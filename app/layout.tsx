@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins as FontSans } from "next/font/google";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = FontSans({
+  subsets: ["latin"],
+  weight: ["300", "400", "600"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html className="min-h-screen" lang="pt-BR">
+      <body
+        className={cn(
+          "min-h-screen overflow-x-hidden bg-background font-sans antialiased",
+          poppins.variable,
+        )}
+      >
+        {children}
+      </body>
     </html>
   );
 }
