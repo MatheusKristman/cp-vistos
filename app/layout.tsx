@@ -5,7 +5,7 @@ import "./globals.css";
 
 const poppins = FontSans({
   subsets: ["latin"],
-  weight: ["300", "400", "600"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-sans",
 });
 
@@ -23,8 +23,8 @@ export default function RootLayout({
     <html className="min-h-screen" lang="pt-BR">
       <body
         className={cn(
-          "min-h-screen overflow-x-hidden bg-background font-sans antialiased",
-          poppins.variable,
+          "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
+          poppins.variable
         )}
       >
         {children}

@@ -1,39 +1,59 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
-import { Menu, Users } from "lucide-react";
+import { MobileBtns } from "./mobile-btns";
 
 export function Header() {
   return (
-    <header className="w-full bg-background h-20 flex items-center">
+    <header className="w-full bg-background h-20 lg:h-24 flex items-center">
       <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
-        <Link href="/" className="relative w-16 h-16 ml-6">
-          <Image
-            src="/assets/images/logo.jpeg"
-            alt="CP Vistos"
-            fill
-            className="object-center object-contain"
-          />
-        </Link>
+        <div className="flex items-center gap-24">
+          <Link href="/" className="relative w-16 h-16 ml-6">
+            <Image
+              src="/assets/images/logo.jpeg"
+              alt="CP Vistos"
+              fill
+              className="object-center object-contain"
+            />
+          </Link>
 
-        <div className="h-full flex items-center">
+          <nav className="hidden lg:block">
+            <ul className="flex items-center gap-12">
+              <li className="text-lg font-medium hover:opacity-70">
+                <Link href="/servicos">Serviços</Link>
+              </li>
+
+              <li className="text-lg font-medium hover:opacity-70">
+                <Link href="/diferenciais">Diferenciais</Link>
+              </li>
+
+              <li className="text-lg font-medium hover:opacity-70">
+                <Link href="/depoimentos">Depoimentos</Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <MobileBtns />
+
+        <div className="hidden lg:flex items-center h-full">
           <Button
             variant="link"
             size="icon"
             asChild
-            className="flex aspect-square w-auto h-full border-l border-secondary"
+            className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
           >
-            <Link href="/login">
-              <Users color="#2E3675" />
-            </Link>
+            <Link href="/contato">Contato</Link>
           </Button>
 
           <Button
             variant="link"
             size="icon"
-            className="flex aspect-square w-auto h-full border-l border-secondary"
+            asChild
+            className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
           >
-            <Menu color="#2E3675" />
+            <Link href="/login">Perfil</Link>
           </Button>
         </div>
       </div>
