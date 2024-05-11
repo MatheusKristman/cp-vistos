@@ -21,7 +21,7 @@ export function MobileMenu() {
           animate="animate"
           exit="exit"
           variants={mobileHeaderAnimation}
-          className="fixed top-0 bottom-0 left-0 right-0 w-full h-full bg-background flex flex-col justify-between gap-12"
+          className="fixed top-0 bottom-0 left-0 right-0 w-full h-full z-50 bg-background flex flex-col justify-between gap-12"
         >
           <div className="w-full flex flex-col gap-6">
             <div className="w-full bg-background h-20 lg:h-24 flex items-center">

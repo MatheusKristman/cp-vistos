@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Poppins as FontSans } from "next/font/google";
+import { Montserrat as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const poppins = FontSans({
+const montserrat = FontSans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
   variable: "--font-sans",
 });
 
@@ -24,7 +23,7 @@ export default function RootLayout({
       <body
         className={cn(
           "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
-          poppins.variable
+          montserrat.variable,
         )}
       >
         {children}
