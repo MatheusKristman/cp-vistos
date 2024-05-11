@@ -63,21 +63,21 @@ export function TestimonialsCarousel() {
   }, [count]);
 
   return (
-    <div className="w-full flex flex-col border-y border-secondary">
-      <Carousel setApi={setApi}>
-        <CarouselContent>
+    <div className="w-full flex flex-col border-y sm:border-l border-secondary sm:h-full">
+      <Carousel setApi={setApi} className="h-full">
+        <CarouselContent className="sm:h-[calc(100%-81px)]">
           {testimonials.map((testimonial, index) => (
             <CarouselItem
               key={`testimonial-${index}`}
-              className="flex flex-col gap-10 py-24"
+              className="flex flex-col justify-center gap-10 py-24"
             >
-              <div className="ml-6 h-[2px] w-36 bg-primary" />
+              <div className="ml-6 sm:ml-16 h-[2px] w-36 bg-primary" />
 
-              <p className="text-2xl text-primary font-medium px-6">
+              <p className="text-2xl lg:text-3xl text-primary font-medium px-6 sm:px-16">
                 {testimonial.text}
               </p>
 
-              <div className="flex flex-col px-6">
+              <div className="flex flex-col px-6 sm:px-16">
                 <span className="text-base text-primary font-medium">
                   {testimonial.person},
                 </span>
@@ -90,7 +90,7 @@ export function TestimonialsCarousel() {
           ))}
         </CarouselContent>
 
-        <div className="w-full px-6 py-6 flex items-center justify-between border-t border-secondary">
+        <div className="w-full px-6 sm:px-16 py-6 flex items-center justify-between border-t border-secondary">
           <div className="flex items-center gap-4">
             {Array.from({ length: count }, (v, k) => k).map((c, i) => (
               <span
@@ -100,7 +100,7 @@ export function TestimonialsCarousel() {
                   {
                     "bg-primary before:content-[''] opacity-100 before:block before:w-4 before:h-4 before:bg-transparent before:border before:border-primary before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full":
                       current === c,
-                  },
+                  }
                 )}
               />
             ))}

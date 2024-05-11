@@ -65,7 +65,7 @@ export function HomeServices() {
                 <div className="flex flex-col items-center gap-4">
                   {Icon}
 
-                  <div className="flex flex-col items-cente gap-2">
+                  <div className="flex flex-col items-center gap-2">
                     <h2 className="text-lg text-center text-primary font-medium">
                       {title}
                     </h2>
@@ -92,7 +92,7 @@ export function HomeServices() {
             <div className="flex flex-col items-center gap-4">
               {Icon}
 
-              <div className="flex flex-col items-cente gap-2">
+              <div className="flex flex-col items-center gap-2">
                 <h2 className="text-lg text-center text-primary font-medium">
                   {title}
                 </h2>
