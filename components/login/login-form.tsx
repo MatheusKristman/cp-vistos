@@ -6,6 +6,10 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,9 +22,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
-import { signIn } from "next-auth/react";
 
 const formSchema = z.object({
   email: z.string().min(1, "E-mail obrigatório").email("E-mail inválido"),
@@ -31,6 +32,8 @@ export function LoginForm() {
   const [passwordType, setPasswordType] = useState<"text" | "password">(
     "password"
   );
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,7 +52,6 @@ export function LoginForm() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(values);
     try {
       const response = await signIn("credentials", {
         ...values,
@@ -60,6 +62,8 @@ export function LoginForm() {
 
       if (!response?.error) {
         toast.success("Logado com sucesso!");
+
+        router.push("/perfil");
       } else {
         toast.error("Ocorreu um erro na autenticação");
       }

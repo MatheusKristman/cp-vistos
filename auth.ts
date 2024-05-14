@@ -7,8 +7,11 @@ import { getUserFromLogin } from "./app/actions";
 export const {
   handlers: { GET, POST },
   auth,
+  signIn,
+  signOut,
 } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  session: { strategy: "jwt" },
   providers: [
     Credentials({
       name: "credentials",
