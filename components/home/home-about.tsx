@@ -16,7 +16,7 @@ export function HomeAbout() {
 
       <div className="w-full px-6 sm:px-9 lg:px-20 py-24 bg-stone-50 flex flex-col justify-center gap-6">
         <div className="flex flex-col gap-4">
-          <h2 className="text-3xl sm:text-4xl lg:text-6xl text-secondary-foreground font-medium">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl text-secondary-foreground font-medium">
             Sobre
           </h2>
 

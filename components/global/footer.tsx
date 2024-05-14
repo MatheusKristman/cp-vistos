@@ -18,12 +18,13 @@ export function Footer() {
       </div>
 
       <div className="w-full flex flex-col sm:justify-between">
-        <div className="w-full px-6 sm:px-16 py-12 flex flex-col lg:flex-row items-center lg:items-start lg:justify-around gap-12">
+        <div className="w-full px-6 sm:px-16 py-12 flex flex-col lg:flex-row items-center lg:justify-around gap-12">
           <nav className="w-full lg:w-fit">
-            <h4 className="text-3xl sm:text-4xl text-primary font-medium mb-6">
-              Menu
+            <h4 className="text-2xl sm:text-3xl text-primary font-medium mb-6">
+              Navegue
             </h4>
-            <ul className="w-full flex flex-col items-center justify-center gap-4 lg:justify-start lg:items-start lg:grid lg:grid-cols-2 lg:grid-rows-2 lg:gap-x-12">
+
+            <ul className="w-full flex flex-col items-center justify-center gap-4 lg:justify-start lg:items-start xl:grid xl:grid-cols-2 xl:grid-rows-2 xl:gap-x-12">
               <li className="text-lg text-primary text-center lg:text-start">
                 <Link href="/servicos">Serviços</Link>
               </li>
@@ -43,10 +44,7 @@ export function Footer() {
           </nav>
 
           <div className="w-ful lg:w-fit flex flex-col gap-6">
-            <h4 className="text-3xl sm:text-4xl text-primary font-medium">
-              Redes Sociais
-            </h4>
-            <ul className="w-full lg:w-fit flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 lg:gap-24">
+            <ul className="w-full lg:w-fit flex flex-col 2xl:flex-row items-center lg:items-start justify-center 2xl:justify-start gap-4 2xl:gap-24">
               <li className="text-primary text-base lg:text-lg">
                 {/* TODO: adicionar mailto */}
                 <a className="flex flex-col items-center gap-1">
@@ -78,17 +76,22 @@ export function Footer() {
           </div>
         </div>
 
-        <span className="w-full border-t border-secondary p-6 text-sm text-center text-primary">
-          Desenvolvido por{" "}
-          <a
-            href="https://www.mkdevsolutions.com/"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="underline"
-          >
-            MKDev Solutions
-          </a>
-        </span>
+        <div className="w-full border-t border-secondary p-6 flex items-center justify-between">
+          <span className="text-sm text-center text-primary">
+            Desenvolvido por{" "}
+            <a
+              href="https://www.mkdevsolutions.com/"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="underline"
+            >
+              MKDev Solutions
+            </a>
+          </span>
+          <span className="text-sm text-center text-primary">
+            2024 © CP Vistos
+          </span>
+        </div>
       </div>
     </footer>
   );

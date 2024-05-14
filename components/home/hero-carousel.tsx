@@ -31,7 +31,7 @@ export function HeroCarousel() {
   }
 
   return (
-    <div className="h-[432px] sm:h-[484px] lg:min-h-[704px] lg:h-[40vw] w-full">
+    <div className="h-[432px] sm:min-h-[548px] lg:min-h-[704px] lg:h-[40vw] w-full">
       <AnimatePresence mode="popLayout">
         {imageShown === 0 && (
           <motion.div

@@ -6,7 +6,7 @@ export function HomeBenefits() {
   return (
     <section className="w-full flex flex-col sm:grid sm:grid-cols-2">
       <div className="w-full px-6 sm:px-16 py-9 sm:py-20 border-t sm:border-b border-secondary">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl text-primary font-medium mb-6">
+        <h2 className="text-2xl sm:text-3xl lg:text-5xl text-primary font-medium mb-6">
           Nossos Diferenciais
         </h2>
 

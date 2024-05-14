@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Montserrat as FontSans } from "next/font/google";
+
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
+
 import "./globals.css";
+import { NextAuthSessionProvider } from "@/providers/sessionProvider";
 
 const montserrat = FontSans({
   subsets: ["latin"],
@@ -23,10 +27,11 @@ export default function RootLayout({
       <body
         className={cn(
           "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
-          montserrat.variable,
+          montserrat.variable
         )}
       >
-        {children}
+        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+        <Toaster />
       </body>
     </html>
   );
