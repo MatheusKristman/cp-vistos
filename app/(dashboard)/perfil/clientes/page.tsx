@@ -1,6 +1,7 @@
 //TODO: criar função para buscar os clientes
 //TODO: criar função para pegar todos os clientes quando entrar nessa pagina
 //TODO: criar função para abrir modal com os formulários e se está completo
+//TODO: criar função para caso o usuário não seja admin, redirecionar para a pagina correta
 
 import { Search } from "lucide-react";
 
