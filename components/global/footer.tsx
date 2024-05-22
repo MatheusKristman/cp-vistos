@@ -9,7 +9,7 @@ export function Footer() {
       <div className="w-full bg-primary flex items-center justify-center py-6 lg:max-w-lg">
         <div className="relative w-24 h-20 sm:aspect-square sm:w-[50%] sm:h-auto">
           <Image
-            src="/assets/images/logo.jpeg"
+            src="/assets/images/cp-vistos-logo.png"
             alt="CP Vistos"
             fill
             className="object-contain object-center"

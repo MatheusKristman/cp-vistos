@@ -3,10 +3,9 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import axios from "axios";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -30,10 +29,11 @@ const formSchema = z.object({
 
 export function LoginForm() {
   const [passwordType, setPasswordType] = useState<"text" | "password">(
-    "password"
+    "password",
   );
 
   const router = useRouter();
+  const session = useSession();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,6 +42,12 @@ export function LoginForm() {
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (session && session.status === "authenticated") {
+      router.push("/perfil");
+    }
+  }, []);
 
   function togglePasswordType() {
     if (passwordType === "text") {
@@ -63,6 +69,7 @@ export function LoginForm() {
       if (!response?.error) {
         toast.success("Logado com sucesso!");
 
+        // TODO: verificar o tipo do usuário, se for admin, redirecionar para o perfil, senão, verificar primeiro se já tem formulário, se não tiver redirecionar para o cadastro do formulário, senão redireciona para o perfil
         router.push("/perfil");
       } else {
         toast.error("Ocorreu um erro na autenticação");
