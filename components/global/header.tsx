@@ -8,8 +8,6 @@ import { auth } from "@/auth";
 export async function Header() {
   const session = await auth();
 
-  console.log(session);
-
   return (
     <header className="w-full bg-background h-20 lg:h-24 flex items-center">
       <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
@@ -58,11 +56,7 @@ export async function Header() {
             asChild
             className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
           >
-            {session ? (
-              <Link href="/perfil">Perfil</Link>
-            ) : (
-              <Link href="/login">Entrar</Link>
-            )}
+            {session ? <Link href="/perfil/clientes">Perfil</Link> : <Link href="/login">Entrar</Link>}
           </Button>
         </div>
       </div>

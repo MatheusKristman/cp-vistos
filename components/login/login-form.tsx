@@ -12,14 +12,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -28,9 +21,7 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
-  const [passwordType, setPasswordType] = useState<"text" | "password">(
-    "password",
-  );
+  const [passwordType, setPasswordType] = useState<"text" | "password">("password");
 
   const router = useRouter();
   const session = useSession();
@@ -45,7 +36,7 @@ export function LoginForm() {
 
   useEffect(() => {
     if (session && session.status === "authenticated") {
-      router.push("/perfil");
+      router.push("/perfil/clientes");
     }
   }, []);
 
@@ -70,7 +61,7 @@ export function LoginForm() {
         toast.success("Logado com sucesso!");
 
         // TODO: verificar o tipo do usuário, se for admin, redirecionar para o perfil, senão, verificar primeiro se já tem formulário, se não tiver redirecionar para o cadastro do formulário, senão redireciona para o perfil
-        router.push("/perfil");
+        router.push("/perfil/clientes");
       } else {
         toast.error("Ocorreu um erro na autenticação");
       }
@@ -85,24 +76,17 @@ export function LoginForm() {
     <section className="min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-96px)] w-full grid grid-cols-2">
       <div className="w-full h-full relative col-span-2 sm:col-span-1 flex flex-col items-center justify-between sm:justify-center gap-12 p-6">
         <div className="w-full flex flex-col items-center justify-center pt-36 sm:pt-0">
-          <h1 className="text-3xl sm:text-4xl font-medium text-center mb-9">
-            Entre na sua conta.
-          </h1>
+          <h1 className="text-3xl sm:text-4xl font-medium text-center mb-9">Entre na sua conta.</h1>
 
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="w-full max-w-xs flex flex-col gap-6"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-xs flex flex-col gap-6">
               <div className="w-full flex flex-col space-y-4">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-primary">
-                        E-mail
-                      </FormLabel>
+                      <FormLabel className="text-base font-medium text-primary">E-mail</FormLabel>
 
                       <FormControl>
                         <Input
@@ -123,9 +107,7 @@ export function LoginForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-primary">
-                        Senha
-                      </FormLabel>
+                      <FormLabel className="text-base font-medium text-primary">Senha</FormLabel>
 
                       <FormControl>
                         <div className="relative">
@@ -143,11 +125,7 @@ export function LoginForm() {
                             size="icon"
                             className="absolute top-1/2 -translate-y-1/2 right-1"
                           >
-                            {passwordType === "password" ? (
-                              <EyeOff color="#9CABCB" />
-                            ) : (
-                              <Eye color="#9CABCB" />
-                            )}
+                            {passwordType === "password" ? <EyeOff color="#9CABCB" /> : <Eye color="#9CABCB" />}
                           </Button>
                         </div>
                       </FormControl>
@@ -164,18 +142,12 @@ export function LoginForm() {
         </div>
 
         <span className="w-full text-sm text-[#8396BE] text-center sm:absolute sm:bottom-6 sm:left-1/2 sm:-translate-x-1/2">
-          Esqueceu seu acesso? Não se preocupe! Entre em contato conosco para
-          recuperar sua conta.
+          Esqueceu seu acesso? Não se preocupe! Entre em contato conosco para recuperar sua conta.
         </span>
       </div>
 
       <div className="hidden sm:block relative w-full h-full">
-        <Image
-          src="/assets/images/login.jpeg"
-          alt="Login"
-          fill
-          className="object-cover object-center"
-        />
+        <Image src="/assets/images/login.jpeg" alt="Login" fill className="object-cover object-center" />
       </div>
     </section>
   );
