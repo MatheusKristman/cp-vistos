@@ -4,10 +4,14 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, role } = await req.json();
+    const { email, password, confirmPassword } = await req.json();
 
-    if (!name || !email || !password || !role) {
+    if (!email || !password || !confirmPassword) {
       return new Response("Dados inválidos", { status: 400 });
+    }
+
+    if (password !== confirmPassword) {
+      return new Response("Senhas não coincidem, verifique e tente novamente", { status: 401 });
     }
 
     const pwHash = await bcrypt.hash(password, 12);
@@ -15,9 +19,8 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({
       data: {
         email,
-        name,
         password: pwHash,
-        role: role === "admin" ? Role.ADMIN : Role.USER,
+        role: Role.USER,
       },
     });
 
@@ -27,7 +30,17 @@ export async function POST(req: Request) {
       });
     }
 
-    return Response.json(user, { status: 200 });
+    const users = await prisma.user.findMany({
+      where: {
+        NOT: {
+          role: {
+            equals: Role.ADMIN,
+          }
+        }
+      }
+    });
+
+    return Response.json({ users, email, password }, { status: 200 });
   } catch (error) {
     console.log("[ERROR_ON_REGISTER]", error);
 

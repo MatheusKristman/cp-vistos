@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Copy, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -17,11 +18,11 @@ import { cn } from "@/lib/utils";
 const formSchema = z
   .object({
     email: z.string().min(1, { message: "E-mail obrigatório" }).email({ message: "E-mail inválido" }),
-    password: z.string().min(6, { message: "Senha precisa ter no mínimo 6 caracteres" }),
-    confirmPassword: z.string().min(6, { message: "Confirmar Senha precisa ter no mínimo 6 caracteres" }),
+    newPassword: z.string().min(6, { message: "Nova Senha precisa ter no mínimo 6 caracteres" }),
+    confirmNewPassword: z.string().min(6, { message: "Confirmar Nova Senha precisa ter no mínimo 6 caracteres" }),
   })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (confirmPassword !== password) {
+  .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
+    if (confirmNewPassword !== newPassword) {
       ctx.addIssue({
         path: ["confirmPassword"],
         code: "custom",
@@ -30,7 +31,7 @@ const formSchema = z
     }
   });
 
-export default function CreateAccountPage() {
+export default function EditAccountPage() {
   const [isEmailCopied, setIsEmailCopied] = useState<boolean>(false);
   const [isPasswordCopied, setIsPasswordCopied] = useState<boolean>(false);
   const [passwordType, setPasswordType] = useState<"password" | "text">("password");
@@ -47,8 +48,8 @@ export default function CreateAccountPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
-      confirmPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
     },
   });
 
@@ -56,15 +57,18 @@ export default function CreateAccountPage() {
     setIsSubmitting(true);
 
     axios
-      .post("/api/register", values)
+      .put("/api/edit-account-password", values)
       .then((res) => {
         setClients(res.data.users);
         setEmailRegistered(res.data.email);
         setPasswordRegistered(res.data.password);
+        toast.success("Usuário editado com sucesso!");
         form.reset();
       })
       .catch((error) => {
         console.error(error);
+
+        toast.error(error.response.data);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -135,7 +139,7 @@ export default function CreateAccountPage() {
             "opacity-0": emailRegistered.length === 0 && passwordRegistered.length === 0,
           })}
         >
-          <h2 className="text-xl text-primary font-medium mb-6">Conta Criada</h2>
+          <h2 className="text-xl text-primary font-medium mb-6">Novos dados do usuário editado</h2>
 
           <div className="flex items-center gap-2 mb-4">
             <TooltipProvider>
@@ -196,10 +200,10 @@ export default function CreateAccountPage() {
 
               <FormField
                 control={form.control}
-                name="password"
+                name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base text-primary">Senha</FormLabel>
+                    <FormLabel className="text-base text-primary">Nova Senha</FormLabel>
 
                     <FormControl>
                       <div className="w-full relative">
@@ -231,10 +235,10 @@ export default function CreateAccountPage() {
 
               <FormField
                 control={form.control}
-                name="confirmPassword"
+                name="confirmNewPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base text-primary">Confirmar Senha</FormLabel>
+                    <FormLabel className="text-base text-primary">Confirmar Nova Senha</FormLabel>
 
                     <FormControl>
                       <div className="relative w-full">
@@ -268,7 +272,7 @@ export default function CreateAccountPage() {
             </div>
 
             <Button disabled={isSubmitting} className="w-full lg:w-24 flex items-center gap-2">
-              Criar
+              Editar
               {isSubmitting && <Loader2 className="animate-spin" />}
             </Button>
           </form>
