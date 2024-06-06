@@ -46,6 +46,7 @@ export function HeroCarousel() {
               src="/assets/images/hero-1.jpeg"
               alt="Mudar depois"
               fill
+              priority
               className="object-cover object-center"
             />
           </motion.div>
@@ -65,6 +66,7 @@ export function HeroCarousel() {
               alt="Mudar depois"
               fill
               className="object-cover object-center"
+              priority
             />
           </motion.div>
         )}
@@ -83,6 +85,7 @@ export function HeroCarousel() {
               alt="Mudar depois"
               fill
               className="object-cover object-center"
+              priority
             />
           </motion.div>
         )}
@@ -114,32 +117,20 @@ export function HeroCarousel() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button
-              onClick={handleBack}
-              variant="secondary"
-              className="w-[30px] h-[30px] p-0 rounded-full"
-            >
+            <Button onClick={handleBack} variant="secondary" className="w-[30px] h-[30px] p-0 rounded-full">
               <ArrowLeft size={20} />
             </Button>
 
-            <Button
-              onClick={handleNext}
-              variant="secondary"
-              className="w-[30px] h-[30px] p-0 rounded-full"
-            >
+            <Button onClick={handleNext} variant="secondary" className="w-[30px] h-[30px] p-0 rounded-full">
               <ArrowRight size={20} />
             </Button>
           </div>
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <span className="w-fit text-base text-primary-foreground font-medium">
-            New York
-          </span>
+          <span className="w-fit text-base text-primary-foreground font-medium">New York</span>
 
-          <span className="w-fit text-base text-primary-foreground">
-            Estados Unidos da América
-          </span>
+          <span className="w-fit text-base text-primary-foreground">Estados Unidos da América</span>
         </div>
       </div>
     </div>
