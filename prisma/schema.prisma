@@ -19,16 +19,18 @@ enum Role {
 }
 
 model User {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String?
-  email    String  @unique
-  password String
-  role     Role    @default(USER)
-
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  password      String
+  role          Role      @default(USER)
+  formStep      Int[]
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
+
+  accounts Account[]
+  sessions Session[]
+  form     Form[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -65,4 +67,247 @@ model Session {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Form {
+  id                                            String                        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName                                     String?
+  lastName                                      String?
+  cpf                                           String?
+  warNameConfirmaiton                           Boolean?
+  warName                                       String?
+  otherNamesConfirmation                        Boolean?
+  otherNames                                    String[]
+  sex                                           String?
+  maritalStatus                                 String?
+  birthDate                                     DateTime?
+  birthCity                                     String?
+  birthState                                    String?
+  birthCountry                                  String?
+  originCountry                                 String?
+  otherNationalityConfirmation                  Boolean?
+  otherNationalityPassport                      String?
+  otherCountryResidentConfirmation              Boolean?
+  USSocialSecurityNumber                        String?
+  USTaxpayerIDNumber                            String?
+  address                                       String?
+  city                                          String?
+  state                                         String?
+  cep                                           String?
+  country                                       String?
+  postalAddressConfirmation                     Boolean?
+  otherPostalAddress                            String?
+  cel                                           String?
+  tel                                           String?
+  fiveYearsOtherTelConfirmation                 Boolean?
+  otherTel                                      String?
+  email                                         String?
+  fiveYearsOtherEmailConfirmation               Boolean?
+  otherEmail                                    String?
+  facebook                                      String?
+  linkedin                                      String?
+  instagram                                     String?
+  othersSocialMedia                             String?
+  passportNumber                                String?
+  passportCity                                  String?
+  passportState                                 String?
+  passportIssuingCountry                        String?
+  passportIssuingDate                           DateTime?
+  passportExpireDate                            DateTime?
+  passportLostConfirmation                      Boolean?
+  lostPassportNumber                            String?
+  lostPassportCountry                           String?
+  lostPassportDetails                           String?
+  travelItneraryConfirmation                    Boolean?
+  USAPreviewArriveDate                          DateTime?
+  arriveFlyNumber                               String?
+  arriveCity                                    String?
+  USAPreviewReturnDate                          DateTime?
+  returnFlyNumber                               String?
+  returnCity                                    String?
+  estimatedTimeOnUSA                            String?
+  visitLocations                                String[]
+  USACompleteAddress                            String?
+  USAZipCode                                    String?
+  USACity                                       String?
+  USAState                                      String?
+  payerNameOrCompany                            String?
+  payerTel                                      String?
+  payerAddress                                  String?
+  payerRelation                                 String?
+  payerEmail                                    String?
+  otherPeopleTravelingConfirmation              Boolean?
+  otherPeopleTraveling                          OtherPeopleTraveling[]
+  groupMemberConfirmation                       Boolean?
+  groupName                                     String?
+  hasBeenOnUSAConfirmation                      Boolean?
+  USALastTravel                                 USALastTravel[]
+  americanLicenseToDriveConfirmation            Boolean?
+  americanLicense                               AmericanLicense[]
+  USAVisaConfirmation                           Boolean?
+  visaIssuingDate                               DateTime?
+  visaNumber                                    String?
+  newVisaConfirmation                           Boolean?
+  sameCountryResidenceConfirmation              Boolean?
+  sameVisaTypeConfirmation                      Boolean?
+  fingerprintsProvidedConfirmation              Boolean?
+  lostVisaConfirmation                          Boolean?
+  lostVisaDetails                               String?
+  canceledVisaConfirmation                      Boolean?
+  canceledVisaDetails                           String?
+  deniedVisaConfirmation                        Boolean?
+  deniedVisaDetails                             String?
+  consularPost                                  String?
+  deniedVisaType                                String?
+  immigrationRequestByAnotherPersonConfirmation Boolean?
+  immigrationRequestByAnotherPersonDetails      String?
+  organizationOrUSAResidentName                 String?
+  organizationOrUSAResidentRelation             String?
+  organizationOrUSAResidentAddress              String?
+  organizationOrUSAResidentZipCode              String?
+  organizationOrUSAResidentCity                 String?
+  organizationOrUSAResidentState                String?
+  organizationOrUSAResidentCountry              String?
+  organizationOrUSAResidentTel                  String?
+  organizationOrUSAResidentEmail                String?
+  fatherCompleteName                            String?
+  fatherBirthdate                               DateTime?
+  fatherLiveInTheUSAConfirmation                Boolean?
+  fatherUSASituation                            String?
+  motherCompleteName                            String?
+  motherBirthdate                               DateTime?
+  motherLiveInTheUSAConfirmation                Boolean?
+  motherUSASituation                            String?
+  familyLivingInTheUSAConfirmation              Boolean?
+  familyLivingInTheUSA                          FamilyLivingInTheUSADetails[]
+  partnerCompleteName                           String?
+  partnerBirthdate                              DateTime?
+  partnerNationality                            String?
+  partnerCity                                   String?
+  partnerState                                  String?
+  partnerCountry                                String?
+  unionDate                                     DateTime?
+  divorceDate                                   DateTime?
+  retireeConfirmation                           Boolean?
+  houseWifeConfirmation                         Boolean?
+  office                                        String?
+  companyOrBossName                             String?
+  companyAddress                                String?
+  companyCity                                   String?
+  companyState                                  String?
+  companyCountry                                String?
+  companyCep                                    String?
+  companyTel                                    String?
+  admissionDate                                 DateTime?
+  monthlySalary                                 String?
+  retireeDate                                   DateTime?
+  jobDetails                                    String?
+  previousJobConfirmation                       Boolean?
+  previousJobs                                  PreviousJobs[]
+  courses                                       Course[]
+  contagiousDiseaseConfirmation                 Boolean?
+  phisicalMentalProblemConfirmation             Boolean?
+  crimeConfirmation                             Boolean?
+  drugsProblemConfirmation                      Boolean?
+  lawViolateConfirmation                        Boolean?
+  prostitutionConfirmation                      Boolean?
+  moneyLaundryConfirmation                      Boolean?
+  peopleTrafficConfirmation                     Boolean?
+  helpPeopleTrafficConfirmation                 Boolean?
+  parentPeopleTrafficConfirmation               Boolean?
+  spyConfirmation                               Boolean?
+  terrorismConfirmation                         Boolean?
+  financialAssistanceConfirmation               Boolean?
+  terrorismMemberConfirmation                   Boolean?
+  parentTerrorismConfirmation                   Boolean?
+  genocideConfirmation                          Boolean?
+  tortureConfirmation                           Boolean?
+  assassinConfirmation                          Boolean?
+  childSoldierConfirmation                      Boolean?
+  religionLibertyConfirmation                   Boolean?
+  abortConfirmation                             Boolean?
+  coerciveTransplantConfirmation                Boolean?
+  visaFraudConfirmation                         Boolean?
+  deportedConfirmation                          Boolean?
+  childCustodyConfirmation                      Boolean?
+  lawViolationConfirmation                      Boolean?
+  avoidTaxConfirmation                          Boolean?
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OtherPeopleTraveling {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String?
+  relation String?
+
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+  formId String @db.ObjectId
+}
+
+model USALastTravel {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  arriveDate    DateTime?
+  estimatedTime String?
+
+  formId String @db.ObjectId
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model AmericanLicense {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  licenseNumber String?
+  state         String?
+
+  formId String @db.ObjectId
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model FamilyLivingInTheUSADetails {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  relation  String?
+  situation String?
+
+  formId String @db.ObjectId
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model PreviousJobs {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  companyName     String?
+  companyAddress  String?
+  companyCity     String?
+  companyState    String?
+  companyCountry  String?
+  companyCep      String?
+  companyTel      String?
+  office          String?
+  supervisorName  String?
+  admissionDate   DateTime?
+  resignationDate DateTime?
+  jobDescription  String?
+
+  formId String @db.ObjectId
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  institutionName String?
+  address         String?
+  city            String?
+  state           String?
+  country         String?
+  cep             String?
+  courseName      String?
+  initialDate     DateTime?
+  finishDate      DateTime?
+
+  formId String @db.ObjectId
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
 }

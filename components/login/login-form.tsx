@@ -55,13 +55,12 @@ export function LoginForm() {
         redirect: false,
       });
 
-      console.log(response);
-
       if (!response?.error) {
         toast.success("Logado com sucesso!");
+        console.log(session);
 
         // TODO: verificar o tipo do usuário, se for admin, redirecionar para o perfil, senão, verificar primeiro se já tem formulário, se não tiver redirecionar para o cadastro do formulário, senão redireciona para o perfil
-        router.push("/perfil/clientes");
+        router.push("/verificando-usuario");
       } else {
         toast.error("Ocorreu um erro na autenticação");
       }
@@ -123,9 +122,13 @@ export function LoginForm() {
                             onClick={togglePasswordType}
                             variant="link"
                             size="icon"
+                            type="button"
                             className="absolute top-1/2 -translate-y-1/2 right-1"
+                            asChild
                           >
-                            {passwordType === "password" ? <EyeOff color="#9CABCB" /> : <Eye color="#9CABCB" />}
+                            <span className="cursor-pointer">
+                              {passwordType === "password" ? <EyeOff color="#9CABCB" /> : <Eye color="#9CABCB" />}
+                            </span>
                           </Button>
                         </div>
                       </FormControl>
