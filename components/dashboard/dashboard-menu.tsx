@@ -1,8 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,11 @@ export function DashboardMenu() {
         </li>
       </ul>
 
-      <Button variant="secondary" className="flex items-center gap-2 text-base">
+      <Button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        variant="secondary"
+        className="flex items-center gap-2 text-base"
+      >
         <LogOut />
         Sair
       </Button>
