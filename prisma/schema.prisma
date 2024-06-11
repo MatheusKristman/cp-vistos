@@ -71,14 +71,15 @@ model Session {
 
 model Form {
   id                                            String                        @id @default(auto()) @map("_id") @db.ObjectId
+  order                                         Int                           @default(0)
   firstName                                     String?
   lastName                                      String?
   cpf                                           String?
-  warNameConfirmaiton                           Boolean?
+  warNameConfirmation                           Boolean?
   warName                                       String?
   otherNamesConfirmation                        Boolean?
   otherNames                                    String[]
-  sex                                           String?
+  sex                                           Sex?
   maritalStatus                                 String?
   birthDate                                     DateTime?
   birthCity                                     String?
@@ -238,6 +239,11 @@ model Form {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Sex {
+  Masculino
+  Feminino
 }
 
 model OtherPeopleTraveling {

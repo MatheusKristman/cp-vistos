@@ -1,17 +1,24 @@
-//TODO: criar função para submit
-//TODO: criar função de loading
-//TODO: mandar para o proximo formulário
-
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ArrowLeft, ArrowRight, Plus, Save, Trash } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  Plus,
+  Save,
+  Trash,
+} from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { Form as FormType } from "@prisma/client";
+import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +46,10 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+interface Props {
+  currentForm: FormType | null;
+}
+
 const formSchema = z
   .object({
     firstName: z.string().min(1, "Campo obrigatório"),
@@ -48,18 +59,7 @@ const formSchema = z
     warName: z.string().optional(),
     otherNamesConfirmation: z.enum(["Sim", "Não"]),
     sex: z.enum(["Masculino", "Feminino"], { message: "Selecione uma opção" }),
-    maritalStatus: z.enum(
-      [
-        "Casado(a)",
-        "União Estável",
-        "Parceiro(a) Doméstico(a)",
-        "Solteiro(a)",
-        "Viúvo(a)",
-        "Divorciado(a)",
-        "Separado(a)",
-      ],
-      { message: "Selecione uma opção" },
-    ),
+    maritalStatus: z.string().min(1, { message: "Selecione uma opção" }),
     birthDate: z.date({ message: "Selecione uma data" }),
     birthCity: z.string().min(1, "Campo obrigatório"),
     birthState: z.string().min(1, "Campo obrigatório"),
@@ -103,33 +103,77 @@ const formSchema = z
     },
   );
 
-export function PersonalDataForm() {
+export function PersonalDataForm({ currentForm }: Props) {
   const [otherNamesIndex, setOtherNamesIndex] = useState<number>(1);
   const [otherNames, setOtherNames] = useState<string[]>([]);
-
-  const currentYear = getYear(new Date());
+  const [otherNamesError, setOtherNamesError] = useState<string>("");
+  const [isSubmitting, setSubmitting] = useState<boolean>(false);
+  const [isSaving, setSaving] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      cpf: "",
-      warNameConfirmation: "Não",
-      warName: undefined,
-      otherNamesConfirmation: "Não",
-      sex: undefined,
-      maritalStatus: undefined,
-      birthDate: undefined,
-      birthCity: "",
-      birthState: "",
-      birthCountry: "",
-      originCountry: "",
-      otherNationalityConfirmation: "Não",
-      otherNationalityPassport: "",
-      otherCountryResidentConfirmation: "Não",
-      USSocialSecurityNumber: "",
-      USTaxpayerIDNumber: "",
+      firstName:
+        currentForm && currentForm.firstName ? currentForm.firstName : "",
+      lastName: currentForm && currentForm.lastName ? currentForm.lastName : "",
+      cpf: currentForm && currentForm.cpf ? currentForm.cpf : "",
+      warNameConfirmation:
+        currentForm && currentForm.warNameConfirmation
+          ? currentForm.warNameConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      warName:
+        currentForm && currentForm.warName ? currentForm.warName : undefined,
+      otherNamesConfirmation:
+        currentForm && currentForm.otherNamesConfirmation
+          ? currentForm.otherNamesConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      sex: currentForm && currentForm.sex ? currentForm.sex : undefined,
+      maritalStatus:
+        currentForm && currentForm.maritalStatus
+          ? currentForm.maritalStatus
+          : undefined,
+      birthDate:
+        currentForm && currentForm.birthDate
+          ? currentForm.birthDate
+          : undefined,
+      birthCity:
+        currentForm && currentForm.birthCity ? currentForm.birthCity : "",
+      birthState:
+        currentForm && currentForm.birthState ? currentForm.birthState : "",
+      birthCountry:
+        currentForm && currentForm.birthCountry ? currentForm.birthCountry : "",
+      originCountry:
+        currentForm && currentForm.originCountry
+          ? currentForm.originCountry
+          : "",
+      otherNationalityConfirmation:
+        currentForm && currentForm.otherNationalityConfirmation
+          ? currentForm.otherNationalityConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      otherNationalityPassport:
+        currentForm && currentForm.otherNationalityPassport
+          ? currentForm.otherNationalityPassport
+          : "",
+      otherCountryResidentConfirmation:
+        currentForm && currentForm.otherCountryResidentConfirmation
+          ? currentForm.otherCountryResidentConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      USSocialSecurityNumber:
+        currentForm && currentForm.USSocialSecurityNumber
+          ? currentForm.USSocialSecurityNumber
+          : "",
+      USTaxpayerIDNumber:
+        currentForm && currentForm.USTaxpayerIDNumber
+          ? currentForm.USTaxpayerIDNumber
+          : "",
     },
   });
   const warNameConfirmationValue: "Sim" | "Não" = form.watch(
@@ -141,9 +185,63 @@ export function PersonalDataForm() {
   const otherNationalityConfirmation: "Sim" | "Não" = form.watch(
     "otherNationalityConfirmation",
   );
+  const currentYear = getYear(new Date());
+  const router = useRouter();
+
+  useEffect(() => {
+    if (currentForm) {
+      setOtherNames(currentForm.otherNames);
+      setOtherNamesIndex(currentForm.otherNames.length);
+    }
+  }, [currentForm]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    setSubmitting(true);
+
+    if (
+      values.otherNamesConfirmation === "Sim" &&
+      (otherNames.length === 0 ||
+        otherNames[otherNames.length - 1].length === 0)
+    ) {
+      setSubmitting(false);
+      setOtherNamesError("Campo vazio, preencha para prosseguir");
+    } else {
+      setOtherNamesError("");
+    }
+
+    axios
+      .post("/api/form/0/submit", { ...values, otherNames })
+      .then(() => {
+        router.push("/formulario/1");
+      })
+      .catch((error) => {
+        console.error(error);
+
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  }
+
+  function handleSave() {
+    const values = form.getValues();
+
+    setSaving(true);
+
+    axios
+      .post("/api/form/0/save", { ...values, otherNames })
+      .then((res) => {
+        toast.success(res.data);
+      })
+      .catch((error) => {
+        console.error(error);
+
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setSaving(false);
+      });
   }
 
   function handleCPFChange(event: ChangeEvent<HTMLInputElement>) {
@@ -190,13 +288,13 @@ export function PersonalDataForm() {
         className="w-full flex flex-col gap-12 mb-12"
       >
         <div className="w-full flex flex-col gap-6">
-          <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="firstName"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-primary">
+                <FormItem className="flex flex-col justify-between">
+                  <FormLabel className="text-primary text-sm">
                     Primeiro nome (Conforme passaporte)*
                   </FormLabel>
 
@@ -213,8 +311,8 @@ export function PersonalDataForm() {
               control={form.control}
               name="lastName"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-primary">
+                <FormItem className="flex flex-col justify-between">
+                  <FormLabel className="text-primary text-sm">
                     Sobrenome (Conforme passaporte)*
                   </FormLabel>
 
@@ -231,8 +329,8 @@ export function PersonalDataForm() {
               control={form.control}
               name="cpf"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-primary">CPF*</FormLabel>
+                <FormItem className="flex flex-col justify-between">
+                  <FormLabel className="text-primary text-sm">CPF*</FormLabel>
 
                   <FormControl>
                     <Input
@@ -251,8 +349,8 @@ export function PersonalDataForm() {
             />
           </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
-            <div className="w-full flex flex-col gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full flex flex-col justify-between gap-4">
               <FormField
                 control={form.control}
                 name="warNameConfirmation"
@@ -297,7 +395,7 @@ export function PersonalDataForm() {
                   name="warName"
                   render={({ field }) => (
                     <FormItem className="w-full bg-secondary p-4">
-                      <FormLabel className="text-primary">
+                      <FormLabel className="text-primary text-sm">
                         Código ou Nome de Guerra
                       </FormLabel>
 
@@ -311,9 +409,7 @@ export function PersonalDataForm() {
                 />
               )}
             </div>
-          </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
             <div className="w-full flex flex-col gap-4">
               <FormField
                 control={form.control}
@@ -355,7 +451,7 @@ export function PersonalDataForm() {
               />
 
               {otherNamesConfirmationValue === "Sim" && (
-                <div className="w-full bg-secondary p-4 flex flex-col gap-2">
+                <div className="w-full bg-secondary p-4 flex flex-col space-y-3">
                   <label
                     htmlFor="otherNames"
                     className="text-sm font-medium text-primary"
@@ -399,12 +495,18 @@ export function PersonalDataForm() {
                       </div>
                     ))}
                   </div>
+
+                  {otherNamesError.length > 0 && (
+                    <span className="text-sm text-red-500">
+                      {otherNamesError}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
           </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="sex"
@@ -539,7 +641,7 @@ export function PersonalDataForm() {
             />
           </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="birthCity"
@@ -595,7 +697,7 @@ export function PersonalDataForm() {
             />
           </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="originCountry"
@@ -653,7 +755,7 @@ export function PersonalDataForm() {
             />
           </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="otherNationalityPassport"
@@ -715,7 +817,7 @@ export function PersonalDataForm() {
             />
           </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="USSocialSecurityNumber"
@@ -756,26 +858,46 @@ export function PersonalDataForm() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
           <Button
             type="button"
             disabled
-            className="w-full flex items-center gap-2 order-3"
+            className="w-full flex items-center gap-2 order-3 sm:w-fit sm:order-1"
           >
             <ArrowLeft className="hidden" /> Voltar
           </Button>
 
           <Button
+            disabled={isSubmitting || isSaving}
+            onClick={handleSave}
             type="button"
             variant="link"
-            className="flex items-center gap-2 order-1"
+            className="w-full flex items-center gap-2 order-1 sm:order-2 sm:w-fit"
           >
-            <Save />
-            Salvar
+            {isSaving ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Salvando progresso
+              </>
+            ) : (
+              <>
+                <Save />
+                Salvar progresso
+              </>
+            )}
           </Button>
 
-          <Button type="submit" className="flex items-center gap-2 order-2">
-            Próximo <ArrowRight className="hidden" />
+          <Button
+            disabled={isSubmitting || isSaving}
+            type="submit"
+            className="w-full flex items-center gap-2 order-2 sm:order-3 sm:w-fit"
+          >
+            Próximo{" "}
+            {isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <ArrowRight className="hidden" />
+            )}
           </Button>
         </div>
       </form>
