@@ -1,17 +1,9 @@
 import getPrimaryForm from "@/app/actions/getPrimaryForm";
-import { ContactAndAddressForm } from "@/components/form/contact-and-address-form";
-import { PassportForm } from "@/components/form/passport-form";
-import { PersonalDataForm } from "@/components/form/personal-data-form";
+import { PrimaryForm } from "@/components/form/primary-form";
 import { Header } from "@/components/global/header";
 import { MobileMenu } from "@/components/global/mobile-menu";
-import { cn } from "@/lib/utils";
 
-export default async function FormPage({
-  params,
-}: {
-  params: { step: string };
-}) {
-  const currentStep = params.step;
+export default async function FormPage() {
   const form = await getPrimaryForm();
 
   return (
@@ -25,22 +17,9 @@ export default async function FormPage({
             <h1 className="text-2xl sm:text-3xl text-center font-semibold text-primary">
               Complete seu cadastro
             </h1>
-
-            <div className="flex items-center gap-2">
-              {Array.from(Array(10).keys()).map((key) => (
-                <span
-                  key={key}
-                  className={cn("w-4 h-4 rounded-full border border-primary", {
-                    "bg-primary": key === Number(currentStep),
-                  })}
-                />
-              ))}
-            </div>
           </div>
 
-          {currentStep === "0" && <PersonalDataForm currentForm={form} />}
-          {currentStep === "1" && <ContactAndAddressForm currentForm={form} />}
-          {currentStep === "2" && <PassportForm currentForm={form} />}
+          <PrimaryForm />
         </div>
       </div>
     </>

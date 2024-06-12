@@ -288,6 +288,10 @@ export function PersonalDataForm({ currentForm }: Props) {
         className="w-full flex flex-col gap-12 mb-12"
       >
         <div className="w-full flex flex-col gap-6">
+          <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold mb-12">
+            Dados Pessoais
+          </h2>
+
           <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
             <FormField
               control={form.control}
@@ -596,14 +600,16 @@ export function PersonalDataForm({ currentForm }: Props) {
                         <Button
                           variant={"outline"}
                           className={cn(
-                            "w-full h-12 pl-3 text-left border-secondary font-normal",
+                            "w-full h-12 pl-3 text-left border-secondary font-normal group",
                             !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
                             format(field.value, "PPP", { locale: ptBR })
                           ) : (
-                            <span>Selecione a data</span>
+                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                              Selecione a data
+                            </span>
                           )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>

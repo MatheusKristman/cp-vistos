@@ -213,6 +213,10 @@ export function ContactAndAddressForm({ currentForm }: Props) {
         className="w-full flex flex-col gap-12 mb-12"
       >
         <div className="w-full flex flex-col gap-6">
+          <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold mb-12">
+            Endereço e Contatos
+          </h2>
+
           <span className="text-primary text-base font-medium">
             Endereço de sua residencia
           </span>

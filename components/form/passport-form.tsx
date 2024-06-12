@@ -7,12 +7,19 @@ import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ArrowLeft, ArrowRight, Loader2, Save } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarIcon,
+  Loader2,
+  Save,
+} from "lucide-react";
 import { Form as FormType } from "@prisma/client";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import PhoneInput from "react-phone-number-input";
+import { ptBR } from "date-fns/locale";
+import { format, getYear } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,8 +33,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-
-import "react-phone-number-input/style.css";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Props {
   currentForm: FormType | null;
@@ -40,7 +53,8 @@ const formSchema = z
     passportState: z.string().min(1, { message: "Campo obrigatório" }),
     passportIssuingCountry: z.string().min(1, { message: "Campo obrigatório" }),
     passportIssuingDate: z.date({ message: "Selecione uma data" }),
-    passportExpireDate: z.date({ message: "Selecione uma data" }),
+    passportExpireDate: z.date({ message: "Selecione uma data" }).optional(),
+    passportNoExpireDate: z.boolean(),
     passportLostConfirmation: z
       .string()
       .min(1, { message: "Campo obrigatório" }),
@@ -55,6 +69,8 @@ const formSchema = z
         lostPassportNumber,
         lostPassportCountry,
         lostPassportDetails,
+        passportExpireDate,
+        passportNoExpireDate,
       },
       ctx,
     ) => {
@@ -93,10 +109,21 @@ const formSchema = z
           path: ["lostPassportDetails"],
         });
       }
+
+      if (!passportNoExpireDate && passportExpireDate === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: ["passportExpireDate"],
+        });
+      }
     },
   );
 
 export function PassportForm({ currentForm }: Props) {
+  const [isSubmitting, setSubmitting] = useState<boolean>(false);
+  const [isSaving, setSaving] = useState<boolean>(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -142,6 +169,11 @@ export function PassportForm({ currentForm }: Props) {
           : "",
     },
   });
+  const passportNoExpireDate: boolean = form.watch("passportNoExpireDate");
+  const passportLostConfirmation: string = form.watch(
+    "passportLostConfirmation",
+  );
+  const currentYear = getYear(new Date());
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -153,7 +185,375 @@ export function PassportForm({ currentForm }: Props) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full flex flex-col gap-12 mb-12"
       >
-        PassportForm
+        <div className="w-full flex flex-col gap-6">
+          <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold mb-12">
+            Passaporte
+          </h2>
+
+          <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="passportNumber"
+              render={({ field }) => (
+                <FormItem className="flex flex-col justify-between">
+                  <FormLabel className="text-primary text-sm">
+                    Número do passaporte*
+                  </FormLabel>
+
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-red-500" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="passportCity"
+              render={({ field }) => (
+                <FormItem className="flex flex-col justify-between">
+                  <FormLabel className="text-primary text-sm">
+                    Cidade*
+                  </FormLabel>
+
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-red-500" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="passportState"
+              render={({ field }) => (
+                <FormItem className="flex flex-col justify-between">
+                  <FormLabel className="text-primary text-sm">
+                    Estado*
+                  </FormLabel>
+
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-red-500" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="w-full grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <FormField
+              control={form.control}
+              name="passportIssuingCountry"
+              render={({ field }) => (
+                <FormItem className="flex flex-col justify-between">
+                  <FormLabel className="text-primary text-sm">
+                    País emissor*
+                  </FormLabel>
+
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-red-500" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="passportIssuingDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-primary">
+                    Data de emissão*
+                  </FormLabel>
+
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full h-12 pl-3 text-left border-secondary font-normal group",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP", { locale: ptBR })
+                          ) : (
+                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                              Selecione a data
+                            </span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        locale={ptBR}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        captionLayout="dropdown"
+                        fromYear={1900}
+                        toYear={currentYear}
+                        classNames={{
+                          day_hidden: "invisible",
+                          dropdown:
+                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          caption_dropdowns: "flex gap-3",
+                          vhidden: "hidden",
+                          caption_label: "hidden",
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FormMessage className="text-sm text-red-500" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="passportExpireDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-primary">
+                    Data de expiração*
+                  </FormLabel>
+
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          disabled={passportNoExpireDate}
+                          variant={"outline"}
+                          className={cn(
+                            "w-full h-12 pl-3 text-left border-secondary font-normal group",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP", { locale: ptBR })
+                          ) : (
+                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                              Selecione a data
+                            </span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        locale={ptBR}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        captionLayout="dropdown"
+                        fromYear={1900}
+                        toYear={currentYear}
+                        classNames={{
+                          day_hidden: "invisible",
+                          dropdown:
+                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          caption_dropdowns: "flex gap-3",
+                          vhidden: "hidden",
+                          caption_label: "hidden",
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <FormMessage className="text-sm text-red-500" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="passportNoExpireDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-3">
+                  <FormLabel className="text-sm text-primary">
+                    Sem expiração
+                  </FormLabel>
+
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="w-full grid grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="passportLostConfirmation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-primary">
+                    Você já perdeu um passaporte ou teve ele roubado?*
+                  </FormLabel>
+
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Não" />
+                        </FormControl>
+
+                        <FormLabel className="font-normal">Não</FormLabel>
+                      </FormItem>
+
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sim" />
+                        </FormControl>
+
+                        <FormLabel className="font-normal">Sim</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-red-500" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {passportLostConfirmation === "Sim" && (
+            <>
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="lostPassportNumber"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col justify-between">
+                      <FormLabel className="text-primary text-sm">
+                        Informe o número do passaporte
+                      </FormLabel>
+
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+
+                      <FormMessage className="text-sm text-red-500" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="lostPassportCountry"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col justify-between">
+                      <FormLabel className="text-primary text-sm">
+                        Informe o país do passaporte
+                      </FormLabel>
+
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+
+                      <FormMessage className="text-sm text-red-500" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="w-full grid grid-cols-1 gap-4">
+                <FormField
+                  control={form.control}
+                  name="lostPassportDetails"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col justify-between">
+                      <FormLabel className="text-primary text-sm">
+                        Explique o ocorrido
+                      </FormLabel>
+
+                      <FormControl>
+                        <Textarea className="resize-none" {...field} />
+                      </FormControl>
+
+                      <FormMessage className="text-sm text-red-500" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+          <Button
+            type="button"
+            disabled={isSubmitting || isSaving}
+            className="w-full flex items-center gap-2 order-3 sm:w-fit sm:order-1"
+          >
+            <ArrowLeft className="hidden" /> Voltar
+          </Button>
+
+          <Button
+            disabled={isSubmitting || isSaving}
+            // onClick={handleSave}
+            onClick={() => {}}
+            type="button"
+            variant="link"
+            className="w-full flex items-center gap-2 order-1 sm:order-2 sm:w-fit"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Salvando progresso
+              </>
+            ) : (
+              <>
+                <Save />
+                Salvar progresso
+              </>
+            )}
+          </Button>
+
+          <Button
+            disabled={isSubmitting || isSaving}
+            type="submit"
+            className="w-full flex items-center gap-2 order-2 sm:order-3 sm:w-fit"
+          >
+            Próximo{" "}
+            {isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <ArrowRight className="hidden" />
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );
