@@ -1,12 +1,14 @@
 //TODO: criar função para submit
 //TODO: mandar para o proximo formulário
+//TODO: validar se o hasBeenOnUSAConfirmation e o USALastTravel estão preenchidos
+//TODO: validar se o americanLicenseToDriveConfirmation e o americanLicense estão preenchidos
 
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Control, useForm } from "react-hook-form";
 import {
   ArrowLeft,
   ArrowRight,
@@ -55,9 +57,10 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { PrimaryFormControl } from "@/types";
 
 interface Props {
-  currentForm: FormType | null;
+  formControl: Control<PrimaryFormControl>;
 }
 
 // hasBeenOnUSAConfirmation                      Boolean?
@@ -82,28 +85,7 @@ interface Props {
 // immigrationRequestByAnotherPersonConfirmation Boolean?
 // immigrationRequestByAnotherPersonDetails      String?
 
-const formSchema = z.object({
-  hasBeenOnUSAConfirmation: z.enum(["Sim", "Não"]),
-  americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
-});
-
-export function PreviousTravelForm({ currentForm }: Props) {
-  const [USALastTravel, setUSALastTravel] = useState<USALastTravel[]>([
-    { arriveDate: null, estimatedTime: "", id: "", formId: "" },
-  ]);
-  const [USALastTravelIndex, setUSALastTravelIndex] = useState<number>(1);
-  const [USALastTravelError, setUSALastTravelError] = useState<string>("");
-  const [americanLicense, setAmericanLicense] = useState<AmericanLicense>([
-    {
-      licenseNumber: "",
-      state: "",
-      id: "",
-      formId: "",
-    },
-  ]);
-  const [americanLicenseIndex, setAmericanLicenseIndex] = useState<number>(1);
-  const [americanLicenseError, setAmericanLicenseError] = useState<string>("");
-
+export function PreviousTravelForm({ formControl }: Props) {
   return (
     <div>
       <div>PreviousTravelForm</div>
