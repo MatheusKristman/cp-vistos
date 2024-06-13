@@ -46,7 +46,7 @@ export type PrimaryFormControl = {
   lostPassportNumber: string;
   lostPassportCountry: string;
   lostPassportDetails: string;
-  travelItneraryConfirmation: "Sim" | "Não";
+  travelItineraryConfirmation: "Sim" | "Não";
   USAPreviewArriveDate: Date;
   arriveFlyNumber: string;
   arriveCity: string;

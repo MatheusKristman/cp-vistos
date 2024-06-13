@@ -1,9 +1,4 @@
-import {
-  AmericanLicense,
-  Form,
-  OtherPeopleTraveling,
-  USALastTravel,
-} from "@prisma/client";
+import { AmericanLicense, Form, OtherPeopleTraveling, USALastTravel } from "@prisma/client";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { create } from "zustand";
 
@@ -38,12 +33,14 @@ interface IUseFormStore {
   setUSALastTravelIndex: (index: number) => void;
   USALastTravelError: string;
   setUSALastTravelError: (error: string) => void;
-  americanLicense: AmericanLicense;
-  setAmericanLicense: (value: AmericanLicense) => void;
+  americanLicense: AmericanLicense[];
+  setAmericanLicense: (value: AmericanLicense[]) => void;
   americanLicenseIndex: number;
   setAmericanLicenseIndex: (index: number) => void;
   americanLicenseError: string;
   setAmericanLicenseError: (error: string) => void;
+  noVisaNumber: CheckedState;
+  setNoVisaNumber: (value: CheckedState) => void;
 }
 
 const useFormStore = create<IUseFormStore>((set) => ({
@@ -75,15 +72,13 @@ const useFormStore = create<IUseFormStore>((set) => ({
   ],
   setOtherPeopleTraveling: (value) => set({ otherPeopleTraveling: value }),
   otherPeopleTravelingIndex: 1,
-  setOtherPeopleTravelingIndex: (index) =>
-    set({ otherPeopleTravelingIndex: index }),
+  setOtherPeopleTravelingIndex: (index) => set({ otherPeopleTravelingIndex: index }),
   otherPeopleTravelingError: "",
-  setOtherPeopleTravelingError: (error) =>
-    set({ otherPeopleTravelingError: error }),
+  setOtherPeopleTravelingError: (error) => set({ otherPeopleTravelingError: error }),
   USALastTravel: [
     {
       id: "",
-      arriveDate: null,
+      arriveDate: new Date(),
       estimatedTime: "",
       formId: "",
     },
@@ -93,17 +88,21 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setUSALastTravelIndex: (index) => set({ USALastTravelIndex: index }),
   USALastTravelError: "",
   setUSALastTravelError: (error) => set({ USALastTravelError: error }),
-  americanLicense: {
-    id: "",
-    formId: "",
-    licenseNumber: "",
-    state: "",
-  },
+  americanLicense: [
+    {
+      id: "",
+      formId: "",
+      licenseNumber: "",
+      state: "",
+    },
+  ],
   setAmericanLicense: (value) => set({ americanLicense: value }),
   americanLicenseIndex: 1,
   setAmericanLicenseIndex: (index) => set({ americanLicenseIndex: index }),
   americanLicenseError: "",
   setAmericanLicenseError: (error) => set({ americanLicenseError: error }),
+  noVisaNumber: false,
+  setNoVisaNumber: (value) => set({ noVisaNumber: value }),
 }));
 
 export default useFormStore;

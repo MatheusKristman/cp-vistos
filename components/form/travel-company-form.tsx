@@ -7,14 +7,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Control, useForm } from "react-hook-form";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Loader2,
-  Plus,
-  Save,
-  Trash,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Plus, Save, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -24,29 +17,12 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -58,7 +34,7 @@ interface Props {
   handleOtherPeopleTravelingChange: (
     event: ChangeEvent<HTMLInputElement>,
     property: "name" | "relation",
-    index: number,
+    index: number
   ) => void;
   handleAddOtherPeopleTravelingInput: () => void;
   handleRemoveOtherPeopleTravelingInput: (index: number) => void;
@@ -74,17 +50,11 @@ export function TravelCompanyForm({
   otherPeopleTravelingConfirmation,
   groupMemberConfirmation,
 }: Props) {
-  const {
-    otherPeopleTraveling,
-    otherPeopleTravelingError,
-    otherPeopleTravelingIndex,
-  } = useFormStore();
+  const { otherPeopleTraveling, otherPeopleTravelingError, otherPeopleTravelingIndex } = useFormStore();
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">
-        Companhia de viagem
-      </h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Companhia de Viagem</h2>
 
       <div className="w-full grid grid-cols-1 gap-4">
         <FormField
@@ -92,16 +62,10 @@ export function TravelCompanyForm({
           name="otherPeopleTravelingConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
-                Há outras pessoas viajando com você?
-              </FormLabel>
+              <FormLabel className="text-primary">Há outras pessoas viajando com você?</FormLabel>
 
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex space-x-4"
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -127,9 +91,7 @@ export function TravelCompanyForm({
 
         {otherPeopleTravelingConfirmation === "Sim" && (
           <div className="w-full bg-secondary p-4 flex flex-col space-y-3">
-            <label className="text-sm font-medium text-primary">
-              Adicione as pessoas que estão viajando com você
-            </label>
+            <label className="text-sm font-medium text-primary">Adicione as pessoas que estão viajando com você</label>
 
             <div className="flex flex-col gap-4 w-full">
               {otherPeopleTraveling.map((obj, i) => (
@@ -138,9 +100,7 @@ export function TravelCompanyForm({
                     className="order-2 w-[calc(100%-58px)] sm:order-1 sm:w-full placeholder:text-primary/70"
                     value={obj.name!}
                     placeholder="Nome completo"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleOtherPeopleTravelingChange(e, "name", i)
-                    }
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOtherPeopleTravelingChange(e, "name", i)}
                   />
 
                   <div className="flex gap-2 justify-between items-end order-1 sm:order-2">
@@ -179,9 +139,7 @@ export function TravelCompanyForm({
             </div>
 
             {otherPeopleTravelingError.length > 0 && (
-              <span className="text-sm text-red-500">
-                {otherPeopleTravelingError}
-              </span>
+              <span className="text-sm text-red-500">{otherPeopleTravelingError}</span>
             )}
           </div>
         )}
@@ -198,11 +156,7 @@ export function TravelCompanyForm({
               </FormLabel>
 
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex space-x-4"
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -231,15 +185,10 @@ export function TravelCompanyForm({
           name="groupName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Nome da Organização ou Grupo
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Nome da Organização ou Grupo</FormLabel>
 
               <FormControl>
-                <Input
-                  disabled={groupMemberConfirmation === "Não"}
-                  {...field}
-                />
+                <Input disabled={groupMemberConfirmation === "Não"} {...field} />
               </FormControl>
 
               <FormMessage className="text-sm text-red-500" />

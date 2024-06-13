@@ -12,21 +12,11 @@ import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
@@ -34,10 +24,7 @@ import useFormStore from "@/constants/stores/useFormStore";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
-  handleVisitLocationsChange: (
-    event: ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) => void;
+  handleVisitLocationsChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
   handleAddVisitLocationsInput: () => void;
   handleRemoveVisitLocationsInput: (index: number) => void;
 }
@@ -48,38 +35,24 @@ export function AboutTravelForm({
   handleAddVisitLocationsInput,
   handleRemoveVisitLocationsInput,
 }: Props) {
-  const {
-    visitLocations,
-    visitLocationsError,
-    visitLocationsIndex,
-    myselfValue,
-    setMyselfValue,
-  } = useFormStore();
+  const { visitLocations, visitLocationsError, visitLocationsIndex, myselfValue, setMyselfValue } = useFormStore();
 
   const currentYear = getYear(new Date());
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">
-        Sobre a Viagem
-      </h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Sobre a Viagem</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
           control={formControl}
-          name="travelItneraryConfirmation"
+          name="travelItineraryConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
-                Possui itnerário de viagem?*
-              </FormLabel>
+              <FormLabel className="text-primary">Possui itinerário de viagem?*</FormLabel>
 
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex space-x-4"
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -108,9 +81,7 @@ export function AboutTravelForm({
           name="USAPreviewArriveDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
-                Data prevista de chegada aos EUA
-              </FormLabel>
+              <FormLabel className="text-primary">Data prevista de chegada aos EUA</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -119,7 +90,7 @@ export function AboutTravelForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value ? (
@@ -140,16 +111,13 @@ export function AboutTravelForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown:
-                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -169,9 +137,7 @@ export function AboutTravelForm({
           name="arriveFlyNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Número do voo de chegada
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Número do voo de chegada</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -189,9 +155,7 @@ export function AboutTravelForm({
           name="arriveCity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Cidade de chegada
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Cidade de chegada</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -207,9 +171,7 @@ export function AboutTravelForm({
           name="USAPreviewReturnDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
-                Data prevista de retorno ao Brasil
-              </FormLabel>
+              <FormLabel className="text-primary">Data prevista de retorno ao Brasil</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -218,7 +180,7 @@ export function AboutTravelForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value ? (
@@ -239,16 +201,13 @@ export function AboutTravelForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown:
-                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -268,9 +227,7 @@ export function AboutTravelForm({
           name="returnFlyNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Número do voo de partida
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Número do voo de partida</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -286,9 +243,7 @@ export function AboutTravelForm({
           name="returnCity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Cidade de partida
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Cidade de partida</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -306,9 +261,7 @@ export function AboutTravelForm({
           name="estimatedTimeOnUSA"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Tempo estimado de permanência nos EUA*
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Tempo estimado de permanência nos EUA*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -320,10 +273,7 @@ export function AboutTravelForm({
         />
 
         <div className="w-full bg-secondary p-4 flex flex-col space-y-3">
-          <label
-            htmlFor="visitLocations"
-            className="text-sm font-medium text-primary"
-          >
+          <label htmlFor="visitLocations" className="text-sm font-medium text-primary">
             Locais que pretende visitar
           </label>
 
@@ -333,9 +283,7 @@ export function AboutTravelForm({
                 <Input
                   name="visitLocations"
                   value={visitLocations[i]}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleVisitLocationsChange(e, i)
-                  }
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleVisitLocationsChange(e, i)}
                 />
 
                 {i === visitLocationsIndex - 1 ? (
@@ -349,12 +297,7 @@ export function AboutTravelForm({
                     <Plus />
                   </Button>
                 ) : (
-                  <Button
-                    type="button"
-                    size="xl"
-                    className="px-3"
-                    onClick={() => handleRemoveVisitLocationsInput(i)}
-                  >
+                  <Button type="button" size="xl" className="px-3" onClick={() => handleRemoveVisitLocationsInput(i)}>
                     <Trash />
                   </Button>
                 )}
@@ -362,9 +305,7 @@ export function AboutTravelForm({
             ))}
           </div>
 
-          {visitLocationsError.length > 0 && (
-            <span className="text-sm text-red-500">{visitLocationsError}</span>
-          )}
+          {visitLocationsError.length > 0 && <span className="text-sm text-red-500">{visitLocationsError}</span>}
         </div>
       </div>
 
@@ -378,9 +319,7 @@ export function AboutTravelForm({
           name="USACompleteAddress"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Endereço completo de onde ficará nos EUA
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Endereço completo de onde ficará nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -396,9 +335,7 @@ export function AboutTravelForm({
           name="USAZipCode"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Zip Code (caso souber)
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Zip Code (caso souber)</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -416,9 +353,7 @@ export function AboutTravelForm({
           name="USACity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Cidade nos EUA
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Cidade nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -434,9 +369,7 @@ export function AboutTravelForm({
           name="USAState"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Estado nos EUA
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Estado nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -448,9 +381,7 @@ export function AboutTravelForm({
         />
       </div>
 
-      <span className="text-primary text-base font-medium mt-6">
-        Referente ao indivíduo pagador
-      </span>
+      <span className="text-primary text-base font-medium mt-6">Referente ao indivíduo pagador</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -459,8 +390,7 @@ export function AboutTravelForm({
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
               <FormLabel className="text-primary text-sm">
-                Nome ou Empresa que pagará a viagem (caso seja você, coloque EU
-                MESMO)
+                Nome ou Empresa que pagará a viagem (caso seja você, coloque EU MESMO)
               </FormLabel>
 
               <FormControl>
@@ -473,19 +403,12 @@ export function AboutTravelForm({
         />
 
         <div className="flex flex-col justify-between">
-          <label
-            htmlFor="payerNameOrCompanyMeValue"
-            className="text-sm text-primary font-medium"
-          >
+          <label htmlFor="payerNameOrCompanyMeValue" className="text-sm text-primary font-medium">
             Sem expiração
           </label>
 
           <div className="h-12">
-            <Checkbox
-              id="payerNameOrCompanyMeValue"
-              checked={myselfValue}
-              onCheckedChange={setMyselfValue}
-            />
+            <Checkbox id="payerNameOrCompanyMeValue" checked={myselfValue} onCheckedChange={setMyselfValue} />
           </div>
         </div>
 
@@ -494,9 +417,7 @@ export function AboutTravelForm({
           name="USAState"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Estado nos EUA
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Estado nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -514,9 +435,7 @@ export function AboutTravelForm({
           name="payerAddress"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Endereço completo
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Endereço completo</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -532,9 +451,7 @@ export function AboutTravelForm({
           name="payerRelation"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Relação com o Solicitante
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Relação com o Solicitante</FormLabel>
 
               <FormControl>
                 <Input {...field} />

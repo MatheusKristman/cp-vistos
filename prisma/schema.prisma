@@ -119,7 +119,7 @@ model Form {
   lostPassportNumber                            String?
   lostPassportCountry                           String?
   lostPassportDetails                           String?
-  travelItneraryConfirmation                    Boolean?
+  travelItineraryConfirmation                   Boolean?
   USAPreviewArriveDate                          DateTime?
   arriveFlyNumber                               String?
   arriveCity                                    String?
