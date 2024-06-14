@@ -10,36 +10,16 @@ import { Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import {
-  AmericanLicense,
-  FamilyLivingInTheUSADetails,
-  USALastTravel,
-} from "@prisma/client";
+import { AmericanLicense, FamilyLivingInTheUSADetails, USALastTravel } from "@prisma/client";
 import PhoneInput from "react-phone-number-input";
 
 import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
@@ -49,12 +29,7 @@ import { ChangeEvent } from "react";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
-  occupation:
-    | "Aposentado"
-    | "Dona de Casa"
-    | "Estudante"
-    | "Empresário"
-    | "Outro";
+  occupation: string;
 }
 
 export function WorkEducationForm({ formControl, occupation }: Props) {
@@ -62,9 +37,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">
-        Trabalho e Educação
-      </h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Trabalho e Educação</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -72,9 +45,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
           name="occupation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
-                Selecione a sua ocupação atual?*
-              </FormLabel>
+              <FormLabel className="text-primary">Selecione a sua ocupação atual?*</FormLabel>
 
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -110,9 +81,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               name="retireeDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary">
-                    Data de aposentadoria
-                  </FormLabel>
+                  <FormLabel className="text-primary">Data de aposentadoria</FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -121,7 +90,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                           variant={"outline"}
                           className={cn(
                             "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (
@@ -142,16 +111,13 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                         locale={ptBR}
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                         captionLayout="dropdown"
                         fromYear={1900}
                         toYear={currentYear}
                         classNames={{
                           day_hidden: "invisible",
-                          dropdown:
-                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                           caption_dropdowns: "flex gap-3",
                           vhidden: "hidden",
                           caption_label: "hidden",
@@ -167,18 +133,15 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
             />
           </div>
         </>
-      ) : occupation === "Dona de Casa" ? null : occupation ===
-        "Estudante" ? null : occupation === "Empresário" ? (
+      ) : occupation === "Dona de Casa" ? null : occupation === "Estudante" ? null : occupation === "Empresário" ? (
         <>
           <div className="w-full grid grid-cols-1 gap-4">
             <FormField
               control={formControl}
               name="companyOrBossName"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
-                  <FormLabel className="text-primary text-sm">
-                    Nome fantasia ou razão social
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Nome fantasia ou razão social</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -195,10 +158,8 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyAddress"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
-                  <FormLabel className="text-primary text-sm">
-                    Endereço completo
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Endereço completo</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -213,7 +174,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyCity"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">Cidade</FormLabel>
 
                   <FormControl>
@@ -229,7 +190,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyState"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">Estado</FormLabel>
 
                   <FormControl>
@@ -247,7 +208,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyCountry"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">País</FormLabel>
 
                   <FormControl>
@@ -263,7 +224,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyCep"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">CEP</FormLabel>
 
                   <FormControl>
@@ -279,10 +240,8 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyTel"
               render={({ field }) => (
-                <FormItem className="flex flex-col justify-between">
-                  <FormLabel className="text-primary text-sm">
-                    Telefone
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Telefone</FormLabel>
 
                   <FormControl>
                     <PhoneInput
@@ -294,7 +253,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                         "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                         {
                           "input-error": false,
-                        },
+                        }
                       )}
                       name={field.name}
                       ref={field.ref}
@@ -316,9 +275,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               name="admissionDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary">
-                    Data da abertura da empresa
-                  </FormLabel>
+                  <FormLabel className="text-primary">Data da abertura da empresa</FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -327,7 +284,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                           variant={"outline"}
                           className={cn(
                             "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (
@@ -348,16 +305,13 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                         locale={ptBR}
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                         captionLayout="dropdown"
                         fromYear={1900}
                         toYear={currentYear}
                         classNames={{
                           day_hidden: "invisible",
-                          dropdown:
-                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                           caption_dropdowns: "flex gap-3",
                           vhidden: "hidden",
                           caption_label: "hidden",
@@ -376,10 +330,8 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="monthlySalary"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
-                  <FormLabel className="text-primary text-sm">
-                    Renda mensal (R$)
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Renda mensal (R$)</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -396,11 +348,10 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="jobDetails"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">
-                    Descreva quais são suas funções dentro da sua empresa, se
-                    possui funcionários registrados e outras informações
-                    relacionadas ao seu negócio
+                    Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras
+                    informações relacionadas ao seu negócio
                   </FormLabel>
 
                   <FormControl>
@@ -415,15 +366,13 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
         </>
       ) : occupation === "Outro" ? (
         <>
-          <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={formControl}
               name="office"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
-                  <FormLabel className="text-primary text-sm">
-                    Cargo / função
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Cargo / função</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -438,10 +387,8 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyOrBossName"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
-                  <FormLabel className="text-primary text-sm">
-                    Nome do empregador atual ou empresa
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Nome do empregador atual ou empresa</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -458,10 +405,8 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyAddress"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
-                  <FormLabel className="text-primary text-sm">
-                    Endereço completo
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Endereço completo</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -476,7 +421,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyCity"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">Cidade</FormLabel>
 
                   <FormControl>
@@ -492,7 +437,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyState"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">Estado</FormLabel>
 
                   <FormControl>
@@ -510,7 +455,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyCountry"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">País</FormLabel>
 
                   <FormControl>
@@ -526,7 +471,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyCep"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">CEP</FormLabel>
 
                   <FormControl>
@@ -542,10 +487,8 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="companyTel"
               render={({ field }) => (
-                <FormItem className="flex flex-col justify-between">
-                  <FormLabel className="text-primary text-sm">
-                    Telefone
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Telefone</FormLabel>
 
                   <FormControl>
                     <PhoneInput
@@ -557,7 +500,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                         "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                         {
                           "input-error": false,
-                        },
+                        }
                       )}
                       name={field.name}
                       ref={field.ref}
@@ -579,9 +522,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               name="admissionDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary">
-                    Data de admissão
-                  </FormLabel>
+                  <FormLabel className="text-primary">Data de admissão</FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -590,7 +531,7 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                           variant={"outline"}
                           className={cn(
                             "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (
@@ -611,16 +552,13 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
                         locale={ptBR}
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                         captionLayout="dropdown"
                         fromYear={1900}
                         toYear={currentYear}
                         classNames={{
                           day_hidden: "invisible",
-                          dropdown:
-                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                           caption_dropdowns: "flex gap-3",
                           vhidden: "hidden",
                           caption_label: "hidden",
@@ -639,10 +577,8 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="monthlySalary"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
-                  <FormLabel className="text-primary text-sm">
-                    Renda mensal (R$)
-                  </FormLabel>
+                <FormItem>
+                  <FormLabel className="text-primary text-sm">Renda mensal (R$)</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -659,11 +595,10 @@ export function WorkEducationForm({ formControl, occupation }: Props) {
               control={formControl}
               name="jobDetails"
               render={({ field }) => (
-                <FormItem className="w-full bg-secondary p-4">
+                <FormItem>
                   <FormLabel className="text-primary text-sm">
-                    Descreva quais são suas funções dentro da sua empresa, se
-                    possui funcionários registrados e outras informações
-                    relacionadas ao seu negócio
+                    Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras
+                    informações relacionadas ao seu negócio
                   </FormLabel>
 
                   <FormControl>

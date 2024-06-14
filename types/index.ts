@@ -111,12 +111,7 @@ export type PrimaryFormControl = {
   partnerCountry: string;
   unionDate?: Date | undefined;
   divorceDate?: Date | undefined;
-  occupation:
-    | "Aposentado"
-    | "Dona de Casa"
-    | "Estudante"
-    | "Empresário"
-    | "Outro";
+  occupation: string;
   office: string;
   companyOrBossName: string;
   companyAddress: string;
