@@ -85,4 +85,49 @@ export type PrimaryFormControl = {
   deniedVisaType: string;
   immigrationRequestByAnotherPersonConfirmation: "Sim" | "Não";
   immigrationRequestByAnotherPersonDetails: string;
+  organizationOrUSAResidentName: string;
+  organizationOrUSAResidentRelation: string;
+  organizationOrUSAResidentAddress: string;
+  organizationOrUSAResidentZipCode: string;
+  organizationOrUSAResidentCity: string;
+  organizationOrUSAResidentState: string;
+  organizationOrUSAResidentCountry: string;
+  organizationOrUSAResidentTel: string;
+  organizationOrUSAResidentEmail: string;
+  fatherCompleteName: string;
+  fatherBirthdate: Date;
+  fatherLiveInTheUSAConfirmation: "Sim" | "Não";
+  fatherUSASituation: string;
+  motherCompleteName: string;
+  motherBirthdate: Date;
+  motherLiveInTheUSAConfirmation: "Sim" | "Não";
+  motherUSASituation: string;
+  familyLivingInTheUSAConfirmation: "Sim" | "Não";
+  partnerCompleteName: string;
+  partnerBirthdate: Date;
+  partnerNationality: string;
+  partnerCity: string;
+  partnerState: string;
+  partnerCountry: string;
+  unionDate?: Date | undefined;
+  divorceDate?: Date | undefined;
+  occupation:
+    | "Aposentado"
+    | "Dona de Casa"
+    | "Estudante"
+    | "Empresário"
+    | "Outro";
+  office: string;
+  companyOrBossName: string;
+  companyAddress: string;
+  companyCity: string;
+  companyState: string;
+  companyCountry: string;
+  companyCep: string;
+  companyTel: string;
+  admissionDate: Date;
+  monthlySalary: string;
+  retireeDate: Date;
+  jobDetails: string;
+  previousJobConfirmation: "Sim" | "Não";
 };

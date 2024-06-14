@@ -1,4 +1,10 @@
-import { AmericanLicense, Form, OtherPeopleTraveling, USALastTravel } from "@prisma/client";
+import {
+  AmericanLicense,
+  FamilyLivingInTheUSADetails,
+  Form,
+  OtherPeopleTraveling,
+  USALastTravel,
+} from "@prisma/client";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { create } from "zustand";
 
@@ -41,6 +47,12 @@ interface IUseFormStore {
   setAmericanLicenseError: (error: string) => void;
   noVisaNumber: CheckedState;
   setNoVisaNumber: (value: CheckedState) => void;
+  familyLivingInTheUSA: FamilyLivingInTheUSADetails[];
+  setFamilyLivingInTheUSA: (value: FamilyLivingInTheUSADetails[]) => void;
+  familyLivingInTheUSAIndex: number;
+  setFamilyLivingInTheUSAIndex: (index: number) => void;
+  familyLivingInTheUSAError: string;
+  setFamilyLivingInTheUSAError: (error: string) => void;
 }
 
 const useFormStore = create<IUseFormStore>((set) => ({
@@ -72,9 +84,11 @@ const useFormStore = create<IUseFormStore>((set) => ({
   ],
   setOtherPeopleTraveling: (value) => set({ otherPeopleTraveling: value }),
   otherPeopleTravelingIndex: 1,
-  setOtherPeopleTravelingIndex: (index) => set({ otherPeopleTravelingIndex: index }),
+  setOtherPeopleTravelingIndex: (index) =>
+    set({ otherPeopleTravelingIndex: index }),
   otherPeopleTravelingError: "",
-  setOtherPeopleTravelingError: (error) => set({ otherPeopleTravelingError: error }),
+  setOtherPeopleTravelingError: (error) =>
+    set({ otherPeopleTravelingError: error }),
   USALastTravel: [
     {
       id: "",
@@ -103,6 +117,22 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setAmericanLicenseError: (error) => set({ americanLicenseError: error }),
   noVisaNumber: false,
   setNoVisaNumber: (value) => set({ noVisaNumber: value }),
+  familyLivingInTheUSA: [
+    {
+      id: "",
+      formId: "",
+      name: "",
+      relation: "",
+      situation: "",
+    },
+  ],
+  setFamilyLivingInTheUSA: (value) => set({ familyLivingInTheUSA: value }),
+  familyLivingInTheUSAIndex: 1,
+  setFamilyLivingInTheUSAIndex: (index) =>
+    set({ familyLivingInTheUSAIndex: index }),
+  familyLivingInTheUSAError: "",
+  setFamilyLivingInTheUSAError: (error) =>
+    set({ familyLivingInTheUSAError: error }),
 }));
 
 export default useFormStore;

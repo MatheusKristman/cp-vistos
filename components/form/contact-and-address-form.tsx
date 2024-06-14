@@ -15,8 +15,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 
-import "react-phone-number-input/style.css";
-
 interface Props {
   formControl: Control<PrimaryFormControl>;
   postalAddressConfirmation: "Sim" | "Não";
