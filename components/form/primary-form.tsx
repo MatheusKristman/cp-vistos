@@ -7,6 +7,8 @@
 // empresario/autonomo
 // funcionário
 
+//TODO: testar a seção sobre a viagem
+
 "use client";
 
 import { z } from "zod";
@@ -26,22 +28,19 @@ import { PreviousTravelForm } from "@/components/form/previous-travel-form";
 import { TravelCompanyForm } from "@/components/form/travel-company-form";
 import { USAContactForm } from "@/components/form/usa-contact-form";
 import { WorkEducationForm } from "@/components/form/work-education-form";
+import { FamilyForm } from "@/components/form/family-form";
+import { SecurityForm } from "@/components/form/security-form";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { getYear } from "date-fns";
-import { ArrowLeft, ArrowRight, Loader2, Save } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import useFormStore from "@/constants/stores/useFormStore";
-import { FamilyForm } from "./family-form";
 
 import "react-phone-number-input/style.css";
 
 interface Props {
   currentForm: FormType | null;
 }
-
-// previousJobs                                  PreviousJobs[]
-// courses                                       Course[]
 
 const formSchema = z
   .object({
@@ -52,7 +51,7 @@ const formSchema = z
     warName: z.string().optional(),
     otherNamesConfirmation: z.enum(["Sim", "Não"]),
     sex: z.enum(["Masculino", "Feminino"], { message: "Selecione uma opção" }),
-    maritalStatus: z.string().min(1, { message: "Selecione uma opção" }),
+    maritalStatus: z.string({ message: "Selecione uma opção" }).min(1, { message: "Selecione uma opção" }),
     birthDate: z.date({ message: "Selecione uma data" }),
     birthCity: z.string().min(1, "Campo obrigatório"),
     birthState: z.string().min(1, "Campo obrigatório"),
@@ -171,6 +170,33 @@ const formSchema = z
     retireeDate: z.date({ message: "Campo obrigatório" }),
     jobDetails: z.string(),
     previousJobConfirmation: z.enum(["Sim", "Não"]),
+    contagiousDiseaseConfirmation: z.enum(["Sim", "Não"]),
+    phisicalMentalProblemConfirmation: z.enum(["Sim", "Não"]),
+    crimeConfirmation: z.enum(["Sim", "Não"]),
+    drugsProblemConfirmation: z.enum(["Sim", "Não"]),
+    lawViolateConfirmation: z.enum(["Sim", "Não"]),
+    prostitutionConfirmation: z.enum(["Sim", "Não"]),
+    moneyLaundryConfirmation: z.enum(["Sim", "Não"]),
+    peopleTrafficConfirmation: z.enum(["Sim", "Não"]),
+    helpPeopleTrafficConfirmation: z.enum(["Sim", "Não"]),
+    parentPeopleTrafficConfirmation: z.enum(["Sim", "Não"]),
+    spyConfirmation: z.enum(["Sim", "Não"]),
+    terrorismConfirmation: z.enum(["Sim", "Não"]),
+    financialAssistanceConfirmation: z.enum(["Sim", "Não"]),
+    terrorismMemberConfirmation: z.enum(["Sim", "Não"]),
+    parentTerrorismConfirmation: z.enum(["Sim", "Não"]),
+    genocideConfirmation: z.enum(["Sim", "Não"]),
+    tortureConfirmation: z.enum(["Sim", "Não"]),
+    assassinConfirmation: z.enum(["Sim", "Não"]),
+    childSoldierConfirmation: z.enum(["Sim", "Não"]),
+    religionLibertyConfirmation: z.enum(["Sim", "Não"]),
+    abortConfirmation: z.enum(["Sim", "Não"]),
+    coerciveTransplantConfirmation: z.enum(["Sim", "Não"]),
+    visaFraudConfirmation: z.enum(["Sim", "Não"]),
+    deportedConfirmation: z.enum(["Sim", "Não"]),
+    childCustodyConfirmation: z.enum(["Sim", "Não"]),
+    lawViolationConfirmation: z.enum(["Sim", "Não"]),
+    avoidTaxConfirmation: z.enum(["Sim", "Não"]),
   })
   .superRefine(
     (
@@ -223,7 +249,7 @@ const formSchema = z
         });
       }
 
-      if (postalAddressConfirmation && otherPostalAddress && otherPostalAddress.length === 0) {
+      if (postalAddressConfirmation === "Sim" && otherPostalAddress.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -342,33 +368,17 @@ const formSchema = z
   );
 
 export function PrimaryForm({ currentForm }: Props) {
-  const [otherNamesIndex, setOtherNamesIndex] = useState<number>(1);
-  const [otherNames, setOtherNames] = useState<string[]>([]);
-  const [otherNamesError, setOtherNamesError] = useState<string>("");
-  const [myselfValue, setMyselfValue] = useState<CheckedState>(false);
-  const [otherPeopleTraveling, setOtherPeopleTraveling] = useState<OtherPeopleTraveling[]>([
-    { name: "", relation: "", id: "", formId: "" },
-  ]);
-  const [otherPeopleTravelingIndex, setOtherPeopleTravelingIndex] = useState<number>(1);
-  const [otherPeopleTravelingError, setOtherPeopleTravelingError] = useState<string>("");
-  const [USALastTravel, setUSALastTravel] = useState<USALastTravel[]>([
-    { arriveDate: null, estimatedTime: "", id: "", formId: "" },
-  ]);
-  const [USALastTravelIndex, setUSALastTravelIndex] = useState<number>(1);
-  const [USALastTravelError, setUSALastTravelError] = useState<string>("");
-  const [americanLicense, setAmericanLicense] = useState<AmericanLicense>({
-    licenseNumber: "",
-    state: "",
-    id: "",
-    formId: "",
-  });
-  const [americanLicenseIndex, setAmericanLicenseIndex] = useState<number>(1);
-  const [americanLicenseError, setAmericanLicenseError] = useState<string>("");
-  const [isSubmitting, setSubmitting] = useState<boolean>(false);
-  const [isSaving, setSaving] = useState<boolean>(false);
-
-  const { setVisitLocationsError, setVisitLocationsIndex, setVisitLocations, visitLocations, visitLocationsIndex } =
-    useFormStore();
+  const {
+    setVisitLocationsError,
+    setVisitLocationsIndex,
+    setVisitLocations,
+    visitLocations,
+    visitLocationsIndex,
+    setOtherNames,
+    setOtherNamesIndex,
+    isSaving,
+    isSubmitting,
+  } = useFormStore();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -626,6 +636,156 @@ export function PrimaryForm({ currentForm }: Props) {
             ? "Sim"
             : "Não"
           : "Não",
+      contagiousDiseaseConfirmation:
+        currentForm && currentForm.contagiousDiseaseConfirmation
+          ? currentForm.contagiousDiseaseConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      phisicalMentalProblemConfirmation:
+        currentForm && currentForm.phisicalMentalProblemConfirmation
+          ? currentForm.phisicalMentalProblemConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      crimeConfirmation:
+        currentForm && currentForm.crimeConfirmation ? (currentForm.crimeConfirmation === true ? "Sim" : "Não") : "Não",
+      drugsProblemConfirmation:
+        currentForm && currentForm.drugsProblemConfirmation
+          ? currentForm.drugsProblemConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      lawViolateConfirmation:
+        currentForm && currentForm.lawViolateConfirmation
+          ? currentForm.lawViolateConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      prostitutionConfirmation:
+        currentForm && currentForm.prostitutionConfirmation
+          ? currentForm.prostitutionConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      moneyLaundryConfirmation:
+        currentForm && currentForm.moneyLaundryConfirmation
+          ? currentForm.moneyLaundryConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      peopleTrafficConfirmation:
+        currentForm && currentForm.peopleTrafficConfirmation
+          ? currentForm.peopleTrafficConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      helpPeopleTrafficConfirmation:
+        currentForm && currentForm.helpPeopleTrafficConfirmation
+          ? currentForm.helpPeopleTrafficConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      parentPeopleTrafficConfirmation:
+        currentForm && currentForm.parentPeopleTrafficConfirmation
+          ? currentForm.parentPeopleTrafficConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      spyConfirmation:
+        currentForm && currentForm.spyConfirmation ? (currentForm.spyConfirmation === true ? "Sim" : "Não") : "Não",
+      terrorismConfirmation:
+        currentForm && currentForm.terrorismConfirmation
+          ? currentForm.terrorismConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      financialAssistanceConfirmation:
+        currentForm && currentForm.financialAssistanceConfirmation
+          ? currentForm.financialAssistanceConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      terrorismMemberConfirmation:
+        currentForm && currentForm.terrorismMemberConfirmation
+          ? currentForm.terrorismMemberConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      parentTerrorismConfirmation:
+        currentForm && currentForm.parentTerrorismConfirmation
+          ? currentForm.parentTerrorismConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      genocideConfirmation:
+        currentForm && currentForm.genocideConfirmation
+          ? currentForm.genocideConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      tortureConfirmation:
+        currentForm && currentForm.tortureConfirmation
+          ? currentForm.tortureConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      assassinConfirmation:
+        currentForm && currentForm.assassinConfirmation
+          ? currentForm.assassinConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      childSoldierConfirmation:
+        currentForm && currentForm.childSoldierConfirmation
+          ? currentForm.childSoldierConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      religionLibertyConfirmation:
+        currentForm && currentForm.religionLibertyConfirmation
+          ? currentForm.religionLibertyConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      abortConfirmation:
+        currentForm && currentForm.abortConfirmation ? (currentForm.abortConfirmation === true ? "Sim" : "Não") : "Não",
+      coerciveTransplantConfirmation:
+        currentForm && currentForm.coerciveTransplantConfirmation
+          ? currentForm.coerciveTransplantConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      visaFraudConfirmation:
+        currentForm && currentForm.visaFraudConfirmation
+          ? currentForm.visaFraudConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      deportedConfirmation:
+        currentForm && currentForm.deportedConfirmation
+          ? currentForm.deportedConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      childCustodyConfirmation:
+        currentForm && currentForm.childCustodyConfirmation
+          ? currentForm.childCustodyConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      lawViolationConfirmation:
+        currentForm && currentForm.lawViolationConfirmation
+          ? currentForm.lawViolationConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
+      avoidTaxConfirmation:
+        currentForm && currentForm.avoidTaxConfirmation
+          ? currentForm.avoidTaxConfirmation === true
+            ? "Sim"
+            : "Não"
+          : "Não",
     },
   });
   const warNameConfirmationValue: "Sim" | "Não" = form.watch("warNameConfirmation");
@@ -648,6 +808,7 @@ export function PrimaryForm({ currentForm }: Props) {
   const motherLiveInTheUSAConfirmation = form.watch("motherLiveInTheUSAConfirmation");
   const familyLivingInTheUSAConfirmation = form.watch("familyLivingInTheUSAConfirmation");
   const occupation = form.watch("occupation");
+  const previousJobConfirmation = form.watch("previousJobConfirmation");
 
   useEffect(() => {
     if (currentForm) {
@@ -660,12 +821,20 @@ export function PrimaryForm({ currentForm }: Props) {
     console.log(values);
   }
 
-  function handleCPFChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleCPFPersonalDataChange(event: ChangeEvent<HTMLInputElement>) {
     let value = event.target.value.replace(/[^\d]/g, "");
 
     value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 
     form.setValue("cpf", value);
+  }
+
+  function handleCEPContactAndAddressChange(event: ChangeEvent<HTMLInputElement>) {
+    let value = event.target.value.replace(/[^\d]/g, "");
+
+    value = value.replace(/(\d{5})(\d{3})/, "$1-$2");
+
+    form.setValue("cep", value);
   }
 
   function handleVisitLocationsChange(event: ChangeEvent<HTMLInputElement>, index: number) {
@@ -695,27 +864,23 @@ export function PrimaryForm({ currentForm }: Props) {
     property: "name" | "relation",
     index: number
   ) {
-    const values = [...otherPeopleTraveling];
-    values[index][property] = event.target.value;
-    setOtherPeopleTraveling(values);
+    // const values = [...otherPeopleTraveling];
+    // values[index][property] = event.target.value;
+    // setOtherPeopleTraveling(values);
   }
 
   function handleAddOtherPeopleTravelingInput() {
-    setOtherPeopleTravelingIndex((prev: number) => prev + 1);
-
-    const values = [...otherPeopleTraveling];
-    values[values.length] = { name: "", relation: "", id: "", formId: "" };
-
-    console.log(values);
-
-    setOtherPeopleTraveling(values);
+    // setOtherPeopleTravelingIndex((prev: number) => prev + 1);
+    // const values = [...otherPeopleTraveling];
+    // values[values.length] = { name: "", relation: "", id: "", formId: "" };
+    // console.log(values);
+    // setOtherPeopleTraveling(values);
   }
 
   function handleRemoveOtherPeopleTravelingInput(index: number) {
-    setOtherPeopleTravelingIndex((prev: number) => prev - 1);
-
-    const values = [...otherPeopleTraveling].filter((value: OtherPeopleTraveling, i: number) => i !== index);
-    setOtherPeopleTraveling(values);
+    // setOtherPeopleTravelingIndex((prev: number) => prev - 1);
+    // const values = [...otherPeopleTraveling].filter((value: OtherPeopleTraveling, i: number) => i !== index);
+    // setOtherPeopleTraveling(values);
   }
 
   return (
@@ -723,7 +888,7 @@ export function PrimaryForm({ currentForm }: Props) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-12 mb-12">
         <PersonalDataForm
           formControl={form.control}
-          handleCPFChange={handleCPFChange}
+          handleCPFPersonalDataChange={handleCPFPersonalDataChange}
           warNameConfirmationValue={warNameConfirmationValue}
           otherNamesConfirmationValue={otherNamesConfirmationValue}
           otherNationalityConfirmation={otherNationalityConfirmation}
@@ -731,6 +896,7 @@ export function PrimaryForm({ currentForm }: Props) {
 
         <ContactAndAddressForm
           formControl={form.control}
+          handleCEPContactAndAddressChange={handleCEPContactAndAddressChange}
           postalAddressConfirmation={postalAddressConfirmation}
           fiveYearsOtherTelConfirmation={fiveYearsOtherTelConfirmation}
           fiveYearsOtherEmailConfirmation={fiveYearsOtherEmailConfirmation}
@@ -777,42 +943,21 @@ export function PrimaryForm({ currentForm }: Props) {
           familyLivingInTheUSAConfirmation={familyLivingInTheUSAConfirmation}
         />
 
-        <WorkEducationForm formControl={form.control} occupation={occupation} />
+        <WorkEducationForm
+          formControl={form.control}
+          occupation={occupation}
+          previousJobConfirmation={previousJobConfirmation}
+        />
 
-        <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
-          <Button type="button" disabled className="w-full flex items-center gap-2 order-3 sm:w-fit sm:order-1">
-            <ArrowLeft className="hidden" /> Voltar
-          </Button>
+        <SecurityForm formControl={form.control} />
 
-          <Button
-            disabled={isSubmitting || isSaving}
-            // onClick={handleSave}
-            onClick={() => {}}
-            type="button"
-            variant="link"
-            className="w-full flex items-center gap-2 order-1 sm:order-2 sm:w-fit"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="animate-spin" />
-                Salvando progresso
-              </>
-            ) : (
-              <>
-                <Save />
-                Salvar progresso
-              </>
-            )}
-          </Button>
-
-          <Button
-            disabled={isSubmitting || isSaving}
-            type="submit"
-            className="w-full flex items-center gap-2 order-2 sm:order-3 sm:w-fit"
-          >
-            Próximo {isSubmitting ? <Loader2 className="animate-spin" /> : <ArrowRight className="hidden" />}
-          </Button>
-        </div>
+        <Button
+          disabled={isSubmitting || isSaving}
+          type="submit"
+          className="w-full flex items-center gap-2 order-2 sm:order-3 sm:w-fit"
+        >
+          Enviar {isSubmitting ? <Loader2 className="animate-spin" /> : <ArrowRight className="hidden" />}
+        </Button>
       </form>
     </Form>
   );

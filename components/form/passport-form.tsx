@@ -9,22 +9,12 @@ import { ptBR } from "date-fns/locale";
 import { format, getYear } from "date-fns";
 
 import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { PrimaryFormControl } from "@/types";
@@ -35,18 +25,12 @@ interface Props {
   passportLostConfirmation: "Sim" | "Não";
 }
 
-export function PassportForm({
-  formControl,
-  passportNoExpireDate,
-  passportLostConfirmation,
-}: Props) {
+export function PassportForm({ formControl, passportNoExpireDate, passportLostConfirmation }: Props) {
   const currentYear = getYear(new Date());
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">
-        Passaporte
-      </h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Passaporte</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -54,9 +38,7 @@ export function PassportForm({
           name="passportNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Número do passaporte*
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Número do passaporte*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -106,9 +88,7 @@ export function PassportForm({
           name="passportIssuingCountry"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                País emissor*
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">País emissor*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -133,7 +113,7 @@ export function PassportForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value ? (
@@ -154,16 +134,13 @@ export function PassportForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown:
-                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -193,7 +170,7 @@ export function PassportForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value ? (
@@ -214,16 +191,13 @@ export function PassportForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown:
-                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -243,15 +217,10 @@ export function PassportForm({
           name="passportNoExpireDate"
           render={({ field }) => (
             <FormItem className="flex flex-col space-y-3">
-              <FormLabel className="text-sm text-primary">
-                Sem expiração
-              </FormLabel>
+              <FormLabel className="text-sm text-primary">Sem expiração</FormLabel>
 
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
             </FormItem>
           )}
@@ -264,16 +233,10 @@ export function PassportForm({
           name="passportLostConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
-                Você já perdeu um passaporte ou teve ele roubado?*
-              </FormLabel>
+              <FormLabel className="text-primary">Você já perdeu um passaporte ou teve ele roubado?*</FormLabel>
 
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex space-x-4"
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -298,67 +261,59 @@ export function PassportForm({
         />
       </div>
 
-      {passportLostConfirmation === "Sim" && (
-        <>
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField
-              control={formControl}
-              name="lostPassportNumber"
-              render={({ field }) => (
-                <FormItem className="flex flex-col justify-between">
-                  <FormLabel className="text-primary text-sm">
-                    Informe o número do passaporte
-                  </FormLabel>
+      <div
+        className={cn("w-full grid grid-cols-1 sm:grid-cols-2 gap-4", { hidden: passportLostConfirmation === "Não" })}
+      >
+        <FormField
+          control={formControl}
+          name="lostPassportNumber"
+          render={({ field }) => (
+            <FormItem className="flex flex-col justify-between">
+              <FormLabel className="text-primary text-sm">Informe o número do passaporte</FormLabel>
 
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
 
-                  <FormMessage className="text-sm text-red-500" />
-                </FormItem>
-              )}
-            />
+              <FormMessage className="text-sm text-red-500" />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={formControl}
-              name="lostPassportCountry"
-              render={({ field }) => (
-                <FormItem className="flex flex-col justify-between">
-                  <FormLabel className="text-primary text-sm">
-                    Informe o país do passaporte
-                  </FormLabel>
+        <FormField
+          control={formControl}
+          name="lostPassportCountry"
+          render={({ field }) => (
+            <FormItem className="flex flex-col justify-between">
+              <FormLabel className="text-primary text-sm">Informe o país do passaporte</FormLabel>
 
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
 
-                  <FormMessage className="text-sm text-red-500" />
-                </FormItem>
-              )}
-            />
-          </div>
+              <FormMessage className="text-sm text-red-500" />
+            </FormItem>
+          )}
+        />
+      </div>
 
-          <div className="w-full grid grid-cols-1 gap-4">
-            <FormField
-              control={formControl}
-              name="lostPassportDetails"
-              render={({ field }) => (
-                <FormItem className="flex flex-col justify-between">
-                  <FormLabel className="text-primary text-sm">
-                    Explique o ocorrido
-                  </FormLabel>
+      <div className={cn("w-full grid grid-cols-1 gap-4", { hidden: passportLostConfirmation === "Não" })}>
+        <FormField
+          control={formControl}
+          name="lostPassportDetails"
+          render={({ field }) => (
+            <FormItem className="flex flex-col justify-between">
+              <FormLabel className="text-primary text-sm">Explique o ocorrido</FormLabel>
 
-                  <FormControl>
-                    <Textarea className="resize-none" {...field} />
-                  </FormControl>
+              <FormControl>
+                <Textarea className="resize-none" {...field} />
+              </FormControl>
 
-                  <FormMessage className="text-sm text-red-500" />
-                </FormItem>
-              )}
-            />
-          </div>
-        </>
-      )}
+              <FormMessage className="text-sm text-red-500" />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 }

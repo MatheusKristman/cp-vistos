@@ -1,8 +1,10 @@
 import {
   AmericanLicense,
+  Course,
   FamilyLivingInTheUSADetails,
   Form,
   OtherPeopleTraveling,
+  PreviousJobs,
   USALastTravel,
 } from "@prisma/client";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -53,6 +55,18 @@ interface IUseFormStore {
   setFamilyLivingInTheUSAIndex: (index: number) => void;
   familyLivingInTheUSAError: string;
   setFamilyLivingInTheUSAError: (error: string) => void;
+  previousJobs: PreviousJobs[];
+  setPreviousJobs: (value: PreviousJobs[]) => void;
+  previousJobsIndex: number;
+  setPreviousJobsIndex: (index: number) => void;
+  previousJobsError: string;
+  setPreviousJobsError: (error: string) => void;
+  courses: Course[];
+  setCourses: (value: Course[]) => void;
+  coursesIndex: number;
+  setCoursesIndex: (index: number) => void;
+  coursesError: string;
+  setCoursesError: (error: string) => void;
 }
 
 const useFormStore = create<IUseFormStore>((set) => ({
@@ -84,11 +98,9 @@ const useFormStore = create<IUseFormStore>((set) => ({
   ],
   setOtherPeopleTraveling: (value) => set({ otherPeopleTraveling: value }),
   otherPeopleTravelingIndex: 1,
-  setOtherPeopleTravelingIndex: (index) =>
-    set({ otherPeopleTravelingIndex: index }),
+  setOtherPeopleTravelingIndex: (index) => set({ otherPeopleTravelingIndex: index }),
   otherPeopleTravelingError: "",
-  setOtherPeopleTravelingError: (error) =>
-    set({ otherPeopleTravelingError: error }),
+  setOtherPeopleTravelingError: (error) => set({ otherPeopleTravelingError: error }),
   USALastTravel: [
     {
       id: "",
@@ -128,11 +140,52 @@ const useFormStore = create<IUseFormStore>((set) => ({
   ],
   setFamilyLivingInTheUSA: (value) => set({ familyLivingInTheUSA: value }),
   familyLivingInTheUSAIndex: 1,
-  setFamilyLivingInTheUSAIndex: (index) =>
-    set({ familyLivingInTheUSAIndex: index }),
+  setFamilyLivingInTheUSAIndex: (index) => set({ familyLivingInTheUSAIndex: index }),
   familyLivingInTheUSAError: "",
-  setFamilyLivingInTheUSAError: (error) =>
-    set({ familyLivingInTheUSAError: error }),
+  setFamilyLivingInTheUSAError: (error) => set({ familyLivingInTheUSAError: error }),
+  previousJobs: [
+    {
+      id: "",
+      formId: "",
+      admissionDate: new Date(),
+      companyAddress: "",
+      companyCep: "",
+      companyCity: "",
+      companyCountry: "",
+      companyName: "",
+      companyState: "",
+      companyTel: "",
+      jobDescription: "",
+      office: "",
+      resignationDate: new Date(),
+      supervisorName: "",
+    },
+  ],
+  setPreviousJobs: (value) => set({ previousJobs: value }),
+  previousJobsIndex: 1,
+  setPreviousJobsIndex: (index) => set({ previousJobsIndex: index }),
+  previousJobsError: "",
+  setPreviousJobsError: (error) => set({ previousJobsError: error }),
+  courses: [
+    {
+      id: "",
+      formId: "",
+      address: "",
+      cep: "",
+      city: "",
+      country: "",
+      courseName: "",
+      finishDate: new Date(),
+      initialDate: new Date(),
+      institutionName: "",
+      state: "",
+    },
+  ],
+  setCourses: (value) => set({ courses: value }),
+  coursesIndex: 1,
+  setCoursesIndex: (index) => set({ coursesIndex: index }),
+  coursesError: "",
+  setCoursesError: (error) => set({ coursesError: error }),
 }));
 
 export default useFormStore;
