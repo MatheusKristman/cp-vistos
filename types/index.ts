@@ -30,7 +30,7 @@ export type PrimaryFormControl = {
   otherTel: string;
   email: string;
   fiveYearsOtherEmailConfirmation: "Sim" | "Não";
-  otherEmail: string;
+  otherEmail?: string | undefined;
   facebook: string;
   linkedin: string;
   instagram: string;
@@ -47,10 +47,10 @@ export type PrimaryFormControl = {
   lostPassportCountry: string;
   lostPassportDetails: string;
   travelItineraryConfirmation: "Sim" | "Não";
-  USAPreviewArriveDate: Date;
+  USAPreviewArriveDate?: Date | undefined;
   arriveFlyNumber: string;
   arriveCity: string;
-  USAPreviewReturnDate: Date;
+  USAPreviewReturnDate?: Date | undefined;
   returnFlyNumber: string;
   returnCity: string;
   estimatedTimeOnUSA: string;
@@ -69,7 +69,7 @@ export type PrimaryFormControl = {
   hasBeenOnUSAConfirmation: "Sim" | "Não";
   americanLicenseToDriveConfirmation: "Sim" | "Não";
   USAVisaConfirmation: "Sim" | "Não";
-  visaIssuingDate: Date;
+  visaIssuingDate?: Date | undefined;
   visaNumber: string;
   newVisaConfirmation: "Sim" | "Não";
   sameCountryResidenceConfirmation: "Sim" | "Não";
@@ -104,7 +104,7 @@ export type PrimaryFormControl = {
   motherUSASituation: string;
   familyLivingInTheUSAConfirmation: "Sim" | "Não";
   partnerCompleteName: string;
-  partnerBirthdate: Date;
+  partnerBirthdate?: Date | undefined;
   partnerNationality: string;
   partnerCity: string;
   partnerState: string;
@@ -120,9 +120,9 @@ export type PrimaryFormControl = {
   companyCountry: string;
   companyCep: string;
   companyTel: string;
-  admissionDate: Date;
+  admissionDate?: Date | undefined;
   monthlySalary: string;
-  retireeDate: Date;
+  retireeDate?: Date | undefined;
   jobDetails: string;
   previousJobConfirmation: "Sim" | "Não";
   contagiousDiseaseConfirmation: "Sim" | "Não";

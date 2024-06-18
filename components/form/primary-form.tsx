@@ -7,8 +7,8 @@
 // empresario/autonomo
 // funcionário
 
-//TODO: testar a seção sobre a viagem
-
+// TODO: no submit adicionar o valor EU MESMO no payerNameOrCompany caso seja true
+// TODO: ajustar o formulário de previousTravelForm pois a parte de posto consular e categoria fica dentro do form dinâmico acima
 "use client";
 
 import { z } from "zod";
@@ -75,7 +75,7 @@ const formSchema = z
     otherTel: z.string(),
     email: z.string().min(1, { message: "Campo obrigatório" }).email({ message: "E-mail inválido" }),
     fiveYearsOtherEmailConfirmation: z.enum(["Sim", "Não"]),
-    otherEmail: z.string(),
+    otherEmail: z.string().email({ message: "E-mail inválido" }).optional(),
     facebook: z.string(),
     linkedin: z.string(),
     instagram: z.string(),
@@ -92,10 +92,10 @@ const formSchema = z
     lostPassportCountry: z.string(),
     lostPassportDetails: z.string(),
     travelItineraryConfirmation: z.enum(["Sim", "Não"]),
-    USAPreviewArriveDate: z.date({ message: "Campo obrigatório" }),
+    USAPreviewArriveDate: z.date({ message: "Campo obrigatório" }).optional(),
     arriveFlyNumber: z.string(),
     arriveCity: z.string(),
-    USAPreviewReturnDate: z.date({ message: "Campo obrigatório" }),
+    USAPreviewReturnDate: z.date({ message: "Campo obrigatório" }).optional(),
     returnFlyNumber: z.string(),
     returnCity: z.string(),
     estimatedTimeOnUSA: z.string().min(1, { message: "Campo obrigatório" }),
@@ -103,18 +103,18 @@ const formSchema = z
     USAZipCode: z.string(),
     USACity: z.string(),
     USAState: z.string(),
-    payerNameOrCompany: z.string(),
-    payerTel: z.string(),
-    payerAddress: z.string(),
-    payerRelation: z.string(),
-    payerEmail: z.string(),
+    payerNameOrCompany: z.string().min(1, { message: "Campo obrigatório" }),
+    payerTel: z.string().min(1, { message: "Campo obrigatório" }),
+    payerAddress: z.string().min(1, { message: "Campo obrigatório" }),
+    payerRelation: z.string().min(1, { message: "Campo obrigatório" }),
+    payerEmail: z.string().email({ message: "E-mail inválido" }).min(1, { message: "Campo obrigatório" }),
     otherPeopleTravelingConfirmation: z.enum(["Sim", "Não"]),
     groupMemberConfirmation: z.enum(["Sim", "Não"]),
     groupName: z.string(),
     hasBeenOnUSAConfirmation: z.enum(["Sim", "Não"]),
     americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
     USAVisaConfirmation: z.enum(["Sim", "Não"]),
-    visaIssuingDate: z.date({ message: "Campo obrigatório" }),
+    visaIssuingDate: z.date({ message: "Campo obrigatório" }).optional(),
     visaNumber: z.string(),
     newVisaConfirmation: z.enum(["Sim", "Não"]),
     sameCountryResidenceConfirmation: z.enum(["Sim", "Não"]),
@@ -139,17 +139,17 @@ const formSchema = z
     organizationOrUSAResidentCountry: z.string(),
     organizationOrUSAResidentTel: z.string(),
     organizationOrUSAResidentEmail: z.string(),
-    fatherCompleteName: z.string(),
+    fatherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
     fatherBirthdate: z.date({ message: "Campo obrigatório" }),
     fatherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
     fatherUSASituation: z.string(),
-    motherCompleteName: z.string(),
+    motherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
     motherBirthdate: z.date({ message: "Campo obrigatório" }),
     motherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
     motherUSASituation: z.string(),
     familyLivingInTheUSAConfirmation: z.enum(["Sim", "Não"]),
     partnerCompleteName: z.string(),
-    partnerBirthdate: z.date({ message: "Campo obrigatório" }),
+    partnerBirthdate: z.date({ message: "Campo obrigatório" }).optional(),
     partnerNationality: z.string(),
     partnerCity: z.string(),
     partnerState: z.string(),
@@ -165,9 +165,9 @@ const formSchema = z
     companyCountry: z.string(),
     companyCep: z.string(),
     companyTel: z.string(),
-    admissionDate: z.date({ message: "Campo obrigatório" }),
+    admissionDate: z.date({ message: "Campo obrigatório" }).optional(),
     monthlySalary: z.string(),
-    retireeDate: z.date({ message: "Campo obrigatório" }),
+    retireeDate: z.date({ message: "Campo obrigatório" }).optional(),
     jobDetails: z.string(),
     previousJobConfirmation: z.enum(["Sim", "Não"]),
     contagiousDiseaseConfirmation: z.enum(["Sim", "Não"]),
@@ -378,6 +378,27 @@ export function PrimaryForm({ currentForm }: Props) {
     setOtherNamesIndex,
     isSaving,
     isSubmitting,
+    personalDataComplete,
+    setPersonalDataComplete,
+    contactAndAddressComplete,
+    setContactAndAddressComplete,
+    passportComplete,
+    setPassportComplete,
+    aboutTravelComplete,
+    setAboutTravelComplete,
+    myselfValue,
+    travelCompanyComplete,
+    setTravelCompanyComplete,
+    previousTravelComplete,
+    setPreviousTravelComplete,
+    USAContactComplete,
+    setUSAContactComplete,
+    familyComplete,
+    setFamilyComplete,
+    workEducationComplete,
+    setWorkEducationComplete,
+    securityComplete,
+    setSecurityComplete,
   } = useFormStore();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -585,6 +606,26 @@ export function PrimaryForm({ currentForm }: Props) {
         currentForm && currentForm.immigrationRequestByAnotherPersonDetails
           ? currentForm.immigrationRequestByAnotherPersonDetails
           : "",
+      organizationOrUSAResidentName:
+        currentForm && currentForm.organizationOrUSAResidentName ? currentForm.organizationOrUSAResidentName : "",
+      organizationOrUSAResidentRelation:
+        currentForm && currentForm.organizationOrUSAResidentRelation
+          ? currentForm.organizationOrUSAResidentRelation
+          : "",
+      organizationOrUSAResidentAddress:
+        currentForm && currentForm.organizationOrUSAResidentAddress ? currentForm.organizationOrUSAResidentAddress : "",
+      organizationOrUSAResidentZipCode:
+        currentForm && currentForm.organizationOrUSAResidentZipCode ? currentForm.organizationOrUSAResidentZipCode : "",
+      organizationOrUSAResidentCity:
+        currentForm && currentForm.organizationOrUSAResidentCity ? currentForm.organizationOrUSAResidentCity : "",
+      organizationOrUSAResidentState:
+        currentForm && currentForm.organizationOrUSAResidentState ? currentForm.organizationOrUSAResidentState : "",
+      organizationOrUSAResidentCountry:
+        currentForm && currentForm.organizationOrUSAResidentCountry ? currentForm.organizationOrUSAResidentCountry : "",
+      organizationOrUSAResidentTel:
+        currentForm && currentForm.organizationOrUSAResidentTel ? currentForm.organizationOrUSAResidentTel : "",
+      organizationOrUSAResidentEmail:
+        currentForm && currentForm.organizationOrUSAResidentEmail ? currentForm.organizationOrUSAResidentEmail : "",
       fatherCompleteName: currentForm && currentForm.fatherCompleteName ? currentForm.fatherCompleteName : "",
       fatherBirthdate: currentForm && currentForm.fatherBirthdate ? currentForm.fatherBirthdate : undefined,
       fatherLiveInTheUSAConfirmation:
@@ -800,6 +841,7 @@ export function PrimaryForm({ currentForm }: Props) {
   const groupMemberConfirmation: "Sim" | "Não" = form.watch("groupMemberConfirmation");
   const hasBeenOnUSAConfirmation = form.watch("hasBeenOnUSAConfirmation");
   const americanLicenseToDriveConfirmation = form.watch("americanLicenseToDriveConfirmation");
+  const USAVisaConfirmation = form.watch("USAVisaConfirmation");
   const lostVisaConfirmation = form.watch("lostVisaConfirmation");
   const canceledVisaConfirmation = form.watch("canceledVisaConfirmation");
   const deniedVisaConfirmation = form.watch("deniedVisaConfirmation");
@@ -809,6 +851,7 @@ export function PrimaryForm({ currentForm }: Props) {
   const familyLivingInTheUSAConfirmation = form.watch("familyLivingInTheUSAConfirmation");
   const occupation = form.watch("occupation");
   const previousJobConfirmation = form.watch("previousJobConfirmation");
+  const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
 
   useEffect(() => {
     if (currentForm) {
@@ -816,6 +859,133 @@ export function PrimaryForm({ currentForm }: Props) {
       setOtherNamesIndex(currentForm.otherNames.length);
     }
   }, [currentForm]);
+
+  const personalDataForm = form.watch([
+    "firstName",
+    "lastName",
+    "cpf",
+    "sex",
+    "maritalStatus",
+    "birthDate",
+    "birthCity",
+    "birthState",
+    "birthCountry",
+    "originCountry",
+  ]);
+
+  useEffect(() => {
+    if (personalDataForm.some((elem) => elem === "" || elem === null)) {
+      if (personalDataComplete) {
+        setPersonalDataComplete(false);
+      }
+    } else {
+      if (!personalDataComplete) {
+        setPersonalDataComplete(true);
+      }
+    }
+  }, [personalDataForm]);
+
+  const contactAndAddressForm = form.watch(["address", "city", "state", "cep", "country", "cel", "tel", "email"]);
+
+  useEffect(() => {
+    if (contactAndAddressForm.some((elem) => elem === "" || elem === null)) {
+      if (contactAndAddressComplete) {
+        setContactAndAddressComplete(false);
+      }
+    } else {
+      if (!contactAndAddressComplete) {
+        setContactAndAddressComplete(true);
+      }
+    }
+  }, [contactAndAddressForm]);
+
+  const passportForm = form.watch([
+    "passportNumber",
+    "passportCity",
+    "passportState",
+    "passportIssuingCountry",
+    "passportIssuingDate",
+  ]);
+
+  useEffect(() => {
+    if (passportForm.some((elem) => elem === "" || elem === null)) {
+      if (passportComplete) {
+        setPassportComplete(false);
+      }
+    } else {
+      if (!passportComplete) {
+        setPassportComplete(true);
+      }
+    }
+  }, [passportForm]);
+
+  const aboutTravelForm = form.watch(["estimatedTimeOnUSA", "payerTel", "payerAddress", "payerRelation", "payerEmail"]);
+
+  useEffect(() => {
+    if (aboutTravelForm.some((elem) => elem === "" || elem === null)) {
+      if (aboutTravelComplete) {
+        setAboutTravelComplete(false);
+      }
+    } else {
+      if (!aboutTravelComplete) {
+        setAboutTravelComplete(true);
+      }
+    }
+  }, [aboutTravelForm]);
+
+  const travelCompanyForm = form.watch(["otherPeopleTravelingConfirmation", "groupMemberConfirmation"]);
+
+  useEffect(() => {
+    if (!travelCompanyComplete) {
+      setTravelCompanyComplete(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!previousTravelComplete) {
+      setPreviousTravelComplete(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!USAContactComplete) {
+      setUSAContactComplete(true);
+    }
+  }, []);
+
+  const familyForm = form.watch(["fatherCompleteName", "fatherBirthdate", "motherCompleteName", "motherBirthdate"]);
+
+  useEffect(() => {
+    if (familyForm.some((elem) => elem === "" || elem === null)) {
+      if (familyComplete) {
+        setFamilyComplete(false);
+      }
+    } else {
+      if (!familyComplete) {
+        setFamilyComplete(true);
+      }
+    }
+  }, [familyForm]);
+
+  const workEducationForm = form.watch(["occupation"]);
+
+  useEffect(() => {
+    if (workEducationForm.some((elem) => elem === "" || elem === null)) {
+      if (workEducationComplete) {
+        setWorkEducationComplete(false);
+      }
+    } else {
+      if (!workEducationComplete) {
+        setWorkEducationComplete(true);
+      }
+    }
+  }, [workEducationForm]);
+
+  useEffect(() => {
+    if (!securityComplete) {
+      setSecurityComplete(true);
+    }
+  }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -837,50 +1007,16 @@ export function PrimaryForm({ currentForm }: Props) {
     form.setValue("cep", value);
   }
 
-  function handleVisitLocationsChange(event: ChangeEvent<HTMLInputElement>, index: number) {
-    const values = [...visitLocations];
-    values[index] = event.target.value;
-    setVisitLocations(values);
+  function handleCEPWorkEducationChange(event: ChangeEvent<HTMLInputElement>) {
+    let value = event.target.value.replace(/[^\d]/g, "");
+
+    value = value.replace(/(\d{5})(\d{3})/, "$1-$2");
+
+    form.setValue("companyCep", value);
   }
 
-  function handleAddVisitLocationsInput() {
-    setVisitLocationsIndex(visitLocationsIndex + 1);
-
-    const values = [...visitLocations];
-    values[values.length] = "";
-    console.log(values);
-    setVisitLocations(values);
-  }
-
-  function handleRemoveVisitLocationsInput(index: number) {
-    setVisitLocationsIndex(visitLocationsIndex - 1);
-
-    const values = [...visitLocations].filter((value: string, i: number) => i !== index);
-    setVisitLocations(values);
-  }
-
-  function handleOtherPeopleTravelingChange(
-    event: ChangeEvent<HTMLInputElement>,
-    property: "name" | "relation",
-    index: number
-  ) {
-    // const values = [...otherPeopleTraveling];
-    // values[index][property] = event.target.value;
-    // setOtherPeopleTraveling(values);
-  }
-
-  function handleAddOtherPeopleTravelingInput() {
-    // setOtherPeopleTravelingIndex((prev: number) => prev + 1);
-    // const values = [...otherPeopleTraveling];
-    // values[values.length] = { name: "", relation: "", id: "", formId: "" };
-    // console.log(values);
-    // setOtherPeopleTraveling(values);
-  }
-
-  function handleRemoveOtherPeopleTravelingInput(index: number) {
-    // setOtherPeopleTravelingIndex((prev: number) => prev - 1);
-    // const values = [...otherPeopleTraveling].filter((value: OtherPeopleTraveling, i: number) => i !== index);
-    // setOtherPeopleTraveling(values);
+  function handleMyselfValue() {
+    form.setValue("payerNameOrCompany", "Eu mesmo");
   }
 
   return (
@@ -908,18 +1044,10 @@ export function PrimaryForm({ currentForm }: Props) {
           passportLostConfirmation={passportLostConfirmation}
         />
 
-        <AboutTravelForm
-          formControl={form.control}
-          handleVisitLocationsChange={handleVisitLocationsChange}
-          handleAddVisitLocationsInput={handleAddVisitLocationsInput}
-          handleRemoveVisitLocationsInput={handleRemoveVisitLocationsInput}
-        />
+        <AboutTravelForm formControl={form.control} travelItineraryConfirmation={travelItineraryConfirmation} />
 
         <TravelCompanyForm
           formControl={form.control}
-          handleOtherPeopleTravelingChange={handleOtherPeopleTravelingChange}
-          handleAddOtherPeopleTravelingInput={handleAddOtherPeopleTravelingInput}
-          handleRemoveOtherPeopleTravelingInput={handleRemoveOtherPeopleTravelingInput}
           otherPeopleTravelingConfirmation={otherPeopleTravelingConfirmation}
           groupMemberConfirmation={groupMemberConfirmation}
         />
@@ -928,6 +1056,7 @@ export function PrimaryForm({ currentForm }: Props) {
           formControl={form.control}
           hasBeenOnUSAConfirmation={hasBeenOnUSAConfirmation}
           americanLicenseToDriveConfirmation={americanLicenseToDriveConfirmation}
+          USAVisaConfirmation={USAVisaConfirmation}
           lostVisaConfirmation={lostVisaConfirmation}
           canceledVisaConfirmation={canceledVisaConfirmation}
           deniedVisaConfirmation={deniedVisaConfirmation}
@@ -947,6 +1076,7 @@ export function PrimaryForm({ currentForm }: Props) {
           formControl={form.control}
           occupation={occupation}
           previousJobConfirmation={previousJobConfirmation}
+          handleCEPWorkEducationChange={handleCEPWorkEducationChange}
         />
 
         <SecurityForm formControl={form.control} />

@@ -15,6 +15,7 @@ import { Form as FormType, OtherPeopleTraveling } from "@prisma/client";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -31,29 +32,50 @@ import { PrimaryFormControl } from "@/types";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
-  handleOtherPeopleTravelingChange: (
-    event: ChangeEvent<HTMLInputElement>,
-    property: "name" | "relation",
-    index: number
-  ) => void;
-  handleAddOtherPeopleTravelingInput: () => void;
-  handleRemoveOtherPeopleTravelingInput: (index: number) => void;
   otherPeopleTravelingConfirmation: "Sim" | "Não";
   groupMemberConfirmation: "Sim" | "Não";
 }
 
 export function TravelCompanyForm({
   formControl,
-  handleOtherPeopleTravelingChange,
-  handleAddOtherPeopleTravelingInput,
-  handleRemoveOtherPeopleTravelingInput,
+
   otherPeopleTravelingConfirmation,
   groupMemberConfirmation,
 }: Props) {
-  const { otherPeopleTraveling, otherPeopleTravelingError, otherPeopleTravelingIndex } = useFormStore();
+  const {
+    otherPeopleTraveling,
+    otherPeopleTravelingError,
+    otherPeopleTravelingIndex,
+    setOtherPeopleTraveling,
+    setOtherPeopleTravelingIndex,
+  } = useFormStore();
+
+  function handleOtherPeopleTravelingChange(
+    event: ChangeEvent<HTMLInputElement>,
+    property: "name" | "relation",
+    index: number
+  ) {
+    const values = [...otherPeopleTraveling];
+    values[index][property] = event.target.value;
+    setOtherPeopleTraveling(values);
+  }
+
+  function handleAddOtherPeopleTravelingInput() {
+    setOtherPeopleTravelingIndex(otherPeopleTravelingIndex + 1);
+    const values = [...otherPeopleTraveling];
+    values[values.length] = { name: "", relation: "", id: "", formId: "" };
+    console.log(values);
+    setOtherPeopleTraveling(values);
+  }
+
+  function handleRemoveOtherPeopleTravelingInput(index: number) {
+    setOtherPeopleTravelingIndex(otherPeopleTravelingIndex - 1);
+    const values = [...otherPeopleTraveling].filter((value: OtherPeopleTraveling, i: number) => i !== index);
+    setOtherPeopleTraveling(values);
+  }
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <Element name="travel-company" className="w-full flex flex-col gap-6">
       <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Companhia de Viagem</h2>
 
       <div className="w-full grid grid-cols-1 gap-4">
@@ -196,6 +218,6 @@ export function TravelCompanyForm({
           )}
         />
       </div>
-    </div>
+    </Element>
   );
 }

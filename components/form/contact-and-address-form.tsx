@@ -2,6 +2,7 @@
 
 import { Control } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
+import { Element } from "react-scroll";
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ export function ContactAndAddressForm({
   fiveYearsOtherEmailConfirmation,
 }: Props) {
   return (
-    <div className="w-full flex flex-col gap-6">
+    <Element name="contact-and-address" className="w-full flex flex-col gap-6">
       <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Endereço e Contatos</h2>
 
       <span className="text-primary text-base font-medium">Endereço de sua residencia</span>
@@ -129,7 +130,7 @@ export function ContactAndAddressForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-primary">
-                Seu endereço de correio é o mesmo endereço de sua residência?*
+                Seu endereço de correio é diferente do endereço de sua residência?*
               </FormLabel>
 
               <FormControl>
@@ -445,6 +446,6 @@ export function ContactAndAddressForm({
           )}
         />
       </div>
-    </div>
+    </Element>
   );
 }

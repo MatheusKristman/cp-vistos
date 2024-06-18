@@ -7,6 +7,7 @@ import { Control } from "react-hook-form";
 import { CalendarIcon } from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { format, getYear } from "date-fns";
+import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -29,7 +30,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
   const currentYear = getYear(new Date());
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <Element name="passport" className="w-full flex flex-col gap-6">
       <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Passaporte</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -191,10 +192,10 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    disabled={(date) => date < new Date("1900-01-01")}
                     captionLayout="dropdown"
                     fromYear={1900}
-                    toYear={currentYear}
+                    toYear={2100}
                     classNames={{
                       day_hidden: "invisible",
                       dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
@@ -314,6 +315,6 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           )}
         />
       </div>
-    </div>
+    </Element>
   );
 }

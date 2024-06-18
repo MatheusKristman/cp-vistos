@@ -4,14 +4,9 @@
 "use client";
 
 import { Control } from "react-hook-form";
+import { Element } from "react-scroll";
 
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PrimaryFormControl } from "@/types";
 
@@ -21,7 +16,7 @@ interface Props {
 
 export function USAContactForm({ formControl }: Props) {
   return (
-    <div className="w-full flex flex-col gap-6">
+    <Element name="usa-contact" className="w-full flex flex-col gap-6">
       <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">
         Contato nos estados unidades
       </h2>
@@ -36,9 +31,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Nome completo da pessoa ou Organização
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Nome completo da pessoa ou Organização</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -54,9 +47,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentRelation"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Qual é a relação do contato com você?
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Qual é a relação do contato com você?</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -74,9 +65,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentAddress"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
-                Endereço do contato nos EUA
-              </FormLabel>
+              <FormLabel className="text-primary text-sm">Endereço do contato nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -95,7 +84,7 @@ export function USAContactForm({ formControl }: Props) {
               <FormLabel className="text-primary text-sm">Zip code</FormLabel>
 
               <FormControl>
-                <Input {...field} />
+                <Input maxLength={5} {...field} />
               </FormControl>
 
               <FormMessage className="text-sm text-red-500" />
@@ -187,6 +176,6 @@ export function USAContactForm({ formControl }: Props) {
           )}
         />
       </div>
-    </div>
+    </Element>
   );
 }

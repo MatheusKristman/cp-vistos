@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
+import { Element } from "react-scroll";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -61,7 +62,7 @@ export function PersonalDataForm({
   }
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <Element name="personal-data" className="w-full flex flex-col gap-6">
       <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold mb-12">Dados Pessoais</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -557,6 +558,6 @@ export function PersonalDataForm({
           )}
         />
       </div>
-    </div>
+    </Element>
   );
 }

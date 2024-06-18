@@ -11,6 +11,7 @@ import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { AmericanLicense, Course, FamilyLivingInTheUSADetails, PreviousJobs, USALastTravel } from "@prisma/client";
+import { Element } from "react-scroll";
 import PhoneInput from "react-phone-number-input";
 
 import { Button } from "@/components/ui/button";
@@ -31,9 +32,15 @@ interface Props {
   formControl: Control<PrimaryFormControl>;
   occupation: string;
   previousJobConfirmation: "Sim" | "Não";
+  handleCEPWorkEducationChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function WorkEducationForm({ formControl, occupation, previousJobConfirmation }: Props) {
+export function WorkEducationForm({
+  formControl,
+  occupation,
+  previousJobConfirmation,
+  handleCEPWorkEducationChange,
+}: Props) {
   const currentYear = getYear(new Date());
   const {
     previousJobs,
@@ -67,7 +74,15 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
   ) {
     const arr = [...previousJobs];
 
-    arr[index][property] = value;
+    if (property === "companyCep") {
+      let formattedValue = value.replace(/[^\d]/g, "");
+
+      formattedValue = formattedValue.replace(/(\d{5})(\d{3})/, "$1-$2");
+
+      arr[index][property] = formattedValue;
+    } else {
+      arr[index][property] = value;
+    }
 
     setPreviousJobs(arr);
   }
@@ -120,7 +135,15 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
   ) {
     const arr = [...courses];
 
-    arr[index][property] = value;
+    if (property === "cep") {
+      let formattedValue = value.replace(/[^\d]/g, "");
+
+      formattedValue = formattedValue.replace(/(\d{5})(\d{3})/, "$1-$2");
+
+      arr[index][property] = formattedValue;
+    } else {
+      arr[index][property] = value;
+    }
 
     setCourses(arr);
   }
@@ -164,7 +187,7 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
   }
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <Element name="work-education" className="w-full flex flex-col gap-6">
       <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Trabalho e Educação</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -356,7 +379,14 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
                   <FormLabel className="text-primary text-sm">CEP</FormLabel>
 
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      maxLength={9}
+                      name={field.name}
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      value={field.value}
+                      onChange={handleCEPWorkEducationChange}
+                    />
                   </FormControl>
 
                   <FormMessage className="text-sm text-red-500" />
@@ -603,7 +633,14 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
                   <FormLabel className="text-primary text-sm">CEP</FormLabel>
 
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      maxLength={9}
+                      name={field.name}
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      value={field.value}
+                      onChange={handleCEPWorkEducationChange}
+                    />
                   </FormControl>
 
                   <FormMessage className="text-sm text-red-500" />
@@ -785,7 +822,7 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
           {previousJobConfirmation === "Sim" && (
             <div className="w-full flex flex-col gap-8">
               {previousJobs.map((obj, i) => (
-                <div className="w-full flex flex-col gap-6 bg-secondary p-4">
+                <div key={`previous-jobs-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
                   <div className="w-full flex flex-col gap-4">
                     <div className="w-full grid grid-cols-1 gap-4">
                       <div className="w-full flex flex-col gap-2">
@@ -868,6 +905,7 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
                         </label>
 
                         <Input
+                          maxLength={9}
                           id="companyCep"
                           value={obj.companyCep!}
                           onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -947,7 +985,9 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
                               )}
                             >
                               {obj.admissionDate ? (
-                                format(obj.admissionDate, "PPP", { locale: ptBR })
+                                format(obj.admissionDate, "PPP", {
+                                  locale: ptBR,
+                                })
                               ) : (
                                 <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
                                   Selecione a data
@@ -998,7 +1038,9 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
                               )}
                             >
                               {obj.resignationDate ? (
-                                format(obj.resignationDate, "PPP", { locale: ptBR })
+                                format(obj.resignationDate, "PPP", {
+                                  locale: ptBR,
+                                })
                               ) : (
                                 <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
                                   Selecione a data
@@ -1095,7 +1137,7 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
       <div className="w-full grid grid-cols-1 gap-4">
         <div className="w-full flex flex-col gap-8">
           {courses.map((obj, i) => (
-            <div className="w-full flex flex-col gap-6 bg-secondary p-4">
+            <div key={`courses-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
               <div className="w-full flex flex-col gap-4">
                 <div className="w-full grid grid-cols-1 gap-4">
                   <div className="w-full flex flex-col gap-2">
@@ -1178,6 +1220,7 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
                     </label>
 
                     <Input
+                      maxLength={9}
                       id="cep"
                       value={obj.cep!}
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -1336,6 +1379,6 @@ export function WorkEducationForm({ formControl, occupation, previousJobConfirma
           ))}
         </div>
       </div>
-    </div>
+    </Element>
   );
 }

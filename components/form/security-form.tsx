@@ -9,6 +9,7 @@ import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { AmericanLicense, FamilyLivingInTheUSADetails, USALastTravel } from "@prisma/client";
+import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -29,7 +30,7 @@ interface Props {
 
 export function SecurityForm({ formControl }: Props) {
   return (
-    <div className="w-full flex flex-col gap-6">
+    <Element name="security" className="w-full flex flex-col gap-6">
       <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Segurança</h2>
 
       <div className="w-full grid grid-cols-1 gap-4">
@@ -1020,6 +1021,6 @@ export function SecurityForm({ formControl }: Props) {
           )}
         />
       </div>
-    </div>
+    </Element>
   );
 }

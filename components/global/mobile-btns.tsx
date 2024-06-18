@@ -1,3 +1,5 @@
+//TODO: ajustar para o usuário que estiver logado
+
 "use client";
 
 import Link from "next/link";
