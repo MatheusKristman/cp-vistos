@@ -8,7 +8,6 @@ import { Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { AmericanLicense, FamilyLivingInTheUSADetails, USALastTravel } from "@prisma/client";
 import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
-import useFormStore from "@/constants/stores/useFormStore";
+import useFormStore, { FamilyLivingInTheUSADetails } from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
 import { ChangeEvent } from "react";
 
@@ -61,8 +60,6 @@ export function FamilyForm({
     const arr = [...familyLivingInTheUSA];
 
     arr.push({
-      id: "",
-      formId: "",
       name: "",
       relation: "",
       situation: "",

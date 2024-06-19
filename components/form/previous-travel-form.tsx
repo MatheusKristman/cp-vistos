@@ -8,7 +8,6 @@ import { Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { AmericanLicense, USALastTravel } from "@prisma/client";
 import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
+import { AmericanLicense, USALastTravel } from "@/constants/stores/useFormStore";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -83,8 +83,6 @@ export function PreviousTravelForm({
     values[values.length] = {
       arriveDate: new Date(),
       estimatedTime: "",
-      id: "",
-      formId: "",
     };
 
     console.log(values);
@@ -122,8 +120,6 @@ export function PreviousTravelForm({
     values.push({
       state: "",
       licenseNumber: "",
-      id: "",
-      formId: "",
     });
 
     console.log(values);
@@ -743,56 +739,60 @@ export function PreviousTravelForm({
         />
 
         {deniedVisaConfirmation === "Sim" && (
-          <FormField
-            control={formControl}
-            name="deniedVisaDetails"
-            render={({ field }) => (
-              <FormItem className="w-full bg-secondary p-4">
-                <FormLabel className="text-primary text-sm">Em qual ano? Explique o ocorrido</FormLabel>
+          <div className="w-full flex flex-col gap-4 bg-secondary p-4">
+            <div className="w-full grid grid-cols-1 gap-4">
+              <FormField
+                control={formControl}
+                name="deniedVisaDetails"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="text-primary text-sm">Em qual ano? Explique o ocorrido</FormLabel>
 
-                <FormControl>
-                  <Textarea className="resize-none" {...field} />
-                </FormControl>
+                    <FormControl>
+                      <Textarea className="resize-none" {...field} />
+                    </FormControl>
 
-                <FormMessage className="text-sm text-red-500" />
-              </FormItem>
-            )}
-          />
+                    <FormMessage className="text-sm text-red-500" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={formControl}
+                name="consularPost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-primary text-sm">Qual posto consular do Brasil?</FormLabel>
+
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-red-500" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={formControl}
+                name="deniedVisaType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-primary text-sm">Categoria/tipo de visto negado</FormLabel>
+
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-red-500" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
         )}
-      </div>
-
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FormField
-          control={formControl}
-          name="consularPost"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-primary text-sm">Qual posto consular do Brasil?</FormLabel>
-
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-
-              <FormMessage className="text-sm text-red-500" />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={formControl}
-          name="deniedVisaType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-primary text-sm">Categoria/tipo de visto negado</FormLabel>
-
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-
-              <FormMessage className="text-sm text-red-500" />
-            </FormItem>
-          )}
-        />
       </div>
 
       <div className="w-full grid grid-cols-1 gap-4">

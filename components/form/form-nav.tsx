@@ -12,6 +12,7 @@ import useFormStore from "@/constants/stores/useFormStore";
 
 export function FormNav() {
   const {
+    setSaving,
     personalDataComplete,
     contactAndAddressComplete,
     passportComplete,
@@ -22,7 +23,21 @@ export function FormNav() {
     familyComplete,
     workEducationComplete,
     securityComplete,
+    personalDataError,
+    contactAndAddressError,
+    passportError,
+    aboutTravelError,
+    travelCompanyError,
+    previousTravelError,
+    USAContactError,
+    familyError,
+    workEducationError,
+    securityError,
   } = useFormStore();
+
+  function handleSave() {
+    setSaving(true);
+  }
 
   return (
     <>
@@ -44,11 +59,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": personalDataComplete,
+                        "bg-green-400": personalDataComplete && !personalDataError,
+                        "bg-red-400": personalDataError,
                       }
                     )}
                   >
-                    {personalDataComplete && <Check color="#FFF" />}
+                    {personalDataComplete && !personalDataError && <Check color="#FFF" />}
+                    {personalDataError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -61,11 +78,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": contactAndAddressComplete,
+                        "bg-green-400": contactAndAddressComplete && !contactAndAddressError,
+                        "bg-red-400": contactAndAddressError,
                       }
                     )}
                   >
-                    {contactAndAddressComplete && <Check color="#FFF" />}
+                    {contactAndAddressComplete && !contactAndAddressError && <Check color="#FFF" />}
+                    {contactAndAddressError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -78,11 +97,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": passportComplete,
+                        "bg-green-400": passportComplete && !passportError,
+                        "bg-red-400": passportError,
                       }
                     )}
                   >
-                    {passportComplete && <Check color="#FFF" />}
+                    {passportComplete && !passportError && <Check color="#FFF" />}
+                    {passportError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -95,11 +116,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": aboutTravelComplete,
+                        "bg-green-400": aboutTravelComplete && !aboutTravelError,
+                        "bg-red-400": aboutTravelError,
                       }
                     )}
                   >
-                    {aboutTravelComplete && <Check color="#FFF" />}
+                    {aboutTravelComplete && !aboutTravelError && <Check color="#FFF" />}
+                    {aboutTravelError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -112,11 +135,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": travelCompanyComplete,
+                        "bg-green-400": travelCompanyComplete && !travelCompanyError,
+                        "bg-red-400": travelCompanyError,
                       }
                     )}
                   >
-                    {travelCompanyComplete && <Check color="#FFF" />}
+                    {travelCompanyComplete && !travelCompanyError && <Check color="#FFF" />}
+                    {travelCompanyError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -129,11 +154,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": previousTravelComplete,
+                        "bg-green-400": previousTravelComplete && !previousTravelError,
+                        "bg-red-400": previousTravelError,
                       }
                     )}
                   >
-                    {previousTravelComplete && <Check color="#FFF" />}
+                    {previousTravelComplete && !previousTravelError && <Check color="#FFF" />}
+                    {previousTravelError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -146,11 +173,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": USAContactComplete,
+                        "bg-green-400": USAContactComplete && !USAContactError,
+                        "bg-red-400": USAContactError,
                       }
                     )}
                   >
-                    {USAContactComplete && <Check color="#FFF" />}
+                    {USAContactComplete && !USAContactError && <Check color="#FFF" />}
+                    {USAContactError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -163,11 +192,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": familyComplete,
+                        "bg-green-400": familyComplete && !familyError,
+                        "bg-red-400": familyError,
                       }
                     )}
                   >
-                    {familyComplete && <Check color="#FFF" />}
+                    {familyComplete && !familyError && <Check color="#FFF" />}
+                    {familyError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -180,11 +211,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": workEducationComplete,
+                        "bg-green-400": workEducationComplete && !workEducationError,
+                        "bg-red-400": workEducationError,
                       }
                     )}
                   >
-                    {workEducationComplete && <Check color="#FFF" />}
+                    {workEducationComplete && !workEducationError && <Check color="#FFF" />}
+                    {workEducationError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -197,11 +230,13 @@ export function FormNav() {
                     className={cn(
                       "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                       {
-                        "bg-green-400": securityComplete,
+                        "bg-green-400": securityComplete && !securityError,
+                        "bg-red-400": securityError,
                       }
                     )}
                   >
-                    {securityComplete && <Check color="#FFF" />}
+                    {securityComplete && !securityError && <Check color="#FFF" />}
+                    {securityError && <X color="#FFF" />}
                   </div>
                 </li>
               </LinkScroll>
@@ -209,7 +244,7 @@ export function FormNav() {
           </PopoverContent>
         </Popover>
 
-        <Button>
+        <Button onClick={handleSave}>
           <Save />
         </Button>
       </div>
@@ -224,11 +259,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": personalDataComplete,
+                    "bg-green-400": personalDataComplete && !personalDataError,
+                    "bg-red-400": personalDataError,
                   }
                 )}
               >
-                {personalDataComplete && <Check color="#FFF" />}
+                {personalDataComplete && !personalDataError && <Check color="#FFF" />}
+                {personalDataError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -241,11 +278,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": contactAndAddressComplete,
+                    "bg-green-400": contactAndAddressComplete && !contactAndAddressError,
+                    "bg-red-400": contactAndAddressError,
                   }
                 )}
               >
-                {contactAndAddressComplete && <Check color="#FFF" />}
+                {contactAndAddressComplete && !contactAndAddressError && <Check color="#FFF" />}
+                {contactAndAddressError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -258,11 +297,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": passportComplete,
+                    "bg-green-400": passportComplete && !passportError,
+                    "bg-red-400": passportError,
                   }
                 )}
               >
-                {passportComplete && <Check color="#FFF" />}
+                {passportComplete && !passportError && <Check color="#FFF" />}
+                {passportError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -275,11 +316,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": aboutTravelComplete,
+                    "bg-green-400": aboutTravelComplete && !aboutTravelError,
+                    "bg-red-400": aboutTravelError,
                   }
                 )}
               >
-                {aboutTravelComplete && <Check color="#FFF" />}
+                {aboutTravelComplete && !aboutTravelError && <Check color="#FFF" />}
+                {aboutTravelError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -292,11 +335,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": travelCompanyComplete,
+                    "bg-green-400": travelCompanyComplete && !travelCompanyError,
+                    "bg-red-400": travelCompanyError,
                   }
                 )}
               >
-                {travelCompanyComplete && <Check color="#FFF" />}
+                {travelCompanyComplete && !travelCompanyError && <Check color="#FFF" />}
+                {travelCompanyError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -309,11 +354,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": previousTravelComplete,
+                    "bg-green-400": previousTravelComplete && !previousTravelError,
+                    "bg-red-400": previousTravelError,
                   }
                 )}
               >
-                {previousTravelComplete && <Check color="#FFF" />}
+                {previousTravelComplete && !previousTravelError && <Check color="#FFF" />}
+                {previousTravelError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -328,11 +375,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": USAContactComplete,
+                    "bg-green-400": USAContactComplete && !USAContactError,
+                    "bg-red-400": USAContactError,
                   }
                 )}
               >
-                {USAContactComplete && <Check color="#FFF" />}
+                {USAContactComplete && !USAContactError && <Check color="#FFF" />}
+                {USAContactError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -345,11 +394,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": familyComplete,
+                    "bg-green-400": familyComplete && !familyError,
+                    "bg-red-400": familyError,
                   }
                 )}
               >
-                {familyComplete && <Check color="#FFF" />}
+                {familyComplete && !familyError && <Check color="#FFF" />}
+                {familyError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -362,11 +413,13 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": workEducationComplete,
+                    "bg-green-400": workEducationComplete && !workEducationError,
+                    "bg-red-400": workEducationError,
                   }
                 )}
               >
-                {workEducationComplete && <Check color="#FFF" />}
+                {workEducationComplete && !workEducationError && <Check color="#FFF" />}
+                {workEducationError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
@@ -379,17 +432,19 @@ export function FormNav() {
                 className={cn(
                   "w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-secondary brightness-90 flex items-center justify-center",
                   {
-                    "bg-green-400": securityComplete,
+                    "bg-green-400": securityComplete && !securityError,
+                    "bg-red-400": securityError,
                   }
                 )}
               >
-                {securityComplete && <Check color="#FFF" />}
+                {securityComplete && !securityError && <Check color="#FFF" />}
+                {securityError && <X color="#FFF" />}
               </div>
             </li>
           </LinkScroll>
         </ul>
 
-        <Button size="lg" className="w-full flex items-center gap-2 text-base">
+        <Button onClick={handleSave} size="lg" className="w-full flex items-center gap-2 text-base">
           <Save />
           Salvar
         </Button>

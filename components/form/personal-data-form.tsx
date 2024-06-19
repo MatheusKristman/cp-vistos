@@ -1,11 +1,12 @@
 "use client";
 
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 import { Control } from "react-hook-form";
 import { Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -17,7 +18,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
-import { Element } from "react-scroll";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -42,6 +42,8 @@ export function PersonalDataForm({
     values[index] = event.target.value;
     setOtherNames(values);
   }
+
+  console.log(otherNamesIndex);
 
   function handleAddOtherNamesInput() {
     setOtherNamesIndex(otherNamesIndex + 1);

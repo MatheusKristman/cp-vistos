@@ -11,8 +11,6 @@ import { cn } from "@/lib/utils";
 export function DashboardMobileMenu() {
   const pathname = usePathname();
 
-  console.log(pathname);
-
   return (
     <div className="w-full px-6 sm:px-16 mt-12 lg:hidden">
       <Sheet>
@@ -47,10 +45,7 @@ export function DashboardMobileMenu() {
               </li>
             </ul>
 
-            <Button
-              variant="secondary"
-              className="flex items-center gap-2 text-base"
-            >
+            <Button variant="secondary" className="flex items-center gap-2 text-base">
               <LogOut />
               Sair
             </Button>

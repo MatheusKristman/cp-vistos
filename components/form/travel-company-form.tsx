@@ -3,32 +3,18 @@
 
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Control, useForm } from "react-hook-form";
-import { ArrowLeft, ArrowRight, Loader2, Plus, Save, Trash } from "lucide-react";
-import { format, getYear } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Form as FormType, OtherPeopleTraveling } from "@prisma/client";
-import axios from "axios";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { ChangeEvent } from "react";
+import { Control } from "react-hook-form";
+import { Plus, Trash } from "lucide-react";
 import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
-import { CheckedState } from "@radix-ui/react-checkbox";
 import useFormStore from "@/constants/stores/useFormStore";
 import { PrimaryFormControl } from "@/types";
+import { OtherPeopleTraveling } from "@/constants/stores/useFormStore";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -63,7 +49,7 @@ export function TravelCompanyForm({
   function handleAddOtherPeopleTravelingInput() {
     setOtherPeopleTravelingIndex(otherPeopleTravelingIndex + 1);
     const values = [...otherPeopleTraveling];
-    values[values.length] = { name: "", relation: "", id: "", formId: "" };
+    values[values.length] = { name: "", relation: "" };
     console.log(values);
     setOtherPeopleTraveling(values);
   }

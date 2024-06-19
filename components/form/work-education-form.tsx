@@ -10,9 +10,9 @@ import { Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { AmericanLicense, Course, FamilyLivingInTheUSADetails, PreviousJobs, USALastTravel } from "@prisma/client";
 import { Element } from "react-scroll";
 import PhoneInput from "react-phone-number-input";
+import { ChangeEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -21,12 +21,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
-import { ChangeEvent } from "react";
+import { Course, PreviousJobs } from "@/constants/stores/useFormStore";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -101,8 +100,6 @@ export function WorkEducationForm({
     const arr = [...previousJobs];
 
     arr.push({
-      id: "",
-      formId: "",
       admissionDate: new Date(),
       companyAddress: "",
       companyCep: "",
@@ -162,8 +159,6 @@ export function WorkEducationForm({
     const arr = [...courses];
 
     arr.push({
-      id: "",
-      formId: "",
       address: "",
       cep: "",
       city: "",

@@ -4,7 +4,7 @@
 
 "use client";
 
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 import { Control } from "react-hook-form";
 import { Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";

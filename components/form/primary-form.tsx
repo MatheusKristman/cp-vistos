@@ -11,14 +11,15 @@
 // TODO: ajustar o formulário de previousTravelForm pois a parte de posto consular e categoria fica dentro do form dinâmico acima
 "use client";
 
+import { ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { AmericanLicense, Form as FormType, OtherPeopleTraveling, USALastTravel } from "@prisma/client";
+import { Form as FormType } from "@prisma/client";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 import { AboutTravelForm } from "@/components/form/about-travel-form";
 import { ContactAndAddressForm } from "@/components/form/contact-and-address-form";
@@ -32,8 +33,6 @@ import { FamilyForm } from "@/components/form/family-form";
 import { SecurityForm } from "@/components/form/security-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { CheckedState } from "@radix-ui/react-checkbox";
-import { ArrowRight, Loader2 } from "lucide-react";
 import useFormStore from "@/constants/stores/useFormStore";
 
 import "react-phone-number-input/style.css";
@@ -377,7 +376,9 @@ export function PrimaryForm({ currentForm }: Props) {
     setOtherNames,
     setOtherNamesIndex,
     isSaving,
+    setSaving,
     isSubmitting,
+    setSubmitting,
     personalDataComplete,
     setPersonalDataComplete,
     contactAndAddressComplete,
@@ -399,7 +400,24 @@ export function PrimaryForm({ currentForm }: Props) {
     setWorkEducationComplete,
     securityComplete,
     setSecurityComplete,
+    setPersonalDataError,
+    setContactAndAddressError,
+    setPassportError,
+    setAboutTravelError,
+    setTravelCompanyError,
+    setPreviousTravelError,
+    setFamilyError,
+    setWorkEducationError,
+    otherNames,
+    otherPeopleTraveling,
+    USALastTravel,
+    americanLicense,
+    noVisaNumber,
+    familyLivingInTheUSA,
+    previousJobs,
+    courses,
   } = useFormStore();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -483,6 +501,8 @@ export function PrimaryForm({ currentForm }: Props) {
         currentForm && currentForm.passportIssuingCountry ? currentForm.passportIssuingCountry : "",
       passportIssuingDate: currentForm && currentForm.passportIssuingDate ? currentForm.passportIssuingDate : undefined,
       passportExpireDate: currentForm && currentForm.passportExpireDate ? currentForm.passportExpireDate : undefined,
+      passportNoExpireDate:
+        currentForm && currentForm.passportExpireDate ? (currentForm.passportExpireDate === null ? true : false) : true,
       passportLostConfirmation:
         currentForm && currentForm.passportLostConfirmation
           ? currentForm.passportLostConfirmation === true
@@ -854,11 +874,39 @@ export function PrimaryForm({ currentForm }: Props) {
   const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
 
   useEffect(() => {
-    if (currentForm) {
+    if (currentForm && currentForm.otherNames.length > 0) {
       setOtherNames(currentForm.otherNames);
       setOtherNamesIndex(currentForm.otherNames.length);
     }
   }, [currentForm]);
+
+  useEffect(() => {
+    if (isSaving) {
+      axios
+        .post("/api/form/save", {
+          ...form.getValues(),
+          otherNames,
+          visitLocations,
+          myselfValue,
+          otherPeopleTraveling,
+          USALastTravel,
+          americanLicense,
+          noVisaNumber,
+          familyLivingInTheUSA,
+          previousJobs,
+          courses,
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setSaving(false);
+        });
+    }
+  }, [isSaving]);
 
   const personalDataForm = form.watch([
     "firstName",
@@ -872,6 +920,141 @@ export function PrimaryForm({ currentForm }: Props) {
     "birthCountry",
     "originCountry",
   ]);
+
+  const errors = form.formState.errors;
+
+  useEffect(() => {
+    console.log(errors);
+    if (
+      "firstName" in errors ||
+      "lastName" in errors ||
+      "cpf" in errors ||
+      "warName" in errors ||
+      "sex" in errors ||
+      "maritalStatus" in errors ||
+      "birthDate" in errors ||
+      "birthCity" in errors ||
+      "birthState" in errors ||
+      "birthCountry" in errors ||
+      "originCountry" in errors
+    ) {
+      setPersonalDataError(true);
+    } else {
+      setPersonalDataError(false);
+    }
+
+    if (
+      "address" in errors ||
+      "city" in errors ||
+      "state" in errors ||
+      "cep" in errors ||
+      "country" in errors ||
+      "otherPostalAddress" in errors ||
+      "cel" in errors ||
+      "tel" in errors ||
+      "otherTel" in errors ||
+      "email" in errors ||
+      "otherEmail" in errors
+    ) {
+      setContactAndAddressError(true);
+      console.log("test");
+    } else {
+      setContactAndAddressError(false);
+    }
+
+    if (
+      "passportNumber" in errors ||
+      "passportCity" in errors ||
+      "passportState" in errors ||
+      "passportIssuingCountry" in errors ||
+      "passportIssuingDate" in errors ||
+      "lostPassportNumber" in errors ||
+      "lostPassportCountry" in errors ||
+      "lostPassportDetails" in errors
+    ) {
+      setPassportError(true);
+    } else {
+      setPassportError(false);
+    }
+
+    if (
+      "USAPreviewArriveDate" in errors ||
+      "arriveFlyNumber" in errors ||
+      "arriveCity" in errors ||
+      "USAPreviewReturnDate" in errors ||
+      "returnFlyNumber" in errors ||
+      "returnCity" in errors ||
+      "estimatedTimeOnUSA" in errors ||
+      "payerNameOrCompany" in errors ||
+      "payerTel" in errors ||
+      "payerAddress" in errors ||
+      "payerRelation" in errors ||
+      "payerEmail" in errors
+    ) {
+      setAboutTravelError(true);
+    } else {
+      setAboutTravelError(false);
+    }
+
+    if ("groupName" in errors) {
+      setTravelCompanyError(true);
+    } else {
+      setTravelCompanyError(false);
+    }
+
+    if (
+      "visaIssuingDate" in errors ||
+      "visaNumber" in errors ||
+      "lostVisaDetails" in errors ||
+      "canceledVisaDetails" in errors ||
+      "deniedVisaDetails" in errors ||
+      "consularPost" in errors ||
+      "deniedVisaType" in errors ||
+      "immigrationRequestByAnotherPersonDetails" in errors
+    ) {
+      setPreviousTravelError(true);
+    } else {
+      setPreviousTravelError(false);
+    }
+
+    if (
+      "fatherCompleteName" in errors ||
+      "fatherBirthdate" in errors ||
+      "fatherUSASituation" in errors ||
+      "motherCompleteName" in errors ||
+      "motherBirthdate" in errors ||
+      "motherUSASituation" in errors ||
+      "partnerCompleteName" in errors ||
+      "partnerBirthdate" in errors ||
+      "partnerNationality" in errors ||
+      "partnerCity" in errors ||
+      "partnerState" in errors ||
+      "partnerCountry" in errors
+    ) {
+      setFamilyError(true);
+    } else {
+      setFamilyError(false);
+    }
+
+    if (
+      "office" in errors ||
+      "companyOrBossName" in errors ||
+      "companyAddress" in errors ||
+      "companyCity" in errors ||
+      "companyState" in errors ||
+      "companyCountry" in errors ||
+      "companyCep" in errors ||
+      "companyTel" in errors ||
+      "admissionDate" in errors ||
+      "monthlySalary" in errors ||
+      "retireeDate" in errors ||
+      "jobDetails" in errors
+    ) {
+      setWorkEducationError(true);
+    } else {
+      setWorkEducationError(false);
+    }
+  }, [errors]);
 
   useEffect(() => {
     if (personalDataForm.some((elem) => elem === "" || elem === null)) {
@@ -933,8 +1116,6 @@ export function PrimaryForm({ currentForm }: Props) {
     }
   }, [aboutTravelForm]);
 
-  const travelCompanyForm = form.watch(["otherPeopleTravelingConfirmation", "groupMemberConfirmation"]);
-
   useEffect(() => {
     if (!travelCompanyComplete) {
       setTravelCompanyComplete(true);
@@ -988,7 +1169,32 @@ export function PrimaryForm({ currentForm }: Props) {
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    setSubmitting(true);
+
+    axios
+      .post("api/form/submit", {
+        ...values,
+        otherNames,
+        visitLocations,
+        myselfValue,
+        otherPeopleTraveling,
+        USALastTravel,
+        americanLicense,
+        noVisaNumber,
+        familyLivingInTheUSA,
+        previousJobs,
+        courses,
+      })
+      .then((res) => {
+        toast.success(res.data);
+        router.push("/perfil/area-do-cliente");
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
   }
 
   function handleCPFPersonalDataChange(event: ChangeEvent<HTMLInputElement>) {

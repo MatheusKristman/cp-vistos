@@ -1,14 +1,53 @@
-import {
-  AmericanLicense,
-  Course,
-  FamilyLivingInTheUSADetails,
-  Form,
-  OtherPeopleTraveling,
-  PreviousJobs,
-  USALastTravel,
-} from "@prisma/client";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { create } from "zustand";
+
+export type OtherPeopleTraveling = {
+  name: string;
+  relation: string;
+};
+
+export type USALastTravel = {
+  arriveDate: Date;
+  estimatedTime: string;
+};
+
+export type AmericanLicense = {
+  licenseNumber: string;
+  state: string;
+};
+
+export type FamilyLivingInTheUSADetails = {
+  name: string;
+  relation: string;
+  situation: string;
+};
+
+export type PreviousJobs = {
+  companyName: string;
+  companyAddress: string;
+  companyCity: string;
+  companyState: string;
+  companyCountry: string;
+  companyCep: string;
+  companyTel: string;
+  office: string;
+  supervisorName: string;
+  admissionDate: Date;
+  resignationDate: Date;
+  jobDescription: string;
+};
+
+export type Course = {
+  institutionName: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  cep: string;
+  courseName: string;
+  initialDate: Date;
+  finishDate: Date;
+};
 
 interface IUseFormStore {
   isSubmitting: boolean;
@@ -130,10 +169,8 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setMyselfValue: (value) => set({ myselfValue: value }),
   otherPeopleTraveling: [
     {
-      id: "",
       name: "",
       relation: "",
-      formId: "",
     },
   ],
   setOtherPeopleTraveling: (value) => set({ otherPeopleTraveling: value }),
@@ -143,10 +180,8 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setOtherPeopleTravelingError: (error) => set({ otherPeopleTravelingError: error }),
   USALastTravel: [
     {
-      id: "",
       arriveDate: new Date(),
       estimatedTime: "",
-      formId: "",
     },
   ],
   setUSALastTravel: (value) => set({ USALastTravel: value }),
@@ -156,8 +191,6 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setUSALastTravelError: (error) => set({ USALastTravelError: error }),
   americanLicense: [
     {
-      id: "",
-      formId: "",
       licenseNumber: "",
       state: "",
     },
@@ -171,8 +204,6 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setNoVisaNumber: (value) => set({ noVisaNumber: value }),
   familyLivingInTheUSA: [
     {
-      id: "",
-      formId: "",
       name: "",
       relation: "",
       situation: "",
@@ -185,8 +216,6 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setFamilyLivingInTheUSAError: (error) => set({ familyLivingInTheUSAError: error }),
   previousJobs: [
     {
-      id: "",
-      formId: "",
       admissionDate: new Date(),
       companyAddress: "",
       companyCep: "",
@@ -208,8 +237,6 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setPreviousJobsError: (error) => set({ previousJobsError: error }),
   courses: [
     {
-      id: "",
-      formId: "",
       address: "",
       cep: "",
       city: "",

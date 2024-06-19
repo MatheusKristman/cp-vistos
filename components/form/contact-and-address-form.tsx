@@ -3,13 +3,13 @@
 import { Control } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 import { Element } from "react-scroll";
+import { ChangeEvent } from "react";
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
-import { ChangeEvent } from "react";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
