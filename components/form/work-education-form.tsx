@@ -183,7 +183,9 @@ export function WorkEducationForm({
 
   return (
     <Element name="work-education" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Trabalho e Educação</h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold my-12">
+        Trabalho e Educação
+      </h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -191,7 +193,7 @@ export function WorkEducationForm({
           name="occupation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Selecione a sua ocupação atual?*</FormLabel>
+              <FormLabel className="text-foreground">Selecione a sua ocupação atual?*</FormLabel>
 
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -227,7 +229,7 @@ export function WorkEducationForm({
               name="retireeDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary">Data de aposentadoria</FormLabel>
+                  <FormLabel className="text-foreground">Data de aposentadoria</FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -242,7 +244,7 @@ export function WorkEducationForm({
                           {field.value ? (
                             format(field.value, "PPP", { locale: ptBR })
                           ) : (
-                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                            <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                               Selecione a data
                             </span>
                           )}
@@ -287,7 +289,7 @@ export function WorkEducationForm({
               name="companyOrBossName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Nome fantasia ou razão social</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Nome fantasia ou razão social</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -305,7 +307,7 @@ export function WorkEducationForm({
               name="companyAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Endereço completo</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Endereço completo</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -321,7 +323,7 @@ export function WorkEducationForm({
               name="companyCity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Cidade</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Cidade</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -337,7 +339,7 @@ export function WorkEducationForm({
               name="companyState"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Estado</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Estado</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -355,7 +357,7 @@ export function WorkEducationForm({
               name="companyCountry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">País</FormLabel>
+                  <FormLabel className="text-foreground text-sm">País</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -371,7 +373,7 @@ export function WorkEducationForm({
               name="companyCep"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">CEP</FormLabel>
+                  <FormLabel className="text-foreground text-sm">CEP</FormLabel>
 
                   <FormControl>
                     <Input
@@ -394,7 +396,7 @@ export function WorkEducationForm({
               name="companyTel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Telefone</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Telefone</FormLabel>
 
                   <FormControl>
                     <PhoneInput
@@ -428,7 +430,7 @@ export function WorkEducationForm({
               name="admissionDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary">Data da abertura da empresa</FormLabel>
+                  <FormLabel className="text-foreground">Data da abertura da empresa</FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -443,7 +445,7 @@ export function WorkEducationForm({
                           {field.value ? (
                             format(field.value, "PPP", { locale: ptBR })
                           ) : (
-                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                            <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                               Selecione a data
                             </span>
                           )}
@@ -484,7 +486,7 @@ export function WorkEducationForm({
               name="monthlySalary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Renda mensal (R$)</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Renda mensal (R$)</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -502,7 +504,7 @@ export function WorkEducationForm({
               name="jobDetails"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">
+                  <FormLabel className="text-foreground text-sm">
                     Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras
                     informações relacionadas ao seu negócio
                   </FormLabel>
@@ -525,7 +527,7 @@ export function WorkEducationForm({
               name="office"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Cargo / função</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Cargo / função</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -541,7 +543,7 @@ export function WorkEducationForm({
               name="companyOrBossName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Nome do empregador atual ou empresa</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Nome do empregador atual ou empresa</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -559,7 +561,7 @@ export function WorkEducationForm({
               name="companyAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Endereço completo</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Endereço completo</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -575,7 +577,7 @@ export function WorkEducationForm({
               name="companyCity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Cidade</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Cidade</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -591,7 +593,7 @@ export function WorkEducationForm({
               name="companyState"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Estado</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Estado</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -609,7 +611,7 @@ export function WorkEducationForm({
               name="companyCountry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">País</FormLabel>
+                  <FormLabel className="text-foreground text-sm">País</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -625,7 +627,7 @@ export function WorkEducationForm({
               name="companyCep"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">CEP</FormLabel>
+                  <FormLabel className="text-foreground text-sm">CEP</FormLabel>
 
                   <FormControl>
                     <Input
@@ -648,7 +650,7 @@ export function WorkEducationForm({
               name="companyTel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Telefone</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Telefone</FormLabel>
 
                   <FormControl>
                     <PhoneInput
@@ -682,7 +684,7 @@ export function WorkEducationForm({
               name="admissionDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary">Data de admissão</FormLabel>
+                  <FormLabel className="text-foreground">Data de admissão</FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -697,7 +699,7 @@ export function WorkEducationForm({
                           {field.value ? (
                             format(field.value, "PPP", { locale: ptBR })
                           ) : (
-                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                            <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                               Selecione a data
                             </span>
                           )}
@@ -738,7 +740,7 @@ export function WorkEducationForm({
               name="monthlySalary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">Renda mensal (R$)</FormLabel>
+                  <FormLabel className="text-foreground text-sm">Renda mensal (R$)</FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -756,7 +758,7 @@ export function WorkEducationForm({
               name="jobDetails"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary text-sm">
+                  <FormLabel className="text-foreground text-sm">
                     Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras
                     informações relacionadas ao seu negócio
                   </FormLabel>
@@ -784,7 +786,7 @@ export function WorkEducationForm({
               name="previousJobConfirmation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-primary">
+                  <FormLabel className="text-foreground">
                     Já trabalhou anteriormente? Se sim, informe abaixo os dois últimos
                   </FormLabel>
 
@@ -821,7 +823,7 @@ export function WorkEducationForm({
                   <div className="w-full flex flex-col gap-4">
                     <div className="w-full grid grid-cols-1 gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyName" className="text-sm text-primary font-medium">
+                        <label htmlFor="companyName" className="text-sm text-foreground font-medium">
                           Nome do empregador ou empresa anterior
                         </label>
 
@@ -837,7 +839,7 @@ export function WorkEducationForm({
 
                     <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyAddress" className="text-sm text-primary font-medium">
+                        <label htmlFor="companyAddress" className="text-sm text-foreground font-medium">
                           Endereço completo
                         </label>
 
@@ -851,7 +853,7 @@ export function WorkEducationForm({
                       </div>
 
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyCity" className="text-sm text-primary font-medium">
+                        <label htmlFor="companyCity" className="text-sm text-foreground font-medium">
                           Cidade
                         </label>
 
@@ -865,7 +867,7 @@ export function WorkEducationForm({
                       </div>
 
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyState" className="text-sm text-primary font-medium">
+                        <label htmlFor="companyState" className="text-sm text-foreground font-medium">
                           Estado
                         </label>
 
@@ -881,7 +883,7 @@ export function WorkEducationForm({
 
                     <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyCountry" className="text-sm text-primary font-medium">
+                        <label htmlFor="companyCountry" className="text-sm text-foreground font-medium">
                           País
                         </label>
 
@@ -895,7 +897,7 @@ export function WorkEducationForm({
                       </div>
 
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyCep" className="text-sm text-primary font-medium">
+                        <label htmlFor="companyCep" className="text-sm text-foreground font-medium">
                           CEP
                         </label>
 
@@ -910,7 +912,7 @@ export function WorkEducationForm({
                       </div>
 
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyTel" className="text-sm text-primary font-medium">
+                        <label htmlFor="companyTel" className="text-sm text-foreground font-medium">
                           Telefone
                         </label>
 
@@ -935,7 +937,7 @@ export function WorkEducationForm({
 
                     <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="office" className="text-sm text-primary font-medium">
+                        <label htmlFor="office" className="text-sm text-foreground font-medium">
                           Cargo / Função
                         </label>
 
@@ -949,7 +951,7 @@ export function WorkEducationForm({
                       </div>
 
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="supervisorName" className="text-sm text-primary font-medium">
+                        <label htmlFor="supervisorName" className="text-sm text-foreground font-medium">
                           Nome completo do supervisor
                         </label>
 
@@ -965,7 +967,7 @@ export function WorkEducationForm({
 
                     <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="admissionDate" className="text-primary text-sm font-medium">
+                        <label htmlFor="admissionDate" className="text-foreground text-sm font-medium">
                           Data de admissão
                         </label>
 
@@ -984,7 +986,7 @@ export function WorkEducationForm({
                                   locale: ptBR,
                                 })
                               ) : (
-                                <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                                <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                                   Selecione a data
                                 </span>
                               )}
@@ -1018,7 +1020,7 @@ export function WorkEducationForm({
                       </div>
 
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="resignationDate" className="text-primary text-sm font-medium">
+                        <label htmlFor="resignationDate" className="text-foreground text-sm font-medium">
                           Data de demissão
                         </label>
 
@@ -1037,7 +1039,7 @@ export function WorkEducationForm({
                                   locale: ptBR,
                                 })
                               ) : (
-                                <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                                <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                                   Selecione a data
                                 </span>
                               )}
@@ -1073,7 +1075,7 @@ export function WorkEducationForm({
 
                     <div className="w-full grid grid-cols-1 gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="jobDescription" className="text-sm text-primary font-medium">
+                        <label htmlFor="jobDescription" className="text-sm text-foreground font-medium">
                           Faça descrição da tarefa exercida
                         </label>
 
@@ -1125,7 +1127,7 @@ export function WorkEducationForm({
         </>
       ) : null}
 
-      <span className="text-primary text-base font-medium mt-6">
+      <span className="text-foreground text-base font-medium mt-6">
         Informe as duas últimas instituições de ensino que frequentou
       </span>
 
@@ -1136,7 +1138,7 @@ export function WorkEducationForm({
               <div className="w-full flex flex-col gap-4">
                 <div className="w-full grid grid-cols-1 gap-4">
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="institutionName" className="text-sm text-primary font-medium">
+                    <label htmlFor="institutionName" className="text-sm text-foreground font-medium">
                       Nome completo da instituição*
                     </label>
 
@@ -1152,7 +1154,7 @@ export function WorkEducationForm({
 
                 <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="address" className="text-sm text-primary font-medium">
+                    <label htmlFor="address" className="text-sm text-foreground font-medium">
                       Endereço completo*
                     </label>
 
@@ -1166,7 +1168,7 @@ export function WorkEducationForm({
                   </div>
 
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="city" className="text-sm text-primary font-medium">
+                    <label htmlFor="city" className="text-sm text-foreground font-medium">
                       Cidade*
                     </label>
 
@@ -1180,7 +1182,7 @@ export function WorkEducationForm({
                   </div>
 
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="state" className="text-sm text-primary font-medium">
+                    <label htmlFor="state" className="text-sm text-foreground font-medium">
                       Estado*
                     </label>
 
@@ -1196,7 +1198,7 @@ export function WorkEducationForm({
 
                 <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="country" className="text-sm text-primary font-medium">
+                    <label htmlFor="country" className="text-sm text-foreground font-medium">
                       País*
                     </label>
 
@@ -1210,7 +1212,7 @@ export function WorkEducationForm({
                   </div>
 
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="cep" className="text-sm text-primary font-medium">
+                    <label htmlFor="cep" className="text-sm text-foreground font-medium">
                       CEP*
                     </label>
 
@@ -1227,7 +1229,7 @@ export function WorkEducationForm({
 
                 <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="courseName" className="text-sm text-primary font-medium">
+                    <label htmlFor="courseName" className="text-sm text-foreground font-medium">
                       Nome do curso*
                     </label>
 
@@ -1241,7 +1243,7 @@ export function WorkEducationForm({
                   </div>
 
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="initialDate" className="text-sm text-primary font-medium">
+                    <label htmlFor="initialDate" className="text-sm text-foreground font-medium">
                       Data de início*
                     </label>
 
@@ -1258,7 +1260,7 @@ export function WorkEducationForm({
                           {obj.initialDate ? (
                             format(obj.initialDate, "PPP", { locale: ptBR })
                           ) : (
-                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                            <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                               Selecione a data
                             </span>
                           )}
@@ -1290,7 +1292,7 @@ export function WorkEducationForm({
                   </div>
 
                   <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="finishDate" className="text-sm text-primary font-medium">
+                    <label htmlFor="finishDate" className="text-sm text-foreground font-medium">
                       Data de término*
                     </label>
 
@@ -1307,7 +1309,7 @@ export function WorkEducationForm({
                           {obj.finishDate ? (
                             format(obj.finishDate, "PPP", { locale: ptBR })
                           ) : (
-                            <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                            <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                               Selecione a data
                             </span>
                           )}

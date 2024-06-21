@@ -65,7 +65,7 @@ export function PersonalDataForm({
 
   return (
     <Element name="personal-data" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold mb-12">Dados Pessoais</h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-12">Dados Pessoais</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -73,7 +73,7 @@ export function PersonalDataForm({
           name="firstName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Primeiro nome (Conforme passaporte)*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Primeiro nome (Conforme passaporte)*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -89,7 +89,7 @@ export function PersonalDataForm({
           name="lastName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Sobrenome (Conforme passaporte)*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Sobrenome (Conforme passaporte)*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -105,7 +105,7 @@ export function PersonalDataForm({
           name="cpf"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">CPF*</FormLabel>
+              <FormLabel className="text-foreground text-sm">CPF*</FormLabel>
 
               <FormControl>
                 <Input
@@ -131,7 +131,7 @@ export function PersonalDataForm({
             name="warNameConfirmation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-primary">Possui Código ou Nome de Guerra?</FormLabel>
+                <FormLabel className="text-foreground">Possui Código ou Nome de Guerra?</FormLabel>
 
                 <FormControl>
                   <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -163,7 +163,7 @@ export function PersonalDataForm({
             name="warName"
             render={({ field }) => (
               <FormItem className={cn("w-full bg-secondary p-4", { hidden: warNameConfirmationValue === "Não" })}>
-                <FormLabel className="text-primary text-sm">Código ou Nome de Guerra</FormLabel>
+                <FormLabel className="text-foreground text-sm">Código ou Nome de Guerra</FormLabel>
 
                 <FormControl>
                   <Input {...field} />
@@ -181,7 +181,7 @@ export function PersonalDataForm({
             name="otherNamesConfirmation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-primary">
+                <FormLabel className="text-foreground">
                   Possui outros nomes? (Solteira/Nome Profissional/Religioso/etc...)
                 </FormLabel>
 
@@ -215,7 +215,7 @@ export function PersonalDataForm({
               hidden: otherNamesConfirmationValue === "Não",
             })}
           >
-            <label htmlFor="otherNames" className="text-sm font-medium text-primary">
+            <label htmlFor="otherNames" className="text-sm font-medium text-foreground">
               Outro nome
             </label>
 
@@ -257,7 +257,7 @@ export function PersonalDataForm({
           name="sex"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Sexo*</FormLabel>
+              <FormLabel className="text-foreground">Sexo*</FormLabel>
 
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -283,7 +283,7 @@ export function PersonalDataForm({
           name="maritalStatus"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Estado civil*</FormLabel>
+              <FormLabel className="text-foreground">Estado civil*</FormLabel>
 
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -319,7 +319,7 @@ export function PersonalDataForm({
           name="birthDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Data de nascimento*</FormLabel>
+              <FormLabel className="text-foreground">Data de nascimento*</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -334,7 +334,7 @@ export function PersonalDataForm({
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -377,7 +377,7 @@ export function PersonalDataForm({
           name="birthCity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Cidade que nasceu*</FormLabel>
+              <FormLabel className="text-foreground">Cidade que nasceu*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -393,7 +393,7 @@ export function PersonalDataForm({
           name="birthState"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Estado que nasceu*</FormLabel>
+              <FormLabel className="text-foreground">Estado que nasceu*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -409,7 +409,7 @@ export function PersonalDataForm({
           name="birthCountry"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">País que nasceu*</FormLabel>
+              <FormLabel className="text-foreground">País que nasceu*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -427,7 +427,7 @@ export function PersonalDataForm({
           name="originCountry"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">País de origem (nacionalidade)*</FormLabel>
+              <FormLabel className="text-foreground">País de origem (nacionalidade)*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -443,7 +443,7 @@ export function PersonalDataForm({
           name="otherNationalityConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Possui outra nacionalidade?</FormLabel>
+              <FormLabel className="text-foreground">Possui outra nacionalidade?</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -477,7 +477,7 @@ export function PersonalDataForm({
           name="otherNationalityPassport"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
+              <FormLabel className="text-foreground">
                 Se respondeu sim anteriormente, digite o número do passaporte dessa nacionalidade
               </FormLabel>
 
@@ -495,7 +495,7 @@ export function PersonalDataForm({
           name="otherCountryResidentConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">É residente de um país diferente da sua nacionalidade?</FormLabel>
+              <FormLabel className="text-foreground">É residente de um país diferente da sua nacionalidade?</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -529,7 +529,7 @@ export function PersonalDataForm({
           name="USSocialSecurityNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
+              <FormLabel className="text-foreground">
                 U.S. Social Security Number (aplicável somente para quem já trabalhou nos EUA)
               </FormLabel>
 
@@ -547,7 +547,7 @@ export function PersonalDataForm({
           name="USTaxpayerIDNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
+              <FormLabel className="text-foreground">
                 U.S. Taxpayer ID Number (aplicável somente para quem já trabalhou nos EUA)
               </FormLabel>
 

@@ -66,7 +66,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
 
   return (
     <Element name="about-travel" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Sobre a Viagem</h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold my-12">Sobre a Viagem</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -74,7 +74,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="travelItineraryConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Possui itinerário de viagem?*</FormLabel>
+              <FormLabel className="text-foreground">Possui itinerário de viagem?*</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -106,7 +106,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="USAPreviewArriveDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Data prevista de chegada aos EUA</FormLabel>
+              <FormLabel className="text-foreground">Data prevista de chegada aos EUA</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -122,7 +122,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -163,7 +163,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="arriveFlyNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Número do voo de chegada</FormLabel>
+              <FormLabel className="text-foreground text-sm">Número do voo de chegada</FormLabel>
 
               <FormControl>
                 <Input disabled={travelItineraryConfirmation === "Não"} {...field} />
@@ -181,7 +181,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="arriveCity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Cidade de chegada</FormLabel>
+              <FormLabel className="text-foreground text-sm">Cidade de chegada</FormLabel>
 
               <FormControl>
                 <Input disabled={travelItineraryConfirmation === "Não"} {...field} />
@@ -197,7 +197,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="USAPreviewReturnDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Data prevista de retorno ao Brasil</FormLabel>
+              <FormLabel className="text-foreground">Data prevista de retorno ao Brasil</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -213,7 +213,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -254,7 +254,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="returnFlyNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Número do voo de partida</FormLabel>
+              <FormLabel className="text-foreground text-sm">Número do voo de partida</FormLabel>
 
               <FormControl>
                 <Input disabled={travelItineraryConfirmation === "Não"} {...field} />
@@ -270,7 +270,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="returnCity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Cidade de partida</FormLabel>
+              <FormLabel className="text-foreground text-sm">Cidade de partida</FormLabel>
 
               <FormControl>
                 <Input disabled={travelItineraryConfirmation === "Não"} {...field} />
@@ -288,7 +288,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="estimatedTimeOnUSA"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Tempo estimado de permanência nos EUA*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Tempo estimado de permanência nos EUA*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -300,7 +300,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
         />
 
         <div className="w-full bg-secondary p-4 flex flex-col space-y-3">
-          <label htmlFor="visitLocations" className="text-sm font-medium text-primary">
+          <label htmlFor="visitLocations" className="text-sm font-medium text-foreground">
             Locais que pretende visitar
           </label>
 
@@ -336,7 +336,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
         </div>
       </div>
 
-      <span className="text-primary text-base font-medium mt-6">
+      <span className="text-foreground text-base font-medium mt-6">
         Referente ao endereço onde ficará nos EUA (preencha apenas se possuir)
       </span>
 
@@ -346,7 +346,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="USACompleteAddress"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Endereço completo de onde ficará nos EUA</FormLabel>
+              <FormLabel className="text-foreground text-sm">Endereço completo de onde ficará nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -362,7 +362,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="USAZipCode"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Zip Code (caso souber)</FormLabel>
+              <FormLabel className="text-foreground text-sm">Zip Code (caso souber)</FormLabel>
 
               <FormControl>
                 <Input maxLength={5} {...field} />
@@ -380,7 +380,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="USACity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Cidade nos EUA</FormLabel>
+              <FormLabel className="text-foreground text-sm">Cidade nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -396,7 +396,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="USAState"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Estado nos EUA</FormLabel>
+              <FormLabel className="text-foreground text-sm">Estado nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -408,7 +408,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
         />
       </div>
 
-      <span className="text-primary text-base font-medium mt-6">Referente ao indivíduo pagador</span>
+      <span className="text-foreground text-base font-medium mt-6">Referente ao indivíduo pagador</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -416,7 +416,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="payerNameOrCompany"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">
+              <FormLabel className="text-foreground text-sm">
                 Nome ou Empresa que pagará a viagem (caso seja você, marque a opção EU MESMO)*
               </FormLabel>
 
@@ -430,7 +430,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
         />
 
         <div className="flex flex-col justify-between">
-          <label htmlFor="payerNameOrCompanyMeValue" className="text-sm text-primary font-medium">
+          <label htmlFor="payerNameOrCompanyMeValue" className="text-sm text-foreground font-medium">
             Eu mesmo
           </label>
 
@@ -444,7 +444,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="payerTel"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Telefone Residencial*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Telefone Residencial*</FormLabel>
 
               <FormControl>
                 <PhoneInput
@@ -478,7 +478,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="payerAddress"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Endereço completo*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Endereço completo*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -494,7 +494,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="payerRelation"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Relação com o Solicitante*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Relação com o Solicitante*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -510,7 +510,7 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
           name="payerEmail"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">E-mail*</FormLabel>
+              <FormLabel className="text-foreground text-sm">E-mail*</FormLabel>
 
               <FormControl>
                 <Input {...field} />

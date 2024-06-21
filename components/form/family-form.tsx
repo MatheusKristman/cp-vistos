@@ -78,11 +78,11 @@ export function FamilyForm({
 
   return (
     <Element name="family" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold my-12">
         Informações da Família
       </h2>
 
-      <span className="text-primary text-base font-medium">Inserir todos os dados, mesmo se falecidos</span>
+      <span className="text-foreground text-base font-medium">Inserir todos os dados, mesmo se falecidos</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -90,7 +90,7 @@ export function FamilyForm({
           name="fatherCompleteName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Nome completo do pai*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Nome completo do pai*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -106,7 +106,7 @@ export function FamilyForm({
           name="fatherBirthdate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Data de nascimento do pai*</FormLabel>
+              <FormLabel className="text-foreground">Data de nascimento do pai*</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -121,7 +121,7 @@ export function FamilyForm({
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -164,7 +164,7 @@ export function FamilyForm({
           name="fatherLiveInTheUSAConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Seu pai se encontra nos EUA?</FormLabel>
+              <FormLabel className="text-foreground">Seu pai se encontra nos EUA?</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -197,7 +197,7 @@ export function FamilyForm({
             name="fatherUSASituation"
             render={({ field }) => (
               <FormItem className="w-full bg-secondary p-4">
-                <FormLabel className="text-primary text-sm">
+                <FormLabel className="text-foreground text-sm">
                   Em qual situação? (trabalhando legalmente, passeando, etc)
                 </FormLabel>
 
@@ -218,7 +218,7 @@ export function FamilyForm({
           name="motherCompleteName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Nome completo da mãe*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Nome completo da mãe*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -234,7 +234,7 @@ export function FamilyForm({
           name="motherBirthdate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Data de nascimento da mãe*</FormLabel>
+              <FormLabel className="text-foreground">Data de nascimento da mãe*</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -249,7 +249,7 @@ export function FamilyForm({
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -292,7 +292,7 @@ export function FamilyForm({
           name="motherLiveInTheUSAConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Sua mãe se encontra nos EUA?</FormLabel>
+              <FormLabel className="text-foreground">Sua mãe se encontra nos EUA?</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -325,7 +325,7 @@ export function FamilyForm({
             name="motherUSASituation"
             render={({ field }) => (
               <FormItem className="w-full bg-secondary p-4">
-                <FormLabel className="text-primary text-sm">
+                <FormLabel className="text-foreground text-sm">
                   Em qual situação? (trabalhando legalmente, passeando, etc)
                 </FormLabel>
 
@@ -346,7 +346,7 @@ export function FamilyForm({
           name="familyLivingInTheUSAConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Excluindo os pais, há alguém da sua família nos EUA?</FormLabel>
+              <FormLabel className="text-foreground">Excluindo os pais, há alguém da sua família nos EUA?</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -375,7 +375,7 @@ export function FamilyForm({
 
         {familyLivingInTheUSAConfirmation === "Sim" && (
           <div className="w-full  flex flex-col gap-8 mt-6">
-            <span className="text-primary text-base font-medium">Em caso afirmativo, informe:</span>
+            <span className="text-foreground text-base font-medium">Em caso afirmativo, informe:</span>
 
             <div className="w-full flex flex-col gap-6">
               {familyLivingInTheUSA.map((obj, index) => (
@@ -385,7 +385,7 @@ export function FamilyForm({
                 >
                   <div className="w-full grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] gap-4">
                     <div className="w-full flex flex-col gap-2 sm:h-fit">
-                      <label className="text-sm text-primary font-medium">Nome</label>
+                      <label className="text-sm text-foreground font-medium">Nome</label>
 
                       <Input
                         value={obj.name!}
@@ -396,7 +396,7 @@ export function FamilyForm({
                     </div>
 
                     <div className="w-full flex flex-col gap-2 sm:h-fit">
-                      <label className="text-sm text-primary font-medium">Parentesco</label>
+                      <label className="text-sm text-foreground font-medium">Parentesco</label>
 
                       <Input
                         value={obj.relation!}
@@ -407,7 +407,7 @@ export function FamilyForm({
                     </div>
 
                     <div className="w-full flex flex-col gap-2 sm:col-span-2">
-                      <label className="text-sm text-primary font-medium">
+                      <label className="text-sm text-foreground font-medium">
                         Situação (cidadão americano, residente legal, não imigrante, etc...)
                       </label>
 
@@ -448,7 +448,7 @@ export function FamilyForm({
         )}
       </div>
 
-      <span className="text-primary text-base font-medium">Dados do cônjuge, parceiro doméstico ou ex-cônjuge</span>
+      <span className="text-foreground text-base font-medium">Dados do cônjuge, parceiro doméstico ou ex-cônjuge</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -456,7 +456,7 @@ export function FamilyForm({
           name="partnerCompleteName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Nome completo</FormLabel>
+              <FormLabel className="text-foreground text-sm">Nome completo</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -472,7 +472,7 @@ export function FamilyForm({
           name="partnerBirthdate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Data de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">Data de nascimento</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -487,7 +487,7 @@ export function FamilyForm({
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -528,7 +528,7 @@ export function FamilyForm({
           name="partnerNationality"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Nacionalidade</FormLabel>
+              <FormLabel className="text-foreground text-sm">Nacionalidade</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -546,7 +546,7 @@ export function FamilyForm({
           name="partnerCity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Cidade de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">Cidade de nascimento</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -562,7 +562,7 @@ export function FamilyForm({
           name="partnerState"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Estado de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">Estado de nascimento</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -578,7 +578,7 @@ export function FamilyForm({
           name="partnerCountry"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">País de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">País de nascimento</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -590,7 +590,7 @@ export function FamilyForm({
         />
       </div>
 
-      <span className="text-primary text-base font-medium">Se separado(a) ou divorciado(a)</span>
+      <span className="text-foreground text-base font-medium">Se separado(a) ou divorciado(a)</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -598,7 +598,7 @@ export function FamilyForm({
           name="unionDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Data da união</FormLabel>
+              <FormLabel className="text-foreground text-sm">Data da união</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -613,7 +613,7 @@ export function FamilyForm({
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -654,7 +654,7 @@ export function FamilyForm({
           name="divorceDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Data da separação</FormLabel>
+              <FormLabel className="text-foreground text-sm">Data da separação</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -669,7 +669,7 @@ export function FamilyForm({
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}

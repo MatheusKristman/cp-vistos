@@ -67,24 +67,15 @@ export function TestimonialsCarousel() {
       <Carousel setApi={setApi} className="h-full">
         <CarouselContent className="sm:h-[calc(100%-81px)]">
           {testimonials.map((testimonial, index) => (
-            <CarouselItem
-              key={`testimonial-${index}`}
-              className="flex flex-col justify-center gap-10 py-24"
-            >
+            <CarouselItem key={`testimonial-${index}`} className="flex flex-col justify-center gap-10 py-24">
               <div className="ml-6 sm:ml-16 h-[2px] w-36 bg-primary" />
 
-              <p className="text-2xl lg:text-3xl text-primary font-medium px-6 sm:px-16">
-                {testimonial.text}
-              </p>
+              <p className="text-2xl lg:text-3xl text-foreground font-medium px-6 sm:px-16">{testimonial.text}</p>
 
               <div className="flex flex-col px-6 sm:px-16">
-                <span className="text-base text-primary font-medium">
-                  {testimonial.person},
-                </span>
+                <span className="text-base text-foreground font-medium">{testimonial.person},</span>
 
-                <span className="text-base text-primary">
-                  {testimonial.job}
-                </span>
+                <span className="text-base text-foreground">{testimonial.job}</span>
               </div>
             </CarouselItem>
           ))}
@@ -95,13 +86,10 @@ export function TestimonialsCarousel() {
             {Array.from({ length: count }, (v, k) => k).map((c, i) => (
               <span
                 key={`carousel-item-${c}`}
-                className={cn(
-                  "w-1.5 h-1.5 rounded-full bg-primary opacity-70 relative",
-                  {
-                    "bg-primary before:content-[''] opacity-100 before:block before:w-4 before:h-4 before:bg-transparent before:border before:border-primary before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full":
-                      current === c,
-                  }
-                )}
+                className={cn("w-1.5 h-1.5 rounded-full bg-primary opacity-70 relative", {
+                  "bg-primary before:content-[''] opacity-100 before:block before:w-4 before:h-4 before:bg-transparent before:border before:border-primary before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full":
+                    current === c,
+                })}
               />
             ))}
           </div>

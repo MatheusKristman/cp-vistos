@@ -9,6 +9,7 @@
 
 // TODO: no submit adicionar o valor EU MESMO no payerNameOrCompany caso seja true
 // TODO: ajustar o formulário de previousTravelForm pois a parte de posto consular e categoria fica dentro do form dinâmico acima
+// TODO: ajustar formulário no personal data para alinhar o nome de guerra com o outro nomes
 "use client";
 
 import { ArrowRight, Loader2 } from "lucide-react";

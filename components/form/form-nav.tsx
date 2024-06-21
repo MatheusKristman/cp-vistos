@@ -53,7 +53,7 @@ export function FormNav() {
             <ul className="flex flex-col">
               <LinkScroll activeClass="active" to="personal-data" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Dados Pessoais</span>
+                  <span className="text-base text-foreground font-medium">Dados Pessoais</span>
 
                   <div
                     className={cn(
@@ -72,7 +72,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="contact-and-address" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Endereço e Contatos +4</span>
+                  <span className="text-base text-foreground font-medium">Endereço e Contatos +4</span>
 
                   <div
                     className={cn(
@@ -91,7 +91,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="passport" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Passaporte</span>
+                  <span className="text-base text-foreground font-medium">Passaporte</span>
 
                   <div
                     className={cn(
@@ -110,7 +110,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="about-travel" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Sobre a Viagem</span>
+                  <span className="text-base text-foreground font-medium">Sobre a Viagem</span>
 
                   <div
                     className={cn(
@@ -129,7 +129,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="travel-company" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Companhia de Viagem</span>
+                  <span className="text-base text-foreground font-medium">Companhia de Viagem</span>
 
                   <div
                     className={cn(
@@ -148,7 +148,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="previous-travel" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Viagens Anteriores</span>
+                  <span className="text-base text-foreground font-medium">Viagens Anteriores</span>
 
                   <div
                     className={cn(
@@ -167,7 +167,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="usa-contact" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Contatos nos Estados Unidos</span>
+                  <span className="text-base text-foreground font-medium">Contatos nos Estados Unidos</span>
 
                   <div
                     className={cn(
@@ -186,7 +186,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="family" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Informações da Família</span>
+                  <span className="text-base text-foreground font-medium">Informações da Família</span>
 
                   <div
                     className={cn(
@@ -205,7 +205,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="work-education" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Trabalho e Educação</span>
+                  <span className="text-base text-foreground font-medium">Trabalho e Educação</span>
 
                   <div
                     className={cn(
@@ -224,7 +224,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="security" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-primary font-medium">Segurança</span>
+                  <span className="text-base text-foreground font-medium">Segurança</span>
 
                   <div
                     className={cn(
@@ -253,7 +253,7 @@ export function FormNav() {
         <ul className="flex flex-col">
           <LinkScroll activeClass="active" to="personal-data" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Dados Pessoais</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Dados Pessoais</span>
 
               <div
                 className={cn(
@@ -272,7 +272,9 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="contact-and-address" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Endereço e Contatos +4</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">
+                Endereço e Contatos +4
+              </span>
 
               <div
                 className={cn(
@@ -291,7 +293,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="passport" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Passaporte</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Passaporte</span>
 
               <div
                 className={cn(
@@ -310,7 +312,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="about-travel" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Sobre a Viagem</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Sobre a Viagem</span>
 
               <div
                 className={cn(
@@ -329,7 +331,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="travel-company" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Companhia de Viagem</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Companhia de Viagem</span>
 
               <div
                 className={cn(
@@ -348,7 +350,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="previous-travel" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Viagens Anteriores</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Viagens Anteriores</span>
 
               <div
                 className={cn(
@@ -367,7 +369,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="usa-contact" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">
+              <span className="text-base text-foreground font-medium group-hover:text-white">
                 Contatos nos Estados Unidos
               </span>
 
@@ -388,7 +390,9 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="family" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Informações da Família</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">
+                Informações da Família
+              </span>
 
               <div
                 className={cn(
@@ -407,7 +411,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="work-education" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Trabalho e Educação</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Trabalho e Educação</span>
 
               <div
                 className={cn(
@@ -426,7 +430,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="security" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-primary font-medium group-hover:text-white">Segurança</span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Segurança</span>
 
               <div
                 className={cn(

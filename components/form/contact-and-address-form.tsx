@@ -28,9 +28,11 @@ export function ContactAndAddressForm({
 }: Props) {
   return (
     <Element name="contact-and-address" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Endereço e Contatos</h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold my-12">
+        Endereço e Contatos
+      </h2>
 
-      <span className="text-primary text-base font-medium">Endereço de sua residencia</span>
+      <span className="text-foreground text-base font-medium">Endereço de sua residencia</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -38,7 +40,7 @@ export function ContactAndAddressForm({
           name="address"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Endereço*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Endereço*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -54,7 +56,7 @@ export function ContactAndAddressForm({
           name="city"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Cidade*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Cidade*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -70,7 +72,7 @@ export function ContactAndAddressForm({
           name="state"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Estado*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Estado*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -88,7 +90,7 @@ export function ContactAndAddressForm({
           name="cep"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">CEP*</FormLabel>
+              <FormLabel className="text-foreground text-sm">CEP*</FormLabel>
 
               <FormControl>
                 <Input
@@ -111,7 +113,7 @@ export function ContactAndAddressForm({
           name="country"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">País*</FormLabel>
+              <FormLabel className="text-foreground text-sm">País*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -129,7 +131,7 @@ export function ContactAndAddressForm({
           name="postalAddressConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">
+              <FormLabel className="text-foreground">
                 Seu endereço de correio é diferente do endereço de sua residência?*
               </FormLabel>
 
@@ -163,7 +165,7 @@ export function ContactAndAddressForm({
           name="otherPostalAddress"
           render={({ field }) => (
             <FormItem className={cn("w-full bg-secondary p-4", { hidden: postalAddressConfirmation === "Não" })}>
-              <FormLabel className="text-primary text-sm">Informe seu outro endereço</FormLabel>
+              <FormLabel className="text-foreground text-sm">Informe seu outro endereço</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -175,7 +177,7 @@ export function ContactAndAddressForm({
         />
       </div>
 
-      <span className="text-primary text-base font-medium mt-6">Telefone</span>
+      <span className="text-foreground text-base font-medium mt-6">Telefone</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -183,7 +185,7 @@ export function ContactAndAddressForm({
           name="cel"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Celular*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Celular*</FormLabel>
 
               <FormControl>
                 <PhoneInput
@@ -215,7 +217,7 @@ export function ContactAndAddressForm({
           name="tel"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Fixo*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Fixo*</FormLabel>
 
               <FormControl>
                 <PhoneInput
@@ -250,7 +252,7 @@ export function ContactAndAddressForm({
             name="fiveYearsOtherTelConfirmation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-primary">
+                <FormLabel className="text-foreground">
                   Nos últimos 5 anos você usou outros números de telefone?*
                 </FormLabel>
 
@@ -284,7 +286,7 @@ export function ContactAndAddressForm({
             name="otherTel"
             render={({ field }) => (
               <FormItem className={cn("w-full bg-secondary p-4", { hidden: fiveYearsOtherTelConfirmation === "Não" })}>
-                <FormLabel className="text-primary text-sm">Informe seu outro telefone</FormLabel>
+                <FormLabel className="text-foreground text-sm">Informe seu outro telefone</FormLabel>
 
                 <FormControl>
                   <PhoneInput
@@ -317,7 +319,7 @@ export function ContactAndAddressForm({
           name="email"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="text-primary text-sm">E-mail*</FormLabel>
+              <FormLabel className="text-foreground text-sm">E-mail*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -335,7 +337,7 @@ export function ContactAndAddressForm({
           name="fiveYearsOtherEmailConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Nos últimos 5 anos você teve outros e-mails?*</FormLabel>
+              <FormLabel className="text-foreground">Nos últimos 5 anos você teve outros e-mails?*</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -367,7 +369,7 @@ export function ContactAndAddressForm({
           name="otherEmail"
           render={({ field }) => (
             <FormItem className={cn("w-full bg-secondary p-4", { hidden: fiveYearsOtherEmailConfirmation === "Não" })}>
-              <FormLabel className="text-primary text-sm">Informe seu outro e-mail</FormLabel>
+              <FormLabel className="text-foreground text-sm">Informe seu outro e-mail</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -379,7 +381,7 @@ export function ContactAndAddressForm({
         />
       </div>
 
-      <span className="text-primary text-base font-medium mt-6">Redes sociais (Somente @ ou nome)</span>
+      <span className="text-foreground text-base font-medium mt-6">Redes sociais (Somente @ ou nome)</span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -387,7 +389,7 @@ export function ContactAndAddressForm({
           name="facebook"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Facebook</FormLabel>
+              <FormLabel className="text-foreground text-sm">Facebook</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -403,7 +405,7 @@ export function ContactAndAddressForm({
           name="linkedin"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Linkedin</FormLabel>
+              <FormLabel className="text-foreground text-sm">Linkedin</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -419,7 +421,7 @@ export function ContactAndAddressForm({
           name="instagram"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Instagram</FormLabel>
+              <FormLabel className="text-foreground text-sm">Instagram</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -435,7 +437,7 @@ export function ContactAndAddressForm({
           name="othersSocialMedia"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">Outras Redes</FormLabel>
+              <FormLabel className="text-foreground text-sm">Outras Redes</FormLabel>
 
               <FormControl>
                 <Input {...field} />

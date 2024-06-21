@@ -85,7 +85,7 @@ export function LoginForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-primary">E-mail</FormLabel>
+                      <FormLabel className="text-base font-medium text-foreground">E-mail</FormLabel>
 
                       <FormControl>
                         <Input
@@ -106,7 +106,7 @@ export function LoginForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-primary">Senha</FormLabel>
+                      <FormLabel className="text-base font-medium text-foreground">Senha</FormLabel>
 
                       <FormControl>
                         <div className="relative">

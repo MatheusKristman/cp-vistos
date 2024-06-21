@@ -31,7 +31,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
 
   return (
     <Element name="passport" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Passaporte</h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold my-12">Passaporte</h2>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -39,7 +39,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Número do passaporte*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Número do passaporte*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -55,7 +55,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportCity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Cidade*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Cidade*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -71,7 +71,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportState"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Estado*</FormLabel>
+              <FormLabel className="text-foreground text-sm">Estado*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -89,7 +89,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportIssuingCountry"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">País emissor*</FormLabel>
+              <FormLabel className="text-foreground text-sm">País emissor*</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -105,7 +105,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportIssuingDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Data de emissão*</FormLabel>
+              <FormLabel className="text-foreground">Data de emissão*</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -120,7 +120,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -161,7 +161,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportExpireDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Data de expiração*</FormLabel>
+              <FormLabel className="text-foreground">Data de expiração*</FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -177,7 +177,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
                       {field.value ? (
                         format(field.value, "PPP", { locale: ptBR })
                       ) : (
-                        <span className="text-primary opacity-80 group-hover:text-white group-hover:opacity-100">
+                        <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
                           Selecione a data
                         </span>
                       )}
@@ -218,7 +218,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportNoExpireDate"
           render={({ field }) => (
             <FormItem className="flex flex-col space-y-3">
-              <FormLabel className="text-sm text-primary">Sem expiração</FormLabel>
+              <FormLabel className="text-sm text-foreground">Sem expiração</FormLabel>
 
               <FormControl>
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
@@ -234,7 +234,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="passportLostConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Você já perdeu um passaporte ou teve ele roubado?*</FormLabel>
+              <FormLabel className="text-foreground">Você já perdeu um passaporte ou teve ele roubado?*</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -270,7 +270,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="lostPassportNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Informe o número do passaporte</FormLabel>
+              <FormLabel className="text-foreground text-sm">Informe o número do passaporte</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -286,7 +286,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="lostPassportCountry"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Informe o país do passaporte</FormLabel>
+              <FormLabel className="text-foreground text-sm">Informe o país do passaporte</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -304,7 +304,7 @@ export function PassportForm({ formControl, passportNoExpireDate, passportLostCo
           name="lostPassportDetails"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Explique o ocorrido</FormLabel>
+              <FormLabel className="text-foreground text-sm">Explique o ocorrido</FormLabel>
 
               <FormControl>
                 <Textarea className="resize-none" {...field} />

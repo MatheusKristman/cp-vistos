@@ -18,60 +18,11 @@ export default async function VerifyUserPage() {
   }
 
   if (currentUser.role === Role.USER) {
-    const formStep: number[] = currentUser.formStep;
-
-    if (!formStep.includes(0)) {
-      console.log("formulario-0");
-      redirect("/formulario/0");
+    if (currentUser.primaryFormCreated) {
+      redirect("/area-do-cliente");
+    } else {
+      redirect("/formulario");
     }
-
-    if (!formStep.includes(1)) {
-      console.log("formulario-1");
-      redirect("/formulario/1");
-    }
-
-    if (!formStep.includes(2)) {
-      console.log("formulario-2");
-      redirect("/formulario/2");
-    }
-
-    if (!formStep.includes(3)) {
-      console.log("formulario-3");
-      redirect("/formulario/3");
-    }
-
-    if (!formStep.includes(4)) {
-      console.log("formulario-4");
-      redirect("/formulario/4");
-    }
-
-    if (!formStep.includes(5)) {
-      console.log("formulario-5");
-      redirect("/formulario/5");
-    }
-
-    if (!formStep.includes(6)) {
-      console.log("formulario-6");
-      redirect("/formulario/6");
-    }
-
-    if (!formStep.includes(7)) {
-      console.log("formulario-7");
-      redirect("/formulario/7");
-    }
-
-    if (!formStep.includes(8)) {
-      console.log("formulario-8");
-      redirect("/formulario/8");
-    }
-
-    if (!formStep.includes(9)) {
-      console.log("formulario-9");
-      redirect("/formulario/9");
-    }
-
-    console.log("perfil usuário");
-    redirect("/perfil/resumo-formulário");
   }
 
   return (

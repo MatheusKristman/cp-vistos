@@ -17,7 +17,7 @@ export default async function FormPage() {
 
         <div className="w-full px-6 mt-6 sm:px-16 sm:mt-10 lg:container lg:mx-auto">
           <div className="w-full flex flex-col items-center gap-4 mb-12 sm:mb-24">
-            <h1 className="text-2xl sm:text-3xl text-center font-semibold text-primary">Complete seu cadastro</h1>
+            <h1 className="text-2xl sm:text-3xl text-center font-semibold text-foreground">Complete seu cadastro</h1>
           </div>
 
           <PrimaryForm currentForm={form} />

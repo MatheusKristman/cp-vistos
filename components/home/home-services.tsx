@@ -1,17 +1,7 @@
-import {
-  BadgeCheck,
-  FileCheck,
-  FileCheck2,
-  Plane,
-  PlaneTakeoff,
-} from "lucide-react";
+import { BadgeCheck, FileCheck, FileCheck2, Plane, PlaneTakeoff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Link from "next/link";
 
 const services = [
@@ -66,11 +56,9 @@ export function HomeServices() {
                   {Icon}
 
                   <div className="flex flex-col items-center gap-2">
-                    <h2 className="text-lg text-center text-primary font-medium">
-                      {title}
-                    </h2>
+                    <h2 className="text-lg text-center text-foreground font-medium">{title}</h2>
 
-                    <p className="text-base text-center text-primary">{desc}</p>
+                    <p className="text-base text-center text-foreground">{desc}</p>
                   </div>
                 </div>
 
@@ -93,11 +81,9 @@ export function HomeServices() {
               {Icon}
 
               <div className="flex flex-col items-center gap-2">
-                <h2 className="text-lg text-center text-primary font-medium">
-                  {title}
-                </h2>
+                <h2 className="text-lg text-center text-foreground font-medium">{title}</h2>
 
-                <p className="text-base text-center text-primary">{desc}</p>
+                <p className="text-base text-center text-foreground">{desc}</p>
               </div>
             </div>
 

@@ -25,15 +25,15 @@ export async function Header() {
 
           <nav className="hidden lg:block">
             <ul className="flex items-center gap-12">
-              <li className="text-lg font-medium hover:opacity-70">
+              <li className="text-lg font-medium text-foreground hover:opacity-70">
                 <Link href="/servicos">Serviços</Link>
               </li>
 
-              <li className="text-lg font-medium hover:opacity-70">
+              <li className="text-lg font-medium text-foreground hover:opacity-70">
                 <Link href="/diferenciais">Diferenciais</Link>
               </li>
 
-              <li className="text-lg font-medium hover:opacity-70">
+              <li className="text-lg font-medium text-foreground hover:opacity-70">
                 <Link href="/depoimentos">Depoimentos</Link>
               </li>
             </ul>

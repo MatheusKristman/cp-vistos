@@ -52,15 +52,15 @@ export function MobileMenu() {
 
             <nav>
               <ul className="flex flex-col px-6">
-                <li className="text-lg font-medium hover:opacity-70 py-4 border-b border-secondary">
+                <li className="text-lg text-foreground font-medium hover:opacity-70 py-4 border-b border-secondary">
                   <Link href="/servicos">Serviços</Link>
                 </li>
 
-                <li className="text-lg font-medium hover:opacity-70 py-4 border-b border-secondary">
+                <li className="text-lg text-foreground font-medium hover:opacity-70 py-4 border-b border-secondary">
                   <Link href="/diferenciais">Diferenciais</Link>
                 </li>
 
-                <li className="text-lg font-medium hover:opacity-70 py-4 border-b border-secondary">
+                <li className="text-lg text-foreground font-medium hover:opacity-70 py-4 border-b border-secondary">
                   <Link href="/depoimentos">Depoimentos</Link>
                 </li>
               </ul>

@@ -17,11 +17,11 @@ interface Props {
 export function USAContactForm({ formControl }: Props) {
   return (
     <Element name="usa-contact" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold my-12">
         Contato nos estados unidades
       </h2>
 
-      <span className="text-primary text-base font-medium">
+      <span className="text-foreground text-base font-medium">
         Preencher apenas se houver contato frequente com alguém dos EUA{" "}
       </span>
 
@@ -31,7 +31,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Nome completo da pessoa ou Organização</FormLabel>
+              <FormLabel className="text-foreground text-sm">Nome completo da pessoa ou Organização</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -47,7 +47,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentRelation"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Qual é a relação do contato com você?</FormLabel>
+              <FormLabel className="text-foreground text-sm">Qual é a relação do contato com você?</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -65,7 +65,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentAddress"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Endereço do contato nos EUA</FormLabel>
+              <FormLabel className="text-foreground text-sm">Endereço do contato nos EUA</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -81,7 +81,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentZipCode"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Zip code</FormLabel>
+              <FormLabel className="text-foreground text-sm">Zip code</FormLabel>
 
               <FormControl>
                 <Input maxLength={5} {...field} />
@@ -99,7 +99,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentCity"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Cidade</FormLabel>
+              <FormLabel className="text-foreground text-sm">Cidade</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -115,7 +115,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentState"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Estado</FormLabel>
+              <FormLabel className="text-foreground text-sm">Estado</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -131,7 +131,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentCountry"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">País</FormLabel>
+              <FormLabel className="text-foreground text-sm">País</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -149,7 +149,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentTel"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Telefone</FormLabel>
+              <FormLabel className="text-foreground text-sm">Telefone</FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -165,7 +165,7 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentEmail"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">E-mail</FormLabel>
+              <FormLabel className="text-foreground text-sm">E-mail</FormLabel>
 
               <FormControl>
                 <Input {...field} />

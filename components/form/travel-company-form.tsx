@@ -62,7 +62,9 @@ export function TravelCompanyForm({
 
   return (
     <Element name="travel-company" className="w-full flex flex-col gap-6">
-      <h2 className="w-full text-center text-2xl sm:text-3xl text-primary font-semibold my-12">Companhia de Viagem</h2>
+      <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold my-12">
+        Companhia de Viagem
+      </h2>
 
       <div className="w-full grid grid-cols-1 gap-4">
         <FormField
@@ -70,7 +72,7 @@ export function TravelCompanyForm({
           name="otherPeopleTravelingConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary">Há outras pessoas viajando com você?</FormLabel>
+              <FormLabel className="text-foreground">Há outras pessoas viajando com você?</FormLabel>
 
               <FormControl>
                 <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
@@ -99,13 +101,15 @@ export function TravelCompanyForm({
 
         {otherPeopleTravelingConfirmation === "Sim" && (
           <div className="w-full bg-secondary p-4 flex flex-col space-y-3">
-            <label className="text-sm font-medium text-primary">Adicione as pessoas que estão viajando com você</label>
+            <label className="text-sm font-medium text-foreground">
+              Adicione as pessoas que estão viajando com você
+            </label>
 
             <div className="flex flex-col gap-4 w-full">
               {otherPeopleTraveling.map((obj, i) => (
                 <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
-                    className="order-2 w-[calc(100%-58px)] sm:order-1 sm:w-full placeholder:text-primary/70"
+                    className="order-2 w-[calc(100%-58px)] sm:order-1 sm:w-full placeholder:text-foreground/70"
                     value={obj.name!}
                     placeholder="Nome completo"
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleOtherPeopleTravelingChange(e, "name", i)}
@@ -114,7 +118,7 @@ export function TravelCompanyForm({
                   <div className="flex gap-2 justify-between items-end order-1 sm:order-2">
                     <Input
                       value={obj.relation!}
-                      className="placeholder:text-primary/70"
+                      className="placeholder:text-foreground/70"
                       placeholder="Relação com a pessoa"
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         handleOtherPeopleTravelingChange(e, "relation", i)
@@ -159,7 +163,7 @@ export function TravelCompanyForm({
           name="groupMemberConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-primary text-sm">
+              <FormLabel className="text-foreground text-sm">
                 Está viajando como integrante de um grupo de viagem?
               </FormLabel>
 
@@ -193,7 +197,7 @@ export function TravelCompanyForm({
           name="groupName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-primary text-sm">Nome da Organização ou Grupo</FormLabel>
+              <FormLabel className="text-foreground text-sm">Nome da Organização ou Grupo</FormLabel>
 
               <FormControl>
                 <Input disabled={groupMemberConfirmation === "Não"} {...field} />
