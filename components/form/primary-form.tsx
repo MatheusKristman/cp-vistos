@@ -19,8 +19,9 @@ import { useForm } from "react-hook-form";
 import { Form as FormType } from "@prisma/client";
 import axios from "axios";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect } from "react";
+import Link from "next/link";
 
 import { AboutTravelForm } from "@/components/form/about-travel-form";
 import { ContactAndAddressForm } from "@/components/form/contact-and-address-form";
@@ -873,6 +874,7 @@ export function PrimaryForm({ currentForm }: Props) {
   const occupation = form.watch("occupation");
   const previousJobConfirmation = form.watch("previousJobConfirmation");
   const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
+  const pathname = usePathname();
 
   useEffect(() => {
     if (currentForm && currentForm.otherNames.length > 0) {
@@ -1288,13 +1290,29 @@ export function PrimaryForm({ currentForm }: Props) {
 
         <SecurityForm formControl={form.control} />
 
-        <Button
-          disabled={isSubmitting || isSaving}
-          type="submit"
-          className="w-full flex items-center gap-2 order-2 sm:order-3 sm:w-fit"
-        >
-          Enviar {isSubmitting ? <Loader2 className="animate-spin" /> : <ArrowRight className="hidden" />}
-        </Button>
+        <div className="w-full flex flex-col gap-2 sm:flex-row-reverse sm:justify-end">
+          <Button
+            size="xl"
+            disabled={isSubmitting || isSaving}
+            type="submit"
+            className="w-full flex items-center gap-2 sm:w-fit"
+          >
+            Enviar {isSubmitting ? <Loader2 className="animate-spin" /> : <ArrowRight className="hidden" />}
+          </Button>
+
+          {pathname === "/formulario/editar" ? (
+            <Button
+              size="xl"
+              variant="outline"
+              disabled={isSubmitting || isSaving}
+              type="button"
+              className="w-full sm:w-fit"
+              asChild
+            >
+              <Link href="/area-do-cliente">Cancelar</Link>
+            </Button>
+          ) : null}
+        </div>
       </form>
     </Form>
   );

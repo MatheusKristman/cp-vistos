@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import useFormStore from "@/constants/stores/useFormStore";
+import { usePathname } from "next/navigation";
 
 export function FormNav() {
   const {
@@ -34,6 +35,7 @@ export function FormNav() {
     workEducationError,
     securityError,
   } = useFormStore();
+  const pathname = usePathname();
 
   function handleSave() {
     setSaving(true);
@@ -72,7 +74,7 @@ export function FormNav() {
 
               <LinkScroll activeClass="active" to="contact-and-address" smooth offset={-50} duration={500}>
                 <li className="flex items-center justify-between p-4">
-                  <span className="text-base text-foreground font-medium">Endereço e Contatos +4</span>
+                  <span className="text-base text-foreground font-medium">Endereço e Contatos</span>
 
                   <div
                     className={cn(
@@ -244,9 +246,11 @@ export function FormNav() {
           </PopoverContent>
         </Popover>
 
-        <Button onClick={handleSave}>
-          <Save />
-        </Button>
+        {pathname !== "/formulario/editar" ? (
+          <Button onClick={handleSave}>
+            <Save />
+          </Button>
+        ) : null}
       </div>
 
       <div className="w-80 h-fit hidden lg:block sticky top-0 right-0 order-1">
@@ -272,9 +276,7 @@ export function FormNav() {
 
           <LinkScroll activeClass="active" to="contact-and-address" smooth offset={-50} duration={500}>
             <li className="flex items-center gap-2 justify-between p-4 hover:bg-primary group bg-secondary transition-all cursor-pointer">
-              <span className="text-base text-foreground font-medium group-hover:text-white">
-                Endereço e Contatos +4
-              </span>
+              <span className="text-base text-foreground font-medium group-hover:text-white">Endereço e Contatos</span>
 
               <div
                 className={cn(
@@ -448,10 +450,12 @@ export function FormNav() {
           </LinkScroll>
         </ul>
 
-        <Button onClick={handleSave} size="lg" className="w-full flex items-center gap-2 text-base">
-          <Save />
-          Salvar
-        </Button>
+        {pathname !== "/formulario/editar" ? (
+          <Button onClick={handleSave} size="lg" className="w-full flex items-center gap-2 text-base">
+            <Save />
+            Salvar
+          </Button>
+        ) : null}
       </div>
     </>
   );
