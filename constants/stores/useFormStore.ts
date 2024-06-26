@@ -34,7 +34,7 @@ interface IUseFormStore {
   setOtherPeopleTravelingIndex: (index: number) => void;
   otherPeopleTravelingError: string;
   setOtherPeopleTravelingError: (error: string) => void;
-  USALastTravel: USALastTravel[];
+  USALastTravel: USALastTravel[] | null;
   setUSALastTravel: (value: USALastTravel[]) => void;
   USALastTravelIndex: number;
   setUSALastTravelIndex: (index: number) => void;
@@ -133,14 +133,7 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setOtherPeopleTravelingIndex: (index) => set({ otherPeopleTravelingIndex: index }),
   otherPeopleTravelingError: "",
   setOtherPeopleTravelingError: (error) => set({ otherPeopleTravelingError: error }),
-  USALastTravel: [
-    {
-      arriveDate: new Date(),
-      estimatedTime: "",
-      formId: "",
-      id: "",
-    },
-  ],
+  USALastTravel: null,
   setUSALastTravel: (value) => set({ USALastTravel: value }),
   USALastTravelIndex: 1,
   setUSALastTravelIndex: (index) => set({ USALastTravelIndex: index }),

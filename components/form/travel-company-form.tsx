@@ -41,8 +41,11 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
     index: number
   ) {
     if (!otherPeopleTraveling) return;
+
     const values = [...otherPeopleTraveling];
+
     values[index][property] = event.target.value;
+
     setOtherPeopleTraveling(values);
   }
 

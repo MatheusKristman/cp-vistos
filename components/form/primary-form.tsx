@@ -374,6 +374,8 @@ export function PrimaryForm({ currentForm }: Props) {
   const {
     setOtherPeopleTraveling,
     setOtherPeopleTravelingIndex,
+    setUSALastTravel,
+    setUSALastTravelIndex,
     setVisitLocationsError,
     setVisitLocationsIndex,
     setVisitLocations,
@@ -889,6 +891,11 @@ export function PrimaryForm({ currentForm }: Props) {
     if (currentForm && currentForm.otherNames.length > 0) {
       setOtherNames(currentForm.otherNames);
       setOtherNamesIndex(currentForm.otherNames.length);
+    }
+
+    if (currentForm && currentForm.USALastTravel.length > 0) {
+      setUSALastTravel(currentForm.USALastTravel);
+      setUSALastTravelIndex(currentForm.USALastTravel.length);
     }
   }, [currentForm]);
 

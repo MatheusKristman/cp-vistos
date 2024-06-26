@@ -61,6 +61,8 @@ export function PreviousTravelForm({
   } = useFormStore();
 
   function handleArrivalDate(value: Date, index: number) {
+    if (!USALastTravel) return;
+
     const arr = [...USALastTravel];
 
     arr[index].arriveDate = value;
@@ -69,6 +71,8 @@ export function PreviousTravelForm({
   }
 
   function handleEstimatedTime(value: string, index: number) {
+    if (!USALastTravel) return;
+
     const arr = [...USALastTravel];
 
     arr[index].estimatedTime = value;
@@ -77,6 +81,9 @@ export function PreviousTravelForm({
   }
 
   function handleAddUSALastTravelInput() {
+    //TODO: adicionar função de create da api
+    if (!USALastTravel) return;
+
     setUSALastTravelIndex(USALastTravelIndex + 1);
 
     const values = [...USALastTravel];
@@ -91,6 +98,9 @@ export function PreviousTravelForm({
   }
 
   function handleRemoveUSALastTravelInput(index: number) {
+    // TODO: adicionar função de delete da api
+    if (!USALastTravel) return;
+
     setUSALastTravelIndex(USALastTravelIndex - 1);
 
     const values = [...USALastTravel].filter((value: USALastTravel, i: number) => i !== index);
