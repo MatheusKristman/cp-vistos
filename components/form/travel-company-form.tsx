@@ -3,10 +3,13 @@
 
 "use client";
 
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { Control } from "react-hook-form";
-import { Plus, Trash } from "lucide-react";
+import { Loader2, Plus, Trash } from "lucide-react";
 import { Element } from "react-scroll";
+import { OtherPeopleTraveling } from "@prisma/client";
+import { toast } from "sonner";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -14,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import useFormStore from "@/constants/stores/useFormStore";
 import { PrimaryFormControl } from "@/types";
-import { OtherPeopleTraveling } from "@prisma/client";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -23,6 +25,8 @@ interface Props {
 }
 
 export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmation, groupMemberConfirmation }: Props) {
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const {
     otherPeopleTraveling,
     otherPeopleTravelingError,
@@ -36,23 +40,50 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
     property: "name" | "relation",
     index: number
   ) {
+    if (!otherPeopleTraveling) return;
     const values = [...otherPeopleTraveling];
     values[index][property] = event.target.value;
     setOtherPeopleTraveling(values);
   }
 
   function handleAddOtherPeopleTravelingInput() {
-    setOtherPeopleTravelingIndex(otherPeopleTravelingIndex + 1);
-    const values = [...otherPeopleTraveling];
-    values[values.length] = { name: "", relation: "", id: "", formId: "" };
-    console.log(values);
-    setOtherPeopleTraveling(values);
+    if (!otherPeopleTraveling) return;
+
+    setIsFetching(true);
+
+    axios
+      .post("/api/form/other-people-traveling/create", { otherPeopleTraveling })
+      .then((res) => {
+        setOtherPeopleTravelingIndex(otherPeopleTravelingIndex + 1);
+        setOtherPeopleTraveling(res.data.updatedOtherPeopleTraveling);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
   }
 
-  function handleRemoveOtherPeopleTravelingInput(index: number) {
-    setOtherPeopleTravelingIndex(otherPeopleTravelingIndex - 1);
-    const values = [...otherPeopleTraveling].filter((value: OtherPeopleTraveling, i: number) => i !== index);
-    setOtherPeopleTraveling(values);
+  function handleRemoveOtherPeopleTravelingInput(id: string) {
+    if (!otherPeopleTraveling) return;
+
+    setIsFetching(true);
+
+    axios
+      .put("/api/form/other-people-traveling/delete", { otherPeopleTravelingId: id, otherPeopleTraveling })
+      .then((res) => {
+        setOtherPeopleTravelingIndex(otherPeopleTravelingIndex - 1);
+        setOtherPeopleTraveling(res.data.updatedOtherPeopleTraveling);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
   }
 
   return (
@@ -101,48 +132,53 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
             </label>
 
             <div className="flex flex-col gap-4 w-full">
-              {otherPeopleTraveling.map((obj, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input
-                    className="order-2 w-[calc(100%-58px)] sm:order-1 sm:w-full placeholder:text-foreground/70"
-                    value={obj.name!}
-                    placeholder="Nome completo"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleOtherPeopleTravelingChange(e, "name", i)}
-                  />
-
-                  <div className="flex gap-2 justify-between items-end order-1 sm:order-2">
+              {otherPeopleTraveling ? (
+                otherPeopleTraveling.map((obj, i) => (
+                  <div key={obj.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Input
-                      value={obj.relation!}
-                      className="placeholder:text-foreground/70"
-                      placeholder="Relação com a pessoa"
-                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleOtherPeopleTravelingChange(e, "relation", i)
-                      }
+                      className="order-2 w-[calc(100%-58px)] sm:order-1 sm:w-full placeholder:text-foreground/70"
+                      value={obj.name!}
+                      placeholder="Nome completo"
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleOtherPeopleTravelingChange(e, "name", i)}
                     />
 
-                    {i === otherPeopleTravelingIndex - 1 ? (
-                      <Button
-                        type="button"
-                        size="xl"
-                        className="px-3"
-                        disabled={obj.relation === "" || obj.name === ""}
-                        onClick={handleAddOtherPeopleTravelingInput}
-                      >
-                        <Plus />
-                      </Button>
-                    ) : (
-                      <Button
-                        type="button"
-                        size="xl"
-                        className="px-3"
-                        onClick={() => handleRemoveOtherPeopleTravelingInput(i)}
-                      >
-                        <Trash />
-                      </Button>
-                    )}
+                    <div className="flex gap-2 justify-between items-end order-1 sm:order-2">
+                      <Input
+                        value={obj.relation!}
+                        className="placeholder:text-foreground/70"
+                        placeholder="Relação com a pessoa"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          handleOtherPeopleTravelingChange(e, "relation", i)
+                        }
+                      />
+
+                      {i === otherPeopleTravelingIndex - 1 ? (
+                        <Button
+                          type="button"
+                          size="xl"
+                          className="px-3"
+                          disabled={obj.relation === "" || obj.name === "" || isFetching}
+                          onClick={handleAddOtherPeopleTravelingInput}
+                        >
+                          {isFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                        </Button>
+                      ) : (
+                        <Button
+                          disabled={isFetching}
+                          type="button"
+                          size="xl"
+                          className="px-3"
+                          onClick={() => handleRemoveOtherPeopleTravelingInput(obj.id)}
+                        >
+                          {isFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div>Loading...</div>
+              )}
             </div>
 
             {otherPeopleTravelingError.length > 0 && (

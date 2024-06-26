@@ -1,26 +1,146 @@
 import prisma from "@/lib/prisma";
 import getCurrentUser from "./getCurrentUser";
-import { Form, OtherPeopleTraveling } from "@prisma/client";
+import {
+  AmericanLicense,
+  Course,
+  FamilyLivingInTheUSADetails,
+  Form,
+  OtherPeopleTraveling,
+  PreviousJobs,
+  USALastTravel,
+} from "@prisma/client";
 import { FullForm } from "@/types";
 
 export default async function getPrimaryForm() {
+  let newForm: FullForm | null = null;
+  let newOtherPeopleTraveling: OtherPeopleTraveling | null = null;
+  let newUSALastTravel: USALastTravel | null = null;
+  let newAmericanLicense: AmericanLicense | null = null;
+  let newFamilyLivingInTheUSA: FamilyLivingInTheUSADetails | null = null;
+  let newPreviousJobs: PreviousJobs | null = null;
+  let newCourses: Course | null = null;
+
+  async function handleOtherPeopleTraveling(form: FullForm) {
+    return await prisma.otherPeopleTraveling.create({
+      data: {
+        name: "",
+        relation: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleUSALastTravel(form: FullForm) {
+    return await prisma.USALastTravel.create({
+      data: {
+        arriveDate: null,
+        estimatedTime: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleAmericanLicense(form: FullForm) {
+    return await prisma.americanLicense.create({
+      data: {
+        licenseNumber: "",
+        state: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleFamilyLivingInTheUSA(form: FullForm) {
+    return await prisma.familyLivingInTheUSADetails.create({
+      data: {
+        name: "",
+        relation: "",
+        situation: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handlePreviousJobs(form: FullForm) {
+    return await prisma.previousJobs.create({
+      data: {
+        admissionDate: null,
+        companyAddress: "",
+        companyCep: "",
+        companyCity: "",
+        companyCountry: "",
+        companyName: "",
+        companyState: "",
+        companyTel: "",
+        jobDescription: "",
+        resignationDate: null,
+        supervisorName: "",
+        office: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleCourses(form: FullForm) {
+    return await prisma.course.create({
+      data: {
+        address: "",
+        cep: "",
+        city: "",
+        country: "",
+        courseName: "",
+        finishDate: null,
+        initialDate: null,
+        institutionName: "",
+        state: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
   try {
     const currentUser = await getCurrentUser();
-
-    let newForm: FullForm | null = null;
-    let otherPeopleTraveling: OtherPeopleTraveling | null = null;
 
     if (!currentUser) {
       return null;
     }
 
-    let form = await prisma.form.findFirst({
+    let form: FullForm | null = await prisma.form.findFirst({
       where: {
         userId: currentUser.id,
         order: 0,
       },
       include: {
         otherPeopleTraveling: true,
+        USALastTravel: true,
+        americanLicense: true,
+        familyLivingInTheUSA: true,
+        previousJobs: true,
+        courses: true,
       },
     });
 
@@ -52,11 +172,19 @@ export default async function getPrimaryForm() {
             },
           },
         },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
+        },
       });
 
       newForm = await prisma.form.update({
         where: {
-          id: newForm.id,
+          id: newForm!.id,
         },
         data: {
           address: null,
@@ -78,6 +206,14 @@ export default async function getPrimaryForm() {
           instagram: null,
           othersSocialMedia: null,
         },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
+        },
       });
 
       newForm = await prisma.form.update({
@@ -95,6 +231,14 @@ export default async function getPrimaryForm() {
           lostPassportNumber: null,
           lostPassportCountry: null,
           lostPassportDetails: null,
+        },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
         },
       });
 
@@ -122,6 +266,14 @@ export default async function getPrimaryForm() {
           payerRelation: null,
           payerEmail: null,
         },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
+        },
       });
 
       newForm = await prisma.form.update({
@@ -133,6 +285,14 @@ export default async function getPrimaryForm() {
           otherPeopleTraveling: undefined,
           groupMemberConfirmation: false,
           groupName: null,
+        },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
         },
       });
 
@@ -163,6 +323,14 @@ export default async function getPrimaryForm() {
           immigrationRequestByAnotherPersonConfirmation: false,
           immigrationRequestByAnotherPersonDetails: null,
         },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
+        },
       });
 
       newForm = await prisma.form.update({
@@ -179,6 +347,14 @@ export default async function getPrimaryForm() {
           organizationOrUSAResidentCountry: null,
           organizationOrUSAResidentTel: null,
           organizationOrUSAResidentEmail: null,
+        },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
         },
       });
 
@@ -206,6 +382,14 @@ export default async function getPrimaryForm() {
           unionDate: null,
           divorceDate: null,
         },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
+        },
       });
 
       newForm = await prisma.form.update({
@@ -229,6 +413,14 @@ export default async function getPrimaryForm() {
           previousJobConfirmation: false,
           previousJobs: undefined,
           courses: undefined,
+        },
+        include: {
+          otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
         },
       });
 
@@ -267,28 +459,88 @@ export default async function getPrimaryForm() {
         },
         include: {
           otherPeopleTraveling: true,
+          USALastTravel: true,
+          americanLicense: true,
+          familyLivingInTheUSA: true,
+          previousJobs: true,
+          courses: true,
         },
       });
     }
 
-    //TODO: criar novas instancias dos objetos ao ser novo no formulário ou ao já ter criado um formulário e eles estiverem vazios
     if (newForm) {
-      if (newForm?.otherPeopleTraveling === undefined) {
-        otherPeopleTraveling = await prisma.otherPeopleTraveling.create({
-          data: {
-            name: "",
-            relation: "",
-            form: {
-              connect: {
-                id: newForm.id,
-              },
-            },
-          },
-        });
+      if (newForm?.otherPeopleTraveling.length === 0) {
+        newOtherPeopleTraveling = await handleOtherPeopleTraveling(newForm);
+      }
+
+      if (newForm?.USALastTravel.length === 0) {
+        newUSALastTravel = await handleUSALastTravel(newForm);
+      }
+
+      if (newForm?.americanLicense.length === 0) {
+        newAmericanLicense = await handleAmericanLicense(newForm);
+      }
+
+      if (newForm?.familyLivingInTheUSA.length === 0) {
+        newFamilyLivingInTheUSA = await handleFamilyLivingInTheUSA(newForm);
+      }
+
+      if (newForm?.previousJobs.length === 0) {
+        newPreviousJobs = await handlePreviousJobs(newForm);
+      }
+
+      if (newForm?.courses.length === 0) {
+        newCourses = await handleCourses(newForm);
+      }
+
+      return {
+        ...newForm,
+        otherPeopleTraveling: newOtherPeopleTraveling ? [newOtherPeopleTraveling] : newForm.otherPeopleTraveling,
+        USALastTravel: newUSALastTravel ? [newUSALastTravel] : newForm.USALastTravel,
+        americanLicense: newAmericanLicense ? [newAmericanLicense] : newForm.americanLicense,
+        familyLivingInTheUSA: newFamilyLivingInTheUSA ? [newFamilyLivingInTheUSA] : newForm.familyLivingInTheUSA,
+        previousJobs: newPreviousJobs ? [newPreviousJobs] : newForm.previousJobs,
+        courses: newCourses ? [newCourses] : newForm.courses,
+      };
+    } else {
+      if (form) {
+        if (form.otherPeopleTraveling.length === 0) {
+          newOtherPeopleTraveling = await handleOtherPeopleTraveling(form);
+        }
+
+        if (form.USALastTravel.length === 0) {
+          newUSALastTravel = await handleUSALastTravel(form);
+        }
+
+        if (form.americanLicense.length === 0) {
+          newAmericanLicense = await handleAmericanLicense(form);
+        }
+
+        if (form.familyLivingInTheUSA.length === 0) {
+          newFamilyLivingInTheUSA = await handleFamilyLivingInTheUSA(form);
+        }
+
+        if (form.previousJobs.length === 0) {
+          newPreviousJobs = await handlePreviousJobs(form);
+        }
+
+        if (form.courses.length === 0) {
+          newCourses = await handleCourses(form);
+        }
+      } else {
+        return null;
       }
     }
 
-    return form;
+    return {
+      ...form,
+      otherPeopleTraveling: newOtherPeopleTraveling ? [newOtherPeopleTraveling] : form.otherPeopleTraveling,
+      USALastTravel: newUSALastTravel ? [newUSALastTravel] : form.USALastTravel,
+      americanLicense: newAmericanLicense ? [newAmericanLicense] : form.americanLicense,
+      familyLivingInTheUSA: newFamilyLivingInTheUSA ? [newFamilyLivingInTheUSA] : form.familyLivingInTheUSA,
+      previousJobs: newPreviousJobs ? [newPreviousJobs] : form.previousJobs,
+      courses: newCourses ? [newCourses] : form.courses,
+    };
   } catch (error) {
     return null;
   }

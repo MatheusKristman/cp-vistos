@@ -10,6 +10,7 @@
 // TODO: no submit adicionar o valor EU MESMO no payerNameOrCompany caso seja true
 // TODO: ajustar o formulário de previousTravelForm pois a parte de posto consular e categoria fica dentro do form dinâmico acima
 // TODO: ajustar formulário no personal data para alinhar o nome de guerra com o outro nomes
+// TODO: ajustar data de nascimento, pois se for menor de 14 anos, tem alguns campos que serão desativados
 "use client";
 
 import { ArrowRight, Loader2 } from "lucide-react";
@@ -38,9 +39,10 @@ import { Form } from "@/components/ui/form";
 import useFormStore from "@/constants/stores/useFormStore";
 
 import "react-phone-number-input/style.css";
+import { FullForm } from "@/types";
 
 interface Props {
-  currentForm: FormType | null;
+  currentForm: FullForm | null;
 }
 
 const formSchema = z
@@ -51,7 +53,7 @@ const formSchema = z
     warNameConfirmation: z.enum(["Sim", "Não"]),
     warName: z.string().optional(),
     otherNamesConfirmation: z.enum(["Sim", "Não"]),
-    sex: z.enum(["Masculino", "Feminino"], { message: "Selecione uma opção" }),
+    sex: z.string({ message: "Selecione uma opção" }).min(1, { message: "Selecione uma opção" }),
     maritalStatus: z.string({ message: "Selecione uma opção" }).min(1, { message: "Selecione uma opção" }),
     birthDate: z.date({ message: "Selecione uma data" }),
     birthCity: z.string().min(1, "Campo obrigatório"),
@@ -370,6 +372,8 @@ const formSchema = z
 
 export function PrimaryForm({ currentForm }: Props) {
   const {
+    setOtherPeopleTraveling,
+    setOtherPeopleTravelingIndex,
     setVisitLocationsError,
     setVisitLocationsIndex,
     setVisitLocations,
@@ -877,6 +881,11 @@ export function PrimaryForm({ currentForm }: Props) {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (currentForm && currentForm.otherPeopleTraveling) {
+      setOtherPeopleTraveling(currentForm.otherPeopleTraveling);
+      setOtherPeopleTravelingIndex(currentForm.otherPeopleTraveling.length);
+    }
+
     if (currentForm && currentForm.otherNames.length > 0) {
       setOtherNames(currentForm.otherNames);
       setOtherNamesIndex(currentForm.otherNames.length);

@@ -28,7 +28,7 @@ interface IUseFormStore {
   setVisitLocationsError: (error: string) => void;
   myselfValue: CheckedState;
   setMyselfValue: (value: CheckedState) => void;
-  otherPeopleTraveling: OtherPeopleTraveling[];
+  otherPeopleTraveling: OtherPeopleTraveling[] | null;
   setOtherPeopleTraveling: (value: OtherPeopleTraveling[]) => void;
   otherPeopleTravelingIndex: number;
   setOtherPeopleTravelingIndex: (index: number) => void;
@@ -127,14 +127,7 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setVisitLocationsError: (error) => set({ visitLocationsError: error }),
   myselfValue: false,
   setMyselfValue: (value) => set({ myselfValue: value }),
-  otherPeopleTraveling: [
-    {
-      name: "",
-      relation: "",
-      id: "",
-      formId: "",
-    },
-  ],
+  otherPeopleTraveling: null,
   setOtherPeopleTraveling: (value) => set({ otherPeopleTraveling: value }),
   otherPeopleTravelingIndex: 1,
   setOtherPeopleTravelingIndex: (index) => set({ otherPeopleTravelingIndex: index }),

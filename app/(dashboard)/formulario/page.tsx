@@ -5,7 +5,7 @@ import { Header } from "@/components/global/header";
 import { MobileMenu } from "@/components/global/mobile-menu";
 
 export default async function FormPage() {
-  const form = await getPrimaryForm();
+  const primaryForm = await getPrimaryForm();
 
   return (
     <>
@@ -20,7 +20,7 @@ export default async function FormPage() {
             <h1 className="text-2xl sm:text-3xl text-center font-semibold text-foreground">Complete seu cadastro</h1>
           </div>
 
-          <PrimaryForm currentForm={form} />
+          <PrimaryForm currentForm={primaryForm} />
         </div>
       </div>
     </>

@@ -15,7 +15,7 @@ export type PrimaryFormControl = {
   warNameConfirmation: "Sim" | "Não";
   warName?: string | undefined;
   otherNamesConfirmation: "Sim" | "Não";
-  sex: "Masculino" | "Feminino";
+  sex: string;
   maritalStatus: string;
   birthDate: Date;
   birthCity: string;
@@ -165,10 +165,10 @@ export type PrimaryFormControl = {
 };
 
 export type FullForm = Form & {
-  otherPeopleTraveling: OtherPeopleTraveling[] | undefined;
-  USALastTravel: USALastTravel[] | undefined;
-  americanLicense: AmericanLicense[] | undefined;
-  familyLivingInTheUSA: FamilyLivingInTheUSADetails[] | undefined;
-  previousJobs: PreviousJobs[] | undefined;
-  courses: Course[] | undefined;
+  otherPeopleTraveling: OtherPeopleTraveling[];
+  USALastTravel: USALastTravel[];
+  americanLicense: AmericanLicense[];
+  familyLivingInTheUSA: FamilyLivingInTheUSADetails[];
+  previousJobs: PreviousJobs[];
+  courses: Course[];
 };
