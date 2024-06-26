@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import useFormStore from "@/constants/stores/useFormStore";
 import { PrimaryFormControl } from "@/types";
-import { OtherPeopleTraveling } from "@/constants/stores/useFormStore";
+import { OtherPeopleTraveling } from "@prisma/client";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -22,12 +22,7 @@ interface Props {
   groupMemberConfirmation: "Sim" | "Não";
 }
 
-export function TravelCompanyForm({
-  formControl,
-
-  otherPeopleTravelingConfirmation,
-  groupMemberConfirmation,
-}: Props) {
+export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmation, groupMemberConfirmation }: Props) {
   const {
     otherPeopleTraveling,
     otherPeopleTravelingError,
@@ -49,7 +44,7 @@ export function TravelCompanyForm({
   function handleAddOtherPeopleTravelingInput() {
     setOtherPeopleTravelingIndex(otherPeopleTravelingIndex + 1);
     const values = [...otherPeopleTraveling];
-    values[values.length] = { name: "", relation: "" };
+    values[values.length] = { name: "", relation: "", id: "", formId: "" };
     console.log(values);
     setOtherPeopleTraveling(values);
   }

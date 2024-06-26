@@ -1,3 +1,13 @@
+import {
+  AmericanLicense,
+  Course,
+  FamilyLivingInTheUSADetails,
+  Form,
+  OtherPeopleTraveling,
+  PreviousJobs,
+  USALastTravel,
+} from "@prisma/client";
+
 export type PrimaryFormControl = {
   firstName: string;
   lastName: string;
@@ -152,4 +162,13 @@ export type PrimaryFormControl = {
   childCustodyConfirmation: "Sim" | "Não";
   lawViolationConfirmation: "Sim" | "Não";
   avoidTaxConfirmation: "Sim" | "Não";
+};
+
+export type FullForm = Form & {
+  otherPeopleTraveling: OtherPeopleTraveling[] | undefined;
+  USALastTravel: USALastTravel[] | undefined;
+  americanLicense: AmericanLicense[] | undefined;
+  familyLivingInTheUSA: FamilyLivingInTheUSADetails[] | undefined;
+  previousJobs: PreviousJobs[] | undefined;
+  courses: Course[] | undefined;
 };

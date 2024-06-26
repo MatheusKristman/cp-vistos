@@ -70,8 +70,8 @@ model Session {
 }
 
 model Form {
-  id                                            String    @id @default(auto()) @map("_id") @db.ObjectId
-  order                                         Int       @default(0)
+  id                                            String                        @id @default(auto()) @map("_id") @db.ObjectId
+  order                                         Int                           @default(0)
   firstName                                     String?
   lastName                                      String?
   cpf                                           String?
@@ -79,7 +79,7 @@ model Form {
   warName                                       String?
   otherNamesConfirmation                        Boolean?
   otherNames                                    String[]
-  sex                                           Sex?
+  sex                                           String?
   maritalStatus                                 String?
   birthDate                                     DateTime?
   birthCity                                     String?
@@ -138,13 +138,13 @@ model Form {
   payerRelation                                 String?
   payerEmail                                    String?
   otherPeopleTravelingConfirmation              Boolean?
-  otherPeopleTraveling                          Json[]
+  otherPeopleTraveling                          OtherPeopleTraveling[]
   groupMemberConfirmation                       Boolean?
   groupName                                     String?
   hasBeenOnUSAConfirmation                      Boolean?
-  USALastTravel                                 Json[]
+  USALastTravel                                 USALastTravel[]
   americanLicenseToDriveConfirmation            Boolean?
-  americanLicense                               Json[]
+  americanLicense                               AmericanLicense[]
   USAVisaConfirmation                           Boolean?
   visaIssuingDate                               DateTime?
   visaNumber                                    String?
@@ -180,7 +180,7 @@ model Form {
   motherLiveInTheUSAConfirmation                Boolean?
   motherUSASituation                            String?
   familyLivingInTheUSAConfirmation              Boolean?
-  familyLivingInTheUSA                          Json[]
+  familyLivingInTheUSA                          FamilyLivingInTheUSADetails[]
   partnerCompleteName                           String?
   partnerBirthdate                              DateTime?
   partnerNationality                            String?
@@ -189,6 +189,8 @@ model Form {
   partnerCountry                                String?
   unionDate                                     DateTime?
   divorceDate                                   DateTime?
+  retireeConfirmation                           Boolean?
+  houseWifeConfirmation                         Boolean?
   occupation                                    String?
   office                                        String?
   companyOrBossName                             String?
@@ -203,8 +205,8 @@ model Form {
   retireeDate                                   DateTime?
   jobDetails                                    String?
   previousJobConfirmation                       Boolean?
-  previousJobs                                  Json[]
-  courses                                       Json[]
+  previousJobs                                  PreviousJobs[]
+  courses                                       Course[]
   contagiousDiseaseConfirmation                 Boolean?
   phisicalMentalProblemConfirmation             Boolean?
   crimeConfirmation                             Boolean?
@@ -232,15 +234,79 @@ model Form {
   childCustodyConfirmation                      Boolean?
   lawViolationConfirmation                      Boolean?
   avoidTaxConfirmation                          Boolean?
-
-  userId String @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId                                        String                        @db.ObjectId
+  user                                          User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt                                     DateTime                      @default(now())
+  updatedAt                                     DateTime                      @updatedAt
 }
 
 enum Sex {
   Masculino
   Feminino
+}
+
+model OtherPeopleTraveling {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String?
+  relation String?
+  form     Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
+  formId   String  @db.ObjectId
+}
+
+model USALastTravel {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  arriveDate    DateTime?
+  estimatedTime String?
+  formId        String    @db.ObjectId
+  form          Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model AmericanLicense {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  licenseNumber String?
+  state         String?
+  formId        String  @db.ObjectId
+  form          Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model FamilyLivingInTheUSADetails {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  relation  String?
+  situation String?
+  formId    String  @db.ObjectId
+  form      Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model PreviousJobs {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  companyName     String?
+  companyAddress  String?
+  companyCity     String?
+  companyState    String?
+  companyCountry  String?
+  companyCep      String?
+  companyTel      String?
+  office          String?
+  supervisorName  String?
+  admissionDate   DateTime?
+  resignationDate DateTime?
+  jobDescription  String?
+  formId          String    @db.ObjectId
+  form            Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+}
+
+model Course {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  institutionName String?
+  address         String?
+  city            String?
+  state           String?
+  country         String?
+  cep             String?
+  courseName      String?
+  initialDate     DateTime?
+  finishDate      DateTime?
+  formId          String    @db.ObjectId
+  form            Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
 }
