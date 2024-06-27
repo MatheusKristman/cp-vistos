@@ -43,8 +43,6 @@ export function PersonalDataForm({
     setOtherNames(values);
   }
 
-  console.log(otherNamesIndex);
-
   function handleAddOtherNamesInput() {
     setOtherNamesIndex(otherNamesIndex + 1);
 

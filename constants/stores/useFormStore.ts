@@ -40,7 +40,7 @@ interface IUseFormStore {
   setUSALastTravelIndex: (index: number) => void;
   USALastTravelError: string;
   setUSALastTravelError: (error: string) => void;
-  americanLicense: AmericanLicense[];
+  americanLicense: AmericanLicense[] | null;
   setAmericanLicense: (value: AmericanLicense[]) => void;
   americanLicenseIndex: number;
   setAmericanLicenseIndex: (index: number) => void;
@@ -139,14 +139,7 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setUSALastTravelIndex: (index) => set({ USALastTravelIndex: index }),
   USALastTravelError: "",
   setUSALastTravelError: (error) => set({ USALastTravelError: error }),
-  americanLicense: [
-    {
-      id: "",
-      formId: "",
-      licenseNumber: "",
-      state: "",
-    },
-  ],
+  americanLicense: null,
   setAmericanLicense: (value) => set({ americanLicense: value }),
   americanLicenseIndex: 1,
   setAmericanLicenseIndex: (index) => set({ americanLicenseIndex: index }),

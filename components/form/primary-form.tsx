@@ -376,6 +376,8 @@ export function PrimaryForm({ currentForm }: Props) {
     setOtherPeopleTravelingIndex,
     setUSALastTravel,
     setUSALastTravelIndex,
+    setAmericanLicense,
+    setAmericanLicenseIndex,
     setVisitLocationsError,
     setVisitLocationsIndex,
     setVisitLocations,
@@ -896,6 +898,11 @@ export function PrimaryForm({ currentForm }: Props) {
     if (currentForm && currentForm.USALastTravel.length > 0) {
       setUSALastTravel(currentForm.USALastTravel);
       setUSALastTravelIndex(currentForm.USALastTravel.length);
+    }
+
+    if (currentForm && currentForm.americanLicense.length > 0) {
+      setAmericanLicense(currentForm.americanLicense);
+      setAmericanLicenseIndex(currentForm.americanLicense.length);
     }
   }, [currentForm]);
 

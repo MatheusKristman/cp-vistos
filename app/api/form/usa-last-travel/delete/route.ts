@@ -2,9 +2,15 @@ import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/lib/prisma";
 import { USALastTravel } from "@prisma/client";
 
-export async function POST(req: Request) {
+export async function PUT(req: Request) {
   try {
-    const { usaLastTravel }: { usaLastTravel: USALastTravel[] } = await req.json();
+    const { usaLastTravelId, usaLastTravel }: { usaLastTravelId: string; usaLastTravel: USALastTravel[] } =
+      await req.json();
+
+    if (!usaLastTravelId) {
+      return new Response("Dados inválidos", { status: 401 });
+    }
+
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
@@ -18,7 +24,7 @@ export async function POST(req: Request) {
     });
 
     if (!currentForm) {
-      return new Response("Dados inválidos", { status: 404 });
+      return new Response("Formulário não localizado", { status: 404 });
     }
 
     await Promise.all(
@@ -35,15 +41,10 @@ export async function POST(req: Request) {
       })
     );
 
-    await prisma.USALastTravel.create({
-      data: {
-        arriveDate: null,
-        estimatedTime: "",
-        form: {
-          connect: {
-            id: currentForm.id,
-          },
-        },
+    await prisma.USALastTravel.delete({
+      where: {
+        id: usaLastTravelId,
+        formId: currentForm.id,
       },
     });
 
@@ -55,8 +56,8 @@ export async function POST(req: Request) {
 
     return Response.json({ updatedUSALastTravel }, { status: 200 });
   } catch (error) {
-    console.log("ERROR_CREATE_USA_LAST_TRAVEL", error);
+    console.log("ERROR_ON_USA_LAST_TRAVEL_DELETE", error);
 
-    return new Response("Ocorreu um erro ao gerar um novo item", { status: 500 });
+    return new Response("Ocorreu um erro ao deletar o item", { status: 500 });
   }
 }

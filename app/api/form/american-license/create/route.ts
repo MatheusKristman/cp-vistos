@@ -1,10 +1,10 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/lib/prisma";
-import { USALastTravel } from "@prisma/client";
+import { AmericanLicense } from "@prisma/client";
 
 export async function POST(req: Request) {
   try {
-    const { usaLastTravel }: { usaLastTravel: USALastTravel[] } = await req.json();
+    const { americanLicense }: { americanLicense: AmericanLicense[] } = await req.json();
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
@@ -22,23 +22,23 @@ export async function POST(req: Request) {
     }
 
     await Promise.all(
-      usaLastTravel.map(async (item) => {
-        await prisma.USALastTravel.update({
+      americanLicense.map(async (item) => {
+        await prisma.americanLicense.update({
           where: {
             id: item.id,
           },
           data: {
-            arriveDate: item.arriveDate,
-            estimatedTime: item.estimatedTime,
+            licenseNumber: item.licenseNumber,
+            state: item.state,
           },
         });
       })
     );
 
-    await prisma.USALastTravel.create({
+    await prisma.americanLicense.create({
       data: {
-        arriveDate: null,
-        estimatedTime: "",
+        licenseNumber: "",
+        state: "",
         form: {
           connect: {
             id: currentForm.id,
@@ -47,15 +47,15 @@ export async function POST(req: Request) {
       },
     });
 
-    const updatedUSALastTravel = await prisma.USALastTravel.findMany({
+    const updatedAmericanLicense = await prisma.americanLicense.findMany({
       where: {
         formId: currentForm.id,
       },
     });
 
-    return Response.json({ updatedUSALastTravel }, { status: 200 });
+    return Response.json({ updatedAmericanLicense }, { status: 200 });
   } catch (error) {
-    console.log("ERROR_CREATE_USA_LAST_TRAVEL", error);
+    console.log("ERROR_CREATE_AMERICAN_LICENSE", error);
 
     return new Response("Ocorreu um erro ao gerar um novo item", { status: 500 });
   }

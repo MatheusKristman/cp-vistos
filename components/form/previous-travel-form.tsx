@@ -1,14 +1,16 @@
-//TODO: criar função para submit
-//TODO: mandar para o proximo formulário
+// TODO: criar função de erro no USALastTravel e AmericanLicense
 
 "use client";
 
 import { Control } from "react-hook-form";
-import { Plus, Trash } from "lucide-react";
+import { Loader2, Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Element } from "react-scroll";
+import axios from "axios";
+import { toast } from "sonner";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -21,7 +23,6 @@ import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
-import { AmericanLicense, USALastTravel } from "@/constants/stores/useFormStore";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -44,6 +45,9 @@ export function PreviousTravelForm({
   deniedVisaConfirmation,
   immigrationRequestByAnotherPersonConfirmation,
 }: Props) {
+  const [isUSALastTravelFetching, setIsUSALastTravelFetching] = useState<boolean>(false);
+  const [isAmericanLicenseFetching, setIsAmericanLicenseFetching] = useState<boolean>(false);
+
   const currentYear = getYear(new Date());
   const {
     USALastTravel,
@@ -81,33 +85,49 @@ export function PreviousTravelForm({
   }
 
   function handleAddUSALastTravelInput() {
-    //TODO: adicionar função de create da api
     if (!USALastTravel) return;
 
-    setUSALastTravelIndex(USALastTravelIndex + 1);
+    setIsUSALastTravelFetching(true);
 
-    const values = [...USALastTravel];
-    values[values.length] = {
-      arriveDate: new Date(),
-      estimatedTime: "",
-    };
-
-    console.log(values);
-
-    setUSALastTravel(values);
+    axios
+      .post("/api/form/usa-last-travel/create", { usaLastTravel: USALastTravel })
+      .then((res) => {
+        setUSALastTravelIndex(USALastTravelIndex + 1);
+        setUSALastTravel(res.data.updatedUSALastTravel);
+        console.log(res.data.updatedUSALastTravel);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsUSALastTravelFetching(false);
+      });
   }
 
-  function handleRemoveUSALastTravelInput(index: number) {
-    // TODO: adicionar função de delete da api
+  function handleRemoveUSALastTravelInput(id: string) {
     if (!USALastTravel) return;
 
-    setUSALastTravelIndex(USALastTravelIndex - 1);
+    setIsUSALastTravelFetching(true);
 
-    const values = [...USALastTravel].filter((value: USALastTravel, i: number) => i !== index);
-    setUSALastTravel(values);
+    axios
+      .put("/api/form/usa-last-travel/delete", { usaLastTravelId: id, usaLastTravel: USALastTravel })
+      .then((res) => {
+        setUSALastTravelIndex(USALastTravelIndex - 1);
+        setUSALastTravel(res.data.updatedUSALastTravel);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsUSALastTravelFetching(false);
+      });
   }
 
   function handleLicenseNumber(value: string, index: number) {
+    if (!americanLicense) return;
+
     const arr = [...americanLicense];
 
     arr[index].licenseNumber = value;
@@ -116,6 +136,8 @@ export function PreviousTravelForm({
   }
 
   function handleState(value: string, index: number) {
+    if (!americanLicense) return;
+
     const arr = [...americanLicense];
 
     arr[index].state = value;
@@ -124,24 +146,43 @@ export function PreviousTravelForm({
   }
 
   function handleAddAmericanLicenseInput() {
-    setAmericanLicenseIndex(americanLicenseIndex + 1);
+    if (!americanLicense) return;
 
-    const values = [...americanLicense];
-    values.push({
-      state: "",
-      licenseNumber: "",
-    });
+    setIsAmericanLicenseFetching(true);
 
-    console.log(values);
-
-    setAmericanLicense(values);
+    axios
+      .post("/api/form/american-license/create", { americanLicense })
+      .then((res) => {
+        setAmericanLicenseIndex(americanLicenseIndex + 1);
+        setAmericanLicense(res.data.updatedAmericanLicense);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsAmericanLicenseFetching(false);
+      });
   }
 
-  function handleRemoveAmericanLicenseInput(index: number) {
-    setAmericanLicenseIndex(americanLicenseIndex - 1);
+  function handleRemoveAmericanLicenseInput(id: string) {
+    if (!americanLicense) return;
 
-    const values = [...americanLicense].filter((value: AmericanLicense, i: number) => i !== index);
-    setAmericanLicense(values);
+    setIsAmericanLicenseFetching(true);
+
+    axios
+      .put("/api/form/american-license/delete", { americanLicenseId: id, americanLicense })
+      .then((res) => {
+        setAmericanLicenseIndex(americanLicenseIndex - 1);
+        setAmericanLicense(res.data.updatedAmericanLicense);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsAmericanLicenseFetching(false);
+      });
   }
 
   return (
@@ -190,82 +231,92 @@ export function PreviousTravelForm({
             </span>
 
             <div className="flex flex-col gap-6">
-              {USALastTravel.map((obj, i) => (
-                <div key={`usa-last-travel-${i}`} className="w-full flex sm:items-end gap-4">
-                  <div className="w-full flex flex-col sm:flex-row gap-4">
-                    <div className="w-full flex flex-col gap-2">
-                      <label className="text-foreground text-sm font-medium">Data prevista de chegada aos EUA</label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full bg-background h-12 pl-3 text-left border-secondary font-normal group",
-                              !obj.arriveDate && "text-muted-foreground"
-                            )}
-                          >
-                            {obj.arriveDate ? (
-                              format(obj.arriveDate, "PPP", { locale: ptBR })
-                            ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
-                                Selecione a data
-                              </span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
+              {USALastTravel ? (
+                USALastTravel.map((obj, i) => (
+                  <div key={obj.id} className="w-full flex sm:items-end gap-4">
+                    <div className="w-full flex flex-col sm:flex-row gap-4">
+                      <div className="w-full flex flex-col gap-2">
+                        <label className="text-foreground text-sm font-medium">Data prevista de chegada aos EUA</label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full bg-background h-12 pl-3 text-left border-secondary font-normal group",
+                                !obj.arriveDate && "text-muted-foreground"
+                              )}
+                            >
+                              {obj.arriveDate ? (
+                                format(obj.arriveDate, "PPP", { locale: ptBR })
+                              ) : (
+                                <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                                  Selecione a data
+                                </span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
 
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            locale={ptBR}
-                            selected={obj.arriveDate!}
-                            onSelect={(day, selectedDay, activeModifiers, e) => handleArrivalDate(selectedDay, i)}
-                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                            captionLayout="dropdown"
-                            fromYear={1900}
-                            toYear={currentYear}
-                            classNames={{
-                              day_hidden: "invisible",
-                              dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                              caption_dropdowns: "flex gap-3",
-                              vhidden: "hidden",
-                              caption_label: "hidden",
-                            }}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              locale={ptBR}
+                              selected={obj.arriveDate!}
+                              onSelect={(day, selectedDay, activeModifiers, e) => handleArrivalDate(selectedDay, i)}
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                              captionLayout="dropdown"
+                              fromYear={1900}
+                              toYear={currentYear}
+                              classNames={{
+                                day_hidden: "invisible",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                caption_dropdowns: "flex gap-3",
+                                vhidden: "hidden",
+                                caption_label: "hidden",
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-2">
+                        <label className="text-foreground text-sm font-medium">
+                          Tempo estimado de permanência nos EUA
+                        </label>
+                        <Input
+                          value={obj.estimatedTime!}
+                          onChange={(event) => handleEstimatedTime(event.target.value, i)}
+                        />
+                      </div>
                     </div>
 
-                    <div className="w-full flex flex-col gap-2">
-                      <label className="text-foreground text-sm font-medium">
-                        Tempo estimado de permanência nos EUA
-                      </label>
-                      <Input
-                        value={obj.estimatedTime!}
-                        onChange={(event) => handleEstimatedTime(event.target.value, i)}
-                      />
-                    </div>
+                    {i === USALastTravelIndex - 1 ? (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3"
+                        disabled={obj.estimatedTime === "" || !obj.arriveDate || isUSALastTravelFetching}
+                        onClick={handleAddUSALastTravelInput}
+                      >
+                        {isUSALastTravelFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3"
+                        onClick={() => handleRemoveUSALastTravelInput(obj.id)}
+                        disabled={isUSALastTravelFetching}
+                      >
+                        {isUSALastTravelFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                      </Button>
+                    )}
                   </div>
-
-                  {i === USALastTravelIndex - 1 ? (
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3"
-                      disabled={obj.estimatedTime === "" || !obj.arriveDate}
-                      onClick={handleAddUSALastTravelInput}
-                    >
-                      <Plus />
-                    </Button>
-                  ) : (
-                    <Button type="button" size="xl" className="px-3" onClick={() => handleRemoveUSALastTravelInput(i)}>
-                      <Trash />
-                    </Button>
-                  )}
-                </div>
-              ))}
+                ))
+              ) : (
+                <div>Loading...</div>
+              )}
             </div>
           </div>
         )}
@@ -307,45 +358,50 @@ export function PreviousTravelForm({
         {americanLicenseToDriveConfirmation === "Sim" && (
           <div className="w-full bg-secondary p-4 flex flex-col space-y-8">
             <div className="flex flex-col gap-6">
-              {americanLicense.map((obj, i) => (
-                <div key={`american-license-${i}`} className="w-full flex sm:items-end gap-4">
-                  <div className="w-full flex flex-col sm:flex-row gap-4">
-                    <div className="w-full flex flex-col gap-2">
-                      <label className="text-foreground text-sm font-medium">Número da licença</label>
-                      <Input
-                        value={obj.licenseNumber!}
-                        onChange={(event) => handleLicenseNumber(event.target.value, i)}
-                      />
+              {americanLicense ? (
+                americanLicense.map((obj, i) => (
+                  <div key={`american-license-${i}`} className="w-full flex sm:items-end gap-4">
+                    <div className="w-full flex flex-col sm:flex-row gap-4">
+                      <div className="w-full flex flex-col gap-2">
+                        <label className="text-foreground text-sm font-medium">Número da licença</label>
+                        <Input
+                          value={obj.licenseNumber!}
+                          onChange={(event) => handleLicenseNumber(event.target.value, i)}
+                        />
+                      </div>
+
+                      <div className="w-full flex flex-col gap-2">
+                        <label className="text-foreground text-sm font-medium">Estado</label>
+                        <Input value={obj.state!} onChange={(event) => handleState(event.target.value, i)} />
+                      </div>
                     </div>
 
-                    <div className="w-full flex flex-col gap-2">
-                      <label className="text-foreground text-sm font-medium">Estado</label>
-                      <Input value={obj.state!} onChange={(event) => handleState(event.target.value, i)} />
-                    </div>
+                    {i === americanLicenseIndex - 1 ? (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3"
+                        disabled={obj.licenseNumber === "" || obj.state === "" || isAmericanLicenseFetching}
+                        onClick={handleAddAmericanLicenseInput}
+                      >
+                        {isAmericanLicenseFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3"
+                        onClick={() => handleRemoveAmericanLicenseInput(obj.id)}
+                        disabled={isAmericanLicenseFetching}
+                      >
+                        {isAmericanLicenseFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                      </Button>
+                    )}
                   </div>
-
-                  {i === americanLicenseIndex - 1 ? (
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3"
-                      disabled={obj.licenseNumber === "" || obj.state === ""}
-                      onClick={handleAddAmericanLicenseInput}
-                    >
-                      <Plus />
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3"
-                      onClick={() => handleRemoveAmericanLicenseInput(i)}
-                    >
-                      <Trash />
-                    </Button>
-                  )}
-                </div>
-              ))}
+                ))
+              ) : (
+                <div>Loading...</div>
+              )}
             </div>
           </div>
         )}

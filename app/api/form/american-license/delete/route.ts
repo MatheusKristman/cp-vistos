@@ -1,15 +1,13 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/lib/prisma";
-import { OtherPeopleTraveling } from "@prisma/client";
+import { AmericanLicense } from "@prisma/client";
 
 export async function PUT(req: Request) {
   try {
-    const {
-      otherPeopleTravelingId,
-      otherPeopleTraveling,
-    }: { otherPeopleTravelingId: string; otherPeopleTraveling: OtherPeopleTraveling[] } = await req.json();
+    const { americanLicenseId, americanLicense }: { americanLicenseId: string; americanLicense: AmericanLicense[] } =
+      await req.json();
 
-    if (!otherPeopleTravelingId) {
+    if (!americanLicenseId) {
       return new Response("Dados inválidos", { status: 401 });
     }
 
@@ -30,35 +28,35 @@ export async function PUT(req: Request) {
     }
 
     await Promise.all(
-      otherPeopleTraveling.map(async (item) => {
-        await prisma.otherPeopleTraveling.update({
+      americanLicense.map(async (item) => {
+        await prisma.americanLicense.update({
           where: {
             id: item.id,
           },
           data: {
-            name: item.name,
-            relation: item.relation,
+            licenseNumber: item.licenseNumber,
+            state: item.state,
           },
         });
       })
     );
 
-    await prisma.otherPeopleTraveling.delete({
+    await prisma.americanLicense.delete({
       where: {
-        id: otherPeopleTravelingId,
+        id: americanLicenseId,
         formId: currentForm.id,
       },
     });
 
-    const updatedOtherPeopleTraveling = await prisma.otherPeopleTraveling.findMany({
+    const updatedAmericanLicense = await prisma.americanLicense.findMany({
       where: {
         formId: currentForm.id,
       },
     });
 
-    return Response.json({ updatedOtherPeopleTraveling }, { status: 200 });
+    return Response.json({ updatedAmericanLicense }, { status: 200 });
   } catch (error) {
-    console.error("ERROR_DELETE_OTHER_PEOPLE_TRAVELING", error);
+    console.log("ERROR_ON_AMERICA_LICENSE_DELETE", error);
 
     return new Response("Ocorreu um erro ao deletar o item", { status: 500 });
   }
