@@ -378,6 +378,12 @@ export function PrimaryForm({ currentForm }: Props) {
     setUSALastTravelIndex,
     setAmericanLicense,
     setAmericanLicenseIndex,
+    setFamilyLivingInTheUSA,
+    setFamilyLivingInTheUSAIndex,
+    setPreviousJobs,
+    setPreviousJobsIndex,
+    setCourses,
+    setCoursesIndex,
     setVisitLocationsError,
     setVisitLocationsIndex,
     setVisitLocations,
@@ -884,6 +890,8 @@ export function PrimaryForm({ currentForm }: Props) {
   const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
   const pathname = usePathname();
 
+  console.log(currentForm);
+
   useEffect(() => {
     if (currentForm && currentForm.otherPeopleTraveling) {
       setOtherPeopleTraveling(currentForm.otherPeopleTraveling);
@@ -903,6 +911,21 @@ export function PrimaryForm({ currentForm }: Props) {
     if (currentForm && currentForm.americanLicense.length > 0) {
       setAmericanLicense(currentForm.americanLicense);
       setAmericanLicenseIndex(currentForm.americanLicense.length);
+    }
+
+    if (currentForm && currentForm.familyLivingInTheUSA.length > 0) {
+      setFamilyLivingInTheUSA(currentForm.familyLivingInTheUSA);
+      setFamilyLivingInTheUSAIndex(currentForm.familyLivingInTheUSA.length);
+    }
+
+    if (currentForm && currentForm.previousJobs.length > 0) {
+      setPreviousJobs(currentForm.previousJobs);
+      setPreviousJobsIndex(currentForm.previousJobs.length);
+    }
+
+    if (currentForm && currentForm.courses.length > 0) {
+      setCourses(currentForm.courses);
+      setCoursesIndex(currentForm.courses.length);
     }
   }, [currentForm]);
 
@@ -924,9 +947,11 @@ export function PrimaryForm({ currentForm }: Props) {
         })
         .then((res) => {
           console.log(res.data);
+          toast.success("Progresso salvo!");
         })
         .catch((error) => {
           console.error(error);
+          toast.error(error.response.data);
         })
         .finally(() => {
           setSaving(false);
@@ -1213,7 +1238,7 @@ export function PrimaryForm({ currentForm }: Props) {
       })
       .then((res) => {
         toast.success(res.data);
-        router.push("/perfil/area-do-cliente");
+        router.push("/area-do-cliente");
       })
       .catch((error) => {
         console.error(error);

@@ -189,8 +189,6 @@ model Form {
   partnerCountry                                String?
   unionDate                                     DateTime?
   divorceDate                                   DateTime?
-  retireeConfirmation                           Boolean?
-  houseWifeConfirmation                         Boolean?
   occupation                                    String?
   office                                        String?
   companyOrBossName                             String?

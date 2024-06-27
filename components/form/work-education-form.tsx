@@ -1,18 +1,15 @@
-//TODO: criar função para submit
-//TODO: mandar para o proximo formulário
-//TODO: incluir previousJobs no store
-//TODO: incluir courses no store
+//TODO: adicionar erro no previousJobs e courses
 
 "use client";
 
 import { Control } from "react-hook-form";
-import { Plus, Trash } from "lucide-react";
+import { Loader2, Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Element } from "react-scroll";
 import PhoneInput from "react-phone-number-input";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -25,7 +22,8 @@ import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
-import { Course, PreviousJobs } from "@/constants/stores/useFormStore";
+import axios from "axios";
+import { toast } from "sonner";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -40,6 +38,9 @@ export function WorkEducationForm({
   previousJobConfirmation,
   handleCEPWorkEducationChange,
 }: Props) {
+  const [isPreviousJobsFetching, setIsPreviousJobsFetching] = useState<boolean>(false);
+  const [isCoursesFetching, setIsCoursesFetching] = useState<boolean>(false);
+
   const currentYear = getYear(new Date());
   const {
     previousJobs,
@@ -71,6 +72,8 @@ export function WorkEducationForm({
       | "supervisorName",
     index: number
   ) {
+    if (!previousJobs) return;
+
     const arr = [...previousJobs];
 
     if (property === "companyCep") {
@@ -87,6 +90,8 @@ export function WorkEducationForm({
   }
 
   function handlePreviousJobsChangeDate(value: Date, property: "admissionDate" | "resignationDate", index: number) {
+    if (!previousJobs) return;
+
     const arr = [...previousJobs];
 
     arr[index][property] = value;
@@ -95,34 +100,43 @@ export function WorkEducationForm({
   }
 
   function handleAddPreviousJobsInput() {
-    setPreviousJobsIndex(previousJobsIndex + 1);
+    if (!previousJobs) return;
 
-    const arr = [...previousJobs];
+    setIsPreviousJobsFetching(true);
 
-    arr.push({
-      admissionDate: new Date(),
-      companyAddress: "",
-      companyCep: "",
-      companyCity: "",
-      companyCountry: "",
-      companyName: "",
-      companyState: "",
-      companyTel: "",
-      jobDescription: "",
-      office: "",
-      resignationDate: new Date(),
-      supervisorName: "",
-    });
-
-    setPreviousJobs(arr);
+    axios
+      .post("/api/form/previous-jobs/create", { previousJobs })
+      .then((res) => {
+        setPreviousJobsIndex(previousJobsIndex + 1);
+        setPreviousJobs(res.data.updatedPreviousJobs);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsPreviousJobsFetching(false);
+      });
   }
 
-  function handleRemovePreviousJobsInput(index: number) {
-    setPreviousJobsIndex(previousJobsIndex - 1);
+  function handleRemovePreviousJobsInput(id: string) {
+    if (!previousJobs) return;
 
-    const arr = [...previousJobs].filter((value: PreviousJobs, i: number) => index !== i);
+    setIsPreviousJobsFetching(true);
 
-    setPreviousJobs(arr);
+    axios
+      .put("/api/form/previous-jobs/delete", { previousJobsId: id, previousJobs })
+      .then((res) => {
+        setPreviousJobsIndex(previousJobsIndex - 1);
+        setPreviousJobs(res.data.updatedPreviousJobs);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsPreviousJobsFetching(false);
+      });
   }
 
   function handleCoursesChangeString(
@@ -130,6 +144,8 @@ export function WorkEducationForm({
     property: "address" | "cep" | "city" | "country" | "courseName" | "institutionName" | "state",
     index: number
   ) {
+    if (!courses) return;
+
     const arr = [...courses];
 
     if (property === "cep") {
@@ -146,6 +162,8 @@ export function WorkEducationForm({
   }
 
   function handleCourseChangeDate(value: Date, property: "initialDate" | "finishDate", index: number) {
+    if (!courses) return;
+
     const arr = [...courses];
 
     arr[index][property] = value;
@@ -154,31 +172,45 @@ export function WorkEducationForm({
   }
 
   function handleAddCoursesInput() {
-    setCoursesIndex(coursesIndex + 1);
+    if (!courses) return;
 
-    const arr = [...courses];
+    setIsCoursesFetching(true);
 
-    arr.push({
-      address: "",
-      cep: "",
-      city: "",
-      country: "",
-      courseName: "",
-      finishDate: new Date(),
-      initialDate: new Date(),
-      institutionName: "",
-      state: "",
-    });
-
-    setCourses(arr);
+    axios
+      .post("/api/form/courses/create", {
+        courses,
+      })
+      .then((res) => {
+        setCoursesIndex(coursesIndex + 1);
+        setCourses(res.data.updatedCourses);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsCoursesFetching(false);
+      });
   }
 
-  function handleRemoveCoursesInput(index: number) {
-    setCoursesIndex(coursesIndex - 1);
+  function handleRemoveCoursesInput(id: string) {
+    if (!courses) return;
 
-    const arr = [...courses].filter((value: Course, i: number) => index !== i);
+    setIsCoursesFetching(true);
 
-    setCourses(arr);
+    axios
+      .put("/api/form/courses/delete", { coursesId: id, courses })
+      .then((res) => {
+        setCoursesIndex(coursesIndex - 1);
+        setCourses(res.data.updatedCourses);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsCoursesFetching(false);
+      });
   }
 
   return (
@@ -221,6 +253,7 @@ export function WorkEducationForm({
         />
       </div>
 
+      {/* TODO: ajustar para sumir pelo css para os valores adicionados dinamicamente para o formulário receberem normalmente sem erro */}
       {occupation === "Aposentado" ? (
         <>
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -241,7 +274,7 @@ export function WorkEducationForm({
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value ? (
+                          {field.value !== undefined ? (
                             format(field.value, "PPP", { locale: ptBR })
                           ) : (
                             <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
@@ -818,310 +851,318 @@ export function WorkEducationForm({
 
           {previousJobConfirmation === "Sim" && (
             <div className="w-full flex flex-col gap-8">
-              {previousJobs.map((obj, i) => (
-                <div key={`previous-jobs-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
-                  <div className="w-full flex flex-col gap-4">
-                    <div className="w-full grid grid-cols-1 gap-4">
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyName" className="text-sm text-foreground font-medium">
-                          Nome do empregador ou empresa anterior
-                        </label>
+              {previousJobs ? (
+                previousJobs.map((obj, i) => (
+                  <div key={`previous-jobs-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
+                    <div className="w-full flex flex-col gap-4">
+                      <div className="w-full grid grid-cols-1 gap-4">
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="companyName" className="text-sm text-foreground font-medium">
+                            Nome do empregador ou empresa anterior
+                          </label>
 
-                        <Input
-                          id="companyName"
-                          value={obj.companyName!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "companyName", i)
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyAddress" className="text-sm text-foreground font-medium">
-                          Endereço completo
-                        </label>
-
-                        <Input
-                          id="companyAddress"
-                          value={obj.companyAddress!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "companyAddress", i)
-                          }
-                        />
-                      </div>
-
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyCity" className="text-sm text-foreground font-medium">
-                          Cidade
-                        </label>
-
-                        <Input
-                          id="companyCity"
-                          value={obj.companyCity!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "companyCity", i)
-                          }
-                        />
-                      </div>
-
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyState" className="text-sm text-foreground font-medium">
-                          Estado
-                        </label>
-
-                        <Input
-                          id="companyState"
-                          value={obj.companyState!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "companyState", i)
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyCountry" className="text-sm text-foreground font-medium">
-                          País
-                        </label>
-
-                        <Input
-                          id="companyCountry"
-                          value={obj.companyCountry!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "companyCountry", i)
-                          }
-                        />
-                      </div>
-
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyCep" className="text-sm text-foreground font-medium">
-                          CEP
-                        </label>
-
-                        <Input
-                          maxLength={9}
-                          id="companyCep"
-                          value={obj.companyCep!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "companyCep", i)
-                          }
-                        />
-                      </div>
-
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="companyTel" className="text-sm text-foreground font-medium">
-                          Telefone
-                        </label>
-
-                        <PhoneInput
-                          id="companyTel"
-                          limitMaxLength
-                          smartCaret={false}
-                          placeholder="Insira seu celular..."
-                          defaultCountry="BR"
-                          className={cn(
-                            "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
-                            {
-                              "input-error": false,
+                          <Input
+                            id="companyName"
+                            value={obj.companyName!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "companyName", i)
                             }
-                          )}
-                          name="companyTel"
-                          value={obj.companyTel!}
-                          onChange={(value) => handlePreviousJobsChangeString(value as string, "companyTel", i)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="office" className="text-sm text-foreground font-medium">
-                          Cargo / Função
-                        </label>
-
-                        <Input
-                          id="office"
-                          value={obj.office!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "office", i)
-                          }
-                        />
+                          />
+                        </div>
                       </div>
 
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="supervisorName" className="text-sm text-foreground font-medium">
-                          Nome completo do supervisor
-                        </label>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="companyAddress" className="text-sm text-foreground font-medium">
+                            Endereço completo
+                          </label>
 
-                        <Input
-                          id="supervisorName"
-                          value={obj.supervisorName!}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "supervisorName", i)
-                          }
-                        />
+                          <Input
+                            id="companyAddress"
+                            value={obj.companyAddress!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "companyAddress", i)
+                            }
+                          />
+                        </div>
+
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="companyCity" className="text-sm text-foreground font-medium">
+                            Cidade
+                          </label>
+
+                          <Input
+                            id="companyCity"
+                            value={obj.companyCity!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "companyCity", i)
+                            }
+                          />
+                        </div>
+
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="companyState" className="text-sm text-foreground font-medium">
+                            Estado
+                          </label>
+
+                          <Input
+                            id="companyState"
+                            value={obj.companyState!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "companyState", i)
+                            }
+                          />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="admissionDate" className="text-foreground text-sm font-medium">
-                          Data de admissão
-                        </label>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="companyCountry" className="text-sm text-foreground font-medium">
+                            País
+                          </label>
 
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              id="admissionDate"
-                              variant={"outline"}
-                              className={cn(
-                                "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                                !obj.admissionDate && "text-muted-foreground"
-                              )}
-                            >
-                              {obj.admissionDate ? (
-                                format(obj.admissionDate, "PPP", {
-                                  locale: ptBR,
-                                })
-                              ) : (
-                                <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
-                                  Selecione a data
-                                </span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
+                          <Input
+                            id="companyCountry"
+                            value={obj.companyCountry!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "companyCountry", i)
+                            }
+                          />
+                        </div>
 
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              locale={ptBR}
-                              selected={obj.admissionDate!}
-                              onSelect={(day, selectedDay) =>
-                                handlePreviousJobsChangeDate(selectedDay, "admissionDate", i)
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="companyCep" className="text-sm text-foreground font-medium">
+                            CEP
+                          </label>
+
+                          <Input
+                            maxLength={9}
+                            id="companyCep"
+                            value={obj.companyCep!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "companyCep", i)
+                            }
+                          />
+                        </div>
+
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="companyTel" className="text-sm text-foreground font-medium">
+                            Telefone
+                          </label>
+
+                          <PhoneInput
+                            id="companyTel"
+                            limitMaxLength
+                            smartCaret={false}
+                            placeholder="Insira seu celular..."
+                            defaultCountry="BR"
+                            className={cn(
+                              "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                              {
+                                "input-error": false,
                               }
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                              captionLayout="dropdown"
-                              fromYear={1900}
-                              toYear={currentYear}
-                              classNames={{
-                                day_hidden: "invisible",
-                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                                caption_dropdowns: "flex gap-3",
-                                vhidden: "hidden",
-                                caption_label: "hidden",
-                              }}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                            )}
+                            name="companyTel"
+                            value={obj.companyTel!}
+                            onChange={(value) => handlePreviousJobsChangeString(value as string, "companyTel", i)}
+                          />
+                        </div>
                       </div>
 
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="resignationDate" className="text-foreground text-sm font-medium">
-                          Data de demissão
-                        </label>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="office" className="text-sm text-foreground font-medium">
+                            Cargo / Função
+                          </label>
 
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              id="resignationDate"
-                              variant={"outline"}
-                              className={cn(
-                                "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                                !obj.resignationDate && "text-muted-foreground"
-                              )}
-                            >
-                              {obj.resignationDate ? (
-                                format(obj.resignationDate, "PPP", {
-                                  locale: ptBR,
-                                })
-                              ) : (
-                                <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
-                                  Selecione a data
-                                </span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
+                          <Input
+                            id="office"
+                            value={obj.office!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "office", i)
+                            }
+                          />
+                        </div>
 
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              locale={ptBR}
-                              selected={obj.resignationDate!}
-                              onSelect={(day, selectedDay) =>
-                                handlePreviousJobsChangeDate(selectedDay, "resignationDate", i)
-                              }
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                              captionLayout="dropdown"
-                              fromYear={1900}
-                              toYear={currentYear}
-                              classNames={{
-                                day_hidden: "invisible",
-                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                                caption_dropdowns: "flex gap-3",
-                                vhidden: "hidden",
-                                caption_label: "hidden",
-                              }}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="supervisorName" className="text-sm text-foreground font-medium">
+                            Nome completo do supervisor
+                          </label>
+
+                          <Input
+                            id="supervisorName"
+                            value={obj.supervisorName!}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "supervisorName", i)
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="admissionDate" className="text-foreground text-sm font-medium">
+                            Data de admissão
+                          </label>
+
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                id="admissionDate"
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
+                                  !obj.admissionDate && "text-muted-foreground"
+                                )}
+                              >
+                                {obj.admissionDate ? (
+                                  format(obj.admissionDate, "PPP", {
+                                    locale: ptBR,
+                                  })
+                                ) : (
+                                  <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                                    Selecione a data
+                                  </span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                locale={ptBR}
+                                selected={obj.admissionDate!}
+                                onSelect={(day, selectedDay) =>
+                                  handlePreviousJobsChangeDate(selectedDay, "admissionDate", i)
+                                }
+                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={currentYear}
+                                classNames={{
+                                  day_hidden: "invisible",
+                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  caption_dropdowns: "flex gap-3",
+                                  vhidden: "hidden",
+                                  caption_label: "hidden",
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="resignationDate" className="text-foreground text-sm font-medium">
+                            Data de demissão
+                          </label>
+
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                id="resignationDate"
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
+                                  !obj.resignationDate && "text-muted-foreground"
+                                )}
+                              >
+                                {obj.resignationDate ? (
+                                  format(obj.resignationDate, "PPP", {
+                                    locale: ptBR,
+                                  })
+                                ) : (
+                                  <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                                    Selecione a data
+                                  </span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                locale={ptBR}
+                                selected={obj.resignationDate!}
+                                onSelect={(day, selectedDay) =>
+                                  handlePreviousJobsChangeDate(selectedDay, "resignationDate", i)
+                                }
+                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={currentYear}
+                                classNames={{
+                                  day_hidden: "invisible",
+                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  caption_dropdowns: "flex gap-3",
+                                  vhidden: "hidden",
+                                  caption_label: "hidden",
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </div>
+
+                      <div className="w-full grid grid-cols-1 gap-4">
+                        <div className="w-full flex flex-col gap-2">
+                          <label htmlFor="jobDescription" className="text-sm text-foreground font-medium">
+                            Faça descrição da tarefa exercida
+                          </label>
+
+                          <Textarea
+                            id="jobDescription"
+                            value={obj.jobDescription!}
+                            onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                              handlePreviousJobsChangeString(event.target.value, "jobDescription", i)
+                            }
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    <div className="w-full grid grid-cols-1 gap-4">
-                      <div className="w-full flex flex-col gap-2">
-                        <label htmlFor="jobDescription" className="text-sm text-foreground font-medium">
-                          Faça descrição da tarefa exercida
-                        </label>
+                    {i === previousJobsIndex - 1 ? (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3 w-full sm:w-fit flex items-center gap-2"
+                        disabled={
+                          obj.companyAddress === "" ||
+                          obj.companyCep === "" ||
+                          obj.companyCountry === "" ||
+                          obj.companyName === "" ||
+                          obj.companyState === "" ||
+                          obj.companyTel === "" ||
+                          obj.companyCity === "" ||
+                          isPreviousJobsFetching
+                        }
+                        onClick={handleAddPreviousJobsInput}
+                      >
+                        {isPreviousJobsFetching ? <Loader2 className="animate-spin" /> : <Plus />}
 
-                        <Textarea
-                          id="jobDescription"
-                          value={obj.jobDescription!}
-                          onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                            handlePreviousJobsChangeString(event.target.value, "jobDescription", i)
-                          }
-                        />
-                      </div>
-                    </div>
+                        <span className="hidden sm:block">Adicionar emprego anterior</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3 w-full sm:w-fit flex items-center gap-2"
+                        onClick={() => handleRemovePreviousJobsInput(obj.id)}
+                        disabled={isPreviousJobsFetching}
+                      >
+                        {isPreviousJobsFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+
+                        <span className="hidden sm:block">Remover emprego</span>
+                      </Button>
+                    )}
                   </div>
-
-                  {i === previousJobsIndex - 1 ? (
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3 w-full sm:w-fit flex items-center gap-2"
-                      disabled={
-                        obj.companyAddress === "" ||
-                        obj.companyCep === "" ||
-                        obj.companyCountry === "" ||
-                        obj.companyName === "" ||
-                        obj.companyState === "" ||
-                        obj.companyTel === "" ||
-                        obj.companyCity === ""
-                      }
-                      onClick={handleAddPreviousJobsInput}
-                    >
-                      <Plus />
-                      <span className="hidden sm:block">Adicionar emprego anterior</span>
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3 w-full sm:w-fit flex items-center gap-2"
-                      onClick={() => handleRemovePreviousJobsInput(i)}
-                    >
-                      <Trash />
-                      <span className="hidden sm:block">Remover emprego</span>
-                    </Button>
-                  )}
-                </div>
-              ))}
+                ))
+              ) : (
+                <div>Loading...</div>
+              )}
             </div>
           )}
         </>
@@ -1133,247 +1174,255 @@ export function WorkEducationForm({
 
       <div className="w-full grid grid-cols-1 gap-4">
         <div className="w-full flex flex-col gap-8">
-          {courses.map((obj, i) => (
-            <div key={`courses-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
-              <div className="w-full flex flex-col gap-4">
-                <div className="w-full grid grid-cols-1 gap-4">
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="institutionName" className="text-sm text-foreground font-medium">
-                      Nome completo da instituição*
-                    </label>
+          {courses ? (
+            courses.map((obj, i) => (
+              <div key={`courses-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
+                <div className="w-full flex flex-col gap-4">
+                  <div className="w-full grid grid-cols-1 gap-4">
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="institutionName" className="text-sm text-foreground font-medium">
+                        Nome completo da instituição*
+                      </label>
 
-                    <Input
-                      id="institutionName"
-                      value={obj.institutionName!}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleCoursesChangeString(event.target.value, "institutionName", i)
-                      }
-                    />
+                      <Input
+                        id="institutionName"
+                        value={obj.institutionName!}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          handleCoursesChangeString(event.target.value, "institutionName", i)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="address" className="text-sm text-foreground font-medium">
+                        Endereço completo*
+                      </label>
+
+                      <Input
+                        id="address"
+                        value={obj.address!}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          handleCoursesChangeString(event.target.value, "address", i)
+                        }
+                      />
+                    </div>
+
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="city" className="text-sm text-foreground font-medium">
+                        Cidade*
+                      </label>
+
+                      <Input
+                        id="city"
+                        value={obj.city!}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          handleCoursesChangeString(event.target.value, "city", i)
+                        }
+                      />
+                    </div>
+
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="state" className="text-sm text-foreground font-medium">
+                        Estado*
+                      </label>
+
+                      <Input
+                        id="state"
+                        value={obj.state!}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          handleCoursesChangeString(event.target.value, "state", i)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="country" className="text-sm text-foreground font-medium">
+                        País*
+                      </label>
+
+                      <Input
+                        id="country"
+                        value={obj.country!}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          handleCoursesChangeString(event.target.value, "country", i)
+                        }
+                      />
+                    </div>
+
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="cep" className="text-sm text-foreground font-medium">
+                        CEP*
+                      </label>
+
+                      <Input
+                        maxLength={9}
+                        id="cep"
+                        value={obj.cep!}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          handleCoursesChangeString(event.target.value, "cep", i)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="courseName" className="text-sm text-foreground font-medium">
+                        Nome do curso*
+                      </label>
+
+                      <Input
+                        id="courseName"
+                        value={obj.courseName!}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                          handleCoursesChangeString(event.target.value, "courseName", i)
+                        }
+                      />
+                    </div>
+
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="initialDate" className="text-sm text-foreground font-medium">
+                        Data de início*
+                      </label>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            id="initialDate"
+                            variant={"outline"}
+                            className={cn(
+                              "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
+                              !obj.initialDate && "text-muted-foreground"
+                            )}
+                          >
+                            {obj.initialDate ? (
+                              format(obj.initialDate, "PPP", { locale: ptBR })
+                            ) : (
+                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                                Selecione a data
+                              </span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            locale={ptBR}
+                            selected={obj.initialDate!}
+                            onSelect={(day, selectedDay) => handleCourseChangeDate(selectedDay, "initialDate", i)}
+                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                            captionLayout="dropdown"
+                            fromYear={1900}
+                            toYear={currentYear}
+                            classNames={{
+                              day_hidden: "invisible",
+                              dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                              caption_dropdowns: "flex gap-3",
+                              vhidden: "hidden",
+                              caption_label: "hidden",
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div className="w-full flex flex-col gap-2">
+                      <label htmlFor="finishDate" className="text-sm text-foreground font-medium">
+                        Data de término*
+                      </label>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            id="finishDate"
+                            variant={"outline"}
+                            className={cn(
+                              "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
+                              !obj.finishDate && "text-muted-foreground"
+                            )}
+                          >
+                            {obj.finishDate ? (
+                              format(obj.finishDate, "PPP", { locale: ptBR })
+                            ) : (
+                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                                Selecione a data
+                              </span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            locale={ptBR}
+                            selected={obj.finishDate!}
+                            onSelect={(day, selectedDay) => handleCourseChangeDate(selectedDay, "finishDate", i)}
+                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                            captionLayout="dropdown"
+                            fromYear={1900}
+                            toYear={currentYear}
+                            classNames={{
+                              day_hidden: "invisible",
+                              dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                              caption_dropdowns: "flex gap-3",
+                              vhidden: "hidden",
+                              caption_label: "hidden",
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
                 </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="address" className="text-sm text-foreground font-medium">
-                      Endereço completo*
-                    </label>
+                {i === coursesIndex - 1 ? (
+                  <Button
+                    type="button"
+                    size="xl"
+                    className="px-3 w-full sm:w-fit flex items-center gap-2"
+                    disabled={
+                      obj.address === "" ||
+                      obj.cep === "" ||
+                      obj.city === "" ||
+                      obj.country === "" ||
+                      obj.courseName === "" ||
+                      obj.institutionName === "" ||
+                      obj.state === "" ||
+                      isCoursesFetching
+                    }
+                    onClick={handleAddCoursesInput}
+                  >
+                    {isCoursesFetching ? <Loader2 className="animate-spin" /> : <Plus />}
 
-                    <Input
-                      id="address"
-                      value={obj.address!}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleCoursesChangeString(event.target.value, "address", i)
-                      }
-                    />
-                  </div>
+                    <span className="hidden sm:block">Adicionar ensino</span>
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    size="xl"
+                    className="px-3 w-full sm:w-fit flex items-center gap-2"
+                    onClick={() => handleRemoveCoursesInput(obj.id)}
+                    disabled={isCoursesFetching}
+                  >
+                    {isCoursesFetching ? <Loader2 className="animate-spin" /> : <Trash />}
 
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="city" className="text-sm text-foreground font-medium">
-                      Cidade*
-                    </label>
-
-                    <Input
-                      id="city"
-                      value={obj.city!}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleCoursesChangeString(event.target.value, "city", i)
-                      }
-                    />
-                  </div>
-
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="state" className="text-sm text-foreground font-medium">
-                      Estado*
-                    </label>
-
-                    <Input
-                      id="state"
-                      value={obj.state!}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleCoursesChangeString(event.target.value, "state", i)
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="country" className="text-sm text-foreground font-medium">
-                      País*
-                    </label>
-
-                    <Input
-                      id="country"
-                      value={obj.country!}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleCoursesChangeString(event.target.value, "country", i)
-                      }
-                    />
-                  </div>
-
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="cep" className="text-sm text-foreground font-medium">
-                      CEP*
-                    </label>
-
-                    <Input
-                      maxLength={9}
-                      id="cep"
-                      value={obj.cep!}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleCoursesChangeString(event.target.value, "cep", i)
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="courseName" className="text-sm text-foreground font-medium">
-                      Nome do curso*
-                    </label>
-
-                    <Input
-                      id="courseName"
-                      value={obj.courseName!}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleCoursesChangeString(event.target.value, "courseName", i)
-                      }
-                    />
-                  </div>
-
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="initialDate" className="text-sm text-foreground font-medium">
-                      Data de início*
-                    </label>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          id="initialDate"
-                          variant={"outline"}
-                          className={cn(
-                            "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                            !obj.initialDate && "text-muted-foreground"
-                          )}
-                        >
-                          {obj.initialDate ? (
-                            format(obj.initialDate, "PPP", { locale: ptBR })
-                          ) : (
-                            <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
-                              Selecione a data
-                            </span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          locale={ptBR}
-                          selected={obj.initialDate!}
-                          onSelect={(day, selectedDay) => handleCourseChangeDate(selectedDay, "initialDate", i)}
-                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                          captionLayout="dropdown"
-                          fromYear={1900}
-                          toYear={currentYear}
-                          classNames={{
-                            day_hidden: "invisible",
-                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                            caption_dropdowns: "flex gap-3",
-                            vhidden: "hidden",
-                            caption_label: "hidden",
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-
-                  <div className="w-full flex flex-col gap-2">
-                    <label htmlFor="finishDate" className="text-sm text-foreground font-medium">
-                      Data de término*
-                    </label>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          id="finishDate"
-                          variant={"outline"}
-                          className={cn(
-                            "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                            !obj.finishDate && "text-muted-foreground"
-                          )}
-                        >
-                          {obj.finishDate ? (
-                            format(obj.finishDate, "PPP", { locale: ptBR })
-                          ) : (
-                            <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
-                              Selecione a data
-                            </span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          locale={ptBR}
-                          selected={obj.finishDate!}
-                          onSelect={(day, selectedDay) => handleCourseChangeDate(selectedDay, "finishDate", i)}
-                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                          captionLayout="dropdown"
-                          fromYear={1900}
-                          toYear={currentYear}
-                          classNames={{
-                            day_hidden: "invisible",
-                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                            caption_dropdowns: "flex gap-3",
-                            vhidden: "hidden",
-                            caption_label: "hidden",
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </div>
+                    <span className="hidden sm:block">Remover ensino</span>
+                  </Button>
+                )}
               </div>
-
-              {i === coursesIndex - 1 ? (
-                <Button
-                  type="button"
-                  size="xl"
-                  className="px-3 w-full sm:w-fit flex items-center gap-2"
-                  disabled={
-                    obj.address === "" ||
-                    obj.cep === "" ||
-                    obj.city === "" ||
-                    obj.country === "" ||
-                    obj.courseName === "" ||
-                    obj.institutionName === "" ||
-                    obj.state === ""
-                  }
-                  onClick={handleAddCoursesInput}
-                >
-                  <Plus />
-                  <span className="hidden sm:block">Adicionar ensino</span>
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  size="xl"
-                  className="px-3 w-full sm:w-fit flex items-center gap-2"
-                  onClick={() => handleRemoveCoursesInput(i)}
-                >
-                  <Trash />
-                  <span className="hidden sm:block">Remover ensino</span>
-                </Button>
-              )}
-            </div>
-          ))}
+            ))
+          ) : (
+            <div>Loading...</div>
+          )}
         </div>
       </div>
     </Element>

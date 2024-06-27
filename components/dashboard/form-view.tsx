@@ -7,9 +7,10 @@ import Link from "next/link";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { FullForm } from "@/types";
 
 interface Props {
-  form: Form;
+  form: FullForm;
 }
 
 export function FormView({ form }: Props) {
@@ -573,35 +574,31 @@ export function FormView({ form }: Props) {
               {form.otherPeopleTravelingConfirmation &&
               form.otherPeopleTraveling &&
               form.otherPeopleTraveling.length > 0
-                ? form.otherPeopleTraveling.map((otherPeople, index) => {
-                    const parsedOtherPeople: { name: string; relation: string } = JSON.parse(otherPeople! as string);
-
-                    return (
-                      <div key={index} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                        <div className="w-full flex items-center gap-2">
-                          <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                            <span className="text-white text-lg font-medium">{index + 1}</span>
-                          </div>
-
-                          <span className="text-foreground text-lg font-medium">Pessoa Acompanhante</span>
+                ? form.otherPeopleTraveling.map((otherPeople, index) => (
+                    <div key={otherPeople.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                      <div className="w-full flex items-center gap-2">
+                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                          <span className="text-white text-lg font-medium">{index + 1}</span>
                         </div>
 
-                        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                          <div className="w-full flex flex-col gap-1">
-                            <span className="text-base text-foreground font-medium">Nome completo da outra pessoa</span>
+                        <span className="text-foreground text-lg font-medium">Pessoa Acompanhante</span>
+                      </div>
 
-                            <span className="text-base text-foreground">{parsedOtherPeople.name}</span>
-                          </div>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Nome completo da outra pessoa</span>
 
-                          <div className="w-full flex flex-col gap-1">
-                            <span className="text-base text-foreground font-medium">Relação com a outra pessoa</span>
+                          <span className="text-base text-foreground">{otherPeople.name}</span>
+                        </div>
 
-                            <span className="text-base text-foreground">{parsedOtherPeople.relation}</span>
-                          </div>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Relação com a outra pessoa</span>
+
+                          <span className="text-base text-foreground">{otherPeople.relation}</span>
                         </div>
                       </div>
-                    );
-                  })
+                    </div>
+                  ))
                 : null}
             </div>
 
@@ -635,34 +632,44 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Já foi para os EUA?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.hasBeenOnUSAConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              <div className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                <div className="w-full flex items-center gap-2">
-                  <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">1</span>
-                  </div>
+              {form.hasBeenOnUSAConfirmation && form.USALastTravel && form.USALastTravel.length > 0
+                ? form.USALastTravel.map((lastTravel, index) => (
+                    <div key={lastTravel.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                      <div className="w-full flex items-center gap-2">
+                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                          <span className="text-white text-lg font-medium">{index + 1}</span>
+                        </div>
 
-                  <span className="text-foreground text-lg font-medium">Viagem</span>
-                </div>
+                        <span className="text-foreground text-lg font-medium">Viagem</span>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Data prevista de chegada nos EUA</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">
+                            Data prevista de chegada nos EUA
+                          </span>
 
-                    <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
-                  </div>
+                          <span className="text-base text-foreground">
+                            {lastTravel.arriveDate ? format(lastTravel.arriveDate, "dd/MM/yyyy") : "--/--/----"}
+                          </span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Tempo estimado de permanência nos EUA</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">
+                            Tempo estimado de permanência nos EUA
+                          </span>
 
-                    <span className="text-base text-foreground">2 anos</span>
-                  </div>
-                </div>
-              </div>
+                          <span className="text-base text-foreground">{lastTravel.estimatedTime}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
             </div>
 
             <div className="w-full grid grid-cols-1 gap-6">
@@ -671,53 +678,63 @@ export function FormView({ form }: Props) {
                   Já obteve uma licença americana para dirigir nos EUA?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">
+                  {form.americanLicenseToDriveConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              <div className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
-                <div className="w-full flex items-center gap-2">
-                  <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">1</span>
-                  </div>
+              {form.americanLicenseToDriveConfirmation && form.americanLicense && form.americanLicense.length > 0
+                ? form.americanLicense.map((americanLicense, index) => (
+                    <div key={americanLicense.id} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
+                      <div className="w-full flex items-center gap-2">
+                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                          <span className="text-white text-lg font-medium">{index + 1}</span>
+                        </div>
 
-                  <span className="text-foreground text-lg font-medium">Licença</span>
-                </div>
+                        <span className="text-foreground text-lg font-medium">Licença</span>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Número da licença</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Número da licença</span>
 
-                    <span className="text-base text-foreground">123123123</span>
-                  </div>
+                          <span className="text-base text-foreground">{americanLicense.licenseNumber}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Estado</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Estado</span>
 
-                    <span className="text-base text-foreground">Teste</span>
-                  </div>
-                </div>
-              </div>
+                          <span className="text-base text-foreground">{americanLicense.state}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Já obteve visto nos EUA?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.USAVisaConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Data de Emissão do Visto</span>
 
-                <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.visaIssuingDate ? format(form.visaIssuingDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Número do Visto</span>
 
-                <span className="text-base text-foreground">Não sei o número</span>
+                <span className="text-base text-foreground">
+                  {form.visaNumber && form.visaNumber.length > 0 ? form.visaNumber : "Não sei o número"}
+                </span>
               </div>
             </div>
 
@@ -727,7 +744,7 @@ export function FormView({ form }: Props) {
                   Está solicitando o novo visto do mesmo país ou localização daquele concedido previamente?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.newVisaConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -735,7 +752,9 @@ export function FormView({ form }: Props) {
                   Este país é o mesmo onde está localizada sua residencia principal?
                 </span>
 
-                <span className="text-base text-foreground">Não</span>
+                <span className="text-base text-foreground">
+                  {form.sameCountryResidenceConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
             </div>
 
@@ -745,13 +764,15 @@ export function FormView({ form }: Props) {
                   Está solicitando o mesmo tipo de visto concedido anteriormente?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.sameVisaTypeConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Forneceu digitais dos 10 dedos?</span>
 
-                <span className="text-base text-foreground">Não</span>
+                <span className="text-base text-foreground">
+                  {form.fingerprintsProvidedConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
             </div>
 
@@ -759,7 +780,7 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Já teve um visto perdido ou roubado?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.lostVisaConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -768,13 +789,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  Forem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a,
-                  mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-                  tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti
-                  sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus
-                  enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse ac rhoncus nisl, eu
-                  tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in
-                  elementum tellus.
+                  {form.lostVisaDetails && form.lostVisaDetails.length > 0 ? form.lostVisaDetails : "---"}
                 </span>
               </div>
             </div>
@@ -783,7 +798,7 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Já teve um visto revogado ou cancelado?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.canceledVisaConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -792,13 +807,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  Forem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a,
-                  mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-                  tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti
-                  sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus
-                  enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse ac rhoncus nisl, eu
-                  tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in
-                  elementum tellus.
+                  {form.canceledVisaDetails && form.canceledVisaDetails.length > 0 ? form.canceledVisaDetails : "---"}
                 </span>
               </div>
             </div>
@@ -807,20 +816,14 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Já teve um visto negado?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.deniedVisaConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">O que ocorreu com o visto negado</span>
 
                 <span className="text-base text-foreground">
-                  Forem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a,
-                  mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-                  tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti
-                  sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus
-                  enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse ac rhoncus nisl, eu
-                  tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in
-                  elementum tellus.
+                  {form.deniedVisaDetails && form.deniedVisaDetails.length > 0 ? form.deniedVisaDetails : "---"}
                 </span>
               </div>
             </div>
@@ -829,13 +832,17 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Posto Consular no Brasil</span>
 
-                <span className="text-base text-foreground">posto teste</span>
+                <span className="text-base text-foreground">
+                  {form.consularPost && form.consularPost.length > 0 ? form.consularPost : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Categoria/tipo de visto negado</span>
 
-                <span className="text-base text-foreground">Teste</span>
+                <span className="text-base text-foreground">
+                  {form.deniedVisaType && form.deniedVisaType.length > 0 ? form.deniedVisaType : "---"}
+                </span>
               </div>
             </div>
 
@@ -846,20 +853,19 @@ export function FormView({ form }: Props) {
                   Estados Unidos?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">
+                  {form.immigrationRequestByAnotherPersonConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Motivo</span>
 
                 <span className="text-base text-foreground">
-                  Forem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a,
-                  mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-                  tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti
-                  sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus
-                  enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse ac rhoncus nisl, eu
-                  tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in
-                  elementum tellus.
+                  {form.immigrationRequestByAnotherPersonDetails &&
+                  form.immigrationRequestByAnotherPersonDetails.length > 0
+                    ? form.immigrationRequestByAnotherPersonDetails
+                    : "---"}
                 </span>
               </div>
             </div>
@@ -876,13 +882,21 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Nome completo da pessoa ou organização</span>
 
-                <span className="text-base text-foreground">Nome Teste</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentName && form.organizationOrUSAResidentName.length > 0
+                    ? form.organizationOrUSAResidentName
+                    : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Relação do contato com você</span>
 
-                <span className="text-base text-foreground">Teste</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentRelation && form.organizationOrUSAResidentRelation.length > 0
+                    ? form.organizationOrUSAResidentRelation
+                    : "---"}
+                </span>
               </div>
             </div>
 
@@ -890,13 +904,21 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Endereço completo do contato</span>
 
-                <span className="text-base text-foreground">Rua teste</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentAddress && form.organizationOrUSAResidentAddress.length > 0
+                    ? form.organizationOrUSAResidentAddress
+                    : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">ZIP Code do contato</span>
 
-                <span className="text-base text-foreground">12345</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentZipCode && form.organizationOrUSAResidentZipCode.length > 0
+                    ? form.organizationOrUSAResidentZipCode
+                    : "---"}
+                </span>
               </div>
             </div>
 
@@ -904,19 +926,31 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade do contato</span>
 
-                <span className="text-base text-foreground">Cidade teste</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentCity && form.organizationOrUSAResidentCity.length > 0
+                    ? form.organizationOrUSAResidentCity
+                    : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado do contato</span>
 
-                <span className="text-base text-foreground">Estado teste</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentState && form.organizationOrUSAResidentState.length > 0
+                    ? form.organizationOrUSAResidentState
+                    : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País do contato</span>
 
-                <span className="text-base text-foreground">País teste</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentCountry && form.organizationOrUSAResidentCountry.length > 0
+                    ? form.organizationOrUSAResidentCountry
+                    : "---"}
+                </span>
               </div>
             </div>
 
@@ -924,13 +958,21 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Telefone do contato</span>
 
-                <span className="text-base text-foreground">+55 (11) 91234-1234</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentTel && form.organizationOrUSAResidentTel.length > 0
+                    ? formatPhone(form.organizationOrUSAResidentTel)
+                    : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">E-mail do contato</span>
 
-                <span className="text-base text-foreground">teste3@teste.com</span>
+                <span className="text-base text-foreground">
+                  {form.organizationOrUSAResidentEmail && form.organizationOrUSAResidentEmail.length > 0
+                    ? form.organizationOrUSAResidentEmail
+                    : "---"}
+                </span>
               </div>
             </div>
           </AccordionContent>
@@ -946,13 +988,17 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Nome Completo do Pai</span>
 
-                <span className="text-base text-foreground">Nome Teste</span>
+                <span className="text-base text-foreground">
+                  {form.fatherCompleteName && form.fatherCompleteName.length > 0 ? form.fatherCompleteName : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Data de Nascimento do Pai</span>
 
-                <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.fatherBirthdate ? format(form.fatherBirthdate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
             </div>
 
@@ -960,13 +1006,15 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Pai se encontra nos EUA?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Situação do Pai</span>
 
-                <span className="text-base text-foreground">teste</span>
+                <span className="text-base text-foreground">
+                  {form.fatherUSASituation && form.fatherUSASituation.length > 0 ? form.fatherUSASituation : "---"}
+                </span>
               </div>
             </div>
 
@@ -974,13 +1022,17 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Nome Completo do Mãe</span>
 
-                <span className="text-base text-foreground">Nome Teste</span>
+                <span className="text-base text-foreground">
+                  {form.motherCompleteName && form.motherCompleteName.length > 0 ? form.motherCompleteName : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Data de Nascimento do Mãe</span>
 
-                <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.motherBirthdate ? format(form.motherBirthdate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
             </div>
 
@@ -988,13 +1040,15 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Mãe se encontra nos EUA?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.motherLiveInTheUSAConfirmation ? "Sim" : "Não"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Situação do Mãe</span>
 
-                <span className="text-base text-foreground">teste</span>
+                <span className="text-base text-foreground">
+                  {form.motherUSASituation && form.motherUSASituation.length > 0 ? form.motherUSASituation : "---"}
+                </span>
               </div>
             </div>
 
@@ -1002,40 +1056,48 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Há alguém da família nos EUA?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">
+                  {form.familyLivingInTheUSAConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              <div className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                <div className="w-full flex items-center gap-2">
-                  <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">1</span>
-                  </div>
+              {form.familyLivingInTheUSAConfirmation &&
+              form.familyLivingInTheUSA &&
+              form.familyLivingInTheUSA.length > 0
+                ? form.familyLivingInTheUSA.map((familyLivingInTheUSA, index) => (
+                    <div key={familyLivingInTheUSA.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                      <div className="w-full flex items-center gap-2">
+                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                          <span className="text-white text-lg font-medium">{index + 1}</span>
+                        </div>
 
-                  <span className="text-foreground text-lg font-medium">Familiar</span>
-                </div>
+                        <span className="text-foreground text-lg font-medium">Familiar</span>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Nome do Parente</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Nome do Parente</span>
 
-                    <span className="text-base text-foreground">Nome Teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{familyLivingInTheUSA.name}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Parentesco</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Parentesco</span>
 
-                    <span className="text-base text-foreground">Teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{familyLivingInTheUSA.relation}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Situação do Parente</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Situação do Parente</span>
 
-                    <span className="text-base text-foreground">Teste</span>
-                  </div>
-                </div>
-              </div>
+                          <span className="text-base text-foreground">{familyLivingInTheUSA.situation}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -1044,7 +1106,9 @@ export function FormView({ form }: Props) {
                   Nome Completo (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">Nome teste</span>
+                <span className="text-base text-foreground">
+                  {form.partnerCompleteName && form.partnerCompleteName.length > 0 ? form.partnerCompleteName : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -1052,7 +1116,9 @@ export function FormView({ form }: Props) {
                   Data de Nascimento (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.partnerBirthdate ? format(form.partnerBirthdate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
             </div>
 
@@ -1062,7 +1128,9 @@ export function FormView({ form }: Props) {
                   Nacionalidade (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">Brasil</span>
+                <span className="text-base text-foreground">
+                  {form.partnerNationality && form.partnerNationality.length > 0 ? form.partnerNationality : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -1070,7 +1138,9 @@ export function FormView({ form }: Props) {
                   Cidade de Nascimento (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">São Paulo</span>
+                <span className="text-base text-foreground">
+                  {form.partnerCity && form.partnerCity.length > 0 ? form.partnerCity : "---"}
+                </span>
               </div>
             </div>
 
@@ -1080,7 +1150,9 @@ export function FormView({ form }: Props) {
                   Estado de Nascimento (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">São Paulo</span>
+                <span className="text-base text-foreground">
+                  {form.partnerState && form.partnerState.length > 0 ? form.partnerState : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -1088,7 +1160,9 @@ export function FormView({ form }: Props) {
                   País de Nascimento (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">Brasil</span>
+                <span className="text-base text-foreground">
+                  {form.partnerCountry && form.partnerCountry.length > 0 ? form.partnerCountry : "---"}
+                </span>
               </div>
             </div>
 
@@ -1098,7 +1172,9 @@ export function FormView({ form }: Props) {
                   Data da União (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.unionDate ? format(form.unionDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -1106,7 +1182,9 @@ export function FormView({ form }: Props) {
                   Data da Separação (Cônjuge/Parceiro/Ex-Cônjuge)
                 </span>
 
-                <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.divorceDate ? format(form.divorceDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
             </div>
           </AccordionContent>
@@ -1122,19 +1200,25 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Ocupação atual</span>
 
-                <span className="text-base text-foreground">Outros</span>
+                <span className="text-base text-foreground">
+                  {form.occupation && form.occupation.length > 0 ? form.occupation : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cargo/Função</span>
 
-                <span className="text-base text-foreground">teste</span>
+                <span className="text-base text-foreground">
+                  {form.office && form.office.length > 0 ? form.office : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Nome do empregador ou empresa atual</span>
 
-                <span className="text-base text-foreground">teste</span>
+                <span className="text-base text-foreground">
+                  {form.companyOrBossName && form.companyOrBossName.length > 0 ? form.companyOrBossName : "---"}
+                </span>
               </div>
             </div>
 
@@ -1142,19 +1226,25 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Endereço completo da empresa</span>
 
-                <span className="text-base text-foreground">Rua teste</span>
+                <span className="text-base text-foreground">
+                  {form.companyAddress && form.companyAddress.length > 0 ? form.companyAddress : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade da empresa</span>
 
-                <span className="text-base text-foreground">cidade teste</span>
+                <span className="text-base text-foreground">
+                  {form.companyCity && form.companyCity.length > 0 ? form.companyCity : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado da empresa</span>
 
-                <span className="text-base text-foreground">estado teste</span>
+                <span className="text-base text-foreground">
+                  {form.companyState && form.companyState.length > 0 ? form.companyState : "---"}
+                </span>
               </div>
             </div>
 
@@ -1162,33 +1252,51 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País da empresa</span>
 
-                <span className="text-base text-foreground">país teste</span>
+                <span className="text-base text-foreground">
+                  {form.companyCountry && form.companyCountry.length > 0 ? form.companyCountry : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cep da empresa</span>
 
-                <span className="text-base text-foreground">cep teste</span>
+                <span className="text-base text-foreground">
+                  {form.companyCep && form.companyCep.length > 0 ? form.companyCep : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Telefone da empresa</span>
 
-                <span className="text-base text-foreground">+55 (11) 91234-1234</span>
+                <span className="text-base text-foreground">
+                  {form.companyTel && form.companyTel.length > 0 ? formatPhone(form.companyTel) : "---"}
+                </span>
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Data de admissão</span>
 
-                <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.admissionDate ? format(form.admissionDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
+              </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Data de aposentadoria</span>
+
+                <span className="text-base text-foreground">
+                  {form.retireeDate ? format(form.retireeDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Renda mensal (R$)</span>
 
-                <span className="text-base text-foreground">R$ 3000,00</span>
+                <span className="text-base text-foreground">
+                  {form.monthlySalary && form.monthlySalary.length > 0 ? form.monthlySalary : "---"}
+                </span>
               </div>
             </div>
 
@@ -1200,209 +1308,203 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  Rorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a,
-                  mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-                  tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti
-                  sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus
-                  enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse ac rhoncus nisl, eu
-                  tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in
-                  elementum tellus.
+                  {form.jobDetails && form.jobDetails.length > 0 ? form.jobDetails : "---"}
                 </span>
               </div>
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              <div className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                <div className="w-full flex items-center gap-2">
-                  <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">1</span>
-                  </div>
+              {form.previousJobConfirmation && form.previousJobs && form.previousJobs.length > 0
+                ? form.previousJobs.map((previousJobs, index) => (
+                    <div key={previousJobs.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                      <div className="w-full flex items-center gap-2">
+                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                          <span className="text-white text-lg font-medium">{index + 1}</span>
+                        </div>
 
-                  <span className="text-foreground text-lg font-medium">Emprego Anterior</span>
-                </div>
+                        <span className="text-foreground text-lg font-medium">Emprego Anterior</span>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">
-                      Nome do empregador ou empresa anterior
-                    </span>
+                      <div className="w-full grid grid-cols-1 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">
+                            Nome do empregador ou empresa anterior
+                          </span>
 
-                    <span className="text-base text-foreground">teste</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">{previousJobs.companyName}</span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Endereço completo da empresa</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Endereço completo da empresa</span>
 
-                    <span className="text-base text-foreground">Rua teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{previousJobs.companyAddress}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Cidade da empresa</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Cidade da empresa</span>
 
-                    <span className="text-base text-foreground">cidade teste</span>
-                  </div>
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Estado da empresa</span>
+                          <span className="text-base text-foreground">{previousJobs.companyCity}</span>
+                        </div>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Estado da empresa</span>
 
-                    <span className="text-base text-foreground">estado teste</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">{previousJobs.companyState}</span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">País da empresa</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">País da empresa</span>
 
-                    <span className="text-base text-foreground">país teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{previousJobs.companyCountry}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">CEP da empresa</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">CEP da empresa</span>
 
-                    <span className="text-base text-foreground">03918-000</span>
-                  </div>
+                          <span className="text-base text-foreground">{previousJobs.companyCep}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Telefone da empresa</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Telefone da empresa</span>
 
-                    <span className="text-base text-foreground">+55 (11) 1234-1235</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">
+                            {previousJobs.companyTel ? formatPhone(previousJobs.companyTel) : "---"}
+                          </span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Cargo / Função</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Cargo / Função</span>
 
-                    <span className="text-base text-foreground">teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{previousJobs.office}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Nome completo do supervisor</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Nome completo do supervisor</span>
 
-                    <span className="text-base text-foreground">Nome teste</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">{previousJobs.supervisorName}</span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Data de admissão</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Data de admissão</span>
 
-                    <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
-                  </div>
+                          <span className="text-base text-foreground">
+                            {previousJobs.admissionDate
+                              ? format(previousJobs.admissionDate, "dd/MM/yyyy")
+                              : "--/--/----"}
+                          </span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Data de demissão</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Data de demissão</span>
 
-                    <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">
+                            {previousJobs.resignationDate
+                              ? format(previousJobs.resignationDate, "dd/MM/yyyy")
+                              : "--/--/----"}
+                          </span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Descrição da tarefa exercida</span>
+                      <div className="w-full grid grid-cols-1 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Descrição da tarefa exercida</span>
 
-                    <span className="text-base text-foreground">
-                      Gorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a,
-                      mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut
-                      interdum tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class
-                      aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent
-                      auctor purus luctus enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse
-                      ac rhoncus nisl, eu tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit
-                      amet lacinia. Aliquam in elementum tellus.
-                    </span>
-                  </div>
-                </div>
-              </div>
+                          <span className="text-base text-foreground">{previousJobs.jobDescription}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              <div className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
-                <div className="w-full flex items-center gap-2">
-                  <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">1</span>
-                  </div>
+              {form.courses && form.courses.length > 0
+                ? form.courses.map((course, index) => (
+                    <div className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
+                      <div className="w-full flex items-center gap-2">
+                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                          <span className="text-white text-lg font-medium">{index + 1}</span>
+                        </div>
 
-                  <span className="text-foreground text-lg font-medium">Instituição de Ensino Anterior</span>
-                </div>
+                        <span className="text-foreground text-lg font-medium">Instituição de Ensino Anterior</span>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Nome completo da instituição</span>
+                      <div className="w-full grid grid-cols-1 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Nome completo da instituição</span>
 
-                    <span className="text-base text-foreground">teste</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">{course.institutionName}</span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Endereço completo da instituição</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">
+                            Endereço completo da instituição
+                          </span>
 
-                    <span className="text-base text-foreground">Rua teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{course.address}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Cidade da instituição</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Cidade da instituição</span>
 
-                    <span className="text-base text-foreground">cidade teste</span>
-                  </div>
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Estado da instituição</span>
+                          <span className="text-base text-foreground">{course.city}</span>
+                        </div>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Estado da instituição</span>
 
-                    <span className="text-base text-foreground">estado teste</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">{course.state}</span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">País da instituição</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">País da instituição</span>
 
-                    <span className="text-base text-foreground">país teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{course.country}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">CEP da instituição</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">CEP da instituição</span>
 
-                    <span className="text-base text-foreground">03918-000</span>
-                  </div>
-                </div>
+                          <span className="text-base text-foreground">{course.cep}</span>
+                        </div>
+                      </div>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Nome do curso</span>
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Nome do curso</span>
 
-                    <span className="text-base text-foreground">Nome teste</span>
-                  </div>
+                          <span className="text-base text-foreground">{course.courseName}</span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Data de início</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Data de início</span>
 
-                    <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
-                  </div>
+                          <span className="text-base text-foreground">
+                            {course.initialDate ? format(course.initialDate, "dd/MM/yyyy") : "--/--/----"}
+                          </span>
+                        </div>
 
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Data de término</span>
+                        <div className="w-full flex flex-col gap-1">
+                          <span className="text-base text-foreground font-medium">Data de término</span>
 
-                    <span className="text-base text-foreground">{format(new Date(), "dd/MM/yyyy")}</span>
-                  </div>
-                </div>
-
-                <div className="w-full grid grid-cols-1 gap-6">
-                  <div className="w-full flex flex-col gap-1">
-                    <span className="text-base text-foreground font-medium">Descrição da tarefa exercida</span>
-
-                    <span className="text-base text-foreground">
-                      Gorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a,
-                      mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut
-                      interdum tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class
-                      aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent
-                      auctor purus luctus enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse
-                      ac rhoncus nisl, eu tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit
-                      amet lacinia. Aliquam in elementum tellus.
-                    </span>
-                  </div>
-                </div>
-              </div>
+                          <span className="text-base text-foreground">
+                            {course.finishDate ? format(course.finishDate, "dd/MM/yyyy") : "--/--/----"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                : null}
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -1421,7 +1523,7 @@ export function FormView({ form }: Props) {
                   determinado pelo Departamento de Saúde e Serviços Humanos?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.contagiousDiseaseConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1431,7 +1533,9 @@ export function FormView({ form }: Props) {
                   Possui algum problema físico ou mental que possa interferir em sua segurança ou de outras pessoas?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">
+                  {form.phisicalMentalProblemConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
             </div>
 
@@ -1442,7 +1546,7 @@ export function FormView({ form }: Props) {
                   anistia ou outra ação semelhante?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.crimeConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1450,7 +1554,7 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Já teve problemas com drogas?</span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.drugsProblemConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1461,7 +1565,7 @@ export function FormView({ form }: Props) {
                   controle de substâncias?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.lawViolateConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1472,7 +1576,7 @@ export function FormView({ form }: Props) {
                   ilegalmente ou esteve envolvido em prostituição ou procura de prostitutas nos últimos 10 anos?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.prostitutionConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1482,7 +1586,7 @@ export function FormView({ form }: Props) {
                   Você já esteve envolvido ou pretende se envolver em lavagem de dinheiro?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.moneyLaundryConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1493,7 +1597,7 @@ export function FormView({ form }: Props) {
                   dos Estados Unidos?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.peopleTrafficConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1504,7 +1608,7 @@ export function FormView({ form }: Props) {
                   conspirou para cometer um crime grave de tráfico de pessoas nos Estados Unidos ou fora?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.helpPeopleTrafficConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1516,7 +1620,9 @@ export function FormView({ form }: Props) {
                   das atividades de tráfico?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">
+                  {form.parentPeopleTrafficConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
             </div>
 
@@ -1527,7 +1633,7 @@ export function FormView({ form }: Props) {
                   outra atividade ilegal enquanto estiver nos Estados Unidos?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.spyConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1538,7 +1644,7 @@ export function FormView({ form }: Props) {
                   envolveu em atividades terroristas?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.terrorismConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1549,7 +1655,9 @@ export function FormView({ form }: Props) {
                   organizações terroristas?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">
+                  {form.financialAssistanceConfirmation ? "Sim" : "Não"}
+                </span>
               </div>
             </div>
 
@@ -1559,7 +1667,7 @@ export function FormView({ form }: Props) {
                   Você é membro ou representante de uma organização terrorista?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.terrorismMemberConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1571,7 +1679,7 @@ export function FormView({ form }: Props) {
                   últimos cinco anos?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.parentTerrorismConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1581,7 +1689,7 @@ export function FormView({ form }: Props) {
                   Você já ordenou, incitou, cometeu, ajudou ou de alguma forma participou de genocídio?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.genocideConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1591,7 +1699,7 @@ export function FormView({ form }: Props) {
                   Você já cometeu, ordenou, incitou, ajudou ou participou de alguma forma em tortura?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.tortureConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1602,7 +1710,7 @@ export function FormView({ form }: Props) {
                   assassinatos políticos ou outros atos de violência?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.assassinConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1612,7 +1720,7 @@ export function FormView({ form }: Props) {
                   Você já se envolveu no recrutamento ou na utilização de crianças-soldados?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.childSoldierConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1623,7 +1731,7 @@ export function FormView({ form }: Props) {
                   qualquer momento, violações particularmente graves da liberdade religiosa?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.religionLibertyConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1635,7 +1743,7 @@ export function FormView({ form }: Props) {
                   se submeter à esterilização contra a sua livre vontade?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.abortConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1645,7 +1753,7 @@ export function FormView({ form }: Props) {
                   Você já esteve diretamente envolvido no transplante coercitivo de órgãos humanos ou tecidos corporais?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.coerciveTransplantConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1657,7 +1765,7 @@ export function FormView({ form }: Props) {
                   meios ilegais?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.visaFraudConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1667,7 +1775,7 @@ export function FormView({ form }: Props) {
                   Você já foi removido ou deportado de algum país?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.deportedConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1678,7 +1786,7 @@ export function FormView({ form }: Props) {
                   recebeu a custódia legal de um tribunal dos EUA?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.childCustodyConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1688,7 +1796,7 @@ export function FormView({ form }: Props) {
                   Você votou nos Estados Unidos violando alguma lei ou regulamento?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.lawViolationConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
 
@@ -1698,7 +1806,7 @@ export function FormView({ form }: Props) {
                   Você já renunciou à cidadania dos Estados Unidos para evitar impostos?
                 </span>
 
-                <span className="text-base text-foreground">Sim</span>
+                <span className="text-base text-foreground">{form.avoidTaxConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
           </AccordionContent>

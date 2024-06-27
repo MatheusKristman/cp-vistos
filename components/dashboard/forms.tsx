@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { FormView } from "./form-view";
 import { Plus } from "lucide-react";
-import { Form } from "@prisma/client";
+import { FullForm } from "@/types";
 
 interface Props {
-  forms: Form[] | null;
+  forms: FullForm[] | null;
 }
 
 export function Forms({ forms }: Props) {

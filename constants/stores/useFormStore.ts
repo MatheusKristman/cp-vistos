@@ -48,19 +48,19 @@ interface IUseFormStore {
   setAmericanLicenseError: (error: string) => void;
   noVisaNumber: CheckedState;
   setNoVisaNumber: (value: CheckedState) => void;
-  familyLivingInTheUSA: FamilyLivingInTheUSADetails[];
+  familyLivingInTheUSA: FamilyLivingInTheUSADetails[] | null;
   setFamilyLivingInTheUSA: (value: FamilyLivingInTheUSADetails[]) => void;
   familyLivingInTheUSAIndex: number;
   setFamilyLivingInTheUSAIndex: (index: number) => void;
   familyLivingInTheUSAError: string;
   setFamilyLivingInTheUSAError: (error: string) => void;
-  previousJobs: PreviousJobs[];
+  previousJobs: PreviousJobs[] | null;
   setPreviousJobs: (value: PreviousJobs[]) => void;
   previousJobsIndex: number;
   setPreviousJobsIndex: (index: number) => void;
   previousJobsError: string;
   setPreviousJobsError: (error: string) => void;
-  courses: Course[];
+  courses: Course[] | null;
   setCourses: (value: Course[]) => void;
   coursesIndex: number;
   setCoursesIndex: (index: number) => void;
@@ -147,58 +147,19 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setAmericanLicenseError: (error) => set({ americanLicenseError: error }),
   noVisaNumber: false,
   setNoVisaNumber: (value) => set({ noVisaNumber: value }),
-  familyLivingInTheUSA: [
-    {
-      id: "",
-      formId: "",
-      name: "",
-      relation: "",
-      situation: "",
-    },
-  ],
+  familyLivingInTheUSA: null,
   setFamilyLivingInTheUSA: (value) => set({ familyLivingInTheUSA: value }),
   familyLivingInTheUSAIndex: 1,
   setFamilyLivingInTheUSAIndex: (index) => set({ familyLivingInTheUSAIndex: index }),
   familyLivingInTheUSAError: "",
   setFamilyLivingInTheUSAError: (error) => set({ familyLivingInTheUSAError: error }),
-  previousJobs: [
-    {
-      id: "",
-      formId: "",
-      admissionDate: new Date(),
-      companyAddress: "",
-      companyCep: "",
-      companyCity: "",
-      companyCountry: "",
-      companyName: "",
-      companyState: "",
-      companyTel: "",
-      jobDescription: "",
-      office: "",
-      resignationDate: new Date(),
-      supervisorName: "",
-    },
-  ],
+  previousJobs: null,
   setPreviousJobs: (value) => set({ previousJobs: value }),
   previousJobsIndex: 1,
   setPreviousJobsIndex: (index) => set({ previousJobsIndex: index }),
   previousJobsError: "",
   setPreviousJobsError: (error) => set({ previousJobsError: error }),
-  courses: [
-    {
-      id: "",
-      formId: "",
-      address: "",
-      cep: "",
-      city: "",
-      country: "",
-      courseName: "",
-      finishDate: new Date(),
-      initialDate: new Date(),
-      institutionName: "",
-      state: "",
-    },
-  ],
+  courses: null,
   setCourses: (value) => set({ courses: value }),
   coursesIndex: 1,
   setCoursesIndex: (index) => set({ coursesIndex: index }),

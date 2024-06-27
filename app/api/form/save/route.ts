@@ -1,4 +1,12 @@
-import { Form } from "@prisma/client";
+import {
+  AmericanLicense,
+  Course,
+  FamilyLivingInTheUSADetails,
+  Form,
+  OtherPeopleTraveling,
+  PreviousJobs,
+  USALastTravel,
+} from "@prisma/client";
 import { User } from "next-auth";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
@@ -79,7 +87,7 @@ export async function POST(req: Request) {
       groupMemberConfirmation,
       groupName,
       hasBeenOnUSAConfirmation,
-      USALastTravel,
+      USALastTravel: usaLastTravel,
       americanLicenseToDriveConfirmation,
       americanLicense,
       USAVisaConfirmation,
@@ -210,6 +218,14 @@ export async function POST(req: Request) {
           otherCountryResidentConfirmation: otherCountryResidentConfirmation === "Sim",
           USSocialSecurityNumber,
           USTaxpayerIDNumber,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           address,
           city,
           state,
@@ -228,6 +244,14 @@ export async function POST(req: Request) {
           linkedin,
           instagram,
           othersSocialMedia,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           passportNumber,
           passportCity,
           passportState,
@@ -238,6 +262,14 @@ export async function POST(req: Request) {
           lostPassportNumber,
           lostPassportCountry,
           lostPassportDetails,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           travelItineraryConfirmation: travelItineraryConfirmation === "Sim",
           USAPreviewArriveDate,
           arriveFlyNumber,
@@ -256,14 +288,41 @@ export async function POST(req: Request) {
           payerAddress,
           payerRelation,
           payerEmail,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           otherPeopleTravelingConfirmation: otherPeopleTravelingConfirmation === "Sim",
-          otherPeopleTraveling,
           groupMemberConfirmation: groupMemberConfirmation === "Sim",
           groupName,
+        },
+      });
+
+      await Promise.all(
+        otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
+          await prisma.otherPeopleTraveling.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
-          USALastTravel,
           americanLicenseToDriveConfirmation: americanLicenseToDriveConfirmation === "Sim",
-          americanLicense,
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
           visaNumber: noVisaNumber ? "Não tem" : visaNumber,
@@ -281,6 +340,42 @@ export async function POST(req: Request) {
           deniedVisaType,
           immigrationRequestByAnotherPersonConfirmation: immigrationRequestByAnotherPersonConfirmation === "Sim",
           immigrationRequestByAnotherPersonDetails,
+        },
+      });
+
+      await Promise.all(
+        usaLastTravel.map(async (item: USALastTravel) => {
+          await prisma.USALastTravel.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              arriveDate: item.arriveDate,
+              estimatedTime: item.estimatedTime,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        americanLicense.map(async (item: AmericanLicense) => {
+          await prisma.americanLicense.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              licenseNumber: item.licenseNumber,
+              state: item.state,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           organizationOrUSAResidentName,
           organizationOrUSAResidentRelation,
           organizationOrUSAResidentAddress,
@@ -290,6 +385,14 @@ export async function POST(req: Request) {
           organizationOrUSAResidentCountry,
           organizationOrUSAResidentTel,
           organizationOrUSAResidentEmail,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           fatherCompleteName,
           fatherBirthdate,
           fatherLiveInTheUSAConfirmation: fatherLiveInTheUSAConfirmation === "Sim",
@@ -299,7 +402,6 @@ export async function POST(req: Request) {
           motherLiveInTheUSAConfirmation: motherLiveInTheUSAConfirmation === "Sim",
           motherUSASituation,
           familyLivingInTheUSAConfirmation: familyLivingInTheUSAConfirmation === "Sim",
-          familyLivingInTheUSA,
           partnerCompleteName,
           partnerBirthdate,
           partnerNationality,
@@ -308,6 +410,29 @@ export async function POST(req: Request) {
           partnerCountry,
           unionDate,
           divorceDate,
+        },
+      });
+
+      await Promise.all(
+        familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
+          await prisma.familyLivingInTheUSADetails.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+              situation: item.situation,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           occupation,
           office,
           companyOrBossName,
@@ -322,8 +447,59 @@ export async function POST(req: Request) {
           retireeDate,
           jobDetails,
           previousJobConfirmation: previousJobConfirmation === "Sim",
-          previousJobs,
-          courses,
+        },
+      });
+
+      await Promise.all(
+        previousJobs.map(async (item: PreviousJobs) => {
+          await prisma.previousJobs.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              admissionDate: item.admissionDate,
+              companyAddress: item.companyAddress,
+              companyCep: item.companyCep,
+              companyCity: item.companyCity,
+              companyCountry: item.companyCountry,
+              companyName: item.companyName,
+              companyState: item.companyState,
+              companyTel: item.companyTel,
+              jobDescription: item.jobDescription,
+              office: item.office,
+              resignationDate: item.resignationDate,
+              supervisorName: item.supervisorName,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        courses.map(async (item: Course) => {
+          await prisma.course.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              address: item.address,
+              city: item.city,
+              cep: item.cep,
+              country: item.country,
+              courseName: item.courseName,
+              finishDate: item.finishDate,
+              initialDate: item.initialDate,
+              institutionName: item.institutionName,
+              state: item.state,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: formExists.id,
+        },
+        data: {
           contagiousDiseaseConfirmation: contagiousDiseaseConfirmation === "Sim",
           phisicalMentalProblemConfirmation: phisicalMentalProblemConfirmation === "Sim",
           crimeConfirmation: crimeConfirmation === "Sim",
@@ -375,6 +551,19 @@ export async function POST(req: Request) {
           otherCountryResidentConfirmation: otherCountryResidentConfirmation === "Sim",
           USSocialSecurityNumber,
           USTaxpayerIDNumber,
+          user: {
+            connect: {
+              id: currentUser.id,
+            },
+          },
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           address,
           city,
           state,
@@ -393,6 +582,14 @@ export async function POST(req: Request) {
           linkedin,
           instagram,
           othersSocialMedia,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           passportNumber,
           passportCity,
           passportState,
@@ -403,6 +600,14 @@ export async function POST(req: Request) {
           lostPassportNumber,
           lostPassportCountry,
           lostPassportDetails,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           travelItineraryConfirmation: travelItineraryConfirmation === "Sim",
           USAPreviewArriveDate,
           arriveFlyNumber,
@@ -421,17 +626,45 @@ export async function POST(req: Request) {
           payerAddress,
           payerRelation,
           payerEmail,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           otherPeopleTravelingConfirmation: otherPeopleTravelingConfirmation === "Sim",
-          otherPeopleTraveling,
+
           groupMemberConfirmation: groupMemberConfirmation === "Sim",
           groupName,
+        },
+      });
+
+      await Promise.all(
+        otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
+          await prisma.otherPeopleTraveling.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
-          USALastTravel,
           americanLicenseToDriveConfirmation: americanLicenseToDriveConfirmation === "Sim",
-          americanLicense,
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
-          visaNumber,
+          visaNumber: noVisaNumber ? "Não tem" : visaNumber,
           newVisaConfirmation: newVisaConfirmation === "Sim",
           sameCountryResidenceConfirmation: sameCountryResidenceConfirmation === "Sim",
           sameVisaTypeConfirmation: sameVisaTypeConfirmation === "Sim",
@@ -446,6 +679,42 @@ export async function POST(req: Request) {
           deniedVisaType,
           immigrationRequestByAnotherPersonConfirmation: immigrationRequestByAnotherPersonConfirmation === "Sim",
           immigrationRequestByAnotherPersonDetails,
+        },
+      });
+
+      await Promise.all(
+        usaLastTravel.map(async (item: USALastTravel) => {
+          await prisma.USALastTravel.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              arriveDate: item.arriveDate,
+              estimatedTime: item.estimatedTime,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        americanLicense.map(async (item: AmericanLicense) => {
+          await prisma.americanLicense.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              licenseNumber: item.licenseNumber,
+              state: item.state,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           organizationOrUSAResidentName,
           organizationOrUSAResidentRelation,
           organizationOrUSAResidentAddress,
@@ -455,6 +724,14 @@ export async function POST(req: Request) {
           organizationOrUSAResidentCountry,
           organizationOrUSAResidentTel,
           organizationOrUSAResidentEmail,
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           fatherCompleteName,
           fatherBirthdate,
           fatherLiveInTheUSAConfirmation: fatherLiveInTheUSAConfirmation === "Sim",
@@ -464,7 +741,6 @@ export async function POST(req: Request) {
           motherLiveInTheUSAConfirmation: motherLiveInTheUSAConfirmation === "Sim",
           motherUSASituation,
           familyLivingInTheUSAConfirmation: familyLivingInTheUSAConfirmation === "Sim",
-          familyLivingInTheUSA,
           partnerCompleteName,
           partnerBirthdate,
           partnerNationality,
@@ -473,6 +749,29 @@ export async function POST(req: Request) {
           partnerCountry,
           unionDate,
           divorceDate,
+        },
+      });
+
+      await Promise.all(
+        familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
+          await prisma.familyLivingInTheUSADetails.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+              situation: item.situation,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           occupation,
           office,
           companyOrBossName,
@@ -487,8 +786,59 @@ export async function POST(req: Request) {
           retireeDate,
           jobDetails,
           previousJobConfirmation: previousJobConfirmation === "Sim",
-          previousJobs,
-          courses,
+        },
+      });
+
+      await Promise.all(
+        previousJobs.map(async (item: PreviousJobs) => {
+          await prisma.previousJobs.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              admissionDate: item.admissionDate,
+              companyAddress: item.companyAddress,
+              companyCep: item.companyCep,
+              companyCity: item.companyCity,
+              companyCountry: item.companyCountry,
+              companyName: item.companyName,
+              companyState: item.companyState,
+              companyTel: item.companyTel,
+              jobDescription: item.jobDescription,
+              office: item.office,
+              resignationDate: item.resignationDate,
+              supervisorName: item.supervisorName,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        courses.map(async (item: Course) => {
+          await prisma.course.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              address: item.address,
+              city: item.city,
+              cep: item.cep,
+              country: item.country,
+              courseName: item.courseName,
+              finishDate: item.finishDate,
+              initialDate: item.initialDate,
+              institutionName: item.institutionName,
+              state: item.state,
+            },
+          });
+        })
+      );
+
+      await prisma.form.update({
+        where: {
+          id: updatedForm.id,
+        },
+        data: {
           contagiousDiseaseConfirmation: contagiousDiseaseConfirmation === "Sim",
           phisicalMentalProblemConfirmation: phisicalMentalProblemConfirmation === "Sim",
           crimeConfirmation: crimeConfirmation === "Sim",
@@ -516,11 +866,6 @@ export async function POST(req: Request) {
           childCustodyConfirmation: childCustodyConfirmation === "Sim",
           lawViolationConfirmation: lawViolationConfirmation === "Sim",
           avoidTaxConfirmation: avoidTaxConfirmation === "Sim",
-          user: {
-            connect: {
-              id: currentUser.id,
-            },
-          },
         },
       });
     }

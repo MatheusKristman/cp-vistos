@@ -1,6 +1,7 @@
 //TODO: criar função para submit
 //TODO: mandar para o proximo formulário
 //TODO: ajustar bug de adicionar mais inputs
+//TODO: ajustar logica do myselfValue no payerNameOrCompany
 
 "use client";
 

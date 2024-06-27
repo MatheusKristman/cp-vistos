@@ -1,5 +1,6 @@
 //TODO: criar função para submit
 //TODO: mandar para o proximo formulário
+// TODO: adicionar input de telefone no formulário de telefone
 
 "use client";
 

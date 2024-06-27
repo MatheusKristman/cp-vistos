@@ -1,4 +1,12 @@
-import { Form } from "@prisma/client";
+import {
+  AmericanLicense,
+  Course,
+  FamilyLivingInTheUSADetails,
+  Form,
+  OtherPeopleTraveling,
+  PreviousJobs,
+  USALastTravel,
+} from "@prisma/client";
 import { User } from "next-auth";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
@@ -79,7 +87,7 @@ export async function POST(req: Request) {
       groupMemberConfirmation,
       groupName,
       hasBeenOnUSAConfirmation,
-      USALastTravel,
+      USALastTravel: usaLastTravel,
       americanLicenseToDriveConfirmation,
       americanLicense,
       USAVisaConfirmation,
@@ -246,7 +254,7 @@ export async function POST(req: Request) {
       groupMemberConfirmation,
       groupName,
       hasBeenOnUSAConfirmation,
-      USALastTravel,
+      usaLastTravel,
       americanLicenseToDriveConfirmation,
       americanLicense,
       USAVisaConfirmation,
@@ -540,11 +548,24 @@ export async function POST(req: Request) {
         },
         data: {
           otherPeopleTravelingConfirmation: otherPeopleTravelingConfirmation === "Sim",
-          otherPeopleTraveling,
           groupMemberConfirmation: groupMemberConfirmation === "Sim",
           groupName,
         },
       });
+
+      await Promise.all(
+        otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
+          await prisma.otherPeopleTraveling.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {
@@ -552,9 +573,7 @@ export async function POST(req: Request) {
         },
         data: {
           hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
-          USALastTravel,
           americanLicenseToDriveConfirmation: americanLicenseToDriveConfirmation === "Sim",
-          americanLicense,
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
           visaNumber: noVisaNumber ? "Não tem" : visaNumber,
@@ -574,6 +593,34 @@ export async function POST(req: Request) {
           immigrationRequestByAnotherPersonDetails,
         },
       });
+
+      await Promise.all(
+        usaLastTravel.map(async (item: USALastTravel) => {
+          await prisma.USALastTravel.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              arriveDate: item.arriveDate,
+              estimatedTime: item.estimatedTime,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        americanLicense.map(async (item: AmericanLicense) => {
+          await prisma.americanLicense.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              licenseNumber: item.licenseNumber,
+              state: item.state,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {
@@ -606,7 +653,6 @@ export async function POST(req: Request) {
           motherLiveInTheUSAConfirmation: motherLiveInTheUSAConfirmation === "Sim",
           motherUSASituation,
           familyLivingInTheUSAConfirmation: familyLivingInTheUSAConfirmation === "Sim",
-          familyLivingInTheUSA,
           partnerCompleteName,
           partnerBirthdate,
           partnerNationality,
@@ -617,6 +663,21 @@ export async function POST(req: Request) {
           divorceDate,
         },
       });
+
+      await Promise.all(
+        familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
+          await prisma.familyLivingInTheUSADetails.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+              situation: item.situation,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {
@@ -637,10 +698,53 @@ export async function POST(req: Request) {
           retireeDate,
           jobDetails,
           previousJobConfirmation: previousJobConfirmation === "Sim",
-          previousJobs,
-          courses,
         },
       });
+
+      await Promise.all(
+        previousJobs.map(async (item: PreviousJobs) => {
+          await prisma.previousJobs.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              admissionDate: item.admissionDate,
+              companyAddress: item.companyAddress,
+              companyCep: item.companyCep,
+              companyCity: item.companyCity,
+              companyCountry: item.companyCountry,
+              companyName: item.companyName,
+              companyState: item.companyState,
+              companyTel: item.companyTel,
+              jobDescription: item.jobDescription,
+              office: item.office,
+              resignationDate: item.resignationDate,
+              supervisorName: item.supervisorName,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        courses.map(async (item: Course) => {
+          await prisma.course.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              address: item.address,
+              city: item.city,
+              cep: item.cep,
+              country: item.country,
+              courseName: item.courseName,
+              finishDate: item.finishDate,
+              initialDate: item.initialDate,
+              institutionName: item.institutionName,
+              state: item.state,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {
@@ -782,11 +886,24 @@ export async function POST(req: Request) {
         },
         data: {
           otherPeopleTravelingConfirmation: otherPeopleTravelingConfirmation === "Sim",
-          otherPeopleTraveling,
           groupMemberConfirmation: groupMemberConfirmation === "Sim",
           groupName,
         },
       });
+
+      await Promise.all(
+        otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
+          await prisma.otherPeopleTraveling.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {
@@ -794,9 +911,7 @@ export async function POST(req: Request) {
         },
         data: {
           hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
-          USALastTravel,
           americanLicenseToDriveConfirmation: americanLicenseToDriveConfirmation === "Sim",
-          americanLicense,
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
           visaNumber: noVisaNumber ? "Não tem" : visaNumber,
@@ -816,6 +931,34 @@ export async function POST(req: Request) {
           immigrationRequestByAnotherPersonDetails,
         },
       });
+
+      await Promise.all(
+        usaLastTravel.map(async (item: USALastTravel) => {
+          await prisma.USALastTravel.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              arriveDate: item.arriveDate,
+              estimatedTime: item.estimatedTime,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        americanLicense.map(async (item: AmericanLicense) => {
+          await prisma.americanLicense.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              licenseNumber: item.licenseNumber,
+              state: item.state,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {
@@ -848,7 +991,6 @@ export async function POST(req: Request) {
           motherLiveInTheUSAConfirmation: motherLiveInTheUSAConfirmation === "Sim",
           motherUSASituation,
           familyLivingInTheUSAConfirmation: familyLivingInTheUSAConfirmation === "Sim",
-          familyLivingInTheUSA,
           partnerCompleteName,
           partnerBirthdate,
           partnerNationality,
@@ -859,6 +1001,21 @@ export async function POST(req: Request) {
           divorceDate,
         },
       });
+
+      await Promise.all(
+        familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
+          await prisma.familyLivingInTheUSADetails.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              name: item.name,
+              relation: item.relation,
+              situation: item.situation,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {
@@ -879,10 +1036,53 @@ export async function POST(req: Request) {
           retireeDate,
           jobDetails,
           previousJobConfirmation: previousJobConfirmation === "Sim",
-          previousJobs,
-          courses,
         },
       });
+
+      await Promise.all(
+        previousJobs.map(async (item: PreviousJobs) => {
+          await prisma.previousJobs.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              admissionDate: item.admissionDate,
+              companyAddress: item.companyAddress,
+              companyCep: item.companyCep,
+              companyCity: item.companyCity,
+              companyCountry: item.companyCountry,
+              companyName: item.companyName,
+              companyState: item.companyState,
+              companyTel: item.companyTel,
+              jobDescription: item.jobDescription,
+              office: item.office,
+              resignationDate: item.resignationDate,
+              supervisorName: item.supervisorName,
+            },
+          });
+        })
+      );
+
+      await Promise.all(
+        courses.map(async (item: Course) => {
+          await prisma.course.update({
+            where: {
+              id: item.id,
+            },
+            data: {
+              address: item.address,
+              city: item.city,
+              cep: item.cep,
+              country: item.country,
+              courseName: item.courseName,
+              finishDate: item.finishDate,
+              initialDate: item.initialDate,
+              institutionName: item.institutionName,
+              state: item.state,
+            },
+          });
+        })
+      );
 
       await prisma.form.update({
         where: {

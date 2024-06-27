@@ -1,10 +1,9 @@
-//TODO: criar função para submit
-//TODO: mandar para o proximo formulário
+// TODO: adicionar erro no familyLivingInTheUSA
 
 "use client";
 
 import { Control } from "react-hook-form";
-import { Plus, Trash } from "lucide-react";
+import { Loader2, Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -19,9 +18,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
-import useFormStore, { FamilyLivingInTheUSADetails } from "@/constants/stores/useFormStore";
+import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -36,6 +37,8 @@ export function FamilyForm({
   motherLiveInTheUSAConfirmation,
   familyLivingInTheUSAConfirmation,
 }: Props) {
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const currentYear = getYear(new Date());
   const {
     familyLivingInTheUSA,
@@ -47,6 +50,8 @@ export function FamilyForm({
   } = useFormStore();
 
   function handleFamilyLivingInTheUSAChange(value: string, property: "name" | "relation" | "situation", index: number) {
+    if (!familyLivingInTheUSA) return;
+
     const arr = [...familyLivingInTheUSA];
 
     arr[index][property] = value;
@@ -55,25 +60,43 @@ export function FamilyForm({
   }
 
   function handleAddFamilyLivingInTheUSAInput() {
-    setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex + 1);
+    if (!familyLivingInTheUSA) return;
 
-    const arr = [...familyLivingInTheUSA];
+    setIsFetching(true);
 
-    arr.push({
-      name: "",
-      relation: "",
-      situation: "",
-    });
-
-    setFamilyLivingInTheUSA(arr);
+    axios
+      .post("/api/form/family-living-in-the-usa/create", { familyLivingInTheUSA })
+      .then((res) => {
+        setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex + 1);
+        setFamilyLivingInTheUSA(res.data.updatedFamilyLivingInTheUSA);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
   }
 
-  function handleRemoveFamilyLivingInTheUSAInput(index: number) {
-    setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex - 1);
+  function handleRemoveFamilyLivingInTheUSAInput(id: string) {
+    if (!familyLivingInTheUSA) return;
 
-    let arr = [...familyLivingInTheUSA].filter((value: FamilyLivingInTheUSADetails, i: number) => i !== index);
+    setIsFetching(true);
 
-    setFamilyLivingInTheUSA(arr);
+    axios
+      .put("/api/form/family-living-in-the-usa/delete", { familyLivingInTheUSAId: id, familyLivingInTheUSA })
+      .then((res) => {
+        setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex - 1);
+        setFamilyLivingInTheUSA(res.data.updatedFamilyLivingInTheUSA);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
   }
 
   return (
@@ -378,71 +401,73 @@ export function FamilyForm({
             <span className="text-foreground text-base font-medium">Em caso afirmativo, informe:</span>
 
             <div className="w-full flex flex-col gap-6">
-              {familyLivingInTheUSA.map((obj, index) => (
-                <div
-                  key={`family-living-in-the-usa-${index}`}
-                  className="w-full bg-secondary p-4 flex sm:items-end gap-4"
-                >
-                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] gap-4">
-                    <div className="w-full flex flex-col gap-2 sm:h-fit">
-                      <label className="text-sm text-foreground font-medium">Nome</label>
+              {familyLivingInTheUSA ? (
+                familyLivingInTheUSA.map((obj, index) => (
+                  <div key={obj.id} className="w-full bg-secondary p-4 flex sm:items-end gap-4">
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] gap-4">
+                      <div className="w-full flex flex-col gap-2 sm:h-fit">
+                        <label className="text-sm text-foreground font-medium">Nome</label>
 
-                      <Input
-                        value={obj.name!}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleFamilyLivingInTheUSAChange(event.target.value, "name", index)
-                        }
-                      />
+                        <Input
+                          value={obj.name!}
+                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                            handleFamilyLivingInTheUSAChange(event.target.value, "name", index)
+                          }
+                        />
+                      </div>
+
+                      <div className="w-full flex flex-col gap-2 sm:h-fit">
+                        <label className="text-sm text-foreground font-medium">Parentesco</label>
+
+                        <Input
+                          value={obj.relation!}
+                          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                            handleFamilyLivingInTheUSAChange(event.target.value, "relation", index)
+                          }
+                        />
+                      </div>
+
+                      <div className="w-full flex flex-col gap-2 sm:col-span-2">
+                        <label className="text-sm text-foreground font-medium">
+                          Situação (cidadão americano, residente legal, não imigrante, etc...)
+                        </label>
+
+                        <Textarea
+                          className="resize-none"
+                          value={obj.situation!}
+                          onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                            handleFamilyLivingInTheUSAChange(event.target.value, "situation", index)
+                          }
+                        />
+                      </div>
                     </div>
 
-                    <div className="w-full flex flex-col gap-2 sm:h-fit">
-                      <label className="text-sm text-foreground font-medium">Parentesco</label>
-
-                      <Input
-                        value={obj.relation!}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleFamilyLivingInTheUSAChange(event.target.value, "relation", index)
-                        }
-                      />
-                    </div>
-
-                    <div className="w-full flex flex-col gap-2 sm:col-span-2">
-                      <label className="text-sm text-foreground font-medium">
-                        Situação (cidadão americano, residente legal, não imigrante, etc...)
-                      </label>
-
-                      <Textarea
-                        className="resize-none"
-                        value={obj.situation!}
-                        onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                          handleFamilyLivingInTheUSAChange(event.target.value, "situation", index)
-                        }
-                      />
-                    </div>
+                    {index === familyLivingInTheUSAIndex - 1 ? (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3"
+                        disabled={obj.name === "" || obj.relation === "" || obj.situation === "" || isFetching}
+                        onClick={handleAddFamilyLivingInTheUSAInput}
+                      >
+                        {isFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="xl"
+                        className="px-3"
+                        onClick={() => handleRemoveFamilyLivingInTheUSAInput(obj.id)}
+                        disabled={isFetching}
+                      >
+                        {isFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                      </Button>
+                    )}
                   </div>
-
-                  {index === familyLivingInTheUSAIndex - 1 ? (
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3"
-                      disabled={obj.name === "" || obj.relation === "" || obj.situation === ""}
-                      onClick={handleAddFamilyLivingInTheUSAInput}
-                    >
-                      <Plus />
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3"
-                      onClick={() => handleRemoveFamilyLivingInTheUSAInput(index)}
-                    >
-                      <Trash />
-                    </Button>
-                  )}
-                </div>
-              ))}
+                ))
+              ) : (
+                <div>Loading...</div>
+              )}
             </div>
           </div>
         )}

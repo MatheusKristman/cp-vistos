@@ -13,6 +13,14 @@ export default async function getForms() {
       where: {
         userId: currentUser.id,
       },
+      include: {
+        otherPeopleTraveling: true,
+        USALastTravel: true,
+        americanLicense: true,
+        familyLivingInTheUSA: true,
+        previousJobs: true,
+        courses: true,
+      },
     });
 
     return forms;
