@@ -1,16 +1,3 @@
-// se empresário/autonomo, a descrição ira ficar (Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras informações relacionadas ao seu negócio)
-// se outro, a descrição ira ficar (Descreva quais funções são você exerce no seu trabalho)
-//
-// itens
-// aposentado
-// dona de casa
-// empresario/autonomo
-// funcionário
-
-// TODO: no submit adicionar o valor EU MESMO no payerNameOrCompany caso seja true
-// TODO: ajustar o formulário de previousTravelForm pois a parte de posto consular e categoria fica dentro do form dinâmico acima
-// TODO: ajustar formulário no personal data para alinhar o nome de guerra com o outro nomes
-// TODO: ajustar data de nascimento, pois se for menor de 14 anos, tem alguns campos que serão desativados
 "use client";
 
 import { ArrowRight, Loader2 } from "lucide-react";
@@ -415,7 +402,7 @@ const formSchema = z
     },
   );
 
-export function PrimaryForm({ currentForm }: Props) {
+export function AdditionalForm() {
   const {
     setOtherPeopleTraveling,
     setOtherPeopleTravelingIndex,

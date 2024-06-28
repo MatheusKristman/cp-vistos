@@ -35,7 +35,7 @@ export default async function getPrimaryForm() {
   }
 
   async function handleUSALastTravel(form: FullForm) {
-    return await prisma.USALastTravel.create({
+    return await prisma.uSALastTravel.create({
       data: {
         arriveDate: null,
         estimatedTime: "",
@@ -495,11 +495,21 @@ export default async function getPrimaryForm() {
 
       return {
         ...newForm,
-        otherPeopleTraveling: newOtherPeopleTraveling ? [newOtherPeopleTraveling] : newForm.otherPeopleTraveling,
-        USALastTravel: newUSALastTravel ? [newUSALastTravel] : newForm.USALastTravel,
-        americanLicense: newAmericanLicense ? [newAmericanLicense] : newForm.americanLicense,
-        familyLivingInTheUSA: newFamilyLivingInTheUSA ? [newFamilyLivingInTheUSA] : newForm.familyLivingInTheUSA,
-        previousJobs: newPreviousJobs ? [newPreviousJobs] : newForm.previousJobs,
+        otherPeopleTraveling: newOtherPeopleTraveling
+          ? [newOtherPeopleTraveling]
+          : newForm.otherPeopleTraveling,
+        USALastTravel: newUSALastTravel
+          ? [newUSALastTravel]
+          : newForm.USALastTravel,
+        americanLicense: newAmericanLicense
+          ? [newAmericanLicense]
+          : newForm.americanLicense,
+        familyLivingInTheUSA: newFamilyLivingInTheUSA
+          ? [newFamilyLivingInTheUSA]
+          : newForm.familyLivingInTheUSA,
+        previousJobs: newPreviousJobs
+          ? [newPreviousJobs]
+          : newForm.previousJobs,
         courses: newCourses ? [newCourses] : newForm.courses,
       };
     } else {
@@ -534,10 +544,16 @@ export default async function getPrimaryForm() {
 
     return {
       ...form,
-      otherPeopleTraveling: newOtherPeopleTraveling ? [newOtherPeopleTraveling] : form.otherPeopleTraveling,
+      otherPeopleTraveling: newOtherPeopleTraveling
+        ? [newOtherPeopleTraveling]
+        : form.otherPeopleTraveling,
       USALastTravel: newUSALastTravel ? [newUSALastTravel] : form.USALastTravel,
-      americanLicense: newAmericanLicense ? [newAmericanLicense] : form.americanLicense,
-      familyLivingInTheUSA: newFamilyLivingInTheUSA ? [newFamilyLivingInTheUSA] : form.familyLivingInTheUSA,
+      americanLicense: newAmericanLicense
+        ? [newAmericanLicense]
+        : form.americanLicense,
+      familyLivingInTheUSA: newFamilyLivingInTheUSA
+        ? [newFamilyLivingInTheUSA]
+        : form.familyLivingInTheUSA,
       previousJobs: newPreviousJobs ? [newPreviousJobs] : form.previousJobs,
       courses: newCourses ? [newCourses] : form.courses,
     };
