@@ -1,5 +1,3 @@
-// TODO: criar função para scrollar até a parte da pagina que está o elemento e deixar marcado de acordo com o scroll
-
 "use client";
 
 import { usePathname } from "next/navigation";

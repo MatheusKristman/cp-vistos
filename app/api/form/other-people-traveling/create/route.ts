@@ -4,21 +4,16 @@ import { OtherPeopleTraveling } from "@prisma/client";
 
 export async function POST(req: Request) {
   try {
-    const { otherPeopleTraveling }: { otherPeopleTraveling: OtherPeopleTraveling[] } = await req.json();
+    const { otherPeopleTraveling, formId }: { otherPeopleTraveling: OtherPeopleTraveling[]; formId: string } =
+      await req.json();
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
-      return new Response("Dados inválidos", { status: 404 });
+    if (!formId) {
+      return new Response("Dados inválidos", { status: 401 });
     }
 
     await Promise.all(
@@ -41,7 +36,7 @@ export async function POST(req: Request) {
         relation: "",
         form: {
           connect: {
-            id: currentForm.id,
+            id: formId,
           },
         },
       },
@@ -49,7 +44,7 @@ export async function POST(req: Request) {
 
     const updatedOtherPeopleTraveling = await prisma.otherPeopleTraveling.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

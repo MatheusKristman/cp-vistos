@@ -1,7 +1,9 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { FullForm } from "@/types";
@@ -31,20 +33,28 @@ export function Forms({ forms }: Props) {
 
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("isSameAddress", isSameAddress);
-    console.log("isSameTravelDate", isSameTravelDate);
-  }, [isSameAddress, isSameTravelDate]);
-
   if (!forms) {
     return <div>Loading...</div>;
   }
 
   function handleNext() {
-    //TODO: adicionar rota da api para criar o formulário e depois redirecionar para o formulário adicionar com o id de parametro, ao ser redirecionado, usar o id para pegar as informações do formulário para preencher o que precisar ser preenchido
-    router.push(
-      `/formulario-adicional?isSameAddress=${isSameAddress === "sim"}&isSameTravelDate=${isSameTravelDate === "sim"}`,
-    );
+    setIsLoading(true);
+
+    axios
+      .post("/api/additional-form/create", {
+        isSameAddress: isSameAddress === "sim",
+        isSameTravelDate: isSameTravelDate === "sim",
+      })
+      .then((res) => {
+        router.push(`/formulario-adicional/${res.data.formId}`);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   return (
@@ -55,9 +65,13 @@ export function Forms({ forms }: Props) {
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button asChild>
+          <Button disabled={isLoading} asChild>
             <div className="w-full flex justify-center items-center gap-2 !bg-green-500 border-0 h-24 hover:!bg-green-500/70 cursor-pointer">
-              <Plus color="#FFF" />
+              {isLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Plus color="#FFF" />
+              )}
 
               <span className="text-white text-lg font-medium">
                 Adicionar Novo Formulário
@@ -125,8 +139,13 @@ export function Forms({ forms }: Props) {
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleNext}>
+            <AlertDialogCancel disabled={isLoading}>Cancelar</AlertDialogCancel>
+
+            <AlertDialogAction
+              disabled={isLoading}
+              onClick={handleNext}
+              className="flex items-center gap-2"
+            >
               Prosseguir
             </AlertDialogAction>
           </AlertDialogFooter>

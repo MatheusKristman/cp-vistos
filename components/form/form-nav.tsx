@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ListChecks, Save, X } from "lucide-react";
+import { Check, ListChecks, Loader2, Save, X } from "lucide-react";
 import { Link as LinkScroll } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { usePathname } from "next/navigation";
 export function FormNav() {
   const {
     setSaving,
+    isSaving,
     personalDataComplete,
     contactAndAddressComplete,
     passportComplete,
@@ -451,8 +452,13 @@ export function FormNav() {
         </ul>
 
         {pathname !== "/formulario/editar" ? (
-          <Button onClick={handleSave} size="lg" className="w-full flex items-center gap-2 text-base">
-            <Save />
+          <Button
+            disabled={isSaving}
+            onClick={handleSave}
+            size="lg"
+            className="w-full flex items-center gap-2 text-base"
+          >
+            {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
             Salvar
           </Button>
         ) : null}

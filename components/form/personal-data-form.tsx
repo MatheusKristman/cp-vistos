@@ -48,7 +48,6 @@ export function PersonalDataForm({
 
     const values = [...otherNames];
     values[values.length] = "";
-    console.log(values);
     setOtherNames(values);
   }
 
@@ -57,8 +56,6 @@ export function PersonalDataForm({
 
     const values = [...otherNames].filter((value: string, i: number) => i !== index);
     setOtherNames(values);
-
-    console.log(values);
   }
 
   return (

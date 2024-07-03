@@ -10,11 +10,21 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Element } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
@@ -23,6 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChangeEvent, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -40,6 +51,7 @@ export function FamilyForm({
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const currentYear = getYear(new Date());
+  const params = useParams();
   const {
     familyLivingInTheUSA,
     familyLivingInTheUSAIndex,
@@ -49,7 +61,11 @@ export function FamilyForm({
     setFamilyLivingInTheUSAIndex,
   } = useFormStore();
 
-  function handleFamilyLivingInTheUSAChange(value: string, property: "name" | "relation" | "situation", index: number) {
+  function handleFamilyLivingInTheUSAChange(
+    value: string,
+    property: "name" | "relation" | "situation",
+    index: number,
+  ) {
     if (!familyLivingInTheUSA) return;
 
     const arr = [...familyLivingInTheUSA];
@@ -65,7 +81,10 @@ export function FamilyForm({
     setIsFetching(true);
 
     axios
-      .post("/api/form/family-living-in-the-usa/create", { familyLivingInTheUSA })
+      .post("/api/form/family-living-in-the-usa/create", {
+        familyLivingInTheUSA,
+        formId: params.formId,
+      })
       .then((res) => {
         setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex + 1);
         setFamilyLivingInTheUSA(res.data.updatedFamilyLivingInTheUSA);
@@ -85,7 +104,11 @@ export function FamilyForm({
     setIsFetching(true);
 
     axios
-      .put("/api/form/family-living-in-the-usa/delete", { familyLivingInTheUSAId: id, familyLivingInTheUSA })
+      .put("/api/form/family-living-in-the-usa/delete", {
+        familyLivingInTheUSAId: id,
+        familyLivingInTheUSA,
+        formId: params.formId,
+      })
       .then((res) => {
         setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex - 1);
         setFamilyLivingInTheUSA(res.data.updatedFamilyLivingInTheUSA);
@@ -105,7 +128,9 @@ export function FamilyForm({
         Informações da Família
       </h2>
 
-      <span className="text-foreground text-base font-medium">Inserir todos os dados, mesmo se falecidos</span>
+      <span className="text-foreground text-base font-medium">
+        Inserir todos os dados, mesmo se falecidos
+      </span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -113,7 +138,9 @@ export function FamilyForm({
           name="fatherCompleteName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Nome completo do pai*</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Nome completo do pai*
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -129,7 +156,9 @@ export function FamilyForm({
           name="fatherBirthdate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Data de nascimento do pai*</FormLabel>
+              <FormLabel className="text-foreground">
+                Data de nascimento do pai*
+              </FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -138,7 +167,7 @@ export function FamilyForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
@@ -159,13 +188,16 @@ export function FamilyForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown:
+                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -187,10 +219,16 @@ export function FamilyForm({
           name="fatherLiveInTheUSAConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Seu pai se encontra nos EUA?</FormLabel>
+              <FormLabel className="text-foreground">
+                Seu pai se encontra nos EUA?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -241,7 +279,9 @@ export function FamilyForm({
           name="motherCompleteName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Nome completo da mãe*</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Nome completo da mãe*
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -257,7 +297,9 @@ export function FamilyForm({
           name="motherBirthdate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Data de nascimento da mãe*</FormLabel>
+              <FormLabel className="text-foreground">
+                Data de nascimento da mãe*
+              </FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -266,7 +308,7 @@ export function FamilyForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
@@ -287,13 +329,16 @@ export function FamilyForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown:
+                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -315,10 +360,16 @@ export function FamilyForm({
           name="motherLiveInTheUSAConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Sua mãe se encontra nos EUA?</FormLabel>
+              <FormLabel className="text-foreground">
+                Sua mãe se encontra nos EUA?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -369,10 +420,16 @@ export function FamilyForm({
           name="familyLivingInTheUSAConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Excluindo os pais, há alguém da sua família nos EUA?</FormLabel>
+              <FormLabel className="text-foreground">
+                Excluindo os pais, há alguém da sua família nos EUA?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -398,45 +455,67 @@ export function FamilyForm({
 
         {familyLivingInTheUSAConfirmation === "Sim" && (
           <div className="w-full  flex flex-col gap-8 mt-6">
-            <span className="text-foreground text-base font-medium">Em caso afirmativo, informe:</span>
+            <span className="text-foreground text-base font-medium">
+              Em caso afirmativo, informe:
+            </span>
 
             <div className="w-full flex flex-col gap-6">
               {familyLivingInTheUSA ? (
                 familyLivingInTheUSA.map((obj, index) => (
-                  <div key={obj.id} className="w-full bg-secondary p-4 flex sm:items-end gap-4">
+                  <div
+                    key={obj.id}
+                    className="w-full bg-secondary p-4 flex sm:items-end gap-4"
+                  >
                     <div className="w-full grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] gap-4">
                       <div className="w-full flex flex-col gap-2 sm:h-fit">
-                        <label className="text-sm text-foreground font-medium">Nome</label>
+                        <label className="text-sm text-foreground font-medium">
+                          Nome
+                        </label>
 
                         <Input
                           value={obj.name!}
                           onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handleFamilyLivingInTheUSAChange(event.target.value, "name", index)
+                            handleFamilyLivingInTheUSAChange(
+                              event.target.value,
+                              "name",
+                              index,
+                            )
                           }
                         />
                       </div>
 
                       <div className="w-full flex flex-col gap-2 sm:h-fit">
-                        <label className="text-sm text-foreground font-medium">Parentesco</label>
+                        <label className="text-sm text-foreground font-medium">
+                          Parentesco
+                        </label>
 
                         <Input
                           value={obj.relation!}
                           onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            handleFamilyLivingInTheUSAChange(event.target.value, "relation", index)
+                            handleFamilyLivingInTheUSAChange(
+                              event.target.value,
+                              "relation",
+                              index,
+                            )
                           }
                         />
                       </div>
 
                       <div className="w-full flex flex-col gap-2 sm:col-span-2">
                         <label className="text-sm text-foreground font-medium">
-                          Situação (cidadão americano, residente legal, não imigrante, etc...)
+                          Situação (cidadão americano, residente legal, não
+                          imigrante, etc...)
                         </label>
 
                         <Textarea
                           className="resize-none"
                           value={obj.situation!}
                           onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                            handleFamilyLivingInTheUSAChange(event.target.value, "situation", index)
+                            handleFamilyLivingInTheUSAChange(
+                              event.target.value,
+                              "situation",
+                              index,
+                            )
                           }
                         />
                       </div>
@@ -447,20 +526,35 @@ export function FamilyForm({
                         type="button"
                         size="xl"
                         className="px-3"
-                        disabled={obj.name === "" || obj.relation === "" || obj.situation === "" || isFetching}
+                        disabled={
+                          obj.name === "" ||
+                          obj.relation === "" ||
+                          obj.situation === "" ||
+                          isFetching
+                        }
                         onClick={handleAddFamilyLivingInTheUSAInput}
                       >
-                        {isFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                        {isFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Plus />
+                        )}
                       </Button>
                     ) : (
                       <Button
                         type="button"
                         size="xl"
                         className="px-3"
-                        onClick={() => handleRemoveFamilyLivingInTheUSAInput(obj.id)}
+                        onClick={() =>
+                          handleRemoveFamilyLivingInTheUSAInput(obj.id)
+                        }
                         disabled={isFetching}
                       >
-                        {isFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                        {isFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Trash />
+                        )}
                       </Button>
                     )}
                   </div>
@@ -469,11 +563,19 @@ export function FamilyForm({
                 <div>Loading...</div>
               )}
             </div>
+
+            {familyLivingInTheUSAError.length > 0 && (
+              <span className="text-sm text-red-500">
+                {familyLivingInTheUSAError}
+              </span>
+            )}
           </div>
         )}
       </div>
 
-      <span className="text-foreground text-base font-medium">Dados do cônjuge, parceiro doméstico ou ex-cônjuge</span>
+      <span className="text-foreground text-base font-medium">
+        Dados do cônjuge, parceiro doméstico ou ex-cônjuge
+      </span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <FormField
@@ -481,7 +583,9 @@ export function FamilyForm({
           name="partnerCompleteName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">Nome completo</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Nome completo
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -497,7 +601,9 @@ export function FamilyForm({
           name="partnerBirthdate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">Data de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Data de nascimento
+              </FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -506,7 +612,7 @@ export function FamilyForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
@@ -527,13 +633,16 @@ export function FamilyForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown:
+                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -553,7 +662,9 @@ export function FamilyForm({
           name="partnerNationality"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">Nacionalidade</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Nacionalidade
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -571,7 +682,9 @@ export function FamilyForm({
           name="partnerCity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">Cidade de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Cidade de nascimento
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -587,7 +700,9 @@ export function FamilyForm({
           name="partnerState"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">Estado de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Estado de nascimento
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -603,7 +718,9 @@ export function FamilyForm({
           name="partnerCountry"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">País de nascimento</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                País de nascimento
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -615,7 +732,9 @@ export function FamilyForm({
         />
       </div>
 
-      <span className="text-foreground text-base font-medium">Se separado(a) ou divorciado(a)</span>
+      <span className="text-foreground text-base font-medium">
+        Se separado(a) ou divorciado(a)
+      </span>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
@@ -623,7 +742,9 @@ export function FamilyForm({
           name="unionDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">Data da união</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Data da união
+              </FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -632,7 +753,7 @@ export function FamilyForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
@@ -653,13 +774,16 @@ export function FamilyForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown:
+                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -679,7 +803,9 @@ export function FamilyForm({
           name="divorceDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground text-sm">Data da separação</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Data da separação
+              </FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -688,7 +814,7 @@ export function FamilyForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
@@ -709,13 +835,16 @@ export function FamilyForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown:
+                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",

@@ -7,7 +7,9 @@ export async function PUT(req: Request) {
     const {
       familyLivingInTheUSAId,
       familyLivingInTheUSA,
-    }: { familyLivingInTheUSAId: string; familyLivingInTheUSA: FamilyLivingInTheUSADetails[] } = await req.json();
+      formId,
+    }: { familyLivingInTheUSAId: string; familyLivingInTheUSA: FamilyLivingInTheUSADetails[]; formId: string } =
+      await req.json();
 
     if (!familyLivingInTheUSAId) {
       return new Response("Dados inválidos", { status: 401 });
@@ -19,13 +21,7 @@ export async function PUT(req: Request) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Formulário não localizado", { status: 404 });
     }
 
@@ -47,13 +43,13 @@ export async function PUT(req: Request) {
     await prisma.familyLivingInTheUSADetails.delete({
       where: {
         id: familyLivingInTheUSAId,
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 
     const updatedFamilyLivingInTheUSA = await prisma.familyLivingInTheUSADetails.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

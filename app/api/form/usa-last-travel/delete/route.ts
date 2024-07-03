@@ -4,8 +4,11 @@ import { USALastTravel } from "@prisma/client";
 
 export async function PUT(req: Request) {
   try {
-    const { usaLastTravelId, usaLastTravel }: { usaLastTravelId: string; usaLastTravel: USALastTravel[] } =
-      await req.json();
+    const {
+      usaLastTravelId,
+      usaLastTravel,
+      formId,
+    }: { usaLastTravelId: string; usaLastTravel: USALastTravel[]; formId: string } = await req.json();
 
     if (!usaLastTravelId) {
       return new Response("Dados inválidos", { status: 401 });
@@ -17,19 +20,13 @@ export async function PUT(req: Request) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Formulário não localizado", { status: 404 });
     }
 
     await Promise.all(
       usaLastTravel.map(async (item) => {
-        await prisma.USALastTravel.update({
+        await prisma.uSALastTravel.update({
           where: {
             id: item.id,
           },
@@ -41,16 +38,16 @@ export async function PUT(req: Request) {
       })
     );
 
-    await prisma.USALastTravel.delete({
+    await prisma.uSALastTravel.delete({
       where: {
         id: usaLastTravelId,
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 
-    const updatedUSALastTravel = await prisma.USALastTravel.findMany({
+    const updatedUSALastTravel = await prisma.uSALastTravel.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

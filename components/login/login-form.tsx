@@ -57,7 +57,6 @@ export function LoginForm() {
 
       if (!response?.error) {
         toast.success("Logado com sucesso!");
-        console.log(session);
 
         // TODO: verificar o tipo do usuário, se for admin, redirecionar para o perfil, senão, verificar primeiro se já tem formulário, se não tiver redirecionar para o cadastro do formulário, senão redireciona para o perfil
         router.push("/verificando-usuario");

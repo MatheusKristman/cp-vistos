@@ -58,10 +58,6 @@ export function TestimonialsCarousel() {
     });
   }, [api]);
 
-  useEffect(() => {
-    console.log(Array.from({ length: count }, (v, k) => k));
-  }, [count]);
-
   return (
     <div className="w-full flex flex-col border-y sm:border-l border-secondary sm:h-full">
       <Carousel setApi={setApi} className="h-full">

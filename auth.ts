@@ -24,15 +24,8 @@ export const {
       authorize: async (credentials) => {
         let user = null;
 
-        console.log(credentials);
-
         // logic to verify if user exists
-        user = await getUserFromLogin(
-          credentials.email as string,
-          credentials.password as string
-        );
-
-        console.log(user);
+        user = await getUserFromLogin(credentials.email as string, credentials.password as string);
 
         if (!user) {
           // No user found, so this is their first attempt to login

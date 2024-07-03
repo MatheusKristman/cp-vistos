@@ -4,7 +4,11 @@ import { PreviousJobs } from "@prisma/client";
 
 export async function PUT(req: Request) {
   try {
-    const { previousJobsId, previousJobs }: { previousJobsId: string; previousJobs: PreviousJobs[] } = await req.json();
+    const {
+      previousJobsId,
+      previousJobs,
+      formId,
+    }: { previousJobsId: string; previousJobs: PreviousJobs[]; formId: string } = await req.json();
 
     if (!previousJobsId) {
       return new Response("Dados inválidos", { status: 401 });
@@ -16,13 +20,7 @@ export async function PUT(req: Request) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Formulário não localizado", { status: 404 });
     }
 
@@ -53,13 +51,13 @@ export async function PUT(req: Request) {
     await prisma.previousJobs.delete({
       where: {
         id: previousJobsId,
-        formId: currentForm.id,
+        formId,
       },
     });
 
     const updatedPreviousJobs = await prisma.previousJobs.findMany({
       where: {
-        formId: currentForm.id,
+        formId,
       },
     });
 

@@ -4,7 +4,7 @@ import { Course } from "@prisma/client";
 
 export async function PUT(req: Request) {
   try {
-    const { coursesId, courses }: { coursesId: string; courses: Course[] } = await req.json();
+    const { coursesId, courses, formId }: { coursesId: string; courses: Course[]; formId: string } = await req.json();
 
     if (!coursesId) {
       return new Response("Dados inválidos", { status: 401 });
@@ -16,13 +16,7 @@ export async function PUT(req: Request) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Formulário não localizado", { status: 404 });
     }
 
@@ -50,13 +44,13 @@ export async function PUT(req: Request) {
     await prisma.course.delete({
       where: {
         id: coursesId,
-        formId: currentForm.id,
+        formId,
       },
     });
 
     const updatedCourses = await prisma.course.findMany({
       where: {
-        formId: currentForm.id,
+        formId,
       },
     });
 

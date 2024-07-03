@@ -7,7 +7,9 @@ export async function PUT(req: Request) {
     const {
       otherPeopleTravelingId,
       otherPeopleTraveling,
-    }: { otherPeopleTravelingId: string; otherPeopleTraveling: OtherPeopleTraveling[] } = await req.json();
+      formId,
+    }: { otherPeopleTravelingId: string; otherPeopleTraveling: OtherPeopleTraveling[]; formId: string } =
+      await req.json();
 
     if (!otherPeopleTravelingId) {
       return new Response("Dados inválidos", { status: 401 });
@@ -19,13 +21,7 @@ export async function PUT(req: Request) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Formulário não localizado", { status: 404 });
     }
 
@@ -46,13 +42,13 @@ export async function PUT(req: Request) {
     await prisma.otherPeopleTraveling.delete({
       where: {
         id: otherPeopleTravelingId,
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 
     const updatedOtherPeopleTraveling = await prisma.otherPeopleTraveling.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

@@ -1,4 +1,5 @@
 // TODO: criar função de erro no USALastTravel e AmericanLicense
+// TODO: ajustar data exata de emissão quando esta selecionado não no lado de visto
 
 "use client";
 
@@ -7,17 +8,28 @@ import { Loader2, Plus, Trash } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 import { Element } from "react-scroll";
 import axios from "axios";
 import { toast } from "sonner";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
@@ -45,10 +57,13 @@ export function PreviousTravelForm({
   deniedVisaConfirmation,
   immigrationRequestByAnotherPersonConfirmation,
 }: Props) {
-  const [isUSALastTravelFetching, setIsUSALastTravelFetching] = useState<boolean>(false);
-  const [isAmericanLicenseFetching, setIsAmericanLicenseFetching] = useState<boolean>(false);
+  const [isUSALastTravelFetching, setIsUSALastTravelFetching] =
+    useState<boolean>(false);
+  const [isAmericanLicenseFetching, setIsAmericanLicenseFetching] =
+    useState<boolean>(false);
 
   const currentYear = getYear(new Date());
+  const params = useParams();
   const {
     USALastTravel,
     setUSALastTravel,
@@ -90,11 +105,13 @@ export function PreviousTravelForm({
     setIsUSALastTravelFetching(true);
 
     axios
-      .post("/api/form/usa-last-travel/create", { usaLastTravel: USALastTravel })
+      .post("/api/form/usa-last-travel/create", {
+        usaLastTravel: USALastTravel,
+        formId: params.formId,
+      })
       .then((res) => {
         setUSALastTravelIndex(USALastTravelIndex + 1);
         setUSALastTravel(res.data.updatedUSALastTravel);
-        console.log(res.data.updatedUSALastTravel);
       })
       .catch((error) => {
         console.error(error);
@@ -111,7 +128,11 @@ export function PreviousTravelForm({
     setIsUSALastTravelFetching(true);
 
     axios
-      .put("/api/form/usa-last-travel/delete", { usaLastTravelId: id, usaLastTravel: USALastTravel })
+      .put("/api/form/usa-last-travel/delete", {
+        usaLastTravelId: id,
+        usaLastTravel: USALastTravel,
+        formId: params.formId,
+      })
       .then((res) => {
         setUSALastTravelIndex(USALastTravelIndex - 1);
         setUSALastTravel(res.data.updatedUSALastTravel);
@@ -151,7 +172,10 @@ export function PreviousTravelForm({
     setIsAmericanLicenseFetching(true);
 
     axios
-      .post("/api/form/american-license/create", { americanLicense })
+      .post("/api/form/american-license/create", {
+        americanLicense,
+        formId: params.formId,
+      })
       .then((res) => {
         setAmericanLicenseIndex(americanLicenseIndex + 1);
         setAmericanLicense(res.data.updatedAmericanLicense);
@@ -171,7 +195,11 @@ export function PreviousTravelForm({
     setIsAmericanLicenseFetching(true);
 
     axios
-      .put("/api/form/american-license/delete", { americanLicenseId: id, americanLicense })
+      .put("/api/form/american-license/delete", {
+        americanLicenseId: id,
+        americanLicense,
+        formId: params.formId,
+      })
       .then((res) => {
         setAmericanLicenseIndex(americanLicenseIndex - 1);
         setAmericanLicense(res.data.updatedAmericanLicense);
@@ -197,10 +225,16 @@ export function PreviousTravelForm({
           name="hasBeenOnUSAConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Você já foi para os EUA?</FormLabel>
+              <FormLabel className="text-foreground">
+                Você já foi para os EUA?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -227,7 +261,8 @@ export function PreviousTravelForm({
         {hasBeenOnUSAConfirmation === "Sim" && (
           <div className="w-full bg-secondary p-4 flex flex-col space-y-8">
             <span className="text-foreground text-base font-medium">
-              Informe as datas das suas últimas 5 viagens aos EUA (data de entrada) e tempo de permanência
+              Informe as datas das suas últimas 5 viagens aos EUA (data de
+              entrada) e tempo de permanência
             </span>
 
             <div className="flex flex-col gap-6">
@@ -236,14 +271,17 @@ export function PreviousTravelForm({
                   <div key={obj.id} className="w-full flex sm:items-end gap-4">
                     <div className="w-full flex flex-col sm:flex-row gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label className="text-foreground text-sm font-medium">Data prevista de chegada aos EUA</label>
+                        <label className="text-foreground text-sm font-medium">
+                          Data prevista de chegada aos EUA
+                        </label>
+
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
                               variant={"outline"}
                               className={cn(
                                 "w-full bg-background h-12 pl-3 text-left border-secondary font-normal group",
-                                !obj.arriveDate && "text-muted-foreground"
+                                !obj.arriveDate && "text-muted-foreground",
                               )}
                             >
                               {obj.arriveDate ? (
@@ -262,14 +300,23 @@ export function PreviousTravelForm({
                               mode="single"
                               locale={ptBR}
                               selected={obj.arriveDate!}
-                              onSelect={(day, selectedDay, activeModifiers, e) => handleArrivalDate(selectedDay, i)}
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                              onSelect={(
+                                day,
+                                selectedDay,
+                                activeModifiers,
+                                e,
+                              ) => handleArrivalDate(selectedDay, i)}
+                              disabled={(date) =>
+                                date > new Date() ||
+                                date < new Date("1900-01-01")
+                              }
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown:
+                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -286,7 +333,9 @@ export function PreviousTravelForm({
                         </label>
                         <Input
                           value={obj.estimatedTime!}
-                          onChange={(event) => handleEstimatedTime(event.target.value, i)}
+                          onChange={(event) =>
+                            handleEstimatedTime(event.target.value, i)
+                          }
                         />
                       </div>
                     </div>
@@ -296,10 +345,18 @@ export function PreviousTravelForm({
                         type="button"
                         size="xl"
                         className="px-3"
-                        disabled={obj.estimatedTime === "" || !obj.arriveDate || isUSALastTravelFetching}
+                        disabled={
+                          obj.estimatedTime === "" ||
+                          !obj.arriveDate ||
+                          isUSALastTravelFetching
+                        }
                         onClick={handleAddUSALastTravelInput}
                       >
-                        {isUSALastTravelFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                        {isUSALastTravelFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Plus />
+                        )}
                       </Button>
                     ) : (
                       <Button
@@ -309,7 +366,11 @@ export function PreviousTravelForm({
                         onClick={() => handleRemoveUSALastTravelInput(obj.id)}
                         disabled={isUSALastTravelFetching}
                       >
-                        {isUSALastTravelFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                        {isUSALastTravelFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Trash />
+                        )}
                       </Button>
                     )}
                   </div>
@@ -318,6 +379,10 @@ export function PreviousTravelForm({
                 <div>Loading...</div>
               )}
             </div>
+
+            {USALastTravelError.length > 0 && (
+              <span className="text-sm text-red-500">{USALastTravelError}</span>
+            )}
           </div>
         )}
       </div>
@@ -328,10 +393,16 @@ export function PreviousTravelForm({
           name="americanLicenseToDriveConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Já obteve uma licença americana para dirigir nos EUA?</FormLabel>
+              <FormLabel className="text-foreground">
+                Já obteve uma licença americana para dirigir nos EUA?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -360,19 +431,33 @@ export function PreviousTravelForm({
             <div className="flex flex-col gap-6">
               {americanLicense ? (
                 americanLicense.map((obj, i) => (
-                  <div key={`american-license-${i}`} className="w-full flex sm:items-end gap-4">
+                  <div
+                    key={`american-license-${i}`}
+                    className="w-full flex sm:items-end gap-4"
+                  >
                     <div className="w-full flex flex-col sm:flex-row gap-4">
                       <div className="w-full flex flex-col gap-2">
-                        <label className="text-foreground text-sm font-medium">Número da licença</label>
+                        <label className="text-foreground text-sm font-medium">
+                          Número da licença
+                        </label>
                         <Input
                           value={obj.licenseNumber!}
-                          onChange={(event) => handleLicenseNumber(event.target.value, i)}
+                          onChange={(event) =>
+                            handleLicenseNumber(event.target.value, i)
+                          }
                         />
                       </div>
 
                       <div className="w-full flex flex-col gap-2">
-                        <label className="text-foreground text-sm font-medium">Estado</label>
-                        <Input value={obj.state!} onChange={(event) => handleState(event.target.value, i)} />
+                        <label className="text-foreground text-sm font-medium">
+                          Estado
+                        </label>
+                        <Input
+                          value={obj.state!}
+                          onChange={(event) =>
+                            handleState(event.target.value, i)
+                          }
+                        />
                       </div>
                     </div>
 
@@ -381,10 +466,18 @@ export function PreviousTravelForm({
                         type="button"
                         size="xl"
                         className="px-3"
-                        disabled={obj.licenseNumber === "" || obj.state === "" || isAmericanLicenseFetching}
+                        disabled={
+                          obj.licenseNumber === "" ||
+                          obj.state === "" ||
+                          isAmericanLicenseFetching
+                        }
                         onClick={handleAddAmericanLicenseInput}
                       >
-                        {isAmericanLicenseFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                        {isAmericanLicenseFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Plus />
+                        )}
                       </Button>
                     ) : (
                       <Button
@@ -394,7 +487,11 @@ export function PreviousTravelForm({
                         onClick={() => handleRemoveAmericanLicenseInput(obj.id)}
                         disabled={isAmericanLicenseFetching}
                       >
-                        {isAmericanLicenseFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                        {isAmericanLicenseFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Trash />
+                        )}
                       </Button>
                     )}
                   </div>
@@ -403,6 +500,12 @@ export function PreviousTravelForm({
                 <div>Loading...</div>
               )}
             </div>
+
+            {americanLicenseError.length > 0 && (
+              <span className="text-sm text-red-500">
+                {americanLicenseError}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -413,10 +516,16 @@ export function PreviousTravelForm({
           name="USAVisaConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Já obteve visto(s) para os EUA?</FormLabel>
+              <FormLabel className="text-foreground">
+                Já obteve visto(s) para os EUA?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -445,7 +554,9 @@ export function PreviousTravelForm({
           name="visaIssuingDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Data exata de Emissão</FormLabel>
+              <FormLabel className="text-foreground">
+                Data exata de Emissão
+              </FormLabel>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -455,7 +566,7 @@ export function PreviousTravelForm({
                       variant={"outline"}
                       className={cn(
                         "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
@@ -476,13 +587,16 @@ export function PreviousTravelForm({
                     locale={ptBR}
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
                     captionLayout="dropdown"
                     fromYear={1900}
                     toYear={currentYear}
                     classNames={{
                       day_hidden: "invisible",
-                      dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                      dropdown:
+                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                       caption_dropdowns: "flex gap-3",
                       vhidden: "hidden",
                       caption_label: "hidden",
@@ -502,10 +616,17 @@ export function PreviousTravelForm({
           name="visaNumber"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Número do visto</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Número do visto
+              </FormLabel>
 
               <FormControl>
-                <Input disabled={noVisaNumber === true || USAVisaConfirmation === "Não"} {...field} />
+                <Input
+                  disabled={
+                    noVisaNumber === true || USAVisaConfirmation === "Não"
+                  }
+                  {...field}
+                />
               </FormControl>
 
               <FormMessage className="text-sm text-red-500" />
@@ -514,7 +635,10 @@ export function PreviousTravelForm({
         />
 
         <div className="flex flex-col justify-between">
-          <label htmlFor="noVisaNumber" className="text-sm text-foreground font-medium">
+          <label
+            htmlFor="noVisaNumber"
+            className="text-sm text-foreground font-medium"
+          >
             Não sei o número
           </label>
 
@@ -530,7 +654,8 @@ export function PreviousTravelForm({
       </div>
 
       <span className="text-foreground text-base font-medium mt-6">
-        Responda as próximas 6 perguntas somente se você está <strong>renovando</strong> o visto
+        Responda as próximas 6 perguntas somente se você está{" "}
+        <strong>renovando</strong> o visto
       </span>
 
       <div className="w-full grid grid-cols-1 gap-4">
@@ -540,11 +665,16 @@ export function PreviousTravelForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-foreground">
-                Está solicitando o novo visto do mesmo País ou localização daquele concedido previamente?
+                Está solicitando o novo visto do mesmo País ou localização
+                daquele concedido previamente?
               </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -574,11 +704,16 @@ export function PreviousTravelForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-foreground">
-                Este País é o mesmo onde está localizada sua residência principal?
+                Este País é o mesmo onde está localizada sua residência
+                principal?
               </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -614,7 +749,11 @@ export function PreviousTravelForm({
               </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -643,10 +782,16 @@ export function PreviousTravelForm({
           name="fingerprintsProvidedConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Forneceu digitais dos 10 dedos</FormLabel>
+              <FormLabel className="text-foreground">
+                Forneceu digitais dos 10 dedos
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -677,10 +822,16 @@ export function PreviousTravelForm({
           name="lostVisaConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Já teve um visto perdido ou roubado?</FormLabel>
+              <FormLabel className="text-foreground">
+                Já teve um visto perdido ou roubado?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -710,7 +861,9 @@ export function PreviousTravelForm({
             name="lostVisaDetails"
             render={({ field }) => (
               <FormItem className="w-full bg-secondary p-4">
-                <FormLabel className="text-foreground text-sm">Em qual ano? Explique o ocorrido</FormLabel>
+                <FormLabel className="text-foreground text-sm">
+                  Em qual ano? Explique o ocorrido
+                </FormLabel>
 
                 <FormControl>
                   <Textarea className="resize-none" {...field} />
@@ -729,10 +882,16 @@ export function PreviousTravelForm({
           name="canceledVisaConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Já teve um visto revogado ou cancelado?</FormLabel>
+              <FormLabel className="text-foreground">
+                Já teve um visto revogado ou cancelado?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -762,7 +921,9 @@ export function PreviousTravelForm({
             name="canceledVisaDetails"
             render={({ field }) => (
               <FormItem className="w-full bg-secondary p-4">
-                <FormLabel className="text-foreground text-sm">Em qual ano? Explique o ocorrido</FormLabel>
+                <FormLabel className="text-foreground text-sm">
+                  Em qual ano? Explique o ocorrido
+                </FormLabel>
 
                 <FormControl>
                   <Textarea className="resize-none" {...field} />
@@ -781,10 +942,16 @@ export function PreviousTravelForm({
           name="deniedVisaConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Já teve um visto negado?</FormLabel>
+              <FormLabel className="text-foreground">
+                Já teve um visto negado?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -816,7 +983,9 @@ export function PreviousTravelForm({
                 name="deniedVisaDetails"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel className="text-foreground text-sm">Em qual ano? Explique o ocorrido</FormLabel>
+                    <FormLabel className="text-foreground text-sm">
+                      Em qual ano? Explique o ocorrido
+                    </FormLabel>
 
                     <FormControl>
                       <Textarea className="resize-none" {...field} />
@@ -834,7 +1003,9 @@ export function PreviousTravelForm({
                 name="consularPost"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">Qual posto consular do Brasil?</FormLabel>
+                    <FormLabel className="text-foreground text-sm">
+                      Qual posto consular do Brasil?
+                    </FormLabel>
 
                     <FormControl>
                       <Input {...field} />
@@ -850,7 +1021,9 @@ export function PreviousTravelForm({
                 name="deniedVisaType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">Categoria/tipo de visto negado</FormLabel>
+                    <FormLabel className="text-foreground text-sm">
+                      Categoria/tipo de visto negado
+                    </FormLabel>
 
                     <FormControl>
                       <Input {...field} />
@@ -872,12 +1045,16 @@ export function PreviousTravelForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-foreground">
-                Alguém já solicitou alguma petição de imigração em seu nome perante o Departamento de Imigração dos
-                Estados Unidos?
+                Alguém já solicitou alguma petição de imigração em seu nome
+                perante o Departamento de Imigração dos Estados Unidos?
               </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -907,7 +1084,9 @@ export function PreviousTravelForm({
             name="immigrationRequestByAnotherPersonDetails"
             render={({ field }) => (
               <FormItem className="w-full bg-secondary p-4">
-                <FormLabel className="text-foreground text-sm">Explique o motivo</FormLabel>
+                <FormLabel className="text-foreground text-sm">
+                  Explique o motivo
+                </FormLabel>
 
                 <FormControl>
                   <Textarea className="resize-none" {...field} />

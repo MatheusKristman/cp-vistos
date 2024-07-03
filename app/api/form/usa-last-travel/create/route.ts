@@ -4,26 +4,20 @@ import { USALastTravel } from "@prisma/client";
 
 export async function POST(req: Request) {
   try {
-    const { usaLastTravel }: { usaLastTravel: USALastTravel[] } = await req.json();
+    const { usaLastTravel, formId }: { usaLastTravel: USALastTravel[]; formId: string } = await req.json();
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Dados inválidos", { status: 404 });
     }
 
     await Promise.all(
       usaLastTravel.map(async (item) => {
-        await prisma.USALastTravel.update({
+        await prisma.uSALastTravel.update({
           where: {
             id: item.id,
           },
@@ -35,21 +29,21 @@ export async function POST(req: Request) {
       })
     );
 
-    await prisma.USALastTravel.create({
+    await prisma.uSALastTravel.create({
       data: {
         arriveDate: null,
         estimatedTime: "",
         form: {
           connect: {
-            id: currentForm.id,
+            id: formId,
           },
         },
       },
     });
 
-    const updatedUSALastTravel = await prisma.USALastTravel.findMany({
+    const updatedUSALastTravel = await prisma.uSALastTravel.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

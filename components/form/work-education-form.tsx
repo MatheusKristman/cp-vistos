@@ -12,18 +12,35 @@ import PhoneInput from "react-phone-number-input";
 import { ChangeEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -38,17 +55,17 @@ export function WorkEducationForm({
   previousJobConfirmation,
   handleCEPWorkEducationChange,
 }: Props) {
-  const [isPreviousJobsFetching, setIsPreviousJobsFetching] = useState<boolean>(false);
+  const [isPreviousJobsFetching, setIsPreviousJobsFetching] =
+    useState<boolean>(false);
   const [isCoursesFetching, setIsCoursesFetching] = useState<boolean>(false);
 
   const currentYear = getYear(new Date());
+  const params = useParams();
   const {
     previousJobs,
     setPreviousJobs,
     previousJobsIndex,
     setPreviousJobsIndex,
-    previousJobsError,
-    setPreviousJobsError,
     courses,
     setCourses,
     coursesIndex,
@@ -70,7 +87,7 @@ export function WorkEducationForm({
       | "jobDescription"
       | "office"
       | "supervisorName",
-    index: number
+    index: number,
   ) {
     if (!previousJobs) return;
 
@@ -89,7 +106,11 @@ export function WorkEducationForm({
     setPreviousJobs(arr);
   }
 
-  function handlePreviousJobsChangeDate(value: Date, property: "admissionDate" | "resignationDate", index: number) {
+  function handlePreviousJobsChangeDate(
+    value: Date,
+    property: "admissionDate" | "resignationDate",
+    index: number,
+  ) {
     if (!previousJobs) return;
 
     const arr = [...previousJobs];
@@ -105,7 +126,10 @@ export function WorkEducationForm({
     setIsPreviousJobsFetching(true);
 
     axios
-      .post("/api/form/previous-jobs/create", { previousJobs })
+      .post("/api/form/previous-jobs/create", {
+        previousJobs,
+        formId: params.formId,
+      })
       .then((res) => {
         setPreviousJobsIndex(previousJobsIndex + 1);
         setPreviousJobs(res.data.updatedPreviousJobs);
@@ -125,7 +149,11 @@ export function WorkEducationForm({
     setIsPreviousJobsFetching(true);
 
     axios
-      .put("/api/form/previous-jobs/delete", { previousJobsId: id, previousJobs })
+      .put("/api/form/previous-jobs/delete", {
+        previousJobsId: id,
+        previousJobs,
+        formId: params.formId,
+      })
       .then((res) => {
         setPreviousJobsIndex(previousJobsIndex - 1);
         setPreviousJobs(res.data.updatedPreviousJobs);
@@ -141,8 +169,15 @@ export function WorkEducationForm({
 
   function handleCoursesChangeString(
     value: string,
-    property: "address" | "cep" | "city" | "country" | "courseName" | "institutionName" | "state",
-    index: number
+    property:
+      | "address"
+      | "cep"
+      | "city"
+      | "country"
+      | "courseName"
+      | "institutionName"
+      | "state",
+    index: number,
   ) {
     if (!courses) return;
 
@@ -161,7 +196,11 @@ export function WorkEducationForm({
     setCourses(arr);
   }
 
-  function handleCourseChangeDate(value: Date, property: "initialDate" | "finishDate", index: number) {
+  function handleCourseChangeDate(
+    value: Date,
+    property: "initialDate" | "finishDate",
+    index: number,
+  ) {
     if (!courses) return;
 
     const arr = [...courses];
@@ -179,6 +218,7 @@ export function WorkEducationForm({
     axios
       .post("/api/form/courses/create", {
         courses,
+        formId: params.formId,
       })
       .then((res) => {
         setCoursesIndex(coursesIndex + 1);
@@ -199,7 +239,11 @@ export function WorkEducationForm({
     setIsCoursesFetching(true);
 
     axios
-      .put("/api/form/courses/delete", { coursesId: id, courses })
+      .put("/api/form/courses/delete", {
+        coursesId: id,
+        courses,
+        formId: params.formId,
+      })
       .then((res) => {
         setCoursesIndex(coursesIndex - 1);
         setCourses(res.data.updatedCourses);
@@ -225,7 +269,9 @@ export function WorkEducationForm({
           name="occupation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Selecione a sua ocupação atual?*</FormLabel>
+              <FormLabel className="text-foreground">
+                Selecione a sua ocupação atual?*
+              </FormLabel>
 
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -235,13 +281,19 @@ export function WorkEducationForm({
                 </FormControl>
 
                 <SelectContent>
+                  <SelectItem value="Empresário/Proprietário">
+                    Empresário/Proprietário
+                  </SelectItem>
+
+                  <SelectItem value="Registrado (CLT/PJ)">
+                    Registrado (CLT/PJ)
+                  </SelectItem>
+
+                  <SelectItem value="Autônomo">Autônomo</SelectItem>
+
+                  <SelectItem value="Não Trabalho">Não Trabalho</SelectItem>
+
                   <SelectItem value="Aposentado">Aposentado</SelectItem>
-
-                  <SelectItem value="Dona de Casa">Dona de Casa</SelectItem>
-
-                  <SelectItem value="Estudante">Estudante</SelectItem>
-
-                  <SelectItem value="Empresário">Empresário</SelectItem>
 
                   <SelectItem value="Outro">Outro</SelectItem>
                 </SelectContent>
@@ -262,7 +314,9 @@ export function WorkEducationForm({
               name="retireeDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Data de aposentadoria</FormLabel>
+                  <FormLabel className="text-foreground">
+                    Data de aposentadoria
+                  </FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -271,7 +325,7 @@ export function WorkEducationForm({
                           variant={"outline"}
                           className={cn(
                             "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value !== undefined ? (
@@ -292,13 +346,16 @@ export function WorkEducationForm({
                         locale={ptBR}
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
                         captionLayout="dropdown"
                         fromYear={1900}
                         toYear={currentYear}
                         classNames={{
                           day_hidden: "invisible",
-                          dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          dropdown:
+                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                           caption_dropdowns: "flex gap-3",
                           vhidden: "hidden",
                           caption_label: "hidden",
@@ -314,7 +371,8 @@ export function WorkEducationForm({
             />
           </div>
         </>
-      ) : occupation === "Dona de Casa" ? null : occupation === "Estudante" ? null : occupation === "Empresário" ? (
+      ) : occupation === "Não Trabalho" ? null : occupation ===
+        "Empresário/Proprietário" ? (
         <>
           <div className="w-full grid grid-cols-1 gap-4">
             <FormField
@@ -322,7 +380,9 @@ export function WorkEducationForm({
               name="companyOrBossName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Nome fantasia ou razão social</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Nome fantasia ou razão social
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -340,7 +400,9 @@ export function WorkEducationForm({
               name="companyAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Endereço completo</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Endereço completo
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -356,7 +418,9 @@ export function WorkEducationForm({
               name="companyCity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Cidade</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Cidade
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -372,7 +436,9 @@ export function WorkEducationForm({
               name="companyState"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Estado</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Estado
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -390,7 +456,9 @@ export function WorkEducationForm({
               name="companyCountry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">País</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    País
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -429,7 +497,9 @@ export function WorkEducationForm({
               name="companyTel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Telefone</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Telefone
+                  </FormLabel>
 
                   <FormControl>
                     <PhoneInput
@@ -441,7 +511,7 @@ export function WorkEducationForm({
                         "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                         {
                           "input-error": false,
-                        }
+                        },
                       )}
                       name={field.name}
                       ref={field.ref}
@@ -463,7 +533,9 @@ export function WorkEducationForm({
               name="admissionDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Data da abertura da empresa</FormLabel>
+                  <FormLabel className="text-foreground">
+                    Data da abertura da empresa
+                  </FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -472,7 +544,7 @@ export function WorkEducationForm({
                           variant={"outline"}
                           className={cn(
                             "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
@@ -493,13 +565,16 @@ export function WorkEducationForm({
                         locale={ptBR}
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
                         captionLayout="dropdown"
                         fromYear={1900}
                         toYear={currentYear}
                         classNames={{
                           day_hidden: "invisible",
-                          dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          dropdown:
+                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                           caption_dropdowns: "flex gap-3",
                           vhidden: "hidden",
                           caption_label: "hidden",
@@ -519,7 +594,9 @@ export function WorkEducationForm({
               name="monthlySalary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Renda mensal (R$)</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Renda mensal (R$)
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -538,8 +615,9 @@ export function WorkEducationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-foreground text-sm">
-                    Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras
-                    informações relacionadas ao seu negócio
+                    Descreva quais são suas funções dentro da sua empresa, se
+                    possui funcionários registrados e outras informações
+                    relacionadas ao seu negócio
                   </FormLabel>
 
                   <FormControl>
@@ -552,7 +630,9 @@ export function WorkEducationForm({
             />
           </div>
         </>
-      ) : occupation === "Outro" ? (
+      ) : occupation === "Outro" ||
+        occupation === "Registrado (CLT/PJ)" ||
+        occupation === "Autônomo" ? (
         <>
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
@@ -560,7 +640,9 @@ export function WorkEducationForm({
               name="office"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Cargo / função</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Cargo / função
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -576,7 +658,9 @@ export function WorkEducationForm({
               name="companyOrBossName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Nome do empregador atual ou empresa</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Nome do empregador atual ou empresa
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -594,7 +678,9 @@ export function WorkEducationForm({
               name="companyAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Endereço completo</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Endereço completo
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -610,7 +696,9 @@ export function WorkEducationForm({
               name="companyCity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Cidade</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Cidade
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -626,7 +714,9 @@ export function WorkEducationForm({
               name="companyState"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Estado</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Estado
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -644,7 +734,9 @@ export function WorkEducationForm({
               name="companyCountry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">País</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    País
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -683,7 +775,9 @@ export function WorkEducationForm({
               name="companyTel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Telefone</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Telefone
+                  </FormLabel>
 
                   <FormControl>
                     <PhoneInput
@@ -695,7 +789,7 @@ export function WorkEducationForm({
                         "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                         {
                           "input-error": false,
-                        }
+                        },
                       )}
                       name={field.name}
                       ref={field.ref}
@@ -717,7 +811,9 @@ export function WorkEducationForm({
               name="admissionDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Data de admissão</FormLabel>
+                  <FormLabel className="text-foreground">
+                    Data de admissão
+                  </FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -726,7 +822,7 @@ export function WorkEducationForm({
                           variant={"outline"}
                           className={cn(
                             "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
@@ -747,13 +843,16 @@ export function WorkEducationForm({
                         locale={ptBR}
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
                         captionLayout="dropdown"
                         fromYear={1900}
                         toYear={currentYear}
                         classNames={{
                           day_hidden: "invisible",
-                          dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                          dropdown:
+                            "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                           caption_dropdowns: "flex gap-3",
                           vhidden: "hidden",
                           caption_label: "hidden",
@@ -773,7 +872,9 @@ export function WorkEducationForm({
               name="monthlySalary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground text-sm">Renda mensal (R$)</FormLabel>
+                  <FormLabel className="text-foreground text-sm">
+                    Renda mensal (R$)
+                  </FormLabel>
 
                   <FormControl>
                     <Input {...field} />
@@ -792,8 +893,9 @@ export function WorkEducationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-foreground text-sm">
-                    Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras
-                    informações relacionadas ao seu negócio
+                    Descreva quais são suas funções dentro da sua empresa, se
+                    possui funcionários registrados e outras informações
+                    relacionadas ao seu negócio
                   </FormLabel>
 
                   <FormControl>
@@ -820,11 +922,16 @@ export function WorkEducationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-foreground">
-                    Já trabalhou anteriormente? Se sim, informe abaixo os dois últimos
+                    Já trabalhou anteriormente? Se sim, informe abaixo os dois
+                    últimos
                   </FormLabel>
 
                   <FormControl>
-                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="Não" />
@@ -853,11 +960,17 @@ export function WorkEducationForm({
             <div className="w-full flex flex-col gap-8">
               {previousJobs ? (
                 previousJobs.map((obj, i) => (
-                  <div key={`previous-jobs-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
+                  <div
+                    key={`previous-jobs-${i}`}
+                    className="w-full flex flex-col gap-6 bg-secondary p-4"
+                  >
                     <div className="w-full flex flex-col gap-4">
                       <div className="w-full grid grid-cols-1 gap-4">
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="companyName" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="companyName"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Nome do empregador ou empresa anterior
                           </label>
 
@@ -865,7 +978,11 @@ export function WorkEducationForm({
                             id="companyName"
                             value={obj.companyName!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "companyName", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "companyName",
+                                i,
+                              )
                             }
                           />
                         </div>
@@ -873,7 +990,10 @@ export function WorkEducationForm({
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="companyAddress" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="companyAddress"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Endereço completo
                           </label>
 
@@ -881,13 +1001,20 @@ export function WorkEducationForm({
                             id="companyAddress"
                             value={obj.companyAddress!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "companyAddress", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "companyAddress",
+                                i,
+                              )
                             }
                           />
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="companyCity" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="companyCity"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Cidade
                           </label>
 
@@ -895,13 +1022,20 @@ export function WorkEducationForm({
                             id="companyCity"
                             value={obj.companyCity!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "companyCity", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "companyCity",
+                                i,
+                              )
                             }
                           />
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="companyState" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="companyState"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Estado
                           </label>
 
@@ -909,7 +1043,11 @@ export function WorkEducationForm({
                             id="companyState"
                             value={obj.companyState!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "companyState", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "companyState",
+                                i,
+                              )
                             }
                           />
                         </div>
@@ -917,7 +1055,10 @@ export function WorkEducationForm({
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="companyCountry" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="companyCountry"
+                            className="text-sm text-foreground font-medium"
+                          >
                             País
                           </label>
 
@@ -925,13 +1066,20 @@ export function WorkEducationForm({
                             id="companyCountry"
                             value={obj.companyCountry!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "companyCountry", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "companyCountry",
+                                i,
+                              )
                             }
                           />
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="companyCep" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="companyCep"
+                            className="text-sm text-foreground font-medium"
+                          >
                             CEP
                           </label>
 
@@ -940,13 +1088,20 @@ export function WorkEducationForm({
                             id="companyCep"
                             value={obj.companyCep!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "companyCep", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "companyCep",
+                                i,
+                              )
                             }
                           />
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="companyTel" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="companyTel"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Telefone
                           </label>
 
@@ -960,18 +1115,27 @@ export function WorkEducationForm({
                               "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                               {
                                 "input-error": false,
-                              }
+                              },
                             )}
                             name="companyTel"
                             value={obj.companyTel!}
-                            onChange={(value) => handlePreviousJobsChangeString(value as string, "companyTel", i)}
+                            onChange={(value) =>
+                              handlePreviousJobsChangeString(
+                                value as string,
+                                "companyTel",
+                                i,
+                              )
+                            }
                           />
                         </div>
                       </div>
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="office" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="office"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Cargo / Função
                           </label>
 
@@ -979,13 +1143,20 @@ export function WorkEducationForm({
                             id="office"
                             value={obj.office!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "office", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "office",
+                                i,
+                              )
                             }
                           />
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="supervisorName" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="supervisorName"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Nome completo do supervisor
                           </label>
 
@@ -993,7 +1164,11 @@ export function WorkEducationForm({
                             id="supervisorName"
                             value={obj.supervisorName!}
                             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "supervisorName", i)
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "supervisorName",
+                                i,
+                              )
                             }
                           />
                         </div>
@@ -1001,7 +1176,10 @@ export function WorkEducationForm({
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="admissionDate" className="text-foreground text-sm font-medium">
+                          <label
+                            htmlFor="admissionDate"
+                            className="text-foreground text-sm font-medium"
+                          >
                             Data de admissão
                           </label>
 
@@ -1012,7 +1190,7 @@ export function WorkEducationForm({
                                 variant={"outline"}
                                 className={cn(
                                   "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                                  !obj.admissionDate && "text-muted-foreground"
+                                  !obj.admissionDate && "text-muted-foreground",
                                 )}
                               >
                                 {obj.admissionDate ? (
@@ -1028,21 +1206,32 @@ export function WorkEducationForm({
                               </Button>
                             </PopoverTrigger>
 
-                            <PopoverContent className="w-auto p-0" align="start">
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
                               <Calendar
                                 mode="single"
                                 locale={ptBR}
                                 selected={obj.admissionDate!}
                                 onSelect={(day, selectedDay) =>
-                                  handlePreviousJobsChangeDate(selectedDay, "admissionDate", i)
+                                  handlePreviousJobsChangeDate(
+                                    selectedDay,
+                                    "admissionDate",
+                                    i,
+                                  )
                                 }
-                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
                                 captionLayout="dropdown"
                                 fromYear={1900}
                                 toYear={currentYear}
                                 classNames={{
                                   day_hidden: "invisible",
-                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  dropdown:
+                                    "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                   caption_dropdowns: "flex gap-3",
                                   vhidden: "hidden",
                                   caption_label: "hidden",
@@ -1054,7 +1243,10 @@ export function WorkEducationForm({
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="resignationDate" className="text-foreground text-sm font-medium">
+                          <label
+                            htmlFor="resignationDate"
+                            className="text-foreground text-sm font-medium"
+                          >
                             Data de demissão
                           </label>
 
@@ -1065,7 +1257,8 @@ export function WorkEducationForm({
                                 variant={"outline"}
                                 className={cn(
                                   "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                                  !obj.resignationDate && "text-muted-foreground"
+                                  !obj.resignationDate &&
+                                    "text-muted-foreground",
                                 )}
                               >
                                 {obj.resignationDate ? (
@@ -1081,21 +1274,32 @@ export function WorkEducationForm({
                               </Button>
                             </PopoverTrigger>
 
-                            <PopoverContent className="w-auto p-0" align="start">
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
                               <Calendar
                                 mode="single"
                                 locale={ptBR}
                                 selected={obj.resignationDate!}
                                 onSelect={(day, selectedDay) =>
-                                  handlePreviousJobsChangeDate(selectedDay, "resignationDate", i)
+                                  handlePreviousJobsChangeDate(
+                                    selectedDay,
+                                    "resignationDate",
+                                    i,
+                                  )
                                 }
-                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
                                 captionLayout="dropdown"
                                 fromYear={1900}
                                 toYear={currentYear}
                                 classNames={{
                                   day_hidden: "invisible",
-                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  dropdown:
+                                    "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                   caption_dropdowns: "flex gap-3",
                                   vhidden: "hidden",
                                   caption_label: "hidden",
@@ -1109,15 +1313,24 @@ export function WorkEducationForm({
 
                       <div className="w-full grid grid-cols-1 gap-4">
                         <div className="w-full flex flex-col gap-2">
-                          <label htmlFor="jobDescription" className="text-sm text-foreground font-medium">
+                          <label
+                            htmlFor="jobDescription"
+                            className="text-sm text-foreground font-medium"
+                          >
                             Faça descrição da tarefa exercida
                           </label>
 
                           <Textarea
                             id="jobDescription"
                             value={obj.jobDescription!}
-                            onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                              handlePreviousJobsChangeString(event.target.value, "jobDescription", i)
+                            onChange={(
+                              event: ChangeEvent<HTMLTextAreaElement>,
+                            ) =>
+                              handlePreviousJobsChangeString(
+                                event.target.value,
+                                "jobDescription",
+                                i,
+                              )
                             }
                           />
                         </div>
@@ -1141,9 +1354,15 @@ export function WorkEducationForm({
                         }
                         onClick={handleAddPreviousJobsInput}
                       >
-                        {isPreviousJobsFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                        {isPreviousJobsFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Plus />
+                        )}
 
-                        <span className="hidden sm:block">Adicionar emprego anterior</span>
+                        <span className="hidden sm:block">
+                          Adicionar emprego anterior
+                        </span>
                       </Button>
                     ) : (
                       <Button
@@ -1153,7 +1372,11 @@ export function WorkEducationForm({
                         onClick={() => handleRemovePreviousJobsInput(obj.id)}
                         disabled={isPreviousJobsFetching}
                       >
-                        {isPreviousJobsFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                        {isPreviousJobsFetching ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Trash />
+                        )}
 
                         <span className="hidden sm:block">Remover emprego</span>
                       </Button>
@@ -1176,11 +1399,17 @@ export function WorkEducationForm({
         <div className="w-full flex flex-col gap-8">
           {courses ? (
             courses.map((obj, i) => (
-              <div key={`courses-${i}`} className="w-full flex flex-col gap-6 bg-secondary p-4">
+              <div
+                key={`courses-${i}`}
+                className="w-full flex flex-col gap-6 bg-secondary p-4"
+              >
                 <div className="w-full flex flex-col gap-4">
                   <div className="w-full grid grid-cols-1 gap-4">
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="institutionName" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="institutionName"
+                        className="text-sm text-foreground font-medium"
+                      >
                         Nome completo da instituição*
                       </label>
 
@@ -1188,7 +1417,11 @@ export function WorkEducationForm({
                         id="institutionName"
                         value={obj.institutionName!}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleCoursesChangeString(event.target.value, "institutionName", i)
+                          handleCoursesChangeString(
+                            event.target.value,
+                            "institutionName",
+                            i,
+                          )
                         }
                       />
                     </div>
@@ -1196,7 +1429,10 @@ export function WorkEducationForm({
 
                   <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="address" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="address"
+                        className="text-sm text-foreground font-medium"
+                      >
                         Endereço completo*
                       </label>
 
@@ -1204,13 +1440,20 @@ export function WorkEducationForm({
                         id="address"
                         value={obj.address!}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleCoursesChangeString(event.target.value, "address", i)
+                          handleCoursesChangeString(
+                            event.target.value,
+                            "address",
+                            i,
+                          )
                         }
                       />
                     </div>
 
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="city" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="city"
+                        className="text-sm text-foreground font-medium"
+                      >
                         Cidade*
                       </label>
 
@@ -1218,13 +1461,20 @@ export function WorkEducationForm({
                         id="city"
                         value={obj.city!}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleCoursesChangeString(event.target.value, "city", i)
+                          handleCoursesChangeString(
+                            event.target.value,
+                            "city",
+                            i,
+                          )
                         }
                       />
                     </div>
 
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="state" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="state"
+                        className="text-sm text-foreground font-medium"
+                      >
                         Estado*
                       </label>
 
@@ -1232,7 +1482,11 @@ export function WorkEducationForm({
                         id="state"
                         value={obj.state!}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleCoursesChangeString(event.target.value, "state", i)
+                          handleCoursesChangeString(
+                            event.target.value,
+                            "state",
+                            i,
+                          )
                         }
                       />
                     </div>
@@ -1240,7 +1494,10 @@ export function WorkEducationForm({
 
                   <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="country" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="country"
+                        className="text-sm text-foreground font-medium"
+                      >
                         País*
                       </label>
 
@@ -1248,13 +1505,20 @@ export function WorkEducationForm({
                         id="country"
                         value={obj.country!}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleCoursesChangeString(event.target.value, "country", i)
+                          handleCoursesChangeString(
+                            event.target.value,
+                            "country",
+                            i,
+                          )
                         }
                       />
                     </div>
 
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="cep" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="cep"
+                        className="text-sm text-foreground font-medium"
+                      >
                         CEP*
                       </label>
 
@@ -1263,7 +1527,11 @@ export function WorkEducationForm({
                         id="cep"
                         value={obj.cep!}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleCoursesChangeString(event.target.value, "cep", i)
+                          handleCoursesChangeString(
+                            event.target.value,
+                            "cep",
+                            i,
+                          )
                         }
                       />
                     </div>
@@ -1271,7 +1539,10 @@ export function WorkEducationForm({
 
                   <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="courseName" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="courseName"
+                        className="text-sm text-foreground font-medium"
+                      >
                         Nome do curso*
                       </label>
 
@@ -1279,13 +1550,20 @@ export function WorkEducationForm({
                         id="courseName"
                         value={obj.courseName!}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                          handleCoursesChangeString(event.target.value, "courseName", i)
+                          handleCoursesChangeString(
+                            event.target.value,
+                            "courseName",
+                            i,
+                          )
                         }
                       />
                     </div>
 
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="initialDate" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="initialDate"
+                        className="text-sm text-foreground font-medium"
+                      >
                         Data de início*
                       </label>
 
@@ -1296,7 +1574,7 @@ export function WorkEducationForm({
                             variant={"outline"}
                             className={cn(
                               "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                              !obj.initialDate && "text-muted-foreground"
+                              !obj.initialDate && "text-muted-foreground",
                             )}
                           >
                             {obj.initialDate ? (
@@ -1315,14 +1593,23 @@ export function WorkEducationForm({
                             mode="single"
                             locale={ptBR}
                             selected={obj.initialDate!}
-                            onSelect={(day, selectedDay) => handleCourseChangeDate(selectedDay, "initialDate", i)}
-                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                            onSelect={(day, selectedDay) =>
+                              handleCourseChangeDate(
+                                selectedDay,
+                                "initialDate",
+                                i,
+                              )
+                            }
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
                             captionLayout="dropdown"
                             fromYear={1900}
                             toYear={currentYear}
                             classNames={{
                               day_hidden: "invisible",
-                              dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                              dropdown:
+                                "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                               caption_dropdowns: "flex gap-3",
                               vhidden: "hidden",
                               caption_label: "hidden",
@@ -1334,7 +1621,10 @@ export function WorkEducationForm({
                     </div>
 
                     <div className="w-full flex flex-col gap-2">
-                      <label htmlFor="finishDate" className="text-sm text-foreground font-medium">
+                      <label
+                        htmlFor="finishDate"
+                        className="text-sm text-foreground font-medium"
+                      >
                         Data de término*
                       </label>
 
@@ -1345,7 +1635,7 @@ export function WorkEducationForm({
                             variant={"outline"}
                             className={cn(
                               "w-full h-12 pl-3 text-left border-secondary font-normal group bg-background",
-                              !obj.finishDate && "text-muted-foreground"
+                              !obj.finishDate && "text-muted-foreground",
                             )}
                           >
                             {obj.finishDate ? (
@@ -1364,14 +1654,23 @@ export function WorkEducationForm({
                             mode="single"
                             locale={ptBR}
                             selected={obj.finishDate!}
-                            onSelect={(day, selectedDay) => handleCourseChangeDate(selectedDay, "finishDate", i)}
-                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                            onSelect={(day, selectedDay) =>
+                              handleCourseChangeDate(
+                                selectedDay,
+                                "finishDate",
+                                i,
+                              )
+                            }
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
                             captionLayout="dropdown"
                             fromYear={1900}
                             toYear={currentYear}
                             classNames={{
                               day_hidden: "invisible",
-                              dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                              dropdown:
+                                "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                               caption_dropdowns: "flex gap-3",
                               vhidden: "hidden",
                               caption_label: "hidden",
@@ -1401,7 +1700,11 @@ export function WorkEducationForm({
                     }
                     onClick={handleAddCoursesInput}
                   >
-                    {isCoursesFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                    {isCoursesFetching ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Plus />
+                    )}
 
                     <span className="hidden sm:block">Adicionar ensino</span>
                   </Button>
@@ -1413,7 +1716,11 @@ export function WorkEducationForm({
                     onClick={() => handleRemoveCoursesInput(obj.id)}
                     disabled={isCoursesFetching}
                   >
-                    {isCoursesFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                    {isCoursesFetching ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Trash />
+                    )}
 
                     <span className="hidden sm:block">Remover ensino</span>
                   </Button>
@@ -1424,6 +1731,10 @@ export function WorkEducationForm({
             <div>Loading...</div>
           )}
         </div>
+
+        {coursesError.length > 0 && (
+          <span className="text-sm text-red-500">{coursesError}</span>
+        )}
       </div>
     </Element>
   );

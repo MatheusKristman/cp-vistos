@@ -4,8 +4,11 @@ import { AmericanLicense } from "@prisma/client";
 
 export async function PUT(req: Request) {
   try {
-    const { americanLicenseId, americanLicense }: { americanLicenseId: string; americanLicense: AmericanLicense[] } =
-      await req.json();
+    const {
+      americanLicenseId,
+      americanLicense,
+      formId,
+    }: { americanLicenseId: string; americanLicense: AmericanLicense[]; formId: string } = await req.json();
 
     if (!americanLicenseId) {
       return new Response("Dados inválidos", { status: 401 });
@@ -17,13 +20,7 @@ export async function PUT(req: Request) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Formulário não localizado", { status: 404 });
     }
 
@@ -44,13 +41,13 @@ export async function PUT(req: Request) {
     await prisma.americanLicense.delete({
       where: {
         id: americanLicenseId,
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 
     const updatedAmericanLicense = await prisma.americanLicense.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

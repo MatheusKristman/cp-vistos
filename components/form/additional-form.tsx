@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Form as FormType } from "@prisma/client";
 import axios from "axios";
 import { toast } from "sonner";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect } from "react";
 import Link from "next/link";
 
@@ -402,20 +402,30 @@ const formSchema = z
     },
   );
 
-export function AdditionalForm() {
+export function AdditionalForm({ currentForm }: Props) {
   const {
     setOtherPeopleTraveling,
     setOtherPeopleTravelingIndex,
+    setOtherPeopleTravelingError,
+    otherPeopleTravelingError,
     setUSALastTravel,
     setUSALastTravelIndex,
+    setUSALastTravelError,
+    USALastTravelError,
     setAmericanLicense,
     setAmericanLicenseIndex,
+    setAmericanLicenseError,
+    americanLicenseError,
     setFamilyLivingInTheUSA,
     setFamilyLivingInTheUSAIndex,
+    setFamilyLivingInTheUSAError,
+    familyLivingInTheUSAError,
     setPreviousJobs,
     setPreviousJobsIndex,
     setCourses,
     setCoursesIndex,
+    setCoursesError,
+    coursesError,
     setVisitLocationsError,
     setVisitLocationsIndex,
     setVisitLocations,
@@ -1143,8 +1153,7 @@ export function AdditionalForm() {
   const previousJobConfirmation = form.watch("previousJobConfirmation");
   const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
   const pathname = usePathname();
-
-  console.log(currentForm);
+  const params = useParams();
 
   useEffect(() => {
     if (currentForm && currentForm.otherPeopleTraveling) {
@@ -1198,10 +1207,11 @@ export function AdditionalForm() {
           familyLivingInTheUSA,
           previousJobs,
           courses,
+          formId: params.formId,
         })
         .then((res) => {
-          console.log(res.data);
           toast.success("Progresso salvo!");
+          router.refresh();
         })
         .catch((error) => {
           console.error(error);
@@ -1229,7 +1239,6 @@ export function AdditionalForm() {
   const errors = form.formState.errors;
 
   useEffect(() => {
-    console.log(errors);
     if (
       "firstName" in errors ||
       "lastName" in errors ||
@@ -1262,7 +1271,6 @@ export function AdditionalForm() {
       "otherEmail" in errors
     ) {
       setContactAndAddressError(true);
-      console.log("test");
     } else {
       setContactAndAddressError(false);
     }
@@ -1294,7 +1302,8 @@ export function AdditionalForm() {
       "payerTel" in errors ||
       "payerAddress" in errors ||
       "payerRelation" in errors ||
-      "payerEmail" in errors
+      "payerEmail" in errors ||
+      otherPeopleTravelingError.length > 0
     ) {
       setAboutTravelError(true);
     } else {
@@ -1315,7 +1324,9 @@ export function AdditionalForm() {
       "deniedVisaDetails" in errors ||
       "consularPost" in errors ||
       "deniedVisaType" in errors ||
-      "immigrationRequestByAnotherPersonDetails" in errors
+      "immigrationRequestByAnotherPersonDetails" in errors ||
+      USALastTravelError.length > 0 ||
+      americanLicenseError.length > 0
     ) {
       setPreviousTravelError(true);
     } else {
@@ -1334,7 +1345,8 @@ export function AdditionalForm() {
       "partnerNationality" in errors ||
       "partnerCity" in errors ||
       "partnerState" in errors ||
-      "partnerCountry" in errors
+      "partnerCountry" in errors ||
+      familyLivingInTheUSAError.length > 0
     ) {
       setFamilyError(true);
     } else {
@@ -1353,13 +1365,21 @@ export function AdditionalForm() {
       "admissionDate" in errors ||
       "monthlySalary" in errors ||
       "retireeDate" in errors ||
-      "jobDetails" in errors
+      "jobDetails" in errors ||
+      coursesError.length > 0
     ) {
       setWorkEducationError(true);
     } else {
       setWorkEducationError(false);
     }
-  }, [errors]);
+  }, [
+    errors,
+    otherPeopleTravelingError,
+    USALastTravelError,
+    americanLicenseError,
+    familyLivingInTheUSAError,
+    coursesError,
+  ]);
 
   useEffect(() => {
     if (personalDataForm.some((elem) => elem === "" || elem === null)) {
@@ -1494,6 +1514,107 @@ export function AdditionalForm() {
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const otherPeopleTravelingInvalid = otherPeopleTraveling?.filter(
+      (item) => item.name === "" || item.relation === "",
+    );
+    const USALastTravelInvalid = USALastTravel?.filter(
+      (item) => item.arriveDate === null || item.estimatedTime === "",
+    );
+    const americanLicenseInvalid = americanLicense?.filter(
+      (item) => item.licenseNumber === "" || item.state === "",
+    );
+    const familyLivingInTheUSAInvalid = familyLivingInTheUSA?.filter(
+      (item) =>
+        item.name === "" || item.relation === "" || item.situation === "",
+    );
+    const coursesInvalid = courses?.filter(
+      (item) =>
+        item.cep === "" ||
+        item.city === "" ||
+        item.state === "" ||
+        item.address === "" ||
+        item.country === "" ||
+        item.courseName === "" ||
+        !item.finishDate ||
+        !item.initialDate ||
+        item.institutionName === "",
+    );
+    const additionalInputsErrors: {
+      otherPeopleTraveling: boolean;
+      USALastTravel: boolean;
+      americanLicense: boolean;
+      familyLivingInTheUSA: boolean;
+      courses: boolean;
+    } = {
+      otherPeopleTraveling: false,
+      USALastTravel: false,
+      americanLicense: false,
+      familyLivingInTheUSA: false,
+      courses: false,
+    };
+
+    if (
+      otherPeopleTravelingConfirmation === "Sim" &&
+      (!otherPeopleTravelingInvalid || otherPeopleTravelingInvalid.length > 0)
+    ) {
+      setOtherPeopleTravelingError("Preencha os campos vazios");
+      additionalInputsErrors.otherPeopleTraveling = true;
+    } else {
+      setOtherPeopleTravelingError("");
+      additionalInputsErrors.otherPeopleTraveling = false;
+    }
+
+    if (
+      hasBeenOnUSAConfirmation === "Sim" &&
+      (!USALastTravelInvalid || USALastTravelInvalid.length > 0)
+    ) {
+      setUSALastTravelError("Preencha os campos vazios");
+      additionalInputsErrors.USALastTravel = true;
+    } else {
+      setUSALastTravelError("");
+      additionalInputsErrors.USALastTravel = false;
+    }
+
+    if (
+      americanLicenseToDriveConfirmation === "Sim" &&
+      (!americanLicenseInvalid || americanLicenseInvalid.length > 0)
+    ) {
+      setAmericanLicenseError("Preencha os campos vazios");
+      additionalInputsErrors.americanLicense = true;
+    } else {
+      setAmericanLicenseError("");
+      additionalInputsErrors.americanLicense = false;
+    }
+
+    if (
+      familyLivingInTheUSAConfirmation === "Sim" &&
+      (!familyLivingInTheUSAInvalid || familyLivingInTheUSAInvalid.length > 0)
+    ) {
+      setFamilyLivingInTheUSAError("Preencha os campos vazios acima");
+      additionalInputsErrors.familyLivingInTheUSA = true;
+    } else {
+      setFamilyLivingInTheUSAError("");
+      additionalInputsErrors.familyLivingInTheUSA = false;
+    }
+
+    if (!coursesInvalid || coursesInvalid.length > 0) {
+      setCoursesError("Preencha os campos vazios do ensino");
+      additionalInputsErrors.courses = true;
+    } else {
+      setCoursesError("");
+      additionalInputsErrors.courses = false;
+    }
+
+    if (
+      additionalInputsErrors.courses ||
+      additionalInputsErrors.familyLivingInTheUSA ||
+      additionalInputsErrors.americanLicense ||
+      additionalInputsErrors.USALastTravel ||
+      additionalInputsErrors.otherPeopleTraveling
+    ) {
+      return;
+    }
+
     setSubmitting(true);
 
     axios
@@ -1509,10 +1630,12 @@ export function AdditionalForm() {
         familyLivingInTheUSA,
         previousJobs,
         courses,
+        formId: params.formId,
       })
       .then((res) => {
         toast.success(res.data);
         router.push("/area-do-cliente");
+        router.refresh();
       })
       .catch((error) => {
         console.error(error);
@@ -1639,18 +1762,16 @@ export function AdditionalForm() {
             )}
           </Button>
 
-          {pathname === "/formulario/editar" ? (
-            <Button
-              size="xl"
-              variant="outline"
-              disabled={isSubmitting || isSaving}
-              type="button"
-              className="w-full sm:w-fit"
-              asChild
-            >
-              <Link href="/area-do-cliente">Cancelar</Link>
-            </Button>
-          ) : null}
+          <Button
+            size="xl"
+            variant="outline"
+            disabled={isSubmitting || isSaving}
+            type="button"
+            className="w-full sm:w-fit"
+            asChild
+          >
+            <Link href="/area-do-cliente">Voltar</Link>
+          </Button>
         </div>
       </form>
     </Form>

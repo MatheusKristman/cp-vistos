@@ -4,20 +4,15 @@ import { FamilyLivingInTheUSADetails } from "@prisma/client";
 
 export async function POST(req: Request) {
   try {
-    const { familyLivingInTheUSA }: { familyLivingInTheUSA: FamilyLivingInTheUSADetails[] } = await req.json();
+    const { familyLivingInTheUSA, formId }: { familyLivingInTheUSA: FamilyLivingInTheUSADetails[]; formId: string } =
+      await req.json();
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Dados inválidos", { status: 404 });
     }
 
@@ -43,7 +38,7 @@ export async function POST(req: Request) {
         situation: "",
         form: {
           connect: {
-            id: currentForm.id,
+            id: formId,
           },
         },
       },
@@ -51,7 +46,7 @@ export async function POST(req: Request) {
 
     const updatedFamilyLivingInTheUSA = await prisma.familyLivingInTheUSADetails.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

@@ -4,20 +4,14 @@ import { AmericanLicense } from "@prisma/client";
 
 export async function POST(req: Request) {
   try {
-    const { americanLicense }: { americanLicense: AmericanLicense[] } = await req.json();
+    const { americanLicense, formId }: { americanLicense: AmericanLicense[]; formId: string } = await req.json();
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Dados inválidos", { status: 404 });
     }
 
@@ -41,7 +35,7 @@ export async function POST(req: Request) {
         state: "",
         form: {
           connect: {
-            id: currentForm.id,
+            id: formId,
           },
         },
       },
@@ -49,7 +43,7 @@ export async function POST(req: Request) {
 
     const updatedAmericanLicense = await prisma.americanLicense.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

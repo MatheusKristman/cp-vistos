@@ -5,6 +5,7 @@
 
 import { ChangeEvent, useState } from "react";
 import { Control } from "react-hook-form";
+import { useParams } from "next/navigation";
 import { Loader2, Plus, Trash } from "lucide-react";
 import { Element } from "react-scroll";
 import { OtherPeopleTraveling } from "@prisma/client";
@@ -26,6 +27,7 @@ interface Props {
 
 export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmation, groupMemberConfirmation }: Props) {
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const params = useParams();
 
   const {
     otherPeopleTraveling,
@@ -50,12 +52,12 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
   }
 
   function handleAddOtherPeopleTravelingInput() {
-    if (!otherPeopleTraveling) return;
+    if (!otherPeopleTraveling || !params.formId) return;
 
     setIsFetching(true);
 
     axios
-      .post("/api/form/other-people-traveling/create", { otherPeopleTraveling })
+      .post("/api/form/other-people-traveling/create", { otherPeopleTraveling, formId: params.formId })
       .then((res) => {
         setOtherPeopleTravelingIndex(otherPeopleTravelingIndex + 1);
         setOtherPeopleTraveling(res.data.updatedOtherPeopleTraveling);
@@ -75,7 +77,11 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
     setIsFetching(true);
 
     axios
-      .put("/api/form/other-people-traveling/delete", { otherPeopleTravelingId: id, otherPeopleTraveling })
+      .put("/api/form/other-people-traveling/delete", {
+        otherPeopleTravelingId: id,
+        otherPeopleTraveling,
+        formId: params.formId,
+      })
       .then((res) => {
         setOtherPeopleTravelingIndex(otherPeopleTravelingIndex - 1);
         setOtherPeopleTraveling(res.data.updatedOtherPeopleTraveling);

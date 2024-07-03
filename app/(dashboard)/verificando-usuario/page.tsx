@@ -6,14 +6,11 @@ import { redirect } from "next/navigation";
 export default async function VerifyUserPage() {
   const currentUser = await getCurrentUser();
 
-  console.log(currentUser);
-
   if (!currentUser) {
     redirect("/");
   }
 
   if (currentUser.role === Role.ADMIN) {
-    console.log("perfil admin");
     redirect("/perfil/clientes");
   }
 

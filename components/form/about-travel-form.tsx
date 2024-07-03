@@ -1,14 +1,9 @@
-//TODO: criar função para submit
-//TODO: mandar para o proximo formulário
-//TODO: ajustar bug de adicionar mais inputs
-//TODO: ajustar logica do myselfValue no payerNameOrCompany
-
 "use client";
 
 import { ChangeEvent } from "react";
 import { Control } from "react-hook-form";
 import { Plus, Trash } from "lucide-react";
-import { format, getYear } from "date-fns";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Element } from "react-scroll";
@@ -41,8 +36,6 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
     setVisitLocationsIndex,
   } = useFormStore();
 
-  const currentYear = getYear(new Date());
-
   function handleVisitLocationsChange(event: ChangeEvent<HTMLInputElement>, index: number) {
     const values = [...visitLocations];
     values[index] = event.target.value;
@@ -54,7 +47,6 @@ export function AboutTravelForm({ formControl, travelItineraryConfirmation }: Pr
 
     const values = [...visitLocations];
     values[values.length] = "";
-    console.log(values);
     setVisitLocations(values);
   }
 

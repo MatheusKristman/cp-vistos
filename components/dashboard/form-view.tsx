@@ -1,40 +1,72 @@
-// TODO: mudar para relation as propriedades que estão como JSON no schema.prisma
+"use client";
 
-import { Edit, Trash } from "lucide-react";
+import { Edit, Loader2, Trash } from "lucide-react";
 import { format } from "date-fns";
-import { Form, Prisma } from "@prisma/client";
 import Link from "next/link";
+import axios from "axios";
+import { toast } from "sonner";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { FullForm } from "@/types";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Props {
   form: FullForm;
 }
 
 export function FormView({ form }: Props) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
+
   function formatPhone(value: string) {
+    if (!value) return;
+
     return value.replace(/\D+/g, "").replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, "+$1 ($2) $3-$4");
+  }
+
+  function handleDelete() {
+    if (!form) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    axios
+      .delete(`/api/form/delete/${form.id}`)
+      .then((res) => {
+        toast.success(res.data);
+        router.refresh();
+      })
+      .catch((error) => {
+        console.error(error);
+
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   return (
     <div className="w-full flex flex-col gap-9 bg-secondary py-8 px-11">
       <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6">
         <h2 className="text-xl text-center text-foreground w-full font-semibold sm:w-fit">
-          Formulário {form.firstName}
+          {form.firstName ? `Formulário ${form.firstName}` : `Formulário adicional não preenchido`}
         </h2>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <Button variant="secondary" className="flex items-center gap-2" asChild>
-            <Link href="/formulario/editar">
+          <Button variant="secondary" className="flex items-center gap-2" disabled={isLoading} asChild>
+            <Link href={`/formulario/editar/${form.id}`}>
               <Edit />
               Editar
             </Link>
           </Button>
 
-          <Button disabled={form.order === 0} className="flex items-center gap-2">
-            <Trash />
+          <Button onClick={handleDelete} disabled={form.order === 0 || isLoading} className="flex items-center gap-2">
+            {isLoading ? <Loader2 className="animate-spin" /> : <Trash />}
             Excluir
           </Button>
         </div>
@@ -51,19 +83,19 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Primeiro Nome</span>
 
-                <span className="text-base text-foreground">{form.firstName}</span>
+                <span className="text-base text-foreground">{form.firstName ? form.firstName : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Sobrenome</span>
 
-                <span className="text-base text-foreground">{form.lastName}</span>
+                <span className="text-base text-foreground">{form.lastName ? form.lastName : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">CPF</span>
 
-                <span className="text-base text-foreground">{form.cpf}</span>
+                <span className="text-base text-foreground">{form.cpf ? form.cpf : "---"}</span>
               </div>
             </div>
 
@@ -71,7 +103,7 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Código ou Nome de Guerra</span>
 
-                <span className="text-base text-foreground">{form.warName ?? "Não possui"}</span>
+                <span className="text-base text-foreground">{form.warName ? form.warName : "Não possui"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -79,7 +111,9 @@ export function FormView({ form }: Props) {
                   Outros Nomes (Religioso, Solteiro, etc...)
                 </span>
 
-                <span className="text-base text-foreground">{form.otherNames.join(" | ") ?? "Não possui"}</span>
+                <span className="text-base text-foreground">
+                  {form.otherNames && form.otherNames.length > 0 ? form.otherNames.join(" | ") : "Não possui"}
+                </span>
               </div>
             </div>
 
@@ -87,19 +121,21 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Sexo</span>
 
-                <span className="text-base text-foreground">{form.sex}</span>
+                <span className="text-base text-foreground">{form.sex ? form.sex : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado Civil</span>
 
-                <span className="text-base text-foreground">{form.maritalStatus}</span>
+                <span className="text-base text-foreground">{form.maritalStatus ? form.maritalStatus : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Data de Nascimento</span>
 
-                <span className="text-base text-foreground">{format(form.birthDate!, "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.birthDate ? format(form.birthDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
             </div>
 
@@ -107,19 +143,19 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade de Nascença</span>
 
-                <span className="text-base text-foreground">{form.birthCity}</span>
+                <span className="text-base text-foreground">{form.birthCity ? form.birthCity : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado de Nascença</span>
 
-                <span className="text-base text-foreground">{form.birthState}</span>
+                <span className="text-base text-foreground">{form.birthState ? form.birthState : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País de Nascença</span>
 
-                <span className="text-base text-foreground">{form.birthCountry}</span>
+                <span className="text-base text-foreground">{form.birthCountry ? form.birthCountry : "---"}</span>
               </div>
             </div>
 
@@ -127,7 +163,7 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País de Origem (Nacionalidade)</span>
 
-                <span className="text-base text-foreground">{form.originCountry}</span>
+                <span className="text-base text-foreground">{form.originCountry ? form.originCountry : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -183,19 +219,19 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Endereço</span>
 
-                <span className="text-base text-foreground">{form.address}</span>
+                <span className="text-base text-foreground">{form.address ? form.address : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade</span>
 
-                <span className="text-base text-foreground">{form.city}</span>
+                <span className="text-base text-foreground">{form.city ? form.city : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado</span>
 
-                <span className="text-base text-foreground">{form.state}</span>
+                <span className="text-base text-foreground">{form.state ? form.state : "---"}</span>
               </div>
             </div>
 
@@ -203,13 +239,13 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">CEP</span>
 
-                <span className="text-base text-foreground">{form.cep}</span>
+                <span className="text-base text-foreground">{form.cep ? form.cep : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País</span>
 
-                <span className="text-base text-foreground">{form.country}</span>
+                <span className="text-base text-foreground">{form.country ? form.country : "---"}</span>
               </div>
             </div>
 
@@ -229,13 +265,13 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Celular</span>
 
-                <span className="text-base text-foreground">{formatPhone(form.cel!)}</span>
+                <span className="text-base text-foreground">{form.cel ? formatPhone(form.cel) : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Telefone</span>
 
-                <span className="text-base text-foreground">{formatPhone(form.tel!)}</span>
+                <span className="text-base text-foreground">{form.tel ? formatPhone(form.tel) : "---"}</span>
               </div>
             </div>
 
@@ -243,7 +279,7 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">E-mail</span>
 
-                <span className="text-base text-foreground">{form.email}</span>
+                <span className="text-base text-foreground">{form.email ? form.email : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -307,19 +343,19 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Número do Passaporte</span>
 
-                <span className="text-base text-foreground">{form.passportNumber}</span>
+                <span className="text-base text-foreground">{form.passportNumber ? form.passportNumber : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade de Emissão</span>
 
-                <span className="text-base text-foreground">{form.passportCity}</span>
+                <span className="text-base text-foreground">{form.passportCity ? form.passportCity : "---"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado de Emissão</span>
 
-                <span className="text-base text-foreground">{form.passportState}</span>
+                <span className="text-base text-foreground">{form.passportState ? form.passportState : "---"}</span>
               </div>
             </div>
 
@@ -327,13 +363,17 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País de Emissão</span>
 
-                <span className="text-base text-foreground">{form.passportIssuingCountry}</span>
+                <span className="text-base text-foreground">
+                  {form.passportIssuingCountry ? form.passportIssuingCountry : "---"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Data de Emissão</span>
 
-                <span className="text-base text-foreground">{format(form.passportIssuingDate!, "dd/MM/yyyy")}</span>
+                <span className="text-base text-foreground">
+                  {form.passportIssuingDate ? format(form.passportIssuingDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -569,37 +609,42 @@ export function FormView({ form }: Props) {
           </AccordionTrigger>
 
           <AccordionContent className="w-full flex flex-col gap-9">
-            {/* TODO: adicionar dinamicamente  */}
             <div className="w-full flex flex-col gap-9">
               {form.otherPeopleTravelingConfirmation &&
               form.otherPeopleTraveling &&
-              form.otherPeopleTraveling.length > 0
-                ? form.otherPeopleTraveling.map((otherPeople, index) => (
-                    <div key={otherPeople.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                      <div className="w-full flex items-center gap-2">
-                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                          <span className="text-white text-lg font-medium">{index + 1}</span>
-                        </div>
-
-                        <span className="text-foreground text-lg font-medium">Pessoa Acompanhante</span>
+              form.otherPeopleTraveling.length > 0 ? (
+                form.otherPeopleTraveling.map((otherPeople, index) => (
+                  <div key={otherPeople.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                    <div className="w-full flex items-center gap-2">
+                      <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-lg font-medium">{index + 1}</span>
                       </div>
 
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Nome completo da outra pessoa</span>
+                      <span className="text-foreground text-lg font-medium">Pessoa Acompanhante</span>
+                    </div>
 
-                          <span className="text-base text-foreground">{otherPeople.name}</span>
-                        </div>
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Nome completo da outra pessoa</span>
 
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Relação com a outra pessoa</span>
+                        <span className="text-base text-foreground">{otherPeople.name}</span>
+                      </div>
 
-                          <span className="text-base text-foreground">{otherPeople.relation}</span>
-                        </div>
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Relação com a outra pessoa</span>
+
+                        <span className="text-base text-foreground">{otherPeople.relation}</span>
                       </div>
                     </div>
-                  ))
-                : null}
+                  </div>
+                ))
+              ) : (
+                <div className="w-full bg-[#D3D3E2] p-5 flex items-center justify-center">
+                  <span className="text-foreground text-lg text-center font-semibold">
+                    Não possui pessoa acompanhante
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -637,39 +682,41 @@ export function FormView({ form }: Props) {
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              {form.hasBeenOnUSAConfirmation && form.USALastTravel && form.USALastTravel.length > 0
-                ? form.USALastTravel.map((lastTravel, index) => (
-                    <div key={lastTravel.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                      <div className="w-full flex items-center gap-2">
-                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                          <span className="text-white text-lg font-medium">{index + 1}</span>
-                        </div>
-
-                        <span className="text-foreground text-lg font-medium">Viagem</span>
+              {form.hasBeenOnUSAConfirmation && form.USALastTravel && form.USALastTravel.length > 0 ? (
+                form.USALastTravel.map((lastTravel, index) => (
+                  <div key={lastTravel.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                    <div className="w-full flex items-center gap-2">
+                      <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-lg font-medium">{index + 1}</span>
                       </div>
 
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">
-                            Data prevista de chegada nos EUA
-                          </span>
+                      <span className="text-foreground text-lg font-medium">Viagem</span>
+                    </div>
 
-                          <span className="text-base text-foreground">
-                            {lastTravel.arriveDate ? format(lastTravel.arriveDate, "dd/MM/yyyy") : "--/--/----"}
-                          </span>
-                        </div>
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Data prevista de chegada nos EUA</span>
 
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">
-                            Tempo estimado de permanência nos EUA
-                          </span>
+                        <span className="text-base text-foreground">
+                          {lastTravel.arriveDate ? format(lastTravel.arriveDate, "dd/MM/yyyy") : "--/--/----"}
+                        </span>
+                      </div>
 
-                          <span className="text-base text-foreground">{lastTravel.estimatedTime}</span>
-                        </div>
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">
+                          Tempo estimado de permanência nos EUA
+                        </span>
+
+                        <span className="text-base text-foreground">{lastTravel.estimatedTime}</span>
                       </div>
                     </div>
-                  ))
-                : null}
+                  </div>
+                ))
+              ) : (
+                <div className="w-full bg-[#D3D3E2] p-5 flex items-center justify-center">
+                  <span className="text-foreground text-lg text-center font-semibold">Não possui viagem anterior</span>
+                </div>
+              )}
             </div>
 
             <div className="w-full grid grid-cols-1 gap-6">
@@ -685,33 +732,37 @@ export function FormView({ form }: Props) {
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              {form.americanLicenseToDriveConfirmation && form.americanLicense && form.americanLicense.length > 0
-                ? form.americanLicense.map((americanLicense, index) => (
-                    <div key={americanLicense.id} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
-                      <div className="w-full flex items-center gap-2">
-                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                          <span className="text-white text-lg font-medium">{index + 1}</span>
-                        </div>
-
-                        <span className="text-foreground text-lg font-medium">Licença</span>
+              {form.americanLicenseToDriveConfirmation && form.americanLicense && form.americanLicense.length > 0 ? (
+                form.americanLicense.map((americanLicense, index) => (
+                  <div key={americanLicense.id} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
+                    <div className="w-full flex items-center gap-2">
+                      <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-lg font-medium">{index + 1}</span>
                       </div>
 
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Número da licença</span>
+                      <span className="text-foreground text-lg font-medium">Licença</span>
+                    </div>
 
-                          <span className="text-base text-foreground">{americanLicense.licenseNumber}</span>
-                        </div>
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Número da licença</span>
 
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Estado</span>
+                        <span className="text-base text-foreground">{americanLicense.licenseNumber}</span>
+                      </div>
 
-                          <span className="text-base text-foreground">{americanLicense.state}</span>
-                        </div>
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Estado</span>
+
+                        <span className="text-base text-foreground">{americanLicense.state}</span>
                       </div>
                     </div>
-                  ))
-                : null}
+                  </div>
+                ))
+              ) : (
+                <div className="w-full bg-[#FDF0D2] p-5 flex items-center justify-center">
+                  <span className="text-foreground text-lg text-center font-semibold">Não possui licença</span>
+                </div>
+              )}
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -1065,39 +1116,43 @@ export function FormView({ form }: Props) {
             <div className="w-full flex flex-col gap-9">
               {form.familyLivingInTheUSAConfirmation &&
               form.familyLivingInTheUSA &&
-              form.familyLivingInTheUSA.length > 0
-                ? form.familyLivingInTheUSA.map((familyLivingInTheUSA, index) => (
-                    <div key={familyLivingInTheUSA.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                      <div className="w-full flex items-center gap-2">
-                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                          <span className="text-white text-lg font-medium">{index + 1}</span>
-                        </div>
-
-                        <span className="text-foreground text-lg font-medium">Familiar</span>
+              form.familyLivingInTheUSA.length > 0 ? (
+                form.familyLivingInTheUSA.map((familyLivingInTheUSA, index) => (
+                  <div key={familyLivingInTheUSA.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                    <div className="w-full flex items-center gap-2">
+                      <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-lg font-medium">{index + 1}</span>
                       </div>
 
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Nome do Parente</span>
+                      <span className="text-foreground text-lg font-medium">Familiar</span>
+                    </div>
 
-                          <span className="text-base text-foreground">{familyLivingInTheUSA.name}</span>
-                        </div>
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Nome do Parente</span>
 
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Parentesco</span>
+                        <span className="text-base text-foreground">{familyLivingInTheUSA.name}</span>
+                      </div>
 
-                          <span className="text-base text-foreground">{familyLivingInTheUSA.relation}</span>
-                        </div>
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Parentesco</span>
 
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Situação do Parente</span>
+                        <span className="text-base text-foreground">{familyLivingInTheUSA.relation}</span>
+                      </div>
 
-                          <span className="text-base text-foreground">{familyLivingInTheUSA.situation}</span>
-                        </div>
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Situação do Parente</span>
+
+                        <span className="text-base text-foreground">{familyLivingInTheUSA.situation}</span>
                       </div>
                     </div>
-                  ))
-                : null}
+                  </div>
+                ))
+              ) : (
+                <div className="w-full bg-[#D3D3E2] p-5 flex items-center justify-center">
+                  <span className="text-foreground text-lg text-center font-semibold">Não possui outro familiar</span>
+                </div>
+              )}
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -1314,197 +1369,201 @@ export function FormView({ form }: Props) {
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              {form.previousJobConfirmation && form.previousJobs && form.previousJobs.length > 0
-                ? form.previousJobs.map((previousJobs, index) => (
-                    <div key={previousJobs.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
-                      <div className="w-full flex items-center gap-2">
-                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                          <span className="text-white text-lg font-medium">{index + 1}</span>
-                        </div>
-
-                        <span className="text-foreground text-lg font-medium">Emprego Anterior</span>
+              {form.previousJobConfirmation && form.previousJobs && form.previousJobs.length > 0 ? (
+                form.previousJobs.map((previousJobs, index) => (
+                  <div key={previousJobs.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                    <div className="w-full flex items-center gap-2">
+                      <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-lg font-medium">{index + 1}</span>
                       </div>
 
-                      <div className="w-full grid grid-cols-1 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">
-                            Nome do empregador ou empresa anterior
-                          </span>
+                      <span className="text-foreground text-lg font-medium">Emprego Anterior</span>
+                    </div>
 
-                          <span className="text-base text-foreground">{previousJobs.companyName}</span>
-                        </div>
-                      </div>
+                    <div className="w-full grid grid-cols-1 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">
+                          Nome do empregador ou empresa anterior
+                        </span>
 
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Endereço completo da empresa</span>
-
-                          <span className="text-base text-foreground">{previousJobs.companyAddress}</span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Cidade da empresa</span>
-
-                          <span className="text-base text-foreground">{previousJobs.companyCity}</span>
-                        </div>
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Estado da empresa</span>
-
-                          <span className="text-base text-foreground">{previousJobs.companyState}</span>
-                        </div>
-                      </div>
-
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">País da empresa</span>
-
-                          <span className="text-base text-foreground">{previousJobs.companyCountry}</span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">CEP da empresa</span>
-
-                          <span className="text-base text-foreground">{previousJobs.companyCep}</span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Telefone da empresa</span>
-
-                          <span className="text-base text-foreground">
-                            {previousJobs.companyTel ? formatPhone(previousJobs.companyTel) : "---"}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Cargo / Função</span>
-
-                          <span className="text-base text-foreground">{previousJobs.office}</span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Nome completo do supervisor</span>
-
-                          <span className="text-base text-foreground">{previousJobs.supervisorName}</span>
-                        </div>
-                      </div>
-
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Data de admissão</span>
-
-                          <span className="text-base text-foreground">
-                            {previousJobs.admissionDate
-                              ? format(previousJobs.admissionDate, "dd/MM/yyyy")
-                              : "--/--/----"}
-                          </span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Data de demissão</span>
-
-                          <span className="text-base text-foreground">
-                            {previousJobs.resignationDate
-                              ? format(previousJobs.resignationDate, "dd/MM/yyyy")
-                              : "--/--/----"}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="w-full grid grid-cols-1 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Descrição da tarefa exercida</span>
-
-                          <span className="text-base text-foreground">{previousJobs.jobDescription}</span>
-                        </div>
+                        <span className="text-base text-foreground">{previousJobs.companyName}</span>
                       </div>
                     </div>
-                  ))
-                : null}
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Endereço completo da empresa</span>
+
+                        <span className="text-base text-foreground">{previousJobs.companyAddress}</span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Cidade da empresa</span>
+
+                        <span className="text-base text-foreground">{previousJobs.companyCity}</span>
+                      </div>
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Estado da empresa</span>
+
+                        <span className="text-base text-foreground">{previousJobs.companyState}</span>
+                      </div>
+                    </div>
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">País da empresa</span>
+
+                        <span className="text-base text-foreground">{previousJobs.companyCountry}</span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">CEP da empresa</span>
+
+                        <span className="text-base text-foreground">{previousJobs.companyCep}</span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Telefone da empresa</span>
+
+                        <span className="text-base text-foreground">
+                          {previousJobs.companyTel ? formatPhone(previousJobs.companyTel) : "---"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Cargo / Função</span>
+
+                        <span className="text-base text-foreground">{previousJobs.office}</span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Nome completo do supervisor</span>
+
+                        <span className="text-base text-foreground">{previousJobs.supervisorName}</span>
+                      </div>
+                    </div>
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Data de admissão</span>
+
+                        <span className="text-base text-foreground">
+                          {previousJobs.admissionDate ? format(previousJobs.admissionDate, "dd/MM/yyyy") : "--/--/----"}
+                        </span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Data de demissão</span>
+
+                        <span className="text-base text-foreground">
+                          {previousJobs.resignationDate
+                            ? format(previousJobs.resignationDate, "dd/MM/yyyy")
+                            : "--/--/----"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="w-full grid grid-cols-1 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Descrição da tarefa exercida</span>
+
+                        <span className="text-base text-foreground">{previousJobs.jobDescription}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="w-full bg-[#D3D3E2] p-5 flex items-center justify-center">
+                  <span className="text-foreground text-lg text-center font-semibold">Não possui emprego anterior</span>
+                </div>
+              )}
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              {form.courses && form.courses.length > 0
-                ? form.courses.map((course, index) => (
-                    <div className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
-                      <div className="w-full flex items-center gap-2">
-                        <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                          <span className="text-white text-lg font-medium">{index + 1}</span>
-                        </div>
-
-                        <span className="text-foreground text-lg font-medium">Instituição de Ensino Anterior</span>
+              {form.courses && form.courses.length > 0 ? (
+                form.courses.map((course, index) => (
+                  <div key={course.id} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
+                    <div className="w-full flex items-center gap-2">
+                      <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-lg font-medium">{index + 1}</span>
                       </div>
 
-                      <div className="w-full grid grid-cols-1 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Nome completo da instituição</span>
+                      <span className="text-foreground text-lg font-medium">Instituição de Ensino Anterior</span>
+                    </div>
 
-                          <span className="text-base text-foreground">{course.institutionName}</span>
-                        </div>
-                      </div>
+                    <div className="w-full grid grid-cols-1 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Nome completo da instituição</span>
 
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">
-                            Endereço completo da instituição
-                          </span>
-
-                          <span className="text-base text-foreground">{course.address}</span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Cidade da instituição</span>
-
-                          <span className="text-base text-foreground">{course.city}</span>
-                        </div>
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Estado da instituição</span>
-
-                          <span className="text-base text-foreground">{course.state}</span>
-                        </div>
-                      </div>
-
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">País da instituição</span>
-
-                          <span className="text-base text-foreground">{course.country}</span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">CEP da instituição</span>
-
-                          <span className="text-base text-foreground">{course.cep}</span>
-                        </div>
-                      </div>
-
-                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Nome do curso</span>
-
-                          <span className="text-base text-foreground">{course.courseName}</span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Data de início</span>
-
-                          <span className="text-base text-foreground">
-                            {course.initialDate ? format(course.initialDate, "dd/MM/yyyy") : "--/--/----"}
-                          </span>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-1">
-                          <span className="text-base text-foreground font-medium">Data de término</span>
-
-                          <span className="text-base text-foreground">
-                            {course.finishDate ? format(course.finishDate, "dd/MM/yyyy") : "--/--/----"}
-                          </span>
-                        </div>
+                        <span className="text-base text-foreground">{course.institutionName}</span>
                       </div>
                     </div>
-                  ))
-                : null}
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Endereço completo da instituição</span>
+
+                        <span className="text-base text-foreground">{course.address}</span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Cidade da instituição</span>
+
+                        <span className="text-base text-foreground">{course.city}</span>
+                      </div>
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Estado da instituição</span>
+
+                        <span className="text-base text-foreground">{course.state}</span>
+                      </div>
+                    </div>
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">País da instituição</span>
+
+                        <span className="text-base text-foreground">{course.country}</span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">CEP da instituição</span>
+
+                        <span className="text-base text-foreground">{course.cep}</span>
+                      </div>
+                    </div>
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Nome do curso</span>
+
+                        <span className="text-base text-foreground">{course.courseName}</span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Data de início</span>
+
+                        <span className="text-base text-foreground">
+                          {course.initialDate ? format(course.initialDate, "dd/MM/yyyy") : "--/--/----"}
+                        </span>
+                      </div>
+
+                      <div className="w-full flex flex-col gap-1">
+                        <span className="text-base text-foreground font-medium">Data de término</span>
+
+                        <span className="text-base text-foreground">
+                          {course.finishDate ? format(course.finishDate, "dd/MM/yyyy") : "--/--/----"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="w-full bg-[#FDF0D2] p-5 flex items-center justify-center">
+                  <span className="text-foreground text-lg text-center font-semibold">Não possui ensino anterior</span>
+                </div>
+              )}
             </div>
           </AccordionContent>
         </AccordionItem>

@@ -1,13 +1,128 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/lib/prisma";
 import { FullForm } from "@/types";
+import {
+  AmericanLicense,
+  Course,
+  FamilyLivingInTheUSADetails,
+  OtherPeopleTraveling,
+  PreviousJobs,
+  USALastTravel,
+} from "@prisma/client";
 
 export async function POST(req: Request) {
+  let newForm: FullForm | null = null;
+  let newOtherPeopleTraveling: OtherPeopleTraveling | null = null;
+  let newUSALastTravel: USALastTravel | null = null;
+  let newAmericanLicense: AmericanLicense | null = null;
+  let newFamilyLivingInTheUSA: FamilyLivingInTheUSADetails | null = null;
+  let newPreviousJobs: PreviousJobs | null = null;
+  let newCourses: Course | null = null;
+
+  async function handleOtherPeopleTraveling(form: FullForm) {
+    return await prisma.otherPeopleTraveling.create({
+      data: {
+        name: "",
+        relation: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleUSALastTravel(form: FullForm) {
+    return await prisma.uSALastTravel.create({
+      data: {
+        arriveDate: null,
+        estimatedTime: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleAmericanLicense(form: FullForm) {
+    return await prisma.americanLicense.create({
+      data: {
+        licenseNumber: "",
+        state: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleFamilyLivingInTheUSA(form: FullForm) {
+    return await prisma.familyLivingInTheUSADetails.create({
+      data: {
+        name: "",
+        relation: "",
+        situation: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handlePreviousJobs(form: FullForm) {
+    return await prisma.previousJobs.create({
+      data: {
+        admissionDate: null,
+        companyAddress: "",
+        companyCep: "",
+        companyCity: "",
+        companyCountry: "",
+        companyName: "",
+        companyState: "",
+        companyTel: "",
+        jobDescription: "",
+        resignationDate: null,
+        supervisorName: "",
+        office: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
+  async function handleCourses(form: FullForm) {
+    return await prisma.course.create({
+      data: {
+        address: "",
+        cep: "",
+        city: "",
+        country: "",
+        courseName: "",
+        finishDate: null,
+        initialDate: null,
+        institutionName: "",
+        state: "",
+        form: {
+          connect: {
+            id: form.id,
+          },
+        },
+      },
+    });
+  }
+
   try {
-    const {
-      isSameAddress,
-      isSameTravelDate,
-    }: { isSameAddress: boolean; isSameTravelDate: boolean } = await req.json();
+    const { isSameAddress, isSameTravelDate }: { isSameAddress: boolean; isSameTravelDate: boolean } = await req.json();
     let newForm: FullForm | null;
 
     const currentUser = await getCurrentUser();
@@ -399,8 +514,7 @@ export async function POST(req: Request) {
             id: newForm.id,
           },
           data: {
-            travelItineraryConfirmation:
-              primaryForm.travelItineraryConfirmation,
+            travelItineraryConfirmation: primaryForm.travelItineraryConfirmation,
             USAPreviewArriveDate: primaryForm.USAPreviewArriveDate,
             arriveFlyNumber: primaryForm.arriveFlyNumber,
             arriveCity: primaryForm.arriveCity,
@@ -431,7 +545,36 @@ export async function POST(req: Request) {
       }
     }
 
-    return Response.json({ formId: newForm.id }, { status: 200 });
+    if (newForm?.otherPeopleTraveling.length === 0) {
+      newOtherPeopleTraveling = await handleOtherPeopleTraveling(newForm);
+    }
+
+    if (newForm?.USALastTravel.length === 0) {
+      newUSALastTravel = await handleUSALastTravel(newForm);
+    }
+
+    if (newForm?.americanLicense.length === 0) {
+      newAmericanLicense = await handleAmericanLicense(newForm);
+    }
+
+    if (newForm?.familyLivingInTheUSA.length === 0) {
+      newFamilyLivingInTheUSA = await handleFamilyLivingInTheUSA(newForm);
+    }
+
+    if (newForm?.previousJobs.length === 0) {
+      newPreviousJobs = await handlePreviousJobs(newForm);
+    }
+
+    if (newForm?.courses.length === 0) {
+      newCourses = await handleCourses(newForm);
+    }
+
+    return Response.json(
+      {
+        formId: newForm.id,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.log("[ERROR_ON_ADDITIONAL_FORM_CREATE]", error);
 

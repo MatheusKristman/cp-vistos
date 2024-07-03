@@ -1,16 +1,3 @@
-// se empresário/autonomo, a descrição ira ficar (Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras informações relacionadas ao seu negócio)
-// se outro, a descrição ira ficar (Descreva quais funções são você exerce no seu trabalho)
-//
-// itens
-// aposentado
-// dona de casa
-// empresario/autonomo
-// funcionário
-
-// TODO: no submit adicionar o valor EU MESMO no payerNameOrCompany caso seja true
-// TODO: ajustar o formulário de previousTravelForm pois a parte de posto consular e categoria fica dentro do form dinâmico acima
-// TODO: ajustar formulário no personal data para alinhar o nome de guerra com o outro nomes
-// TODO: ajustar data de nascimento, pois se for menor de 14 anos, tem alguns campos que serão desativados
 "use client";
 
 import { ArrowRight, Loader2 } from "lucide-react";
@@ -370,7 +357,7 @@ const formSchema = z
     }
   );
 
-export function PrimaryForm({ currentForm }: Props) {
+export function EditForm({ currentForm }: Props) {
   const {
     setOtherPeopleTraveling,
     setOtherPeopleTravelingIndex,
@@ -929,14 +916,6 @@ export function PrimaryForm({ currentForm }: Props) {
   }, [currentForm]);
 
   useEffect(() => {
-    form.setValue("payerNameOrCompany", "Eu mesmo");
-  }, [myselfValue]);
-
-  useEffect(() => {
-    form.setValue("visaNumber", "Não sei");
-  }, [noVisaNumber]);
-
-  useEffect(() => {
     if (isSaving) {
       axios
         .post("/api/form/save", {
@@ -1356,18 +1335,16 @@ export function PrimaryForm({ currentForm }: Props) {
             Enviar {isSubmitting ? <Loader2 className="animate-spin" /> : <ArrowRight className="hidden" />}
           </Button>
 
-          {pathname === "/formulario/editar" ? (
-            <Button
-              size="xl"
-              variant="outline"
-              disabled={isSubmitting || isSaving}
-              type="button"
-              className="w-full sm:w-fit"
-              asChild
-            >
-              <Link href="/area-do-cliente">Cancelar</Link>
-            </Button>
-          ) : null}
+          <Button
+            size="xl"
+            variant="outline"
+            disabled={isSubmitting || isSaving}
+            type="button"
+            className="w-full sm:w-fit"
+            asChild
+          >
+            <Link href="/area-do-cliente">Voltar</Link>
+          </Button>
         </div>
       </form>
     </Form>

@@ -4,20 +4,14 @@ import { Course } from "@prisma/client";
 
 export async function POST(req: Request) {
   try {
-    const { courses }: { courses: Course[] } = await req.json();
+    const { courses, formId }: { courses: Course[]; formId: string } = await req.json();
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
       return new Response("Usuário não autorizado", { status: 401 });
     }
 
-    const currentForm = await prisma.form.findFirst({
-      where: {
-        userId: currentUser.id,
-      },
-    });
-
-    if (!currentForm) {
+    if (!formId) {
       return new Response("Dados inválidos", { status: 404 });
     }
 
@@ -55,7 +49,7 @@ export async function POST(req: Request) {
         state: "",
         form: {
           connect: {
-            id: currentForm.id,
+            id: formId,
           },
         },
       },
@@ -63,7 +57,7 @@ export async function POST(req: Request) {
 
     const updatedCourses = await prisma.course.findMany({
       where: {
-        formId: currentForm.id,
+        formId: formId,
       },
     });
 

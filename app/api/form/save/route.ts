@@ -178,6 +178,7 @@ export async function POST(req: Request) {
       childCustodyConfirmation,
       lawViolationConfirmation,
       avoidTaxConfirmation,
+      formId,
     } = await req.json();
     const currentUser = await getCurrentUser();
 
@@ -190,6 +191,7 @@ export async function POST(req: Request) {
     const formExists = await prisma.form.findFirst({
       where: {
         userId: currentUser.id,
+        id: formId,
       },
     });
 
@@ -302,19 +304,21 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
-          await prisma.otherPeopleTraveling.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              name: item.name,
-              relation: item.relation,
-            },
-          });
-        })
-      );
+      if (otherPeopleTraveling) {
+        await Promise.all(
+          otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
+            await prisma.otherPeopleTraveling.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                name: item.name,
+                relation: item.relation,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {
@@ -343,33 +347,37 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        usaLastTravel.map(async (item: USALastTravel) => {
-          await prisma.USALastTravel.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              arriveDate: item.arriveDate,
-              estimatedTime: item.estimatedTime,
-            },
-          });
-        })
-      );
+      if (usaLastTravel) {
+        await Promise.all(
+          usaLastTravel.map(async (item: USALastTravel) => {
+            await prisma.uSALastTravel.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                arriveDate: item.arriveDate,
+                estimatedTime: item.estimatedTime,
+              },
+            });
+          })
+        );
+      }
 
-      await Promise.all(
-        americanLicense.map(async (item: AmericanLicense) => {
-          await prisma.americanLicense.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              licenseNumber: item.licenseNumber,
-              state: item.state,
-            },
-          });
-        })
-      );
+      if (americanLicense) {
+        await Promise.all(
+          americanLicense.map(async (item: AmericanLicense) => {
+            await prisma.americanLicense.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                licenseNumber: item.licenseNumber,
+                state: item.state,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {
@@ -413,20 +421,22 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
-          await prisma.familyLivingInTheUSADetails.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              name: item.name,
-              relation: item.relation,
-              situation: item.situation,
-            },
-          });
-        })
-      );
+      if (familyLivingInTheUSA) {
+        await Promise.all(
+          familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
+            await prisma.familyLivingInTheUSADetails.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                name: item.name,
+                relation: item.relation,
+                situation: item.situation,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {
@@ -450,50 +460,54 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        previousJobs.map(async (item: PreviousJobs) => {
-          await prisma.previousJobs.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              admissionDate: item.admissionDate,
-              companyAddress: item.companyAddress,
-              companyCep: item.companyCep,
-              companyCity: item.companyCity,
-              companyCountry: item.companyCountry,
-              companyName: item.companyName,
-              companyState: item.companyState,
-              companyTel: item.companyTel,
-              jobDescription: item.jobDescription,
-              office: item.office,
-              resignationDate: item.resignationDate,
-              supervisorName: item.supervisorName,
-            },
-          });
-        })
-      );
+      if (previousJobs) {
+        await Promise.all(
+          previousJobs.map(async (item: PreviousJobs) => {
+            await prisma.previousJobs.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                admissionDate: item.admissionDate,
+                companyAddress: item.companyAddress,
+                companyCep: item.companyCep,
+                companyCity: item.companyCity,
+                companyCountry: item.companyCountry,
+                companyName: item.companyName,
+                companyState: item.companyState,
+                companyTel: item.companyTel,
+                jobDescription: item.jobDescription,
+                office: item.office,
+                resignationDate: item.resignationDate,
+                supervisorName: item.supervisorName,
+              },
+            });
+          })
+        );
+      }
 
-      await Promise.all(
-        courses.map(async (item: Course) => {
-          await prisma.course.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              address: item.address,
-              city: item.city,
-              cep: item.cep,
-              country: item.country,
-              courseName: item.courseName,
-              finishDate: item.finishDate,
-              initialDate: item.initialDate,
-              institutionName: item.institutionName,
-              state: item.state,
-            },
-          });
-        })
-      );
+      if (courses) {
+        await Promise.all(
+          courses.map(async (item: Course) => {
+            await prisma.course.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                address: item.address,
+                city: item.city,
+                cep: item.cep,
+                country: item.country,
+                courseName: item.courseName,
+                finishDate: item.finishDate,
+                initialDate: item.initialDate,
+                institutionName: item.institutionName,
+                state: item.state,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {
@@ -641,19 +655,21 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
-          await prisma.otherPeopleTraveling.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              name: item.name,
-              relation: item.relation,
-            },
-          });
-        })
-      );
+      if (otherPeopleTraveling) {
+        await Promise.all(
+          otherPeopleTraveling.map(async (item: OtherPeopleTraveling) => {
+            await prisma.otherPeopleTraveling.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                name: item.name,
+                relation: item.relation,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {
@@ -682,33 +698,37 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        usaLastTravel.map(async (item: USALastTravel) => {
-          await prisma.USALastTravel.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              arriveDate: item.arriveDate,
-              estimatedTime: item.estimatedTime,
-            },
-          });
-        })
-      );
+      if (usaLastTravel) {
+        await Promise.all(
+          usaLastTravel.map(async (item: USALastTravel) => {
+            await prisma.uSALastTravel.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                arriveDate: item.arriveDate,
+                estimatedTime: item.estimatedTime,
+              },
+            });
+          })
+        );
+      }
 
-      await Promise.all(
-        americanLicense.map(async (item: AmericanLicense) => {
-          await prisma.americanLicense.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              licenseNumber: item.licenseNumber,
-              state: item.state,
-            },
-          });
-        })
-      );
+      if (americanLicense) {
+        await Promise.all(
+          americanLicense.map(async (item: AmericanLicense) => {
+            await prisma.americanLicense.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                licenseNumber: item.licenseNumber,
+                state: item.state,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {
@@ -752,20 +772,22 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
-          await prisma.familyLivingInTheUSADetails.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              name: item.name,
-              relation: item.relation,
-              situation: item.situation,
-            },
-          });
-        })
-      );
+      if (familyLivingInTheUSA) {
+        await Promise.all(
+          familyLivingInTheUSA.map(async (item: FamilyLivingInTheUSADetails) => {
+            await prisma.familyLivingInTheUSADetails.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                name: item.name,
+                relation: item.relation,
+                situation: item.situation,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {
@@ -789,50 +811,54 @@ export async function POST(req: Request) {
         },
       });
 
-      await Promise.all(
-        previousJobs.map(async (item: PreviousJobs) => {
-          await prisma.previousJobs.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              admissionDate: item.admissionDate,
-              companyAddress: item.companyAddress,
-              companyCep: item.companyCep,
-              companyCity: item.companyCity,
-              companyCountry: item.companyCountry,
-              companyName: item.companyName,
-              companyState: item.companyState,
-              companyTel: item.companyTel,
-              jobDescription: item.jobDescription,
-              office: item.office,
-              resignationDate: item.resignationDate,
-              supervisorName: item.supervisorName,
-            },
-          });
-        })
-      );
+      if (previousJobs) {
+        await Promise.all(
+          previousJobs.map(async (item: PreviousJobs) => {
+            await prisma.previousJobs.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                admissionDate: item.admissionDate,
+                companyAddress: item.companyAddress,
+                companyCep: item.companyCep,
+                companyCity: item.companyCity,
+                companyCountry: item.companyCountry,
+                companyName: item.companyName,
+                companyState: item.companyState,
+                companyTel: item.companyTel,
+                jobDescription: item.jobDescription,
+                office: item.office,
+                resignationDate: item.resignationDate,
+                supervisorName: item.supervisorName,
+              },
+            });
+          })
+        );
+      }
 
-      await Promise.all(
-        courses.map(async (item: Course) => {
-          await prisma.course.update({
-            where: {
-              id: item.id,
-            },
-            data: {
-              address: item.address,
-              city: item.city,
-              cep: item.cep,
-              country: item.country,
-              courseName: item.courseName,
-              finishDate: item.finishDate,
-              initialDate: item.initialDate,
-              institutionName: item.institutionName,
-              state: item.state,
-            },
-          });
-        })
-      );
+      if (courses) {
+        await Promise.all(
+          courses.map(async (item: Course) => {
+            await prisma.course.update({
+              where: {
+                id: item.id,
+              },
+              data: {
+                address: item.address,
+                city: item.city,
+                cep: item.cep,
+                country: item.country,
+                courseName: item.courseName,
+                finishDate: item.finishDate,
+                initialDate: item.initialDate,
+                institutionName: item.institutionName,
+                state: item.state,
+              },
+            });
+          })
+        );
+      }
 
       await prisma.form.update({
         where: {

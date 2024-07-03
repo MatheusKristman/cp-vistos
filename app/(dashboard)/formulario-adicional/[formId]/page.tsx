@@ -1,11 +1,15 @@
 export const dynamic = "force-dynamic";
 
+import getForm from "@/app/actions/getForm";
 import { AdditionalForm } from "@/components/form/additional-form";
 import { FormNav } from "@/components/form/form-nav";
 import { Header } from "@/components/global/header";
 import { MobileMenu } from "@/components/global/mobile-menu";
 
-export default async function additionalFormPage() {
+export default async function additionalFormPage({ params }: { params: { formId: string } }) {
+  const formId = params.formId;
+  const selectedForm = await getForm(formId);
+
   return (
     <>
       <Header />
@@ -21,7 +25,7 @@ export default async function additionalFormPage() {
             </h1>
           </div>
 
-          <AdditionalForm currentForm={primaryForm} />
+          <AdditionalForm currentForm={selectedForm} />
         </div>
       </div>
     </>

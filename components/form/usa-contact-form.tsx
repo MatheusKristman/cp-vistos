@@ -6,10 +6,12 @@
 
 import { Control } from "react-hook-form";
 import { Element } from "react-scroll";
+import PhoneInput from "react-phone-number-input";
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PrimaryFormControl } from "@/types";
+import { cn } from "@/lib/utils";
 
 interface Props {
   formControl: Control<PrimaryFormControl>;
@@ -153,7 +155,23 @@ export function USAContactForm({ formControl }: Props) {
               <FormLabel className="text-foreground text-sm">Telefone</FormLabel>
 
               <FormControl>
-                <Input {...field} />
+                <PhoneInput
+                  limitMaxLength
+                  smartCaret={false}
+                  placeholder="Insira seu telefone..."
+                  defaultCountry="BR"
+                  className={cn(
+                    "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                    {
+                      "input-error": false,
+                    }
+                  )}
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
 
               <FormMessage className="text-sm text-red-500" />
