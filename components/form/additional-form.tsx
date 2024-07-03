@@ -1190,7 +1190,23 @@ export function AdditionalForm({ currentForm }: Props) {
       setCourses(currentForm.courses);
       setCoursesIndex(currentForm.courses.length);
     }
-  }, [currentForm]);
+  }, [
+    currentForm,
+    setAmericanLicense,
+    setAmericanLicenseIndex,
+    setCourses,
+    setCoursesIndex,
+    setFamilyLivingInTheUSA,
+    setFamilyLivingInTheUSAIndex,
+    setOtherNames,
+    setOtherNamesIndex,
+    setOtherPeopleTraveling,
+    setOtherPeopleTravelingIndex,
+    setPreviousJobs,
+    setPreviousJobsIndex,
+    setUSALastTravel,
+    setUSALastTravelIndex,
+  ]);
 
   useEffect(() => {
     if (isSaving) {
@@ -1222,6 +1238,14 @@ export function AdditionalForm({ currentForm }: Props) {
         });
     }
   }, [isSaving]);
+
+  useEffect(() => {
+    form.setValue("payerNameOrCompany", "Eu mesmo");
+  }, [myselfValue]);
+
+  useEffect(() => {
+    form.setValue("visaNumber", "Não sei");
+  }, [noVisaNumber]);
 
   const personalDataForm = form.watch([
     "firstName",
@@ -1379,6 +1403,14 @@ export function AdditionalForm({ currentForm }: Props) {
     americanLicenseError,
     familyLivingInTheUSAError,
     coursesError,
+    setAboutTravelError,
+    setContactAndAddressError,
+    setFamilyError,
+    setPassportError,
+    setPersonalDataError,
+    setPreviousTravelError,
+    setTravelCompanyError,
+    setWorkEducationError,
   ]);
 
   useEffect(() => {
