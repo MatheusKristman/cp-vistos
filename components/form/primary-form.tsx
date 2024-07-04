@@ -246,7 +246,7 @@ const formSchema = z
       },
       ctx,
     ) => {
-      if (warNameConfirmation && warName && warName.length === 0) {
+      if (warNameConfirmation === "Sim" && warName && warName.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -255,7 +255,7 @@ const formSchema = z
       }
 
       if (
-        otherNationalityConfirmation &&
+        otherNationalityConfirmation === "Sim" &&
         otherNationalityPassport &&
         otherNationalityPassport.length === 0
       ) {
@@ -277,7 +277,11 @@ const formSchema = z
         });
       }
 
-      if (fiveYearsOtherTelConfirmation && otherTel && otherTel.length === 0) {
+      if (
+        fiveYearsOtherTelConfirmation === "Sim" &&
+        otherTel &&
+        otherTel.length === 0
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -286,7 +290,7 @@ const formSchema = z
       }
 
       if (
-        fiveYearsOtherEmailConfirmation &&
+        fiveYearsOtherEmailConfirmation === "Sim" &&
         otherEmail &&
         otherEmail.length === 0
       ) {
@@ -298,7 +302,7 @@ const formSchema = z
       }
 
       if (
-        passportLostConfirmation &&
+        passportLostConfirmation === "Sim" &&
         lostPassportNumber &&
         lostPassportNumber.length === 0
       ) {
@@ -310,7 +314,7 @@ const formSchema = z
       }
 
       if (
-        passportLostConfirmation &&
+        passportLostConfirmation === "Sim" &&
         lostPassportCountry &&
         lostPassportCountry.length === 0
       ) {
@@ -322,7 +326,7 @@ const formSchema = z
       }
 
       if (
-        passportLostConfirmation &&
+        passportLostConfirmation === "Sim" &&
         lostPassportDetails &&
         lostPassportDetails.length === 0
       ) {
@@ -341,7 +345,11 @@ const formSchema = z
         });
       }
 
-      if (groupMemberConfirmation && groupName && groupName.length === 0) {
+      if (
+        groupMemberConfirmation === "Sim" &&
+        groupName &&
+        groupName.length === 0
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -349,7 +357,7 @@ const formSchema = z
         });
       }
 
-      if (USAVisaConfirmation && !visaIssuingDate) {
+      if (USAVisaConfirmation === "Sim" && !visaIssuingDate) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -357,7 +365,11 @@ const formSchema = z
         });
       }
 
-      if (USAVisaConfirmation && visaNumber && visaNumber.length === 0) {
+      if (
+        USAVisaConfirmation === "Sim" &&
+        visaNumber &&
+        visaNumber.length === 0
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -366,7 +378,7 @@ const formSchema = z
       }
 
       if (
-        lostVisaConfirmation &&
+        lostVisaConfirmation === "Sim" &&
         lostVisaDetails &&
         lostVisaDetails.length === 0
       ) {
@@ -378,7 +390,7 @@ const formSchema = z
       }
 
       if (
-        canceledVisaConfirmation &&
+        canceledVisaConfirmation === "Sim" &&
         canceledVisaDetails &&
         canceledVisaDetails.length === 0
       ) {
@@ -390,7 +402,7 @@ const formSchema = z
       }
 
       if (
-        deniedVisaConfirmation &&
+        deniedVisaConfirmation === "Sim" &&
         deniedVisaDetails &&
         deniedVisaDetails.length === 0
       ) {
@@ -402,7 +414,7 @@ const formSchema = z
       }
 
       if (
-        immigrationRequestByAnotherPersonConfirmation &&
+        immigrationRequestByAnotherPersonConfirmation === "Sim" &&
         immigrationRequestByAnotherPersonDetails &&
         immigrationRequestByAnotherPersonDetails.length === 0
       ) {

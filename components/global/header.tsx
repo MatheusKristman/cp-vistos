@@ -1,5 +1,3 @@
-//TODO: ajustar redirecionamento para formulário
-
 import Image from "next/image";
 import Link from "next/link";
 
@@ -58,7 +56,11 @@ export async function Header() {
             asChild
             className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
           >
-            {session ? <Link href="/verificando-usuario">Perfil</Link> : <Link href="/login">Entrar</Link>}
+            {session ? (
+              <Link href="/verificando-usuario">Perfil</Link>
+            ) : (
+              <Link href="/login">Entrar</Link>
+            )}
           </Button>
         </div>
       </div>
