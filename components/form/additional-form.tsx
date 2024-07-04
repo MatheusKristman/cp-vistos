@@ -37,8 +37,6 @@ const formSchema = z
     firstName: z.string().min(1, "Campo obrigatório"),
     lastName: z.string().min(1, "Campo obrigatório"),
     cpf: z.string().min(1, "Campo obrigatório").min(14, "CPF Inválido"),
-    warNameConfirmation: z.enum(["Sim", "Não"]),
-    warName: z.string().optional(),
     otherNamesConfirmation: z.enum(["Sim", "Não"]),
     sex: z
       .string({ message: "Selecione uma opção" })
@@ -201,8 +199,6 @@ const formSchema = z
   .superRefine(
     (
       {
-        warNameConfirmation,
-        warName,
         otherNationalityConfirmation,
         otherNationalityPassport,
         postalAddressConfirmation,
@@ -233,14 +229,6 @@ const formSchema = z
       },
       ctx,
     ) => {
-      if (warNameConfirmation === "Sim" && warName && warName.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["warName"],
-        });
-      }
-
       if (
         otherNationalityConfirmation === "Sim" &&
         otherNationalityPassport &&
@@ -495,14 +483,6 @@ export function AdditionalForm({ currentForm }: Props) {
         currentForm && currentForm.firstName ? currentForm.firstName : "",
       lastName: currentForm && currentForm.lastName ? currentForm.lastName : "",
       cpf: currentForm && currentForm.cpf ? currentForm.cpf : "",
-      warNameConfirmation:
-        currentForm && currentForm.warNameConfirmation
-          ? currentForm.warNameConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      warName:
-        currentForm && currentForm.warName ? currentForm.warName : undefined,
       otherNamesConfirmation:
         currentForm && currentForm.otherNamesConfirmation
           ? currentForm.otherNamesConfirmation === true
@@ -1113,9 +1093,6 @@ export function AdditionalForm({ currentForm }: Props) {
           : "Não",
     },
   });
-  const warNameConfirmationValue: "Sim" | "Não" = form.watch(
-    "warNameConfirmation",
-  );
   const otherNamesConfirmationValue: "Sim" | "Não" = form.watch(
     "otherNamesConfirmation",
   );
@@ -1279,7 +1256,6 @@ export function AdditionalForm({ currentForm }: Props) {
       "firstName" in errors ||
       "lastName" in errors ||
       "cpf" in errors ||
-      "warName" in errors ||
       "sex" in errors ||
       "maritalStatus" in errors ||
       "birthDate" in errors ||
@@ -1728,7 +1704,6 @@ export function AdditionalForm({ currentForm }: Props) {
         <PersonalDataForm
           formControl={form.control}
           handleCPFPersonalDataChange={handleCPFPersonalDataChange}
-          warNameConfirmationValue={warNameConfirmationValue}
           otherNamesConfirmationValue={otherNamesConfirmationValue}
           otherNationalityConfirmation={otherNationalityConfirmation}
         />

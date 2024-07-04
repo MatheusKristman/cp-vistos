@@ -1,6 +1,3 @@
-//TODO: criar função para submit
-//TODO: mandar para o proximo formulário
-
 "use client";
 
 import { ChangeEvent, useState } from "react";
@@ -13,7 +10,13 @@ import { toast } from "sonner";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import useFormStore from "@/constants/stores/useFormStore";
@@ -25,7 +28,11 @@ interface Props {
   groupMemberConfirmation: "Sim" | "Não";
 }
 
-export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmation, groupMemberConfirmation }: Props) {
+export function TravelCompanyForm({
+  formControl,
+  otherPeopleTravelingConfirmation,
+  groupMemberConfirmation,
+}: Props) {
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const params = useParams();
 
@@ -40,7 +47,7 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
   function handleOtherPeopleTravelingChange(
     event: ChangeEvent<HTMLInputElement>,
     property: "name" | "relation",
-    index: number
+    index: number,
   ) {
     if (!otherPeopleTraveling) return;
 
@@ -57,7 +64,10 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
     setIsFetching(true);
 
     axios
-      .post("/api/form/other-people-traveling/create", { otherPeopleTraveling, formId: params.formId })
+      .post("/api/form/other-people-traveling/create", {
+        otherPeopleTraveling,
+        formId: params.formId,
+      })
       .then((res) => {
         setOtherPeopleTravelingIndex(otherPeopleTravelingIndex + 1);
         setOtherPeopleTraveling(res.data.updatedOtherPeopleTraveling);
@@ -107,10 +117,16 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
           name="otherPeopleTravelingConfirmation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-foreground">Há outras pessoas viajando com você?</FormLabel>
+              <FormLabel className="text-foreground">
+                Há outras pessoas viajando com você?
+              </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -143,12 +159,17 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
             <div className="flex flex-col gap-4 w-full">
               {otherPeopleTraveling ? (
                 otherPeopleTraveling.map((obj, i) => (
-                  <div key={obj.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div
+                    key={obj.id}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  >
                     <Input
                       className="order-2 w-[calc(100%-58px)] sm:order-1 sm:w-full placeholder:text-foreground/70"
                       value={obj.name!}
                       placeholder="Nome completo"
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleOtherPeopleTravelingChange(e, "name", i)}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleOtherPeopleTravelingChange(e, "name", i)
+                      }
                     />
 
                     <div className="flex gap-2 justify-between items-end order-1 sm:order-2">
@@ -166,10 +187,16 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
                           type="button"
                           size="xl"
                           className="px-3"
-                          disabled={obj.relation === "" || obj.name === "" || isFetching}
+                          disabled={
+                            obj.relation === "" || obj.name === "" || isFetching
+                          }
                           onClick={handleAddOtherPeopleTravelingInput}
                         >
-                          {isFetching ? <Loader2 className="animate-spin" /> : <Plus />}
+                          {isFetching ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            <Plus />
+                          )}
                         </Button>
                       ) : (
                         <Button
@@ -177,9 +204,15 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
                           type="button"
                           size="xl"
                           className="px-3"
-                          onClick={() => handleRemoveOtherPeopleTravelingInput(obj.id)}
+                          onClick={() =>
+                            handleRemoveOtherPeopleTravelingInput(obj.id)
+                          }
                         >
-                          {isFetching ? <Loader2 className="animate-spin" /> : <Trash />}
+                          {isFetching ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            <Trash />
+                          )}
                         </Button>
                       )}
                     </div>
@@ -191,7 +224,9 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
             </div>
 
             {otherPeopleTravelingError.length > 0 && (
-              <span className="text-sm text-red-500">{otherPeopleTravelingError}</span>
+              <span className="text-sm text-red-500">
+                {otherPeopleTravelingError}
+              </span>
             )}
           </div>
         )}
@@ -208,7 +243,11 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
               </FormLabel>
 
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="Não" />
@@ -237,10 +276,15 @@ export function TravelCompanyForm({ formControl, otherPeopleTravelingConfirmatio
           name="groupName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Nome da Organização ou Grupo</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Nome da Organização ou Grupo
+              </FormLabel>
 
               <FormControl>
-                <Input disabled={groupMemberConfirmation === "Não"} {...field} />
+                <Input
+                  disabled={groupMemberConfirmation === "Não"}
+                  {...field}
+                />
               </FormControl>
 
               <FormMessage className="text-sm text-red-500" />

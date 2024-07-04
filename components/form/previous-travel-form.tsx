@@ -1,5 +1,3 @@
-// TODO: ajustar data exata de emissão quando esta selecionado não no lado de visto
-
 "use client";
 
 import { Control } from "react-hook-form";

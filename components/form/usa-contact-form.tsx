@@ -1,14 +1,16 @@
-//TODO: criar função para submit
-//TODO: mandar para o proximo formulário
-// TODO: adicionar input de telefone no formulário de telefone
-
 "use client";
 
 import { Control } from "react-hook-form";
 import { Element } from "react-scroll";
 import PhoneInput from "react-phone-number-input";
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PrimaryFormControl } from "@/types";
 import { cn } from "@/lib/utils";
@@ -34,7 +36,9 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentName"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Nome completo da pessoa ou Organização</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Nome completo da pessoa ou Organização
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -50,7 +54,9 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentRelation"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Qual é a relação do contato com você?</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Qual é a relação do contato com você?
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -68,7 +74,9 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentAddress"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Endereço do contato nos EUA</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Endereço do contato nos EUA
+              </FormLabel>
 
               <FormControl>
                 <Input {...field} />
@@ -84,7 +92,9 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentZipCode"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Zip code</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Zip code
+              </FormLabel>
 
               <FormControl>
                 <Input maxLength={5} {...field} />
@@ -152,7 +162,9 @@ export function USAContactForm({ formControl }: Props) {
           name="organizationOrUSAResidentTel"
           render={({ field }) => (
             <FormItem className="flex flex-col justify-between">
-              <FormLabel className="text-foreground text-sm">Telefone</FormLabel>
+              <FormLabel className="text-foreground text-sm">
+                Telefone
+              </FormLabel>
 
               <FormControl>
                 <PhoneInput
@@ -164,7 +176,7 @@ export function USAContactForm({ formControl }: Props) {
                     "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                     {
                       "input-error": false,
-                    }
+                    },
                   )}
                   name={field.name}
                   ref={field.ref}

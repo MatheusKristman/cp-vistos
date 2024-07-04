@@ -1,5 +1,3 @@
-// TODO: adicionar erro no familyLivingInTheUSA
-
 "use client";
 
 import { Control } from "react-hook-form";

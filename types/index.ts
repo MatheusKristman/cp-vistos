@@ -12,8 +12,6 @@ export type PrimaryFormControl = {
   firstName: string;
   lastName: string;
   cpf: string;
-  warNameConfirmation: "Sim" | "Não";
-  warName?: string | undefined;
   otherNamesConfirmation: "Sim" | "Não";
   sex: string;
   maritalStatus: string;

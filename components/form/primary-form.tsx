@@ -1,15 +1,3 @@
-// se empresário/autonomo, a descrição ira ficar (Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras informações relacionadas ao seu negócio)
-// se outro, a descrição ira ficar (Descreva quais funções são você exerce no seu trabalho)
-//
-// itens
-// aposentado
-// dona de casa
-// empresario/autonomo
-// funcionário
-
-// TODO: no submit adicionar o valor EU MESMO no payerNameOrCompany caso seja true
-// TODO: ajustar o formulário de previousTravelForm pois a parte de posto consular e categoria fica dentro do form dinâmico acima
-// TODO: ajustar formulário no personal data para alinhar o nome de guerra com o outro nomes
 // TODO: ajustar data de nascimento, pois se for menor de 14 anos, tem alguns campos que serão desativados
 "use client";
 
@@ -50,8 +38,6 @@ const formSchema = z
     firstName: z.string().min(1, "Campo obrigatório"),
     lastName: z.string().min(1, "Campo obrigatório"),
     cpf: z.string().min(1, "Campo obrigatório").min(14, "CPF Inválido"),
-    warNameConfirmation: z.enum(["Sim", "Não"]),
-    warName: z.string().optional(),
     otherNamesConfirmation: z.enum(["Sim", "Não"]),
     sex: z
       .string({ message: "Selecione uma opção" })
@@ -214,8 +200,6 @@ const formSchema = z
   .superRefine(
     (
       {
-        warNameConfirmation,
-        warName,
         otherNationalityConfirmation,
         otherNationalityPassport,
         postalAddressConfirmation,
@@ -246,14 +230,6 @@ const formSchema = z
       },
       ctx,
     ) => {
-      if (warNameConfirmation === "Sim" && warName && warName.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["warName"],
-        });
-      }
-
       if (
         otherNationalityConfirmation === "Sim" &&
         otherNationalityPassport &&
@@ -508,14 +484,6 @@ export function PrimaryForm({ currentForm }: Props) {
         currentForm && currentForm.firstName ? currentForm.firstName : "",
       lastName: currentForm && currentForm.lastName ? currentForm.lastName : "",
       cpf: currentForm && currentForm.cpf ? currentForm.cpf : "",
-      warNameConfirmation:
-        currentForm && currentForm.warNameConfirmation
-          ? currentForm.warNameConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      warName:
-        currentForm && currentForm.warName ? currentForm.warName : undefined,
       otherNamesConfirmation:
         currentForm && currentForm.otherNamesConfirmation
           ? currentForm.otherNamesConfirmation === true
@@ -1126,9 +1094,6 @@ export function PrimaryForm({ currentForm }: Props) {
           : "Não",
     },
   });
-  const warNameConfirmationValue: "Sim" | "Não" = form.watch(
-    "warNameConfirmation",
-  );
   const otherNamesConfirmationValue: "Sim" | "Não" = form.watch(
     "otherNamesConfirmation",
   );
@@ -1292,7 +1257,6 @@ export function PrimaryForm({ currentForm }: Props) {
       "firstName" in errors ||
       "lastName" in errors ||
       "cpf" in errors ||
-      "warName" in errors ||
       "sex" in errors ||
       "maritalStatus" in errors ||
       "birthDate" in errors ||
@@ -1741,7 +1705,6 @@ export function PrimaryForm({ currentForm }: Props) {
         <PersonalDataForm
           formControl={form.control}
           handleCPFPersonalDataChange={handleCPFPersonalDataChange}
-          warNameConfirmationValue={warNameConfirmationValue}
           otherNamesConfirmationValue={otherNamesConfirmationValue}
           otherNationalityConfirmation={otherNationalityConfirmation}
         />
