@@ -5,18 +5,23 @@
 //TODO: criar função para abrir modal com os formulários e se está completo
 //TODO: criar função para caso o usuário não seja admin, redirecionar para a pagina correta
 
-import { useEffect } from "react";
-import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import axios from "axios";
 
 import { ClientItem } from "@/components/dashboard/client-item";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { clients } from "@/constants/dashboard-clients-test";
+import { FormModal } from "@/components/dashboard/form-modal";
+import { UserWithForm } from "@/types";
 
 export default function ClientsPage() {
+  const [users, setUsers] = useState<UserWithForm[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
+
   const session = useSession();
   const router = useRouter();
 
@@ -25,27 +30,59 @@ export default function ClientsPage() {
       router.replace("/");
       toast.error("Usuário não autorizado");
     }
-  }, [session]);
+  }, [session, router]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    axios
+      .get("/api/adm/get-users")
+      .then((res) => {
+        setUsers(res.data.users);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.response.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   return (
-    <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 mt-6 lg:mt-10">
-      <div className="w-full flex flex-col gap-4 mb-6">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium">Clientes</h1>
+    <>
+      <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 mt-6 lg:mt-10">
+        <div className="w-full flex flex-col gap-4 mb-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium">Clientes</h1>
 
-        <div className="w-full flex items-center gap-2">
-          <Input placeholder="Pesquise seu cliente" className="placeholder:text-primary/60" />
+          <div className="w-full flex items-center gap-2">
+            <Input placeholder="Pesquise seu cliente" className="placeholder:text-primary/60" />
 
-          <Button variant="link" size="icon">
-            <Search />
-          </Button>
+            <Button variant="link" size="icon">
+              <Search />
+            </Button>
+          </div>
+        </div>
+
+        <div className="w-full grid grid-cols-1 min-[375px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {isLoading ? (
+            <div className="mt-12 w-full flex flex-col gap-2 items-center justify-center col-span-2 sm:col-span-3 lg:col-span-4 xl:col-span-5">
+              <Loader2 className="animate-spin" size={70} />
+              <span className="text-lg font-medium">Carregando...</span>
+            </div>
+          ) : users.length > 0 ? (
+            users.map((client) => <ClientItem key={client.id} client={client} />)
+          ) : (
+            <div className="mt-12 w-full flex flex-col gap-2 items-center justify-center col-span-2 sm:col-span-3 lg:col-span-4 xl:col-span-5">
+              <span className="text-center text-lg font-medium opacity-60 md:text-xl">
+                Nenhum usuário cadastrado no momento
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="w-full grid grid-cols-1 min-[375px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {clients.map((client) => (
-          <ClientItem key={client.name} name={client.name} createdAt={client.createdAt} />
-        ))}
-      </div>
-    </div>
+      <FormModal />
+    </>
   );
 }

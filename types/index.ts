@@ -6,6 +6,7 @@ import {
   OtherPeopleTraveling,
   PreviousJobs,
   USALastTravel,
+  User,
 } from "@prisma/client";
 
 export type PrimaryFormControl = {
@@ -169,4 +170,8 @@ export type FullForm = Form & {
   familyLivingInTheUSA: FamilyLivingInTheUSADetails[];
   previousJobs: PreviousJobs[];
   courses: Course[];
+};
+
+export type UserWithForm = User & {
+  form: Form[];
 };
