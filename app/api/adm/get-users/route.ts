@@ -13,7 +13,6 @@ export async function GET() {
     const users = await prisma.user.findMany({
       where: {
         role: Role.USER,
-        primaryFormCreated: true,
       },
       include: {
         form: true,

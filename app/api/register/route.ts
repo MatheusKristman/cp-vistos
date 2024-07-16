@@ -4,9 +4,9 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { email, password, confirmPassword } = await req.json();
+    const { email, name, password, confirmPassword } = await req.json();
 
-    if (!email || !password || !confirmPassword) {
+    if (!email || !name || !password || !confirmPassword) {
       return new Response("Dados inválidos", { status: 400 });
     }
 
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({
       data: {
         email,
+        name,
         password: pwHash,
         role: Role.USER,
       },
@@ -35,9 +36,9 @@ export async function POST(req: Request) {
         NOT: {
           role: {
             equals: Role.ADMIN,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     return Response.json({ users, email, password }, { status: 200 });

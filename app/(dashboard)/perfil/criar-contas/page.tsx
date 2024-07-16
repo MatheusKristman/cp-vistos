@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 const formSchema = z
   .object({
     email: z.string().min(1, { message: "E-mail obrigatório" }).email({ message: "E-mail inválido" }),
+    name: z.string().min(1, { message: "Nome obrigatório" }),
     password: z.string().min(6, { message: "Senha precisa ter no mínimo 6 caracteres" }),
     confirmPassword: z.string().min(6, { message: "Confirmar Senha precisa ter no mínimo 6 caracteres" }),
   })
@@ -47,6 +48,7 @@ export default function CreateAccountPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      name: "",
       password: "",
       confirmPassword: "",
     },
@@ -184,6 +186,27 @@ export default function CreateAccountPage() {
                       <Input
                         disabled={isSubmitting}
                         placeholder="Insira o e-mail"
+                        className="placeholder:text-primary/50"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-red-500" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base text-primary">Nome</FormLabel>
+
+                    <FormControl>
+                      <Input
+                        disabled={isSubmitting}
+                        placeholder="Insira o nome"
                         className="placeholder:text-primary/50"
                         {...field}
                       />

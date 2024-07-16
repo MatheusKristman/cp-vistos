@@ -45,7 +45,7 @@ export function ClientItem({ client }: Props) {
       className="w-full flex flex-col gap-4 bg-secondary px-6 py-4 border border-secondary transition-colors lg:cursor-pointer lg:hover:border-primary"
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-lg sm:text-xl text-primary font-medium">{`${client.form[0].firstName} ${client.form[0].lastName}`}</span>
+        <span className="text-lg sm:text-xl text-primary font-medium">{`${client.name}`}</span>
 
         {isLoading ? (
           <Loader2 className="animate-spin" color="#2E3675" />
