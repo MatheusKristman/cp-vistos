@@ -29,14 +29,6 @@ export function DashboardMenu() {
         >
           <Link href="/perfil/criar-contas">Criar Contas</Link>
         </li>
-
-        <li
-          className={cn("text-xl", {
-            "font-semibold": pathname === "/perfil/editar-conta",
-          })}
-        >
-          <Link href="/perfil/editar-conta">Editar Conta</Link>
-        </li>
       </ul>
 
       <Button
