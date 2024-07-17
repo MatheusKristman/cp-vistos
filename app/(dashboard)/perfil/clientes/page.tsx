@@ -42,8 +42,13 @@ export default function ClientsPage() {
         setUsers(res.data.users);
       })
       .catch((error) => {
-        console.error(error);
-        toast.error(error.response.data);
+        if (error.response.status === 401) {
+          router.replace("/");
+          toast.error("Usuário não autorizado");
+        } else {
+          console.error(error);
+          toast.error(error.response.data);
+        }
       })
       .finally(() => {
         setLoading(false);
