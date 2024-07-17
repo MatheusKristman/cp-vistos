@@ -9,17 +9,37 @@ import axios from "axios";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useClientsStore from "@/constants/stores/useClientsStore";
 import { cn } from "@/lib/utils";
 
 const formSchema = z
   .object({
-    email: z.string().min(1, { message: "E-mail obrigatório" }).email({ message: "E-mail inválido" }),
-    newPassword: z.string().min(6, { message: "Nova Senha precisa ter no mínimo 6 caracteres" }),
-    confirmNewPassword: z.string().min(6, { message: "Confirmar Nova Senha precisa ter no mínimo 6 caracteres" }),
+    email: z
+      .string()
+      .min(1, { message: "E-mail obrigatório" })
+      .email({ message: "E-mail inválido" }),
+    name: z.string().min(1, { message: "Nome obrigatório" }),
+    newPassword: z
+      .string()
+      .min(6, { message: "Nova Senha precisa ter no mínimo 6 caracteres" }),
+    confirmNewPassword: z.string().min(6, {
+      message: "Confirmar Nova Senha precisa ter no mínimo 6 caracteres",
+    }),
   })
   .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
     if (confirmNewPassword !== newPassword) {
@@ -34,8 +54,12 @@ const formSchema = z
 export function EditClientForm() {
   const [isEmailCopied, setIsEmailCopied] = useState<boolean>(false);
   const [isPasswordCopied, setIsPasswordCopied] = useState<boolean>(false);
-  const [passwordType, setPasswordType] = useState<"password" | "text">("password");
-  const [confirmPasswordType, setConfirmPasswordType] = useState<"password" | "text">("password");
+  const [passwordType, setPasswordType] = useState<"password" | "text">(
+    "password",
+  );
+  const [confirmPasswordType, setConfirmPasswordType] = useState<
+    "password" | "text"
+  >("password");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [emailRegistered, setEmailRegistered] = useState<string>("");
   const [passwordRegistered, setPasswordRegistered] = useState<string>("");
@@ -48,6 +72,7 @@ export function EditClientForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      name: "",
       newPassword: "",
       confirmNewPassword: "",
     },
@@ -132,11 +157,17 @@ export function EditClientForm() {
   return (
     <div className="w-full flex flex-col gap-12 lg:flex-row-reverse lg:justify-between">
       <div
-        className={cn("w-full lg:w-fit h-fit bg-secondary px-6 py-4 flex flex-col items-center opacity-100", {
-          "opacity-0": emailRegistered.length === 0 && passwordRegistered.length === 0,
-        })}
+        className={cn(
+          "w-full lg:w-fit h-fit bg-secondary px-6 py-4 flex flex-col items-center opacity-100",
+          {
+            "opacity-0":
+              emailRegistered.length === 0 && passwordRegistered.length === 0,
+          },
+        )}
       >
-        <h2 className="text-xl text-primary font-medium mb-6">Novos dados do usuário editado</h2>
+        <h2 className="text-xl text-primary font-medium mb-6">
+          Novos dados do usuário editado
+        </h2>
 
         <div className="flex items-center gap-2 mb-4">
           <TooltipProvider>
@@ -172,14 +203,19 @@ export function EditClientForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 lg:w-1/2">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 lg:w-1/2"
+        >
           <div className="w-full flex flex-col space-y-4">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base text-primary text-left w-full block">E-mail</FormLabel>
+                  <FormLabel className="text-base text-primary text-left w-full block">
+                    E-mail
+                  </FormLabel>
 
                   <FormControl>
                     <Input
@@ -190,7 +226,30 @@ export function EditClientForm() {
                     />
                   </FormControl>
 
-                  <FormMessage className="text-sm text-red-500" />
+                  <FormMessage className="text-sm text-red-500 w-full text-left block" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base text-primary text-left w-full block">
+                    Nome
+                  </FormLabel>
+
+                  <FormControl>
+                    <Input
+                      disabled={isSubmitting}
+                      placeholder="Insira o nome"
+                      className="placeholder:text-primary/50"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-red-500 w-full text-left block" />
                 </FormItem>
               )}
             />
@@ -200,7 +259,9 @@ export function EditClientForm() {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base text-primary text-left w-full block">Nova Senha</FormLabel>
+                  <FormLabel className="text-base text-primary text-left w-full block">
+                    Nova Senha
+                  </FormLabel>
 
                   <FormControl>
                     <div className="w-full relative">
@@ -220,12 +281,18 @@ export function EditClientForm() {
                         size="icon"
                         className="absolute top-1/2 right-2 transform -translate-y-1/2"
                       >
-                        <span>{passwordType === "text" ? <Eye color="#9CABCB" /> : <EyeOff color="#9CABCB" />}</span>
+                        <span>
+                          {passwordType === "text" ? (
+                            <Eye color="#9CABCB" />
+                          ) : (
+                            <EyeOff color="#9CABCB" />
+                          )}
+                        </span>
                       </Button>
                     </div>
                   </FormControl>
 
-                  <FormMessage className="text-sm text-red-500" />
+                  <FormMessage className="text-sm text-red-500 w-full text-left block" />
                 </FormItem>
               )}
             />
@@ -235,7 +302,9 @@ export function EditClientForm() {
               name="confirmNewPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base text-primary text-left w-full block">Confirmar Nova Senha</FormLabel>
+                  <FormLabel className="text-base text-primary text-left w-full block">
+                    Confirmar Nova Senha
+                  </FormLabel>
 
                   <FormControl>
                     <div className="relative w-full">
@@ -256,19 +325,26 @@ export function EditClientForm() {
                         className="absolute top-1/2 right-2 transform -translate-y-1/2"
                       >
                         <span>
-                          {confirmPasswordType === "text" ? <Eye color="#9CABCB" /> : <EyeOff color="#9CABCB" />}
+                          {confirmPasswordType === "text" ? (
+                            <Eye color="#9CABCB" />
+                          ) : (
+                            <EyeOff color="#9CABCB" />
+                          )}
                         </span>
                       </Button>
                     </div>
                   </FormControl>
 
-                  <FormMessage className="text-sm text-red-500" />
+                  <FormMessage className="text-sm text-red-500 w-full text-left block" />
                 </FormItem>
               )}
             />
           </div>
 
-          <Button disabled={isSubmitting} className="w-full lg:w-24 flex items-center gap-2">
+          <Button
+            disabled={isSubmitting}
+            className="w-full lg:w-24 flex items-center gap-2"
+          >
             Editar
             {isSubmitting && <Loader2 className="animate-spin" />}
           </Button>
