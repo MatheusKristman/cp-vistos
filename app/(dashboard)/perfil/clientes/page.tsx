@@ -1,10 +1,5 @@
 "use client";
 
-//TODO: criar função para buscar os clientes
-//TODO: criar função para pegar todos os clientes quando entrar nessa pagina
-//TODO: criar função para abrir modal com os formulários e se está completo
-//TODO: criar função para caso o usuário não seja admin, redirecionar para a pagina correta
-
 import { ChangeEvent, useEffect, useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -57,7 +52,29 @@ export default function ClientsPage() {
 
   useEffect(() => {
     if (searchValue.length > 3) {
-      const userFilter = users.filter((user) => `${user.email}`.includes(searchValue));
+      const userFilter = users.filter(
+        (user) =>
+          user.email
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/\p{Diacritic}/gu, "")
+            .includes(
+              searchValue
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/\p{Diacritic}/gu, ""),
+            ) ||
+          user.name
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/\p{Diacritic}/gu, "")
+            .includes(
+              searchValue
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/\p{Diacritic}/gu, ""),
+            ),
+      );
       setFilteredUsers(userFilter);
     } else {
       setFilteredUsers([]);
@@ -76,7 +93,9 @@ export default function ClientsPage() {
     <>
       <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 mt-6 lg:mt-10">
         <div className="w-full flex flex-col gap-4 mb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium">Clientes</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium">
+            Clientes
+          </h1>
 
           <div className="w-full flex items-center gap-2">
             <Input
@@ -99,13 +118,19 @@ export default function ClientsPage() {
               <span className="text-lg font-medium">Carregando...</span>
             </div>
           ) : searchValue.length > 3 && filteredUsers.length > 0 ? (
-            filteredUsers.map((client) => <ClientItem key={client.id} client={client} />)
+            filteredUsers.map((client) => (
+              <ClientItem key={client.id} client={client} />
+            ))
           ) : searchValue.length > 3 && filteredUsers.length === 0 ? (
             <div className="mt-12 w-full flex flex-col gap-2 items-center justify-center col-span-2 sm:col-span-3 lg:col-span-4 xl:col-span-5">
-              <span className="text-center text-lg font-medium opacity-60 md:text-xl">Nenhum usuário encontrado</span>
+              <span className="text-center text-lg font-medium opacity-60 md:text-xl">
+                Nenhum usuário encontrado
+              </span>
             </div>
           ) : users.length > 0 ? (
-            users.map((client) => <ClientItem key={client.id} client={client} />)
+            users.map((client) => (
+              <ClientItem key={client.id} client={client} />
+            ))
           ) : (
             <div className="mt-12 w-full flex flex-col gap-2 items-center justify-center col-span-2 sm:col-span-3 lg:col-span-4 xl:col-span-5">
               <span className="text-center text-lg font-medium opacity-60 md:text-xl">
