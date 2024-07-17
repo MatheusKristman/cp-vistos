@@ -33,7 +33,7 @@ const formSchema = z
       .string()
       .min(1, { message: "E-mail obrigatório" })
       .email({ message: "E-mail inválido" }),
-    name: z.string().min(1, { message: "Nome obrigatório" }),
+    name: z.string(),
     newPassword: z
       .string()
       .min(6, { message: "Nova Senha precisa ter no mínimo 6 caracteres" }),
