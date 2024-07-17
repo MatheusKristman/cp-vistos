@@ -8,9 +8,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import useHeader from "@/constants/stores/useHeader";
 import { Button } from "../ui/button";
 import { mobileHeaderAnimation } from "@/constants/animations/header";
+import { signOut } from "next-auth/react";
 
 export function MobileMenu() {
   const { isMenuOpen, closeMenu } = useHeader();
+
+  function handleLogOut() {
+    closeMenu();
+
+    setTimeout(() => {
+      signOut({ callbackUrl: "/" });
+    }, 300);
+  }
 
   return (
     <AnimatePresence>
@@ -70,6 +79,10 @@ export function MobileMenu() {
           <div className="mb-12 px-6 flex flex-col gap-4 items-center w-full">
             <Button size="lg" asChild className="w-full">
               <Link href="/login">Perfil</Link>
+            </Button>
+
+            <Button onClick={handleLogOut} variant="outline" size="lg" className="w-full">
+              Sair
             </Button>
 
             <Button variant="outline" size="lg" asChild className="w-full">

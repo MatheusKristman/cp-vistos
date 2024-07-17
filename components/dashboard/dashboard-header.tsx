@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { MobileBtns } from "./mobile-btns";
+import { useSession, signOut } from "next-auth/react";
+import { LogIn, LogOut, Users } from "lucide-react";
 
-export function Header() {
+export function DashboardHeader() {
   const session = useSession();
 
   return (
@@ -22,36 +22,36 @@ export function Header() {
               className="object-center object-contain"
             />
           </Link>
-
-          <nav className="hidden lg:block">
-            <ul className="flex items-center gap-12">
-              <li className="text-lg font-medium text-foreground hover:opacity-70">
-                <Link href="/servicos">Serviços</Link>
-              </li>
-
-              <li className="text-lg font-medium text-foreground hover:opacity-70">
-                <Link href="/diferenciais">Diferenciais</Link>
-              </li>
-
-              <li className="text-lg font-medium text-foreground hover:opacity-70">
-                <Link href="/depoimentos">Depoimentos</Link>
-              </li>
-            </ul>
-          </nav>
         </div>
 
-        <MobileBtns />
-
-        <div className="hidden lg:flex items-center h-full">
+        <div className="lg:hidden h-full flex items-center">
           <Button
             variant="link"
             size="icon"
             asChild
-            className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
+            className="flex lg:hidden aspect-square w-auto h-full border-l border-secondary"
           >
-            <Link href="/contato">Contato</Link>
+            {session.status === "authenticated" ? (
+              <Link href="/verificando-usuario">
+                <Users color="#2E3675" />
+              </Link>
+            ) : (
+              <Link href="/login">
+                <LogIn color="#2E3675" />
+              </Link>
+            )}
           </Button>
 
+          <Button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            variant="secondary"
+            className="flex aspect-square w-auto h-full border-l border-secondary"
+          >
+            <LogOut />
+          </Button>
+        </div>
+
+        <div className="hidden lg:flex items-center h-full">
           <Button
             variant="link"
             size="icon"
