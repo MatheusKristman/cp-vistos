@@ -10,6 +10,8 @@ import { MobileBtns } from "./mobile-btns";
 export function Header() {
   const session = useSession();
 
+  console.log(session);
+
   return (
     <header className="w-full bg-background h-20 lg:h-24 flex items-center">
       <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
@@ -58,16 +60,22 @@ export function Header() {
             asChild
             className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
           >
-            {session ? <Link href="/verificando-usuario">Perfil</Link> : <Link href="/login">Entrar</Link>}
+            {session.status === "authenticated" ? (
+              <Link href="/verificando-usuario">Perfil</Link>
+            ) : (
+              <Link href="/login">Entrar</Link>
+            )}
           </Button>
 
-          <Button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            variant="secondary"
-            className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
-          >
-            Sair
-          </Button>
+          {session.status === "authenticated" ? (
+            <Button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              variant="secondary"
+              className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
+            >
+              Sair
+            </Button>
+          ) : null}
         </div>
       </div>
     </header>
