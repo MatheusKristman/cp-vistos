@@ -3,79 +3,82 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: #fffefe;
-    --foreground: #2f3357;
+    :root {
+        --background: 0 100% 100%;
+        --foreground: 234 30% 26%;
 
-    --card: #000000;
-    --card-foreground: #000000;
+        --card: 0 0% 0%;
+        --card-foreground: 0 0% 0%;
 
-    --popover: #000000;
-    --popover-foreground: #000000;
+        --popover: 0 0% 0%;
+        --popover-foreground: 0 0% 0%;
 
-    --primary: #2e3676;
-    --primary-foreground: #e7ecee;
+        --primary: 233 44% 32%;
+        --primary-foreground: 197 17% 92%;
 
-    --secondary: #f1f0f6;
-    --secondary-foreground: #082d7e;
+        --secondary: 250 25% 95%;
+        --secondary-foreground: 221 88% 26%;
 
-    --muted: #000000;
-    --muted-foreground: #000000;
+        --muted: 203 19% 92%;
+        --muted-foreground: 222 37% 77%;
 
-    --accent: #000000;
-    --accent-foreground: #000000;
+        --accent: 0 0% 0%;
+        --accent-foreground: 0 0% 0%;
 
-    --destructive: #000000;
-    --destructive-foreground: #000000;
+        --destructive: 0 46% 59%;
+        --destructive-foreground: 0 0% 100%;
 
-    --border: #000000;
-    --input: #000000;
-    --ring: #000000;
+        --confirm: 137 46% 59%;
+        --confirm-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
-  }
+        --border: 222 37% 77%;
+        --input: 0 0% 0%;
+        --ring: 0 0% 0%;
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+        --radius: 0.5rem;
+    }
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 221, 88%, 26%;
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 221, 88%, 26%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+    }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+    * {
+        @apply border-border;
+    }
 
-  body {
-    @apply bg-background text-foreground;
-  }
+    body {
+        @apply bg-background text-foreground;
+    }
 }
 
 .PhoneInputInput {
-  @apply bg-transparent outline-none;
+    @apply bg-transparent outline-none;
 }
