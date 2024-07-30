@@ -1,10 +1,12 @@
+// TODO: adicionar perfis com a variavel profiles
+
 "use client";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import CurrencyInput from "react-currency-input-field";
-import { ChangeEvent, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { CalendarIcon, CircleDollarSign } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -19,7 +21,71 @@ import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 
-const formSchema = z
+const profileFormSchema = z.object({
+  profileName: z
+    .string({
+      required_error: "Nome do perfil é obrigatório",
+      invalid_type_error: "Nome do perfil inválido",
+    })
+    .min(1, { message: "Nome do perfil é obrigatório" })
+    .min(6, { message: "Nome do perfil precisa ter no mínimo 6 caracteres" }),
+  profileCpf: z
+    .string({
+      required_error: "CPF do perfil é obrigatório",
+      invalid_type_error: "CPF do perfil inválido",
+    })
+    .refine((val) => val.length === 0 || (val.length > 0 && val.length === 14), {
+      message: "CPF do perfil inválido",
+    }),
+  profileAddress: z.string({
+    required_error: "Endereço do perfil é obrigatório",
+    invalid_type_error: "Endereço do perfil inválido",
+  }),
+  birthDate: z
+    .date({
+      required_error: "Data de nascimento é obrigatório",
+      invalid_type_error: "Data de nascimento inválida",
+    })
+    .optional(),
+  passport: z.string({
+    required_error: "Passaporte é obrigatório",
+    invalid_type_error: "Passaporte inválido",
+  }),
+  visaType: z
+    .enum(["Renovação", "Primeiro Visto", ""], { message: "Tipo de visto inválido" })
+    .refine((val) => val.length !== 0, { message: "Tipo de visto é obrigatório" }),
+  visaClass: z
+    .enum(
+      [
+        "B1 Babá",
+        "B1/B2 Turismo",
+        "O1 Capacidade Extraordinária",
+        "O2 Estrangeiro Acompanhante/Assistente",
+        "O3 Cônjuge ou Filho de um O1 ou O2",
+        "",
+      ],
+      { message: "Classe de visto inválida" }
+    )
+    .refine((val) => val.length !== 0, { message: "Classe de visto é obrigatória" }),
+  DSNumber: z.string({
+    required_error: "Barcode é obrigatório",
+    invalid_type_error: "Barcode inválido",
+  }),
+  CASVDate: z
+    .date({
+      required_error: "Data do CASV é obrigatória",
+      invalid_type_error: "Data do CASV inválida",
+    })
+    .optional(),
+  interviewDate: z
+    .date({
+      required_error: "Data da entrevista é obrigatória",
+      invalid_type_error: "Data da entrevista inválida",
+    })
+    .optional(),
+});
+
+const accountFormSchema = z
   .object({
     name: z
       .string({ required_error: "Nome é obrigatório", invalid_type_error: "Nome inválido" })
@@ -58,67 +124,7 @@ const formSchema = z
     scheduleAccount: z.enum(["Ativado", "Inativo", ""], {
       message: "Conta de Agendamento é obrigatório",
     }),
-    profileName: z
-      .string({
-        required_error: "Nome do perfil é obrigatório",
-        invalid_type_error: "Nome do perfil inválido",
-      })
-      .min(1, { message: "Nome do perfil é obrigatório" })
-      .min(6, { message: "Nome do perfil precisa ter no mínimo 6 caracteres" }),
-    profileCpf: z
-      .string({
-        required_error: "CPF do perfil é obrigatório",
-        invalid_type_error: "CPF do perfil inválido",
-      })
-      .refine((val) => val.length === 0 || (val.length > 0 && val.length === 14), {
-        message: "CPF do perfil inválido",
-      }),
-    profileAddress: z.string({
-      required_error: "Endereço do perfil é obrigatório",
-      invalid_type_error: "Endereço do perfil inválido",
-    }),
-    birthDate: z
-      .date({
-        required_error: "Data de nascimento é obrigatório",
-        invalid_type_error: "Data de nascimento inválida",
-      })
-      .optional(),
-    passport: z.string({
-      required_error: "Passaporte é obrigatório",
-      invalid_type_error: "Passaporte inválido",
-    }),
-    visaType: z
-      .enum(["Renovação", "Primeiro Visto", ""], { message: "Tipo de visto inválido" })
-      .refine((val) => val.length !== 0, { message: "Tipo de visto é obrigatório" }),
-    visaClass: z
-      .enum(
-        [
-          "B1 Babá",
-          "B1/B2 Turismo",
-          "O1 Capacidade Extraordinária",
-          "O2 Estrangeiro Acompanhante/Assistente",
-          "O3 Cônjuge ou Filho de um O1 ou O2",
-          "",
-        ],
-        { message: "Classe de visto inválida" }
-      )
-      .refine((val) => val.length !== 0, { message: "Classe de visto é obrigatória" }),
-    DSNumber: z.string({
-      required_error: "Barcode é obrigatório",
-      invalid_type_error: "Barcode inválido",
-    }),
-    CASVDate: z
-      .date({
-        required_error: "Data do CASV é obrigatória",
-        invalid_type_error: "Data do CASV inválida",
-      })
-      .optional(),
-    interviewDate: z
-      .date({
-        required_error: "Data da entrevista é obrigatória",
-        invalid_type_error: "Data da entrevista inválida",
-      })
-      .optional(),
+    profiles: z.array(profileFormSchema).min(1, { message: "Precisa ter pelo menos um perfil vinculado a conta" }),
   })
   .superRefine(({ password, passwordConfirm }, ctx) => {
     if (passwordConfirm !== password) {
@@ -132,9 +138,10 @@ const formSchema = z
 
 export default function CreateAccountPage() {
   const [isProfileSameAsAccount, setIsProfileSameAsAccount] = useState<string>("true");
+  const [currentProfile, setCurrentProfile] = useState<number>(0);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof accountFormSchema>>({
+    resolver: zodResolver(accountFormSchema),
     defaultValues: {
       name: "",
       cpf: "",
@@ -144,34 +151,45 @@ export default function CreateAccountPage() {
       passwordConfirm: "",
       budget: "0",
       scheduleAccount: "",
-      profileName: "",
-      profileCpf: "",
-      profileAddress: "",
-      birthDate: undefined,
-      passport: "",
-      visaType: "",
-      visaClass: "",
-      DSNumber: "",
-      CASVDate: undefined,
-      interviewDate: undefined,
+      profiles: [
+        {
+          birthDate: undefined,
+          CASVDate: undefined,
+          DSNumber: "",
+          interviewDate: undefined,
+          passport: "",
+          profileAddress: "",
+          profileCpf: "",
+          profileName: "",
+          visaClass: "",
+          visaType: "",
+        },
+      ],
     },
   });
 
   const name = form.watch("name");
   const cpf = form.watch("cpf");
   const address = form.watch("address");
+  const profiles = form.watch("profiles");
   const currentYear = getYear(new Date());
+  // const { fields } = useFieldArray({ name: "profiles", control: form.control }); TODO: exemplos para os formulário, adiciona fields dinamicamente
+
+  useEffect(() => {
+    setCurrentProfile(profiles.length - 1);
+    console.log("adicionado profile");
+  }, [profiles]);
 
   useEffect(() => {
     if (JSON.parse(isProfileSameAsAccount)) {
-      form.setValue("profileName", name);
-      form.setValue("profileCpf", cpf);
-      form.setValue("profileAddress", address);
+      form.setValue(`profiles.${currentProfile}.profileName`, name);
+      form.setValue(`profiles.${currentProfile}.profileCpf`, cpf);
+      form.setValue(`profiles.${currentProfile}.profileAddress`, address);
       console.log("Adicionado mesmo valor no perfil");
     }
   }, [isProfileSameAsAccount, name, cpf, address]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof accountFormSchema>) {
     console.log(values);
   }
 
@@ -368,7 +386,7 @@ export default function CreateAccountPage() {
               <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <FormField
                   control={form.control}
-                  name="profileName"
+                  name={`profiles.${currentProfile}.profileName`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nome*</FormLabel>
@@ -392,7 +410,7 @@ export default function CreateAccountPage() {
 
                 <FormField
                   control={form.control}
-                  name="profileCpf"
+                  name={`profiles.${currentProfile}.profileCpf`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>CPF*</FormLabel>
@@ -416,7 +434,7 @@ export default function CreateAccountPage() {
 
                 <FormField
                   control={form.control}
-                  name="birthDate"
+                  name={`profiles.${currentProfile}.birthDate`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Data de Nascimento</FormLabel>
@@ -471,7 +489,7 @@ export default function CreateAccountPage() {
               <div className="w-full grid grid-cols-1 sm:grid-cols-[calc(30%-12px)_calc(70%-12px)] gap-6">
                 <FormField
                   control={form.control}
-                  name="passport"
+                  name={`profiles.${currentProfile}.passport`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Passaporte</FormLabel>
@@ -487,7 +505,7 @@ export default function CreateAccountPage() {
 
                 <FormField
                   control={form.control}
-                  name="profileAddress"
+                  name={`profiles.${currentProfile}.profileAddress`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Endereço</FormLabel>
@@ -513,7 +531,7 @@ export default function CreateAccountPage() {
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="visaType"
+                  name={`profiles.${currentProfile}.visaType`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tipo de Visto*</FormLabel>
@@ -538,7 +556,7 @@ export default function CreateAccountPage() {
 
                 <FormField
                   control={form.control}
-                  name="visaClass"
+                  name={`profiles.${currentProfile}.visaClass`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Classe do Visto*</FormLabel>
@@ -576,7 +594,7 @@ export default function CreateAccountPage() {
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 <FormField
                   control={form.control}
-                  name="DSNumber"
+                  name={`profiles.${currentProfile}.DSNumber`}
                   render={({ field }) => (
                     <FormItem className="sm:order-3 xl:order-1">
                       <FormLabel>Barcode</FormLabel>
@@ -592,7 +610,7 @@ export default function CreateAccountPage() {
 
                 <FormField
                   control={form.control}
-                  name="CASVDate"
+                  name={`profiles.${currentProfile}.CASVDate`}
                   render={({ field }) => (
                     <FormItem className="sm:order-1 xl:order-2">
                       <FormLabel>CASV</FormLabel>
@@ -645,7 +663,7 @@ export default function CreateAccountPage() {
 
                 <FormField
                   control={form.control}
-                  name="interviewDate"
+                  name={`profiles.${currentProfile}.interviewDate`}
                   render={({ field }) => (
                     <FormItem className="sm:order-2 xl:order-3">
                       <FormLabel>Entrevista</FormLabel>
