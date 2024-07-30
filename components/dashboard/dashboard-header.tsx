@@ -11,7 +11,7 @@ export function DashboardHeader() {
   const session = useSession();
 
   return (
-    <header className="w-full bg-background h-20 lg:h-24 flex items-center">
+    <header className="w-full bg-background h-20 lg:h-24 flex items-center fixed top-0 left-0 right-0 z-10">
       <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
         <div className="flex items-center gap-24">
           <Link href="/" className="relative w-20 h-20 ml-6">
