@@ -1,5 +1,3 @@
-// TODO: adicionar perfis com a variavel profiles
-
 "use client";
 
 import { z } from "zod";
@@ -7,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import CurrencyInput from "react-currency-input-field";
 import { useState, useEffect } from "react";
-import { CalendarIcon, CircleDollarSign } from "lucide-react";
+import { CalendarIcon, CircleDollarSign, Edit, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,8 +32,8 @@ const profileFormSchema = z.object({
       required_error: "CPF do perfil é obrigatório",
       invalid_type_error: "CPF do perfil inválido",
     })
-    .refine((val) => val.length === 0 || (val.length > 0 && val.length === 14), {
-      message: "CPF do perfil inválido",
+    .refine((val) => val.length > 0 && val.length === 14, {
+      message: "CPF inválido",
     }),
   profileAddress: z.string({
     required_error: "Endereço do perfil é obrigatório",
@@ -93,7 +91,7 @@ const accountFormSchema = z
       .min(4, { message: "Nome precisa ter no mínimo 4 caracteres" }),
     cpf: z
       .string({ required_error: "CPF é obrigatório", invalid_type_error: "CPF inválido" })
-      .refine((val) => val.length === 0 || (val.length > 0 && val.length === 14), {
+      .refine((val) => val.length > 0 && val.length === 14, {
         message: "CPF inválido",
       }),
     address: z.string({
@@ -137,6 +135,7 @@ const accountFormSchema = z
   });
 
 export default function CreateAccountPage() {
+  const [isProfileValidating, setIsProfileValidating] = useState<boolean>(false);
   const [isProfileSameAsAccount, setIsProfileSameAsAccount] = useState<string>("true");
   const [currentProfile, setCurrentProfile] = useState<number>(0);
 
@@ -177,7 +176,7 @@ export default function CreateAccountPage() {
 
   useEffect(() => {
     setCurrentProfile(profiles.length - 1);
-    console.log("adicionado profile");
+    console.log(profiles);
   }, [profiles]);
 
   useEffect(() => {
@@ -185,12 +184,93 @@ export default function CreateAccountPage() {
       form.setValue(`profiles.${currentProfile}.profileName`, name);
       form.setValue(`profiles.${currentProfile}.profileCpf`, cpf);
       form.setValue(`profiles.${currentProfile}.profileAddress`, address);
-      console.log("Adicionado mesmo valor no perfil");
     }
   }, [isProfileSameAsAccount, name, cpf, address]);
 
-  function onSubmit(values: z.infer<typeof accountFormSchema>) {
-    console.log(values);
+  useEffect(() => {
+    form.setValue(`profiles.${currentProfile}.profileName`, "");
+    form.setValue(`profiles.${currentProfile}.profileCpf`, "");
+    form.setValue(`profiles.${currentProfile}.birthDate`, undefined);
+    form.setValue(`profiles.${currentProfile}.profileAddress`, "");
+    form.setValue(`profiles.${currentProfile}.passport`, "");
+    form.setValue(`profiles.${currentProfile}.visaType`, "");
+    form.setValue(`profiles.${currentProfile}.visaClass`, "");
+    form.setValue(`profiles.${currentProfile}.DSNumber`, "");
+    form.setValue(`profiles.${currentProfile}.CASVDate`, undefined);
+    form.setValue(`profiles.${currentProfile}.interviewDate`, undefined);
+
+    form.clearErrors(`profiles.${currentProfile}.profileName`);
+    form.clearErrors(`profiles.${currentProfile}.profileCpf`);
+    form.clearErrors(`profiles.${currentProfile}.birthDate`);
+    form.clearErrors(`profiles.${currentProfile}.profileAddress`);
+    form.clearErrors(`profiles.${currentProfile}.passport`);
+    form.clearErrors(`profiles.${currentProfile}.visaType`);
+    form.clearErrors(`profiles.${currentProfile}.visaClass`);
+    form.clearErrors(`profiles.${currentProfile}.DSNumber`);
+    form.clearErrors(`profiles.${currentProfile}.CASVDate`);
+    form.clearErrors(`profiles.${currentProfile}.interviewDate`);
+  }, [currentProfile]);
+
+  function addProfile() {
+    form
+      .trigger([
+        `profiles.${currentProfile}.profileName`,
+        `profiles.${currentProfile}.profileCpf`,
+        `profiles.${currentProfile}.birthDate`,
+        `profiles.${currentProfile}.profileAddress`,
+        `profiles.${currentProfile}.passport`,
+        `profiles.${currentProfile}.visaType`,
+        `profiles.${currentProfile}.visaClass`,
+        `profiles.${currentProfile}.DSNumber`,
+        `profiles.${currentProfile}.CASVDate`,
+        `profiles.${currentProfile}.interviewDate`,
+      ])
+      .then(() => {
+        if (Object.keys(form.formState.errors).length === 0) {
+          form.setValue("profiles", [
+            ...profiles,
+            {
+              profileName: "",
+              profileCpf: "",
+              birthDate: undefined,
+              profileAddress: "",
+              visaType: "",
+              visaClass: "",
+              DSNumber: "",
+              CASVDate: undefined,
+              interviewDate: undefined,
+              passport: "",
+            },
+          ]);
+
+          setCurrentProfile((prev: number) => prev + 1);
+        }
+      });
+
+    setIsProfileValidating(true);
+  }
+
+  function handleDeleteProfile(index: number) {
+    const profileUpdated = profiles.filter((_, idx) => idx !== index);
+
+    form.setValue("profiles", profileUpdated);
+
+    setCurrentProfile((prev) => prev - 1);
+  }
+
+  function onSubmit() {
+    if (profiles.length > 0) {
+      form
+        .trigger(["name", "cpf", "address", "email", "password", "passwordConfirm", "budget", "scheduleAccount"], {
+          shouldFocus: true,
+        })
+        .then(() => {
+          if (Object.keys(form.formState.errors).length === 0) {
+            // TODO: adicionar função para criar a conta
+            console.log(form.getValues());
+          }
+        });
+    }
   }
 
   return (
@@ -198,7 +278,7 @@ export default function CreateAccountPage() {
       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">Cadastro da Conta</h1>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-12">
+        <form className="flex flex-col gap-y-12">
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <FormField
@@ -340,7 +420,7 @@ export default function CreateAccountPage() {
                   <FormItem>
                     <FormLabel>Conta de Agendamento*</FormLabel>
 
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger className={cn(field.value === "" && "[&>span]:text-muted-foreground")}>
                           <SelectValue placeholder="Selecione o status da conta de agendamento" />
@@ -366,21 +446,35 @@ export default function CreateAccountPage() {
           <div className="w-full flex flex-col gap-9">
             <h2 className="text-xl font-semibold sm:text-2xl">Cadastro do Perfil</h2>
 
-            <RadioGroup
-              defaultValue={isProfileSameAsAccount}
-              onValueChange={setIsProfileSameAsAccount}
-              className="flex flex-col gap-4"
-            >
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="true" id="true" />
-                <Label htmlFor="true">Usar mesmos dados da conta</Label>
-              </div>
+            {profiles.length > 1 ? (
+              <div className="w-full grid grid-cols-1 gap-12 lg:grid-cols-2">
+                {profiles.slice(0, currentProfile).map((profile, index) => (
+                  <div key={index} className="w-full bg-card p-8 flex items-center justify-between">
+                    <span className="text-xl font-semibold text-card-foreground text-left">{profile.profileName}</span>
 
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="false" id="false" />
-                <Label htmlFor="false">Inserir novos dados</Label>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => handleDeleteProfile(index)}>
+                      <Trash2 className="text-card-foreground w-6 h-6" />
+                    </Button>
+                  </div>
+                ))}
               </div>
-            </RadioGroup>
+            ) : (
+              <RadioGroup
+                defaultValue={isProfileSameAsAccount}
+                onValueChange={setIsProfileSameAsAccount}
+                className="flex flex-col gap-4"
+              >
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem value="true" id="true" />
+                  <Label htmlFor="true">Usar mesmos dados da conta</Label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem value="false" id="false" />
+                  <Label htmlFor="false">Inserir novos dados</Label>
+                </div>
+              </RadioGroup>
+            )}
 
             <div className="w-full flex flex-col gap-6">
               <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -536,7 +630,7 @@ export default function CreateAccountPage() {
                     <FormItem>
                       <FormLabel>Tipo de Visto*</FormLabel>
 
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                         <FormControl>
                           <SelectTrigger className={cn(field.value === "" && "[&>span]:text-muted-foreground")}>
                             <SelectValue placeholder="Selecione o tipo de visto" />
@@ -561,7 +655,7 @@ export default function CreateAccountPage() {
                     <FormItem>
                       <FormLabel>Classe do Visto*</FormLabel>
 
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                         <FormControl>
                           <SelectTrigger className={cn(field.value === "" && "[&>span]:text-muted-foreground")}>
                             <SelectValue placeholder="Selecione a classe do visto" />
@@ -718,11 +812,23 @@ export default function CreateAccountPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-6 mb-12">
-            <Button type="button" variant="outline" size="xl" className="w-full order-2 sm:order-1 sm:w-fit">
+            <Button
+              onClick={addProfile}
+              type="button"
+              variant="outline"
+              size="xl"
+              className="w-full order-2 sm:order-1 sm:w-fit"
+            >
               Adicionar Perfil
             </Button>
 
-            <Button type="submit" variant="confirm" size="xl" className="w-full order-1 sm:order-2 sm:w-fit">
+            <Button
+              onClick={onSubmit}
+              type="button"
+              variant="confirm"
+              size="xl"
+              className="w-full order-1 sm:order-2 sm:w-fit"
+            >
               Enviar
             </Button>
           </div>
