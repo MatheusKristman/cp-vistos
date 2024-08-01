@@ -6,7 +6,9 @@ import { useForm } from "react-hook-form";
 import CurrencyInput from "react-currency-input-field";
 import { useState, useEffect } from "react";
 import { CalendarIcon, CircleDollarSign, Edit, Trash2 } from "lucide-react";
+import PhoneInput from "react-phone-number-input";
 
+import { useSubmitConfirmationStore } from "@/constants/stores/useSubmitConfirmationStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -18,6 +20,12 @@ import { cn } from "@/lib/utils";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
+import { SubmitConfirmationModal } from "@/app/(dashboard)/perfil/criar-conta/components/submit-confirmation-modal";
+
+import "react-phone-number-input/style.css";
+
+// TODO: adicionar função para formatar o cpf
+// TODO: adicionar função de submit
 
 const profileFormSchema = z.object({
   profileName: z
@@ -50,8 +58,12 @@ const profileFormSchema = z.object({
     invalid_type_error: "Passaporte inválido",
   }),
   visaType: z
-    .enum(["Renovação", "Primeiro Visto", ""], { message: "Tipo de visto inválido" })
-    .refine((val) => val.length !== 0, { message: "Tipo de visto é obrigatório" }),
+    .enum(["Renovação", "Primeiro Visto", ""], {
+      message: "Tipo de visto inválido",
+    })
+    .refine((val) => val.length !== 0, {
+      message: "Tipo de visto é obrigatório",
+    }),
   visaClass: z
     .enum(
       [
@@ -64,7 +76,9 @@ const profileFormSchema = z.object({
       ],
       { message: "Classe de visto inválida" }
     )
-    .refine((val) => val.length !== 0, { message: "Classe de visto é obrigatória" }),
+    .refine((val) => val.length !== 0, {
+      message: "Classe de visto é obrigatória",
+    }),
   DSNumber: z.string({
     required_error: "Barcode é obrigatório",
     invalid_type_error: "Barcode inválido",
@@ -86,13 +100,28 @@ const profileFormSchema = z.object({
 const accountFormSchema = z
   .object({
     name: z
-      .string({ required_error: "Nome é obrigatório", invalid_type_error: "Nome inválido" })
+      .string({
+        required_error: "Nome é obrigatório",
+        invalid_type_error: "Nome inválido",
+      })
       .min(1, { message: "Nome é obrigatório" })
       .min(4, { message: "Nome precisa ter no mínimo 4 caracteres" }),
     cpf: z
-      .string({ required_error: "CPF é obrigatório", invalid_type_error: "CPF inválido" })
+      .string({
+        required_error: "CPF é obrigatório",
+        invalid_type_error: "CPF inválido",
+      })
       .refine((val) => val.length > 0 && val.length === 14, {
         message: "CPF inválido",
+      }),
+    cel: z
+      .string({
+        required_error: "Celular é obrigatório",
+        invalid_type_error: "Celular inválido",
+      })
+      .optional()
+      .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+        message: "Celular inválido",
       }),
     address: z.string({
       required_error: "Endereço é obrigatório",
@@ -106,7 +135,10 @@ const accountFormSchema = z
       .email({ message: "E-mail inválido" })
       .min(1, { message: "E-mail é obrigatório" }),
     password: z
-      .string({ required_error: "Senha é obrigatório", invalid_type_error: "Senha inválida" })
+      .string({
+        required_error: "Senha é obrigatório",
+        invalid_type_error: "Senha inválida",
+      })
       .min(1, { message: "Senha é obrigatória" })
       .min(6, { message: "Senha precisa ter no mínimo 6 caracteres" }),
     passwordConfirm: z
@@ -115,14 +147,23 @@ const accountFormSchema = z
         invalid_type_error: "Confirmação da senha inválida",
       })
       .min(1, { message: "Confirmação da senha é obrigatório" })
-      .min(6, { message: "Confirmação da senha precisa ter no mínimo 6 caracteres" }),
+      .min(6, {
+        message: "Confirmação da senha precisa ter no mínimo 6 caracteres",
+      }),
     budget: z
-      .string({ required_error: "Valor é obrigatório", invalid_type_error: "Valor inválido" })
-      .refine((val) => Number(val) >= 0, { message: "Valor precisa ser maior que zero" }),
+      .string({
+        required_error: "Valor é obrigatório",
+        invalid_type_error: "Valor inválido",
+      })
+      .refine((val) => Number(val) >= 0, {
+        message: "Valor precisa ser maior que zero",
+      }),
     scheduleAccount: z.enum(["Ativado", "Inativo", ""], {
       message: "Conta de Agendamento é obrigatório",
     }),
-    profiles: z.array(profileFormSchema).min(1, { message: "Precisa ter pelo menos um perfil vinculado a conta" }),
+    profiles: z.array(profileFormSchema).min(1, {
+      message: "Precisa ter pelo menos um perfil vinculado a conta",
+    }),
   })
   .superRefine(({ password, passwordConfirm }, ctx) => {
     if (passwordConfirm !== password) {
@@ -134,16 +175,21 @@ const accountFormSchema = z
     }
   });
 
+export type formValue = z.infer<typeof accountFormSchema>;
+
 export default function CreateAccountPage() {
   const [isProfileValidating, setIsProfileValidating] = useState<boolean>(false);
   const [isProfileSameAsAccount, setIsProfileSameAsAccount] = useState<string>("true");
   const [currentProfile, setCurrentProfile] = useState<number>(0);
+
+  const { openModal, setFormValues } = useSubmitConfirmationStore();
 
   const form = useForm<z.infer<typeof accountFormSchema>>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
       name: "",
       cpf: "",
+      cel: "",
       address: "",
       email: "",
       password: "",
@@ -171,6 +217,7 @@ export default function CreateAccountPage() {
   const cpf = form.watch("cpf");
   const address = form.watch("address");
   const profiles = form.watch("profiles");
+  const cel = form.watch("cel");
   const currentYear = getYear(new Date());
   // const { fields } = useFieldArray({ name: "profiles", control: form.control }); TODO: exemplos para os formulário, adiciona fields dinamicamente
 
@@ -178,6 +225,10 @@ export default function CreateAccountPage() {
     setCurrentProfile(profiles.length - 1);
     console.log(profiles);
   }, [profiles]);
+
+  useEffect(() => {
+    console.log(cel);
+  }, [cel]);
 
   useEffect(() => {
     if (JSON.parse(isProfileSameAsAccount)) {
@@ -261,13 +312,18 @@ export default function CreateAccountPage() {
   function onSubmit() {
     if (profiles.length > 0) {
       form
-        .trigger(["name", "cpf", "address", "email", "password", "passwordConfirm", "budget", "scheduleAccount"], {
-          shouldFocus: true,
-        })
+        .trigger(
+          ["name", "cpf", "cel", "address", "email", "password", "passwordConfirm", "budget", "scheduleAccount"],
+          {
+            shouldFocus: true,
+          }
+        )
         .then(() => {
           if (Object.keys(form.formState.errors).length === 0) {
-            // TODO: adicionar função para criar a conta
-            console.log(form.getValues());
+            const values = form.getValues();
+
+            openModal();
+            setFormValues(values);
           }
         });
     }
@@ -314,21 +370,48 @@ export default function CreateAccountPage() {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Endereço</FormLabel>
+            <div className="w-full grid grid-cols-1 sm:grid-cols-[1fr_250px] gap-6">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Endereço</FormLabel>
 
-                  <FormControl>
-                    <Input placeholder="Insira o endereço completo do cliente" {...field} />
-                  </FormControl>
+                    <FormControl>
+                      <Input placeholder="Insira o endereço completo do cliente" {...field} />
+                    </FormControl>
 
-                  <FormMessage className="font-normal text-destructive" />
-                </FormItem>
-              )}
-            />
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="cel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Celular</FormLabel>
+
+                    <FormControl>
+                      <PhoneInput
+                        limitMaxLength
+                        smartCaret={false}
+                        placeholder="Insira o celular do cliente"
+                        defaultCountry="BR"
+                        className={cn(
+                          "flex h-12 w-full border border-muted transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted"
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
               <FormField
@@ -493,7 +576,7 @@ export default function CreateAccountPage() {
                           ref={field.ref}
                           name={field.name}
                           value={field.value}
-                          disabled={JSON.parse(isProfileSameAsAccount)}
+                          disabled={JSON.parse(isProfileSameAsAccount) && profiles.length === 1}
                         />
                       </FormControl>
 
@@ -517,7 +600,7 @@ export default function CreateAccountPage() {
                           ref={field.ref}
                           name={field.name}
                           value={field.value}
-                          disabled={JSON.parse(isProfileSameAsAccount)}
+                          disabled={JSON.parse(isProfileSameAsAccount) && profiles.length === 1}
                         />
                       </FormControl>
 
@@ -612,7 +695,7 @@ export default function CreateAccountPage() {
                           ref={field.ref}
                           name={field.name}
                           value={field.value}
-                          disabled={JSON.parse(isProfileSameAsAccount)}
+                          disabled={JSON.parse(isProfileSameAsAccount) && profiles.length === 1}
                         />
                       </FormControl>
 
@@ -824,6 +907,7 @@ export default function CreateAccountPage() {
 
             <Button
               onClick={onSubmit}
+              disabled={profiles.length === 1}
               type="button"
               variant="confirm"
               size="xl"
@@ -834,6 +918,8 @@ export default function CreateAccountPage() {
           </div>
         </form>
       </Form>
+
+      <SubmitConfirmationModal />
     </div>
   );
 }
