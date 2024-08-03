@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import { NextAuthSessionProvider } from "@/providers/sessionProvider";
+import TRPCProvider from "@/providers/TRPCProvider";
 
 const montserrat = FontSans({
   subsets: ["latin"],
@@ -28,10 +29,12 @@ export default function RootLayout({
       <body
         className={cn(
           "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
-          montserrat.variable,
+          montserrat.variable
         )}
       >
-        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+        <NextAuthSessionProvider>
+          <TRPCProvider>{children}</TRPCProvider>
+        </NextAuthSessionProvider>
         <Toaster />
       </body>
     </html>

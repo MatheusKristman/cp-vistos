@@ -15,6 +15,7 @@ export const {
   providers: [
     Credentials({
       name: "credentials",
+
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
       credentials: {
@@ -34,7 +35,7 @@ export const {
         }
 
         // return user object with the their profile data
-        return user;
+        return { ...user, role: user.role };
       },
     }),
   ],

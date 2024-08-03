@@ -3,18 +3,54 @@
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatPhoneNumber } from "react-phone-number-input";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ModalAnimation, OverlayAnimation } from "@/constants/animations/modal";
 import { useSubmitConfirmationStore } from "@/constants/stores/useSubmitConfirmationStore";
+import { trpc } from "@/lib/trpc-client";
 
 export function SubmitConfirmationModal() {
-  const { formValues, closeModal } = useSubmitConfirmationStore();
+  const { formValues, closeModal, isModalOpen, setFormValues } = useSubmitConfirmationStore();
+
+  const { mutate: createAccount } = trpc.userRouter.createClient.useMutation({
+    onSuccess: () => {
+      //TODO: adicionar uma função para fechar o modal e redirecionar para a pagina de clientes ao adicionar um novo
+      console.log("Conta Criada");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Ocorreu um erro ao realizar o cadastro do cliente!");
+    },
+  });
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflowY = "hidden";
+    } else {
+      document.body.style.overflowY = "unset";
+    }
+  }, [isModalOpen]);
+
+  function handleClose() {
+    closeModal();
+
+    setTimeout(() => {
+      setFormValues(null);
+    }, 300);
+  }
+
+  function onSubmit() {
+    if (formValues) {
+      createAccount(formValues);
+    }
+  }
 
   return (
     <AnimatePresence>
-      {false && (
+      {isModalOpen && (
         <motion.div
           key="submit-confirmation-modal"
           initial="initial"
@@ -36,7 +72,7 @@ export function SubmitConfirmationModal() {
             <h4 className="text-xl font-semibold mb-6">Dados da Conta</h4>
 
             <div className="w-full flex flex-col gap-4 mb-9">
-              <div className="w-full grid grid-cols-2 gap-4">
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="w-full flex flex-col">
                   <span className="text-xs font-medium opacity-50">Nome</span>
 
@@ -66,7 +102,7 @@ export function SubmitConfirmationModal() {
                 </div>
               </div>
 
-              <div className="w-full grid grid-cols-2 gap-4">
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="w-full flex flex-col">
                   <span className="text-xs font-medium opacity-50">Valor</span>
 
@@ -81,14 +117,14 @@ export function SubmitConfirmationModal() {
               </div>
             </div>
 
-            <h4 className="text-xl font-semibold mb-6">Perfis</h4>
+            <h4 className="text-xl font-semibold mb-6">Dados dos Perfis</h4>
 
             <div className="w-full flex flex-col gap-6 mb-9">
               {formValues ? (
-                formValues!.profiles.length > 1 ? (
+                formValues!.profiles.length > 0 ? (
                   formValues!.profiles.map((profile, index) => (
                     <div key={index} className="w-full border border-muted p-4 flex flex-col gap-4">
-                      <div className="w-full grid grid-cols-3 gap-4">
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="w-full flex flex-col">
                           <span className="text-xs font-medium opacity-50">Nome</span>
 
@@ -110,7 +146,7 @@ export function SubmitConfirmationModal() {
                         </div>
                       </div>
 
-                      <div className="w-full grid grid-cols-2 gap-4">
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="w-full flex flex-col">
                           <span className="text-xs font-medium opacity-50">Endereço</span>
 
@@ -126,21 +162,39 @@ export function SubmitConfirmationModal() {
                         </div>
                       </div>
 
-                      <div className="w-full grid grid-cols-2 gap-4">
-                        <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">Tipo de Visto</span>
-
-                          <span className="text-base font-medium">{profile.visaType}</span>
-                        </div>
-
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="w-full flex flex-col">
                           <span className="text-xs font-medium opacity-50">Classe do Visto</span>
 
                           <span className="text-base font-medium">{profile.visaClass}</span>
                         </div>
+
+                        <div className="w-full flex flex-col">
+                          <span className="text-xs font-medium opacity-50">Tipo de Visto</span>
+
+                          <span className="text-base font-medium">{profile.visaType}</span>
+                        </div>
                       </div>
 
-                      <div className="w-full grid grid-cols-3 gap-4">
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="w-full flex flex-col">
+                          <span className="text-xs font-medium opacity-50">Data de Emissão</span>
+
+                          <span className="text-base font-medium">
+                            {profile.issuanceDate ? format(profile.issuanceDate, "dd/MM/yyyy") : "--/--/----"}
+                          </span>
+                        </div>
+
+                        <div className="w-full flex flex-col">
+                          <span className="text-xs font-medium opacity-50">Data de Expiração</span>
+
+                          <span className="text-base font-medium">
+                            {profile.expireDate ? format(profile.expireDate, "dd/MM/yyyy") : "--/--/----"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="w-full flex flex-col">
                           <span className="text-xs font-medium opacity-50">Barcode</span>
 
@@ -177,12 +231,12 @@ export function SubmitConfirmationModal() {
               )}
             </div>
 
-            <div className="w-full flex justify-end gap-x-6">
-              <Button variant="outline" size="xl">
+            <div className="w-full flex flex-col justify-center sm:flex-row sm:justify-end gap-6">
+              <Button onClick={handleClose} variant="outline" size="xl" className="order-2 sm:order-1">
                 Cancelar
               </Button>
 
-              <Button variant="confirm" size="xl">
+              <Button onClick={onSubmit} variant="confirm" size="xl" className="order-1 sm:order-2">
                 Enviar
               </Button>
             </div>
