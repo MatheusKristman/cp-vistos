@@ -1,9 +1,15 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-import { adminProcedure, collaboratorProcedure, publicProcedure, router } from "../trpc";
+import {
+  adminProcedure,
+  collaboratorProcedure,
+  publicProcedure,
+  router,
+} from "../trpc";
 import prisma from "@/lib/prisma";
 import { Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = router({
   createClient: adminProcedure
@@ -30,9 +36,12 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
-            message: "Celular inválido",
-          }),
+          .refine(
+            (val) => !val || (val && (val.length === 0 || val.length === 14)),
+            {
+              message: "Celular inválido",
+            },
+          ),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -80,7 +89,9 @@ export const userRouter = router({
                   invalid_type_error: "Nome do perfil inválido",
                 })
                 .min(1, { message: "Nome do perfil é obrigatório" })
-                .min(6, { message: "Nome do perfil precisa ter no mínimo 6 caracteres" }),
+                .min(6, {
+                  message: "Nome do perfil precisa ter no mínimo 6 caracteres",
+                }),
               profileCpf: z
                 .string({
                   required_error: "CPF do perfil é obrigatório",
@@ -120,7 +131,7 @@ export const userRouter = router({
                     "O3 Cônjuge ou Filho de um O1 ou O2",
                     "",
                   ],
-                  { message: "Classe de visto inválida" }
+                  { message: "Classe de visto inválida" },
                 )
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
@@ -153,12 +164,12 @@ export const userRouter = router({
                   invalid_type_error: "Data da entrevista inválida",
                 })
                 .optional(),
-            })
+            }),
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      })
+      }),
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -171,6 +182,19 @@ export const userRouter = router({
         scheduleAccount = ScheduleAccount.active;
       } else if (input.scheduleAccount === "Inativo") {
         scheduleAccount = ScheduleAccount.inactive;
+      }
+
+      const accountExists = await prisma.user.findUnique({
+        where: {
+          email: input.email,
+        },
+      });
+
+      if (accountExists) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Conta já cadastrada, utilize outro e-mail",
+        });
       }
 
       const account = await prisma.user.create({

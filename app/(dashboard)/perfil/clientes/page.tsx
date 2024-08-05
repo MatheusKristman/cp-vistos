@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Filter, ListFilter, Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -11,7 +11,23 @@ import { ClientItem } from "@/components/dashboard/client-item";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormModal } from "@/components/dashboard/form-modal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { UserWithForm } from "@/types";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ClientsPage() {
   const [users, setUsers] = useState<UserWithForm[]>([]);
@@ -96,24 +112,169 @@ export default function ClientsPage() {
 
   return (
     <>
-      <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 mt-6 lg:mt-10">
-        <div className="w-full flex flex-col gap-4 mb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium">
-            Clientes
-          </h1>
+      <div className="w-full px-6 sm:px-16 lg:ml-[250px] lg:px-40">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">
+          Clientes
+        </h1>
 
-          <div className="w-full flex items-center gap-2">
+        <div className="w-full flex items-center justify-between gap-2">
+          <div className="h-12 flex items-center gap-2 border border-muted transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border w-full sm:max-w-xs">
+            <Search
+              className="w-5 h-5 text-border flex-shrink-0"
+              strokeWidth={1.5}
+            />
+
+            <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
+
             <Input
-              placeholder="Pesquise seu cliente"
-              className="placeholder:text-primary/60"
+              placeholder="Pesquise seus clientes"
+              className="flex h-full w-full transition border-0 duration-300 bg-background text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0  disabled:cursor-not-allowed disabled:opacity-50"
               value={searchValue}
               onChange={handleSearch}
             />
-
-            <Button variant="link" size="icon">
-              <Search />
-            </Button>
           </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="link" size="icon" className="flex-shrink-0">
+                <ListFilter />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="end"
+              className="w-[600px] bg-white p-8 rounded-none"
+            >
+              <h4 className="text-2xl font-semibold text-foreground mb-9">
+                Filtro
+              </h4>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2 w-full">
+                  <Label
+                    className="text-base font-medium text-foreground"
+                    htmlFor="orderClients"
+                  >
+                    Ordem dos clientes
+                  </Label>
+
+                  <Select name="orderClients">
+                    <SelectTrigger className="text-left">
+                      <SelectValue placeholder="Selecione a ordem dos clientes" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="asc">Crescente</SelectItem>
+                      <SelectItem value="desc">Decrescente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label
+                    className="text-base font-medium text-foreground"
+                    htmlFor="validDSDate"
+                  >
+                    Data de Validação do DS
+                  </Label>
+
+                  <Select name="validDSDate">
+                    <SelectTrigger className="text-left">
+                      <SelectValue placeholder="Selecione a data de validação do DS" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="asc">Crescente</SelectItem>
+                      <SelectItem value="desc">Decrescente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label
+                    className="text-base font-medium text-foreground"
+                    htmlFor="CASVDate"
+                  >
+                    Data do CASV
+                  </Label>
+
+                  <Select name="CASVDate">
+                    <SelectTrigger className="text-left">
+                      <SelectValue placeholder="Selecione a data do CASV" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="asc">Crescente</SelectItem>
+                      <SelectItem value="desc">Decrescente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label
+                    className="text-base font-medium text-foreground"
+                    htmlFor="interviewDate"
+                  >
+                    Data da Entrevista
+                  </Label>
+
+                  <Select name="interviewDate">
+                    <SelectTrigger className="text-left">
+                      <SelectValue placeholder="Selecione a data de entrevista" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="asc">Crescente</SelectItem>
+                      <SelectItem value="desc">Decrescente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label
+                    className="text-base font-medium text-foreground"
+                    htmlFor="meetingDate"
+                  >
+                    Data da Reunião
+                  </Label>
+
+                  <Select name="meetingDate">
+                    <SelectTrigger className="text-left">
+                      <SelectValue placeholder="Selecione a data da reunião" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="asc">Crescente</SelectItem>
+                      <SelectItem value="desc">Decrescente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label
+                    className="text-base font-medium text-foreground"
+                    htmlFor="statusDS"
+                  >
+                    Status do DS
+                  </Label>
+
+                  <Select name="statusDS">
+                    <SelectTrigger className="text-left">
+                      <SelectValue placeholder="Selecione o status da DS" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="awaiting">Aguardando</SelectItem>
+                      <SelectItem value="filling">Preenchendo</SelectItem>
+                      <SelectItem value="filled">Preenchido</SelectItem>
+                      <SelectItem value="emitted">Emitido</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="w-full grid grid-cols-1 min-[375px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
