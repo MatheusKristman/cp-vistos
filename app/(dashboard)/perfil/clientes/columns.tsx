@@ -42,6 +42,10 @@ export const columns: ColumnDef<UserTable>[] = [
       );
     },
     cell: ({ row }) => {
+      if (!row.getValue("CASVDate")) {
+        <span>--/--/----</span>;
+      }
+
       const dateFormatted = format(row.getValue("CASVDate"), "dd/MM/yyyy");
 
       return <span>{dateFormatted}</span>;
@@ -58,6 +62,10 @@ export const columns: ColumnDef<UserTable>[] = [
       );
     },
     cell: ({ row }) => {
+      if (!row.getValue("interviewDate")) {
+        return <span>--/--/----</span>;
+      }
+
       const dateFormatted = format(row.getValue("interviewDate"), "dd/MM/yyyy");
 
       return <span>{dateFormatted}</span>;
@@ -74,6 +82,10 @@ export const columns: ColumnDef<UserTable>[] = [
       );
     },
     cell: ({ row }) => {
+      if (!row.getValue("meetingDate")) {
+        return <span>--/--/----</span>;
+      }
+
       const dateFormatted = format(row.getValue("meetingDate"), "dd/MM/yyyy");
 
       return <span>{dateFormatted}</span>;

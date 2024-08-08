@@ -281,4 +281,30 @@ export const userRouter = router({
 
       return { message: "Conta criada com sucesso" };
     }),
+  getClients: collaboratorProcedure.query(async () => {
+    const profiles = await prisma.profile.findMany({
+      include: {
+        user: true,
+        form: true,
+      },
+    });
+
+    if (profiles.length === 0) {
+      return { clients: [] };
+    }
+
+    const clients = profiles.map((profile) => ({
+      id: profile.id,
+      CASVDate: profile.CASVDate,
+      interviewDate: profile.interviewDate,
+      meetingDate: profile.meetingDate,
+      name: profile.name,
+      scheduleAccount: profile.user.scheduleAccount!,
+      statusDS: profile.statusDS,
+      tax: !!profile.taxDate,
+      visaType: profile.visaType,
+    }));
+
+    return { clients };
+  }),
 });
