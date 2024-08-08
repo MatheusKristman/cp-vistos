@@ -50,6 +50,11 @@ enum ScheduleAccount {
   inactive
 }
 
+enum BudgetPaid {
+  paid
+  pending
+}
+
 model User {
   id              String           @id @default(auto()) @map("_id") @db.ObjectId
   name            String
@@ -59,6 +64,7 @@ model User {
   emailVerified   DateTime?
   image           String?
   budget          Float?
+  budgetPaid      BudgetPaid?
   cpf             String?
   address         String?
   scheduleAccount ScheduleAccount?

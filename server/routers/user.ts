@@ -1,14 +1,9 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-import {
-  adminProcedure,
-  collaboratorProcedure,
-  publicProcedure,
-  router,
-} from "../trpc";
+import { adminProcedure, collaboratorProcedure, publicProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
-import { Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
+import { BudgetPaid, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 export const userRouter = router({
@@ -36,12 +31,9 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine(
-            (val) => !val || (val && (val.length === 0 || val.length === 14)),
-            {
-              message: "Celular inválido",
-            },
-          ),
+          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+            message: "Celular inválido",
+          }),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -77,6 +69,7 @@ export const userRouter = router({
           .refine((val) => Number(val) >= 0, {
             message: "Valor precisa ser maior que zero",
           }),
+        budgetPaid: z.enum(["", "Pago", "Pendente"], { message: "Status do pagamento é obrigatório" }),
         scheduleAccount: z.enum(["Ativado", "Inativo", ""], {
           message: "Conta de Agendamento é obrigatório",
         }),
@@ -131,7 +124,7 @@ export const userRouter = router({
                     "O3 Cônjuge ou Filho de um O1 ou O2",
                     "",
                   ],
-                  { message: "Classe de visto inválida" },
+                  { message: "Classe de visto inválida" }
                 )
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
@@ -164,15 +157,16 @@ export const userRouter = router({
                   invalid_type_error: "Data da entrevista inválida",
                 })
                 .optional(),
-            }),
+            })
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      }),
+      })
     )
     .mutation(async (opts) => {
       let scheduleAccount;
+      let budgetPaid;
 
       const { input } = opts;
 
@@ -197,6 +191,18 @@ export const userRouter = router({
         });
       }
 
+      switch (input.budgetPaid) {
+        case "Pago":
+          budgetPaid = BudgetPaid.paid;
+          break;
+        case "Pendente":
+          budgetPaid = BudgetPaid.pending;
+          break;
+        default:
+          budgetPaid = BudgetPaid.pending;
+          break;
+      }
+
       const account = await prisma.user.create({
         data: {
           name: input.name,
@@ -205,6 +211,7 @@ export const userRouter = router({
           role: Role.CLIENT,
           address: input.address,
           budget: parseFloat(input.budget),
+          budgetPaid,
           cpf: input.cpf,
           scheduleAccount,
         },

@@ -1,6 +1,7 @@
 "use client";
 
 //TODO: adicionar select com status do pagamento com opção: PAGE | PENDENTE, vai ficar do lado de budget
+//TODO: adicionar datas futuras para CASV e Data de Entrevista
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -170,6 +171,7 @@ const accountFormSchema = z
       .refine((val) => Number(val) >= 0, {
         message: "Valor precisa ser maior que zero",
       }),
+    budgetPaid: z.enum(["", "Pago", "Pendente"], { message: "Status do pagamento é obrigatório" }),
     scheduleAccount: z.enum(["Ativado", "Inativo", ""], {
       message: "Conta de Agendamento é obrigatório",
     }),
@@ -207,6 +209,7 @@ export default function CreateAccountPage() {
       password: "",
       passwordConfirm: "",
       budget: "0",
+      budgetPaid: "",
       scheduleAccount: "",
       profiles: [
         {
@@ -340,7 +343,18 @@ export default function CreateAccountPage() {
     if (profiles.length > 0) {
       form
         .trigger(
-          ["name", "cpf", "cel", "address", "email", "password", "passwordConfirm", "budget", "scheduleAccount"],
+          [
+            "name",
+            "cpf",
+            "cel",
+            "address",
+            "email",
+            "password",
+            "passwordConfirm",
+            "budget",
+            "budgetPaid",
+            "scheduleAccount",
+          ],
           {
             shouldFocus: true,
           }
@@ -364,7 +378,7 @@ export default function CreateAccountPage() {
   }
 
   return (
-    <div className="w-full px-6 sm:px-16 lg:ml-[250px] lg:px-40">
+    <div className="w-[calc(100%-250px)] px-6 sm:px-16 lg:ml-[250px] lg:px-40">
       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">Cadastro da Conta</h1>
 
       <Form {...form}>
@@ -510,7 +524,7 @@ export default function CreateAccountPage() {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-[calc(30%-12px)_calc(70%-12px)] gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
               <FormField
                 control={form.control}
                 name="budget"
@@ -545,6 +559,29 @@ export default function CreateAccountPage() {
 
               <FormField
                 control={form.control}
+                name="budgetPaid"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status do pagamento*</FormLabel>
+
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className={cn(field.value === "" && "[&>span]:text-muted-foreground")}>
+                          <SelectValue placeholder="Selecione o status do pagamento" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        <SelectItem value="Pago">Pago</SelectItem>
+                        <SelectItem value="Pendente">Pendente</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="scheduleAccount"
                 render={({ field }) => (
                   <FormItem>
@@ -559,7 +596,6 @@ export default function CreateAccountPage() {
 
                       <SelectContent>
                         <SelectItem value="Ativado">Ativado</SelectItem>
-
                         <SelectItem value="Inativo">Inativo</SelectItem>
                       </SelectContent>
                     </Select>
