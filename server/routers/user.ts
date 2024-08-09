@@ -1,9 +1,20 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-import { adminProcedure, collaboratorProcedure, publicProcedure, router } from "../trpc";
+import {
+  adminProcedure,
+  collaboratorProcedure,
+  publicProcedure,
+  router,
+} from "../trpc";
 import prisma from "@/lib/prisma";
-import { BudgetPaid, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
+import {
+  BudgetPaid,
+  Role,
+  ScheduleAccount,
+  VisaClass,
+  VisaType,
+} from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 export const userRouter = router({
@@ -31,9 +42,12 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
-            message: "Celular inválido",
-          }),
+          .refine(
+            (val) => !val || (val && (val.length === 0 || val.length === 14)),
+            {
+              message: "Celular inválido",
+            },
+          ),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -69,7 +83,9 @@ export const userRouter = router({
           .refine((val) => Number(val) >= 0, {
             message: "Valor precisa ser maior que zero",
           }),
-        budgetPaid: z.enum(["", "Pago", "Pendente"], { message: "Status do pagamento é obrigatório" }),
+        budgetPaid: z.enum(["", "Pago", "Pendente"], {
+          message: "Status do pagamento é obrigatório",
+        }),
         scheduleAccount: z.enum(["Ativado", "Inativo", ""], {
           message: "Conta de Agendamento é obrigatório",
         }),
@@ -124,7 +140,7 @@ export const userRouter = router({
                     "O3 Cônjuge ou Filho de um O1 ou O2",
                     "",
                   ],
-                  { message: "Classe de visto inválida" }
+                  { message: "Classe de visto inválida" },
                 )
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
@@ -157,12 +173,12 @@ export const userRouter = router({
                   invalid_type_error: "Data da entrevista inválida",
                 })
                 .optional(),
-            })
+            }),
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      })
+      }),
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -307,4 +323,167 @@ export const userRouter = router({
 
     return { clients };
   }),
+  getClientDetails: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      }),
+    )
+    .mutation(async (opts) => {
+      const profileId = opts.input.profileId;
+
+      const client = await prisma.profile.findUnique({
+        where: {
+          id: profileId,
+        },
+        include: {
+          user: true,
+          comments: true,
+          form: {
+            include: {
+              otherPeopleTraveling: true,
+              familyLivingInTheUSA: true,
+              americanLicense: true,
+              USALastTravel: true,
+              previousJobs: true,
+              courses: true,
+            },
+          },
+        },
+      });
+
+      if (!client) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado!",
+        });
+      }
+
+      return { client };
+    }),
+  updateDSValidationDate: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      }),
+    )
+    .mutation(async (opts) => {
+      const profileId = opts.input.profileId;
+
+      const updatedClient = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          DSValid: new Date(),
+        },
+        include: {
+          user: true,
+          comments: true,
+          form: {
+            include: {
+              otherPeopleTraveling: true,
+              familyLivingInTheUSA: true,
+              americanLicense: true,
+              USALastTravel: true,
+              previousJobs: true,
+              courses: true,
+            },
+          },
+        },
+      });
+
+      if (!updatedClient) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado!",
+        });
+      }
+
+      return { updatedClient };
+    }),
+  updateStatusDS: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        status: z.enum(["awaiting", "filling", "filled", "emitted"]),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { profileId, status } = opts.input;
+
+      const updatedClient = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          statusDS: status,
+        },
+        include: {
+          user: true,
+          comments: true,
+          form: {
+            include: {
+              otherPeopleTraveling: true,
+              familyLivingInTheUSA: true,
+              americanLicense: true,
+              USALastTravel: true,
+              previousJobs: true,
+              courses: true,
+            },
+          },
+        },
+      });
+
+      if (!updatedClient) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado!",
+        });
+      }
+
+      return { updatedClient, status };
+    }),
+  updateVisaStatus: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        status: z.enum(["awaiting", "approved", "disapproved"]),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { profileId, status } = opts.input;
+
+      const updatedClient = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          visaStatus: status,
+        },
+        include: {
+          user: true,
+          comments: true,
+          form: {
+            include: {
+              otherPeopleTraveling: true,
+              familyLivingInTheUSA: true,
+              americanLicense: true,
+              USALastTravel: true,
+              previousJobs: true,
+              courses: true,
+            },
+          },
+        },
+      });
+
+      if (!updatedClient) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado!",
+        });
+      }
+
+      return { updatedClient, status };
+    }),
 });

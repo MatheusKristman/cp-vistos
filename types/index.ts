@@ -1,10 +1,12 @@
 import {
   AmericanLicense,
+  Comments,
   Course,
   FamilyLivingInTheUSADetails,
   Form,
   OtherPeopleTraveling,
   PreviousJobs,
+  Profile,
   USALastTravel,
   User,
 } from "@prisma/client";
@@ -174,4 +176,10 @@ export type FullForm = Form & {
 
 export type UserWithForm = User & {
   form: Form[];
+};
+
+export type ProfilesWithUserAndForm = Profile & {
+  user: User;
+  form: FullForm | null;
+  comments: Comments[];
 };
