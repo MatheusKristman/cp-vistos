@@ -238,13 +238,14 @@ export const columns: ColumnDef<UserTable>[] = [
     cell: ({ row }) => {
       // NOTE: funciona normalmente
       //eslint-disable-next-line
-      const { openModal, setClient, setToResume } = useClientDetailsModalStore();
+      const { openModal, setClient, setRole, setToResume } = useClientDetailsModalStore();
 
       console.log(row.getAllCells());
 
       const { mutate: handleOpenDetailsModal, isPending } = trpc.userRouter.getClientDetails.useMutation({
-        onSuccess({ client }) {
+        onSuccess({ client, role }) {
           setClient(client);
+          setRole(role);
           openModal();
           setToResume();
         },

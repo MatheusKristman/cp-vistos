@@ -62,36 +62,11 @@ export function ClientDetailsModal() {
             className="w-full max-w-[800px] bg-white p-6 inline-block align-middle overflow-x-hidden text-left"
           >
             <AnimatePresence initial={false} mode="wait">
-              {isResume && (
-                <ClientDetailsResume
-                  key="client-resume"
-                  handleClose={handleClose}
-                />
-              )}
-              {isAnnotation && (
-                <ClientDetailsAnnotations
-                  key="client-annotation"
-                  handleClose={handleClose}
-                />
-              )}
-              {isEditAccount && (
-                <ClientDetailsEditAccount
-                  key="client-edit-account"
-                  handleClose={handleClose}
-                />
-              )}
-              {isComment && (
-                <ClientDetailsComments
-                  key="client-comments"
-                  handleClose={handleClose}
-                />
-              )}
-              {isEditProfile && (
-                <ClientDetailsEditProfile
-                  key="client-edit-profile"
-                  handleClose={handleClose}
-                />
-              )}
+              {isResume && <ClientDetailsResume key="client-resume" handleClose={handleClose} />}
+              {isAnnotation && <ClientDetailsAnnotations key="client-annotation" handleClose={handleClose} />}
+              {isEditAccount && <ClientDetailsEditAccount key="client-edit-account" handleClose={handleClose} />}
+              {isComment && <ClientDetailsComments key="client-comments" handleClose={handleClose} />}
+              {isEditProfile && <ClientDetailsEditProfile key="client-edit-profile" handleClose={handleClose} />}
             </AnimatePresence>
           </motion.div>
         </motion.div>

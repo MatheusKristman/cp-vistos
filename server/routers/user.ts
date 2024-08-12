@@ -6,6 +6,7 @@ import { addDays } from "date-fns";
 
 import { adminProcedure, collaboratorProcedure, publicProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
+import { auth } from "@/auth";
 
 export const userRouter = router({
   createClient: adminProcedure
@@ -319,6 +320,7 @@ export const userRouter = router({
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
+      const role = opts.ctx.collaborator.role;
 
       const client = await prisma.profile.findUnique({
         where: {
@@ -347,7 +349,7 @@ export const userRouter = router({
         });
       }
 
-      return { client };
+      return { client, role };
     }),
   updateDSValidationDate: collaboratorProcedure
     .input(

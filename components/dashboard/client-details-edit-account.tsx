@@ -14,21 +14,8 @@ import { CircleDollarSign } from "lucide-react";
 import { FormAnimation } from "@/constants/animations/modal";
 import { Button } from "@/components/ui/button";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormItem,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { Form, FormField, FormLabel, FormItem, FormControl, FormMessage } from "@/components/ui/form";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -105,7 +92,7 @@ const formSchema = z.object({
 });
 
 export function ClientDetailsEditAccount({ handleClose }: Props) {
-  const { unsetToEditAccount, setToResume } = useClientDetailsModalStore();
+  const { unsetToEditAccount, setToResume, role } = useClientDetailsModalStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -141,51 +128,23 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
   }
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={FormAnimation}
-    >
+    <motion.div initial="initial" animate="animate" exit="exit" variants={FormAnimation}>
       <div className="w-full grid grid-cols-2 grid-rows-2 gap-4 mb-9 sm:flex sm:flex-row sm:items-center sm:justify-between">
-        <Button
-          onClick={handleBack}
-          variant="link"
-          size="icon"
-          className="row-start-1 row-end-2"
-        >
-          <Image
-            src="/assets/icons/arrow-left-dark.svg"
-            alt="Voltar"
-            width={24}
-            height={24}
-          />
+        <Button onClick={handleBack} variant="link" size="icon" className="row-start-1 row-end-2">
+          <Image src="/assets/icons/arrow-left-dark.svg" alt="Voltar" width={24} height={24} />
         </Button>
 
         <h1 className="text-2xl font-semibold text-foreground text-center sm:text-3xl row-end-3 row-start-2 col-span-2">
           Editar Conta
         </h1>
 
-        <Button
-          onClick={handleClose}
-          variant="link"
-          size="icon"
-          className="row-start-1 row-end-2 justify-self-end"
-        >
-          <Image
-            src="/assets/icons/cross-blue.svg"
-            alt="Fechar"
-            width={24}
-            height={24}
-          />
+        <Button onClick={handleClose} variant="link" size="icon" className="row-start-1 row-end-2 justify-self-end">
+          <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
         </Button>
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full flex flex-col gap-9"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-9">
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <FormField
@@ -196,10 +155,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>Nome*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira o nome do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Insira o nome do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -242,13 +198,10 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Endereço*</FormLabel>
+                  <FormLabel>Endereço</FormLabel>
 
                   <FormControl>
-                    <Input
-                      placeholder="Insira o endereço do cliente"
-                      {...field}
-                    />
+                    <Input placeholder="Insira o endereço do cliente" {...field} />
                   </FormControl>
 
                   <FormMessage className="font-normal text-destructive" />
@@ -265,10 +218,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>E-mail*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira o e-mail do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Insira o e-mail do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -284,10 +234,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>Nova senha*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira a nova senha do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Insira a nova senha do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -303,10 +250,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>Confirmar Nova Senha*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Confirme a nova senha do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Confirme a nova senha do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -315,28 +259,27 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div
+              className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", {
+                "sm:grid-cols-2": role !== "ADMIN",
+              })}
+            >
               <FormField
                 control={form.control}
                 name="budget"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className={cn({ hidden: role !== "ADMIN" })}>
                     <FormLabel>Valor do Serviço</FormLabel>
 
                     <FormControl>
                       <div className="h-12 flex items-center gap-2 border border-muted transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
-                        <CircleDollarSign
-                          className="w-5 h-5 text-border flex-shrink-0"
-                          strokeWidth={1.5}
-                        />
+                        <CircleDollarSign className="w-5 h-5 text-border flex-shrink-0" strokeWidth={1.5} />
 
                         <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
                         <CurrencyInput
                           placeholder="Insira o valor do serviço"
-                          onValueChange={(value, name) =>
-                            form.setValue(name as "budget", value ?? "0")
-                          }
+                          onValueChange={(value, name) => form.setValue(name as "budget", value ?? "0")}
                           decimalsLimit={2}
                           ref={field.ref}
                           onBlur={field.onBlur}
@@ -360,17 +303,10 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                   <FormItem>
                     <FormLabel>Status do pagamento*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground",
-                          )}
+                          className={cn(field.value === "" && "[&>span]:text-muted-foreground [&>span]:text-left")}
                         >
                           <SelectValue placeholder="Selecione o status do pagamento" />
                         </SelectTrigger>
@@ -381,6 +317,8 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                         <SelectItem value="Pendente">Pendente</SelectItem>
                       </SelectContent>
                     </Select>
+
+                    <FormMessage className="font-normal text-destructive" />
                   </FormItem>
                 )}
               />
@@ -392,17 +330,10 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                   <FormItem>
                     <FormLabel>Conta de Agendamento*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground",
-                          )}
+                          className={cn(field.value === "" && "[&>span]:text-muted-foreground [&>span]:text-left")}
                         >
                           <SelectValue placeholder="Selecione o status da conta de agendamento" />
                         </SelectTrigger>
@@ -422,13 +353,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
           </div>
 
           <div className="w-full flex flex-col-reverse gap-6 sm:flex-row">
-            <Button
-              type="button"
-              variant="outline"
-              size="xl"
-              className="w-full sm:w-fit"
-              onClick={handleBack}
-            >
+            <Button type="button" variant="outline" size="xl" className="w-full sm:w-fit" onClick={handleBack}>
               Cancelar
             </Button>
 
