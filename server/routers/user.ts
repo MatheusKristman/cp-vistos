@@ -1,21 +1,11 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-
-import {
-  adminProcedure,
-  collaboratorProcedure,
-  publicProcedure,
-  router,
-} from "../trpc";
-import prisma from "@/lib/prisma";
-import {
-  BudgetPaid,
-  Role,
-  ScheduleAccount,
-  VisaClass,
-  VisaType,
-} from "@prisma/client";
+import { BudgetPaid, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { addDays } from "date-fns";
+
+import { adminProcedure, collaboratorProcedure, publicProcedure, router } from "../trpc";
+import prisma from "@/lib/prisma";
 
 export const userRouter = router({
   createClient: adminProcedure
@@ -42,12 +32,9 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine(
-            (val) => !val || (val && (val.length === 0 || val.length === 14)),
-            {
-              message: "Celular inválido",
-            },
-          ),
+          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+            message: "Celular inválido",
+          }),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -140,7 +127,7 @@ export const userRouter = router({
                     "O3 Cônjuge ou Filho de um O1 ou O2",
                     "",
                   ],
-                  { message: "Classe de visto inválida" },
+                  { message: "Classe de visto inválida" }
                 )
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
@@ -173,12 +160,12 @@ export const userRouter = router({
                   invalid_type_error: "Data da entrevista inválida",
                 })
                 .optional(),
-            }),
+            })
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      }),
+      })
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -314,6 +301,7 @@ export const userRouter = router({
       CASVDate: profile.CASVDate,
       interviewDate: profile.interviewDate,
       meetingDate: profile.meetingDate,
+      DSValid: profile.DSValid,
       name: profile.name,
       scheduleAccount: profile.user.scheduleAccount!,
       statusDS: profile.statusDS,
@@ -327,7 +315,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -365,7 +353,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -375,7 +363,7 @@ export const userRouter = router({
           id: profileId,
         },
         data: {
-          DSValid: new Date(),
+          DSValid: addDays(new Date(), 30),
         },
         include: {
           user: true,
@@ -407,7 +395,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "filling", "filled", "emitted"]),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -449,7 +437,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "approved", "disapproved"]),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;

@@ -16,6 +16,7 @@ export type UserTable = {
   CASVDate: Date | null;
   interviewDate: Date | null;
   meetingDate: Date | null;
+  DSValid: Date | null;
   visaType: VisaType;
   scheduleAccount: ScheduleAccount;
   tax: boolean;
@@ -31,10 +32,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Nome
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -42,13 +40,32 @@ export const columns: ColumnDef<UserTable>[] = [
     },
   },
   {
+    accessorKey: "DSValid",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Data do barcode
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("DSValid")) {
+        return <span>--/--/----</span>;
+      }
+
+      //TODO: adicionar função de notificação com ícones para quando estiver próximo
+
+      const dateFormatted = format(row.getValue("DSValid"), "dd/MM/yyyy");
+
+      return <span>{dateFormatted}</span>;
+    },
+  },
+  {
     accessorKey: "CASVDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Data do CASV
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -68,10 +85,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "interviewDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Data da entrevista
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -91,10 +105,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "meetingDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Data da reunião
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -110,14 +121,12 @@ export const columns: ColumnDef<UserTable>[] = [
       return <span>{dateFormatted}</span>;
     },
   },
+
   {
     accessorKey: "visaType",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Status do visto
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -144,10 +153,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "scheduleAccount",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Conta de agendamento
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -174,10 +180,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "tax",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Taxa
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -201,10 +204,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "statusDS",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           DS-160
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -238,26 +238,26 @@ export const columns: ColumnDef<UserTable>[] = [
     cell: ({ row }) => {
       // NOTE: funciona normalmente
       //eslint-disable-next-line
-      const { openModal, setClient } = useClientDetailsModalStore();
+      const { openModal, setClient, setToResume } = useClientDetailsModalStore();
 
       console.log(row.getAllCells());
 
-      const { mutate: handleOpenDetailsModal, isPending } =
-        trpc.userRouter.getClientDetails.useMutation({
-          onSuccess({ client }) {
-            setClient(client);
-            openModal();
-          },
-          onError(error) {
-            console.error(error.data);
+      const { mutate: handleOpenDetailsModal, isPending } = trpc.userRouter.getClientDetails.useMutation({
+        onSuccess({ client }) {
+          setClient(client);
+          openModal();
+          setToResume();
+        },
+        onError(error) {
+          console.error(error.data);
 
-            if (error.data && error.data.code === "NOT_FOUND") {
-              toast.error(error.message);
-            } else {
-              toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
-            }
-          },
-        });
+          if (error.data && error.data.code === "NOT_FOUND") {
+            toast.error(error.message);
+          } else {
+            toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
+          }
+        },
+      });
 
       return (
         <Button
@@ -269,11 +269,7 @@ export const columns: ColumnDef<UserTable>[] = [
           disabled={isPending}
           variant="ghost"
         >
-          {isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <MoreHorizontal className="h-4 w-4" />
-          )}
+          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
         </Button>
       );
     },
