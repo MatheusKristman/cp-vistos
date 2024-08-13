@@ -1,21 +1,10 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import {
-  BudgetPaid,
-  Role,
-  ScheduleAccount,
-  VisaClass,
-  VisaType,
-} from "@prisma/client";
+import { BudgetPaid, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays } from "date-fns";
 
-import {
-  adminProcedure,
-  collaboratorProcedure,
-  publicProcedure,
-  router,
-} from "../trpc";
+import { adminProcedure, collaboratorProcedure, publicProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 
@@ -44,12 +33,9 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine(
-            (val) => !val || (val && (val.length === 0 || val.length === 14)),
-            {
-              message: "Celular inválido",
-            },
-          ),
+          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+            message: "Celular inválido",
+          }),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -142,7 +128,7 @@ export const userRouter = router({
                     "O3 Cônjuge ou Filho de um O1 ou O2",
                     "",
                   ],
-                  { message: "Classe de visto inválida" },
+                  { message: "Classe de visto inválida" }
                 )
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
@@ -175,12 +161,12 @@ export const userRouter = router({
                   invalid_type_error: "Data da entrevista inválida",
                 })
                 .optional(),
-            }),
+            })
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      }),
+      })
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -326,24 +312,36 @@ export const userRouter = router({
 
     return { clients };
   }),
-  getAnnotations: adminProcedure
-    .input(z.object({ accountId: z.string().min(1) }))
-    .query(async (opts) => {
-      const accountId = opts.input.accountId;
+  getAnnotations: adminProcedure.input(z.object({ accountId: z.string().min(1) })).query(async (opts) => {
+    const accountId = opts.input.accountId;
 
-      const annotations = await prisma.annotations.findMany({
-        where: {
-          userId: accountId,
-        },
-      });
+    const annotations = await prisma.annotations.findMany({
+      where: {
+        userId: accountId,
+      },
+    });
 
-      return { annotations };
-    }),
+    return { annotations };
+  }),
+  getComments: collaboratorProcedure.input(z.object({ profileId: z.string().min(1) })).query(async (opts) => {
+    const { profileId } = opts.input;
+
+    const comments = await prisma.comments.findMany({
+      where: {
+        profileId,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    return { comments };
+  }),
   getClientDetails: collaboratorProcedure
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -382,7 +380,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -424,7 +422,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "filling", "filled", "emitted"]),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -466,7 +464,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "approved", "disapproved"]),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -508,7 +506,7 @@ export const userRouter = router({
       z.object({
         userId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { userId, annotation } = opts.input;
@@ -530,7 +528,7 @@ export const userRouter = router({
     .input(
       z.object({
         annotationId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { annotationId } = opts.input;
@@ -548,7 +546,7 @@ export const userRouter = router({
       z.object({
         annotationId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { annotationId, annotation } = opts.input;
@@ -575,9 +573,7 @@ export const userRouter = router({
           cel: z
             .string()
             .optional()
-            .refine(
-              (val) => !val || (val && (val.length === 0 || val.length === 14)),
-            ),
+            .refine((val) => !val || (val && (val.length === 0 || val.length === 14))),
           address: z.string(),
           email: z.string().email().min(1),
           password: z.string(),
@@ -610,20 +606,10 @@ export const userRouter = router({
               message: "As senhas não coincidem, verifique e tente novamente",
             });
           }
-        }),
+        })
     )
     .mutation(async (opts) => {
-      const {
-        profileId,
-        userId,
-        name,
-        cpf,
-        cel,
-        address,
-        email,
-        password,
-        budget,
-      } = opts.input;
+      const { profileId, userId, name, cpf, cel, address, email, password, budget } = opts.input;
       let budgetPaid;
       let scheduleAccount;
 
@@ -685,5 +671,186 @@ export const userRouter = router({
       });
 
       return { clientUpdated, message: "Conta editada com sucesso" };
+    }),
+  addComment: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        comment: z.array(z.string()).min(1),
+      })
+    )
+    .mutation(async (opts) => {
+      const { profileId, comment } = opts.input;
+      const { collaborator } = opts.ctx;
+
+      await prisma.comments.create({
+        data: {
+          comment,
+          author: {
+            connect: {
+              id: collaborator.id,
+            },
+          },
+          profile: {
+            connect: {
+              id: profileId,
+            },
+          },
+        },
+      });
+
+      return {};
+    }),
+  deleteComment: collaboratorProcedure
+    .input(
+      z.object({
+        commentId: z.string().min(1),
+      })
+    )
+    .mutation(async (opts) => {
+      const { commentId } = opts.input;
+
+      await prisma.comments.delete({
+        where: {
+          id: commentId,
+        },
+      });
+
+      return { message: "Comentário excluído" };
+    }),
+  editComment: collaboratorProcedure
+    .input(
+      z.object({
+        commentId: z.string().min(1),
+        comment: z.array(z.string()).min(1),
+      })
+    )
+    .mutation(async (opts) => {
+      const { commentId, comment } = opts.input;
+
+      await prisma.comments.update({
+        where: {
+          id: commentId,
+        },
+        data: {
+          comment,
+        },
+      });
+
+      return { message: "Comentário editado" };
+    }),
+  editProfile: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        profileName: z.string().min(1).min(6),
+        profileCpf: z.string().refine((val) => val.length > 0 && val.length === 14),
+        profileAddress: z.string(),
+        birthDate: z.date().optional(),
+        passport: z.string(),
+        visaType: z.enum(["Renovação", "Primeiro Visto", ""]).refine((val) => val.length !== 0),
+        visaClass: z
+          .enum([
+            "B1 Babá",
+            "B1/B2 Turismo",
+            "O1 Capacidade Extraordinária",
+            "O2 Estrangeiro Acompanhante/Assistente",
+            "O3 Cônjuge ou Filho de um O1 ou O2",
+            "",
+          ])
+          .refine((val) => val.length !== 0),
+        issuanceDate: z.date().optional(),
+        expireDate: z.date().optional(),
+        DSNumber: z.string(),
+        CASVDate: z.date().optional(),
+        interviewDate: z.date().optional(),
+      })
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        profileName,
+        profileCpf,
+        profileAddress,
+        birthDate,
+        passport,
+        issuanceDate,
+        expireDate,
+        DSNumber,
+        CASVDate,
+        interviewDate,
+      } = opts.input;
+
+      let visaClass;
+      let visaType;
+
+      switch (opts.input.visaClass) {
+        case "B1 Babá":
+          visaClass = VisaClass.B1;
+          break;
+        case "B1/B2 Turismo":
+          visaClass = VisaClass.B2_B1;
+          break;
+        case "O1 Capacidade Extraordinária":
+          visaClass = VisaClass.O1;
+          break;
+        case "O2 Estrangeiro Acompanhante/Assistente":
+          visaClass = VisaClass.O2;
+          break;
+        case "O3 Cônjuge ou Filho de um O1 ou O2":
+          visaClass = VisaClass.O3;
+          break;
+        default:
+          visaClass = VisaClass.B1;
+          break;
+      }
+
+      switch (opts.input.visaType) {
+        case "Primeiro Visto":
+          visaType = VisaType.primeiro_visto;
+          break;
+        case "Renovação":
+          visaType = VisaType.renovacao;
+          break;
+        default:
+          visaType = VisaType.primeiro_visto;
+          break;
+      }
+
+      const clientUpdated = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          DSNumber: parseInt(DSNumber),
+          name: profileName,
+          visaClass,
+          visaType,
+          address: profileAddress,
+          cpf: profileCpf,
+          birthDate: birthDate,
+          passport: passport,
+          issuanceDate: issuanceDate,
+          expireDate: expireDate,
+          CASVDate: CASVDate,
+          interviewDate: interviewDate,
+        },
+        include: {
+          user: true,
+          comments: true,
+          form: {
+            include: {
+              otherPeopleTraveling: true,
+              familyLivingInTheUSA: true,
+              americanLicense: true,
+              USALastTravel: true,
+              previousJobs: true,
+              courses: true,
+            },
+          },
+        },
+      });
+
+      return { clientUpdated, message: "Perfil editado com sucesso" };
     }),
 });

@@ -74,6 +74,7 @@ model User {
   annotations Annotations[]
   accounts    Account[]
   sessions    Session[]
+  comments    Comments[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -415,6 +416,8 @@ model Comments {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  authorId String  @db.ObjectId
-  author   Profile @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  authorId  String  @db.ObjectId
+  author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
