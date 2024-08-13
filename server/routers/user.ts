@@ -9,6 +9,11 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 
 export const userRouter = router({
+  getRole: collaboratorProcedure.query(async (opts) => {
+    const { collaborator } = opts.ctx;
+
+    return { role: collaborator.role };
+  }),
   createClient: adminProcedure
     .input(
       z.object({
@@ -345,7 +350,6 @@ export const userRouter = router({
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
-      const role = opts.ctx.collaborator.role;
 
       const client = await prisma.profile.findUnique({
         where: {
@@ -374,7 +378,7 @@ export const userRouter = router({
         });
       }
 
-      return { client, role };
+      return { client };
     }),
   updateDSValidationDate: collaboratorProcedure
     .input(
