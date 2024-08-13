@@ -1,10 +1,21 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { BudgetPaid, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
+import {
+  BudgetPaid,
+  Role,
+  ScheduleAccount,
+  VisaClass,
+  VisaType,
+} from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays } from "date-fns";
 
-import { adminProcedure, collaboratorProcedure, publicProcedure, router } from "../trpc";
+import {
+  adminProcedure,
+  collaboratorProcedure,
+  publicProcedure,
+  router,
+} from "../trpc";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 
@@ -33,9 +44,12 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
-            message: "Celular inválido",
-          }),
+          .refine(
+            (val) => !val || (val && (val.length === 0 || val.length === 14)),
+            {
+              message: "Celular inválido",
+            },
+          ),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -128,7 +142,7 @@ export const userRouter = router({
                     "O3 Cônjuge ou Filho de um O1 ou O2",
                     "",
                   ],
-                  { message: "Classe de visto inválida" }
+                  { message: "Classe de visto inválida" },
                 )
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
@@ -161,12 +175,12 @@ export const userRouter = router({
                   invalid_type_error: "Data da entrevista inválida",
                 })
                 .optional(),
-            })
+            }),
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      })
+      }),
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -312,11 +326,24 @@ export const userRouter = router({
 
     return { clients };
   }),
+  getAnnotations: adminProcedure
+    .input(z.object({ accountId: z.string().min(1) }))
+    .query(async (opts) => {
+      const accountId = opts.input.accountId;
+
+      const annotations = await prisma.annotations.findMany({
+        where: {
+          userId: accountId,
+        },
+      });
+
+      return { annotations };
+    }),
   getClientDetails: collaboratorProcedure
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -355,7 +382,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -397,7 +424,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "filling", "filled", "emitted"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -439,7 +466,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "approved", "disapproved"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -475,5 +502,188 @@ export const userRouter = router({
       }
 
       return { updatedClient, status };
+    }),
+  addAnnotation: adminProcedure
+    .input(
+      z.object({
+        userId: z.string().min(1),
+        annotation: z.array(z.string()).min(1),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { userId, annotation } = opts.input;
+
+      await prisma.annotations.create({
+        data: {
+          annotation,
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+        },
+      });
+
+      return {};
+    }),
+  deleteAnnotation: adminProcedure
+    .input(
+      z.object({
+        annotationId: z.string().min(1),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { annotationId } = opts.input;
+
+      await prisma.annotations.delete({
+        where: {
+          id: annotationId,
+        },
+      });
+
+      return { message: "Anotação excluída" };
+    }),
+  editAnnotation: adminProcedure
+    .input(
+      z.object({
+        annotationId: z.string().min(1),
+        annotation: z.array(z.string()).min(1),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { annotationId, annotation } = opts.input;
+
+      await prisma.annotations.update({
+        where: {
+          id: annotationId,
+        },
+        data: {
+          annotation,
+        },
+      });
+
+      return { message: "Anotação editada" };
+    }),
+  editAccount: collaboratorProcedure
+    .input(
+      z
+        .object({
+          profileId: z.string().min(1),
+          userId: z.string().min(1),
+          name: z.string().min(1).min(4),
+          cpf: z.string().refine((val) => val.length > 0 && val.length === 14),
+          cel: z
+            .string()
+            .optional()
+            .refine(
+              (val) => !val || (val && (val.length === 0 || val.length === 14)),
+            ),
+          address: z.string(),
+          email: z.string().email().min(1),
+          password: z.string(),
+          passwordConfirm: z.string(),
+          budget: z.string().refine((val) => Number(val) >= 0),
+          budgetPaid: z.enum(["", "Pago", "Pendente"]),
+          scheduleAccount: z.enum(["Ativado", "Inativo", ""]),
+        })
+        .superRefine(({ password, passwordConfirm }, ctx) => {
+          if (password.length > 0 && password.length < 6) {
+            ctx.addIssue({
+              path: ["password"],
+              code: "custom",
+              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+            });
+          }
+
+          if (passwordConfirm.length > 0 && passwordConfirm.length < 6) {
+            ctx.addIssue({
+              path: ["passwordConfirm"],
+              code: "custom",
+              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+            });
+          }
+
+          if (passwordConfirm !== password) {
+            ctx.addIssue({
+              path: ["passwordConfirm"],
+              code: "custom",
+              message: "As senhas não coincidem, verifique e tente novamente",
+            });
+          }
+        }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        userId,
+        name,
+        cpf,
+        cel,
+        address,
+        email,
+        password,
+        budget,
+      } = opts.input;
+      let budgetPaid;
+      let scheduleAccount;
+
+      if (password.length > 0) {
+        const pwHash = await bcrypt.hash(password, 12);
+
+        await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            name,
+            cpf,
+            cel,
+            address,
+            email,
+            password: pwHash,
+            budget: parseFloat(budget),
+            budgetPaid,
+            scheduleAccount,
+          },
+        });
+      } else {
+        await prisma.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            name,
+            cpf,
+            cel,
+            address,
+            email,
+            budget: parseFloat(budget),
+            budgetPaid,
+            scheduleAccount,
+          },
+        });
+      }
+
+      const clientUpdated = await prisma.profile.findUnique({
+        where: {
+          id: profileId,
+        },
+        include: {
+          user: true,
+          comments: true,
+          form: {
+            include: {
+              otherPeopleTraveling: true,
+              familyLivingInTheUSA: true,
+              americanLicense: true,
+              USALastTravel: true,
+              previousJobs: true,
+              courses: true,
+            },
+          },
+        },
+      });
+
+      return { clientUpdated, message: "Conta editada com sucesso" };
     }),
 });

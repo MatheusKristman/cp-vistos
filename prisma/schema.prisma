@@ -66,6 +66,7 @@ model User {
   budget          Float?
   budgetPaid      BudgetPaid?
   cpf             String?
+  cel             String?
   address         String?
   scheduleAccount ScheduleAccount?
 
@@ -404,8 +405,8 @@ model Annotations {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  authorId String @db.ObjectId
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comments {
