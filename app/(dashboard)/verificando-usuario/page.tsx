@@ -3,6 +3,8 @@ import { Role } from "@prisma/client";
 import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
 
+// TODO: ajustar para novo formato
+
 export default async function VerifyUserPage() {
   const currentUser = await getCurrentUser();
 

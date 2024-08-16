@@ -32,6 +32,10 @@ const config = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        caution: {
+          DEFAULT: "hsl(var(--caution))",
+          foreground: "hsl(var(--caution-foreground))",
+        },
         confirm: {
           DEFAULT: "hsl(var(--confirm))",
           foreground: "hsl(var(--confirm-foreground))",

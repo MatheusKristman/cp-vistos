@@ -17,7 +17,7 @@
     --primary-foreground: 197 17% 92%;
 
     --secondary: 250 25% 95%;
-    --secondary-foreground: 221 88% 26%;
+    --secondary-foreground: 234 30% 26%;
 
     --muted: 203 19% 92%;
     --muted-foreground: 222 37% 77%;
@@ -27,6 +27,9 @@
 
     --destructive: 0 46% 59%;
     --destructive-foreground: 0 0% 100%;
+
+    --caution: 43 66% 59%;
+    --caution-foreground: 0 0% 100%;
 
     --confirm: 137 46% 59%;
     --confirm-foreground: 0 0% 100%;
