@@ -55,6 +55,12 @@ enum BudgetPaid {
   pending
 }
 
+enum StatusForm {
+  awaiting
+  filling
+  filled
+}
+
 model User {
   id              String           @id @default(auto()) @map("_id") @db.ObjectId
   name            String
@@ -99,6 +105,8 @@ model Profile {
   meetingDate   DateTime?
   issuanceDate  DateTime?
   expireDate    DateTime?
+  statusForm    StatusForm @default(awaiting)
+  formStep      Int        @default(0)
 
   userId   String     @db.ObjectId
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -144,7 +152,6 @@ model Session {
 
 model Form {
   id                                            String                        @id @default(auto()) @map("_id") @db.ObjectId
-  order                                         Int                           @default(0)
   firstName                                     String?
   lastName                                      String?
   cpf                                           String?

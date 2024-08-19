@@ -1,7 +1,7 @@
 // TODO: ajustar data de nascimento, pois se for menor de 14 anos, tem alguns campos que serão desativados
 "use client";
 
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Save } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -35,58 +35,6 @@ interface Props {
 
 const formSchema = z
   .object({
-    firstName: z.string().min(1, "Campo obrigatório"),
-    lastName: z.string().min(1, "Campo obrigatório"),
-    cpf: z.string().min(1, "Campo obrigatório").min(14, "CPF Inválido"),
-    otherNamesConfirmation: z.enum(["Sim", "Não"]),
-    sex: z
-      .string({ message: "Selecione uma opção" })
-      .min(1, { message: "Selecione uma opção" }),
-    maritalStatus: z
-      .string({ message: "Selecione uma opção" })
-      .min(1, { message: "Selecione uma opção" }),
-    birthDate: z.date({ message: "Selecione uma data" }),
-    birthCity: z.string().min(1, "Campo obrigatório"),
-    birthState: z.string().min(1, "Campo obrigatório"),
-    birthCountry: z.string().min(1, "Campo obrigatório"),
-    originCountry: z.string().min(1, "Campo obrigatório"),
-    otherNationalityConfirmation: z.enum(["Sim", "Não"]),
-    otherNationalityPassport: z.string().optional(),
-    otherCountryResidentConfirmation: z.enum(["Sim", "Não"]),
-    USSocialSecurityNumber: z.string(),
-    USTaxpayerIDNumber: z.string(),
-    address: z.string().min(1, { message: "Campo obrigatório" }),
-    city: z.string().min(1, { message: "Campo obrigatório" }),
-    state: z.string().min(1, { message: "Campo obrigatório" }),
-    cep: z.string().min(9, { message: "CEP inválido" }),
-    country: z.string().min(1, { message: "Campo obrigatório" }),
-    postalAddressConfirmation: z.enum(["Sim", "Não"]),
-    otherPostalAddress: z.string(),
-    cel: z.string().min(14, { message: "Celular inválido" }),
-    tel: z.string().min(13, { message: "Telefone inválido" }),
-    fiveYearsOtherTelConfirmation: z.enum(["Sim", "Não"]),
-    otherTel: z.string(),
-    email: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .email({ message: "E-mail inválido" }),
-    fiveYearsOtherEmailConfirmation: z.enum(["Sim", "Não"]),
-    otherEmail: z.string().email({ message: "E-mail inválido" }).optional(),
-    facebook: z.string(),
-    linkedin: z.string(),
-    instagram: z.string(),
-    othersSocialMedia: z.string(),
-    passportNumber: z.string().min(1, { message: "Campo obrigatório" }),
-    passportCity: z.string().min(1, { message: "Campo obrigatório" }),
-    passportState: z.string().min(1, { message: "Campo obrigatório" }),
-    passportIssuingCountry: z.string().min(1, { message: "Campo obrigatório" }),
-    passportIssuingDate: z.date({ message: "Selecione uma data" }),
-    passportExpireDate: z.date({ message: "Selecione uma data" }).optional(),
-    passportNoExpireDate: z.boolean(),
-    passportLostConfirmation: z.enum(["Sim", "Não"]),
-    lostPassportNumber: z.string(),
-    lostPassportCountry: z.string(),
-    lostPassportDetails: z.string(),
     travelItineraryConfirmation: z.enum(["Sim", "Não"]),
     USAPreviewArriveDate: z.date({ message: "Campo obrigatório" }).optional(),
     arriveFlyNumber: z.string(),
@@ -200,20 +148,6 @@ const formSchema = z
   .superRefine(
     (
       {
-        otherNationalityConfirmation,
-        otherNationalityPassport,
-        postalAddressConfirmation,
-        otherPostalAddress,
-        fiveYearsOtherTelConfirmation,
-        otherTel,
-        fiveYearsOtherEmailConfirmation,
-        otherEmail,
-        passportLostConfirmation,
-        lostPassportNumber,
-        lostPassportCountry,
-        lostPassportDetails,
-        passportExpireDate,
-        passportNoExpireDate,
         groupMemberConfirmation,
         groupName,
         USAVisaConfirmation,
@@ -230,97 +164,6 @@ const formSchema = z
       },
       ctx,
     ) => {
-      if (
-        otherNationalityConfirmation === "Sim" &&
-        otherNationalityPassport &&
-        otherNationalityPassport.length === 0
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["otherNationalityPassport"],
-        });
-      }
-
-      if (
-        postalAddressConfirmation === "Sim" &&
-        otherPostalAddress.length === 0
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["otherPostalAddress"],
-        });
-      }
-
-      if (
-        fiveYearsOtherTelConfirmation === "Sim" &&
-        otherTel &&
-        otherTel.length === 0
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["otherTel"],
-        });
-      }
-
-      if (
-        fiveYearsOtherEmailConfirmation === "Sim" &&
-        otherEmail &&
-        otherEmail.length === 0
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["otherEmail"],
-        });
-      }
-
-      if (
-        passportLostConfirmation === "Sim" &&
-        lostPassportNumber &&
-        lostPassportNumber.length === 0
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["lostPassportNumber"],
-        });
-      }
-
-      if (
-        passportLostConfirmation === "Sim" &&
-        lostPassportCountry &&
-        lostPassportCountry.length === 0
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["lostPassportCountry"],
-        });
-      }
-
-      if (
-        passportLostConfirmation === "Sim" &&
-        lostPassportDetails &&
-        lostPassportDetails.length === 0
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo vazio, preencha para prosseguir",
-          path: ["lostPassportDetails"],
-        });
-      }
-
-      if (!passportNoExpireDate && passportExpireDate === undefined) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo obrigatório",
-          path: ["passportExpireDate"],
-        });
-      }
-
       if (
         groupMemberConfirmation === "Sim" &&
         groupName &&
@@ -480,146 +323,6 @@ export function PrimaryForm({ currentForm }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName:
-        currentForm && currentForm.firstName ? currentForm.firstName : "",
-      lastName: currentForm && currentForm.lastName ? currentForm.lastName : "",
-      cpf: currentForm && currentForm.cpf ? currentForm.cpf : "",
-      otherNamesConfirmation:
-        currentForm && currentForm.otherNamesConfirmation
-          ? currentForm.otherNamesConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      sex: currentForm && currentForm.sex ? currentForm.sex : undefined,
-      maritalStatus:
-        currentForm && currentForm.maritalStatus
-          ? currentForm.maritalStatus
-          : undefined,
-      birthDate:
-        currentForm && currentForm.birthDate
-          ? currentForm.birthDate
-          : undefined,
-      birthCity:
-        currentForm && currentForm.birthCity ? currentForm.birthCity : "",
-      birthState:
-        currentForm && currentForm.birthState ? currentForm.birthState : "",
-      birthCountry:
-        currentForm && currentForm.birthCountry ? currentForm.birthCountry : "",
-      originCountry:
-        currentForm && currentForm.originCountry
-          ? currentForm.originCountry
-          : "",
-      otherNationalityConfirmation:
-        currentForm && currentForm.otherNationalityConfirmation
-          ? currentForm.otherNationalityConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      otherNationalityPassport:
-        currentForm && currentForm.otherNationalityPassport
-          ? currentForm.otherNationalityPassport
-          : "",
-      otherCountryResidentConfirmation:
-        currentForm && currentForm.otherCountryResidentConfirmation
-          ? currentForm.otherCountryResidentConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      USSocialSecurityNumber:
-        currentForm && currentForm.USSocialSecurityNumber
-          ? currentForm.USSocialSecurityNumber
-          : "",
-      USTaxpayerIDNumber:
-        currentForm && currentForm.USTaxpayerIDNumber
-          ? currentForm.USTaxpayerIDNumber
-          : "",
-      address: currentForm && currentForm.address ? currentForm.address : "",
-      city: currentForm && currentForm.city ? currentForm.city : "",
-      state: currentForm && currentForm.state ? currentForm.state : "",
-      cep: currentForm && currentForm.cep ? currentForm.cep : "",
-      country: currentForm && currentForm.country ? currentForm.country : "",
-      postalAddressConfirmation:
-        currentForm && currentForm.postalAddressConfirmation
-          ? currentForm.postalAddressConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      otherPostalAddress:
-        currentForm && currentForm.otherPostalAddress
-          ? currentForm.otherPostalAddress
-          : "",
-      cel: currentForm && currentForm.cel ? currentForm.cel : "",
-      tel: currentForm && currentForm.tel ? currentForm.tel : "",
-      fiveYearsOtherTelConfirmation:
-        currentForm && currentForm.fiveYearsOtherTelConfirmation
-          ? currentForm.fiveYearsOtherTelConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      otherTel: currentForm && currentForm.otherTel ? currentForm.otherTel : "",
-      email: currentForm && currentForm.email ? currentForm.email : "",
-      fiveYearsOtherEmailConfirmation:
-        currentForm && currentForm.fiveYearsOtherEmailConfirmation
-          ? currentForm.fiveYearsOtherEmailConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      otherEmail:
-        currentForm && currentForm.otherEmail ? currentForm.otherEmail : "",
-      facebook: currentForm && currentForm.facebook ? currentForm.facebook : "",
-      linkedin: currentForm && currentForm.linkedin ? currentForm.linkedin : "",
-      instagram:
-        currentForm && currentForm.instagram ? currentForm.instagram : "",
-      othersSocialMedia:
-        currentForm && currentForm.othersSocialMedia
-          ? currentForm.othersSocialMedia
-          : "",
-      passportNumber:
-        currentForm && currentForm.passportNumber
-          ? currentForm.passportNumber
-          : "",
-      passportCity:
-        currentForm && currentForm.passportCity ? currentForm.passportCity : "",
-      passportState:
-        currentForm && currentForm.passportState
-          ? currentForm.passportState
-          : "",
-      passportIssuingCountry:
-        currentForm && currentForm.passportIssuingCountry
-          ? currentForm.passportIssuingCountry
-          : "",
-      passportIssuingDate:
-        currentForm && currentForm.passportIssuingDate
-          ? currentForm.passportIssuingDate
-          : undefined,
-      passportExpireDate:
-        currentForm && currentForm.passportExpireDate
-          ? currentForm.passportExpireDate
-          : undefined,
-      passportNoExpireDate:
-        currentForm && currentForm.passportExpireDate
-          ? currentForm.passportExpireDate === null
-            ? true
-            : false
-          : true,
-      passportLostConfirmation:
-        currentForm && currentForm.passportLostConfirmation
-          ? currentForm.passportLostConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
-      lostPassportNumber:
-        currentForm && currentForm.lostPassportNumber
-          ? currentForm.lostPassportNumber
-          : "",
-      lostPassportCountry:
-        currentForm && currentForm.lostPassportCountry
-          ? currentForm.lostPassportCountry
-          : "",
-      lostPassportDetails:
-        currentForm && currentForm.lostPassportDetails
-          ? currentForm.lostPassportDetails
-          : "",
       travelItineraryConfirmation:
         currentForm && currentForm.travelItineraryConfirmation
           ? currentForm.travelItineraryConfirmation === true
@@ -1094,25 +797,6 @@ export function PrimaryForm({ currentForm }: Props) {
           : "Não",
     },
   });
-  const otherNamesConfirmationValue: "Sim" | "Não" = form.watch(
-    "otherNamesConfirmation",
-  );
-  const otherNationalityConfirmation: "Sim" | "Não" = form.watch(
-    "otherNationalityConfirmation",
-  );
-  const postalAddressConfirmation: "Sim" | "Não" = form.watch(
-    "postalAddressConfirmation",
-  );
-  const fiveYearsOtherTelConfirmation: "Sim" | "Não" = form.watch(
-    "fiveYearsOtherTelConfirmation",
-  );
-  const fiveYearsOtherEmailConfirmation: "Sim" | "Não" = form.watch(
-    "fiveYearsOtherEmailConfirmation",
-  );
-  const passportNoExpireDate: boolean = form.watch("passportNoExpireDate");
-  const passportLostConfirmation: "Sim" | "Não" = form.watch(
-    "passportLostConfirmation",
-  );
   const otherPeopleTravelingConfirmation: "Sim" | "Não" = form.watch(
     "otherPeopleTravelingConfirmation",
   );
@@ -1666,24 +1350,6 @@ export function PrimaryForm({ currentForm }: Props) {
       });
   }
 
-  function handleCPFPersonalDataChange(event: ChangeEvent<HTMLInputElement>) {
-    let value = event.target.value.replace(/[^\d]/g, "");
-
-    value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-
-    form.setValue("cpf", value);
-  }
-
-  function handleCEPContactAndAddressChange(
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
-    let value = event.target.value.replace(/[^\d]/g, "");
-
-    value = value.replace(/(\d{5})(\d{3})/, "$1-$2");
-
-    form.setValue("cep", value);
-  }
-
   function handleCEPWorkEducationChange(event: ChangeEvent<HTMLInputElement>) {
     let value = event.target.value.replace(/[^\d]/g, "");
 
@@ -1702,27 +1368,6 @@ export function PrimaryForm({ currentForm }: Props) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full flex flex-col gap-12 mb-12"
       >
-        <PersonalDataForm
-          formControl={form.control}
-          handleCPFPersonalDataChange={handleCPFPersonalDataChange}
-          otherNamesConfirmationValue={otherNamesConfirmationValue}
-          otherNationalityConfirmation={otherNationalityConfirmation}
-        />
-
-        <ContactAndAddressForm
-          formControl={form.control}
-          handleCEPContactAndAddressChange={handleCEPContactAndAddressChange}
-          postalAddressConfirmation={postalAddressConfirmation}
-          fiveYearsOtherTelConfirmation={fiveYearsOtherTelConfirmation}
-          fiveYearsOtherEmailConfirmation={fiveYearsOtherEmailConfirmation}
-        />
-
-        <PassportForm
-          formControl={form.control}
-          passportNoExpireDate={passportNoExpireDate}
-          passportLostConfirmation={passportLostConfirmation}
-        />
-
         <AboutTravelForm
           formControl={form.control}
           travelItineraryConfirmation={travelItineraryConfirmation}
