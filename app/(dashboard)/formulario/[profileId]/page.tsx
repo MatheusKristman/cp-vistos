@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import getPrimaryForm from "@/app/actions/getPrimaryForm";
-import { FormNav } from "@/components/form/form-nav";
-import { PrimaryForm } from "@/components/form/primary-form";
 import { Header } from "@/components/global/header";
 import { MobileMenu } from "@/components/global/mobile-menu";
 import { cn } from "@/lib/utils";
@@ -19,6 +16,31 @@ import { trpc } from "@/lib/trpc-client";
 import { PersonalDataForm } from "@/components/form/personal-data-form";
 import { ContactAndAddressForm } from "@/components/form/contact-and-address-form";
 import { PassportForm } from "@/components/form/passport-form";
+import { AboutTravelForm } from "@/components/form/about-travel-form";
+import { TravelCompanyForm } from "@/components/form/travel-company-form";
+import { PreviousTravelForm } from "@/components/form/previous-travel-form";
+import { USAContactForm } from "@/components/form/usa-contact-form";
+import { FamilyForm } from "@/components/form/family-form";
+import { WorkEducationForm } from "@/components/form/work-education-form";
+import { AdditionalInformationForm } from "@/components/form/additional-information-form";
+import { SecurityForm } from "@/components/form/security-form";
+
+import "react-phone-number-input/style.css";
+import { Loader2 } from "lucide-react";
+
+const STEPS = [
+  { label: "Dados Pessoais", step: 0 },
+  { label: "Endereço e Contatos", step: 1 },
+  { label: "Passaporte", step: 2 },
+  { label: "Sobre a Viagem", step: 3 },
+  { label: "Companhia de Viagem", step: 4 },
+  { label: "Viagens Anteriores", step: 5 },
+  { label: "Contato nos Estados Unidos", step: 6 },
+  { label: "Informações da Família", step: 7 },
+  { label: "Trabalho e Educação", step: 8 },
+  { label: "Informações Adicionais", step: 9 },
+  { label: "Segurança", step: 10 },
+] as const;
 
 export default function FormPage({
   params,
@@ -27,16 +49,40 @@ export default function FormPage({
 }) {
   const profileId = params.profileId;
   const searchParams = useSearchParams();
+  const router = useRouter();
   const formStep = searchParams.get("formStep");
 
   if (!profileId) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
+        <Loader2 size={100} strokeWidth={1} className="animate-spin" />
+
+        <span className="text-center text-2xl font-semibold text-primary">
+          Um momento...
+        </span>
+      </div>
+    );
   }
 
   const { data } = trpc.formsRouter.getForm.useQuery({ profileId });
 
   if (data === undefined) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
+        <Loader2 size={100} strokeWidth={1} className="animate-spin" />
+
+        <span className="text-center text-2xl font-semibold text-primary">
+          Um momento...
+        </span>
+      </div>
+    );
+  }
+
+  const currentStep = data.form.profile.formStep;
+  const stepDisabled = (step: number) => step > currentStep;
+
+  function handleStep(step: number) {
+    router.push(`/formulario/${profileId}?formStep=${step}`);
   }
 
   console.log(data.form);
@@ -57,213 +103,48 @@ export default function FormPage({
 
             <div className="flex items-center gap-4">
               <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=0`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "0",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
+                {STEPS.map((step) => {
+                  const disabled = stepDisabled(step.step);
 
-                  <TooltipContent side="bottom">
-                    <p>Dados Pessoais</p>
-                  </TooltipContent>
-                </Tooltip>
+                  return (
+                    <Tooltip key={step.step} delayDuration={0}>
+                      <TooltipTrigger
+                        disabled={disabled}
+                        onClick={() => handleStep(step.step)}
+                        className={cn(
+                          "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
+                          {
+                            "bg-primary hover:bg-primary":
+                              formStep === step.step.toString(),
+                          },
+                        )}
+                      />
 
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=1`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "1",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Endereço e Contatos</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=2`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "2",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Passaporte</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=3`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "3",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Sobre a Viagem</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=4`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "4",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Companhia de Viagem</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=5`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "5",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Viagens Anteriores</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=6`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "6",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Contato nos Estados Unidos</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=7`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "7",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Informações da Família</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=8`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "8",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Trabalho e Educação</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=9`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "9",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Informações Adicionais</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`/formulario/${profileId}?formStep=10`}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary",
-                        {
-                          "bg-primary": formStep === "10",
-                        },
-                      )}
-                    />
-                  </TooltipTrigger>
-
-                  <TooltipContent side="bottom">
-                    <p>Segurança</p>
-                  </TooltipContent>
-                </Tooltip>
+                      <TooltipContent side="bottom">
+                        <p className="font-medium">{step.label}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                })}
               </TooltipProvider>
             </div>
           </div>
 
-          {formStep === "0" && <PersonalDataForm currentForm={data.form} />}
+          {formStep === "0" && (
+            <PersonalDataForm currentForm={data.form} profileId={profileId} />
+          )}
           {formStep === "1" && (
             <ContactAndAddressForm currentForm={data.form} />
           )}
           {formStep === "2" && <PassportForm currentForm={data.form} />}
-          {/* <PrimaryForm currentForm={primaryForm} /> */}
+          {formStep === "3" && <AboutTravelForm currentForm={data.form} />}
+          {formStep === "4" && <TravelCompanyForm currentForm={data.form} />}
+          {formStep === "5" && <PreviousTravelForm currentForm={data.form} />}
+          {formStep === "6" && <USAContactForm currentForm={data.form} />}
+          {formStep === "7" && <FamilyForm currentForm={data.form} />}
+          {formStep === "8" && <WorkEducationForm currentForm={data.form} />}
+          {formStep === "9" && <AdditionalInformationForm />}
+          {formStep === "10" && <SecurityForm currentForm={data.form} />}
         </div>
       </div>
     </>

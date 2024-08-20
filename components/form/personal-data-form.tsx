@@ -1,12 +1,12 @@
 "use client";
 
-import { ChangeEvent } from "react";
-import { Control } from "react-hook-form";
-import { ArrowRight, Loader2, Plus, Save, Trash } from "lucide-react";
+//TODO: adicionar função de salvar dados
+
+import { ChangeEvent, useState } from "react";
+import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { Element } from "react-scroll";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,8 +36,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { FullForm, PrimaryFormControl } from "@/types";
-import useFormStore from "@/constants/stores/useFormStore";
+import { FullForm } from "@/types";
+import { trpc } from "@/lib/trpc-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -45,6 +47,9 @@ const formSchema = z
     lastName: z.string().min(1, "Campo obrigatório"),
     cpf: z.string().min(1, "Campo obrigatório").min(14, "CPF Inválido"),
     otherNamesConfirmation: z.enum(["Sim", "Não"]),
+    otherNames: z
+      .array(z.string().min(1, { message: "Valor não pode ser vazio" }))
+      .optional(),
     sex: z
       .string({ message: "Selecione uma opção" })
       .min(1, { message: "Selecione uma opção" }),
@@ -63,11 +68,19 @@ const formSchema = z
     USTaxpayerIDNumber: z.string(),
   })
   .superRefine(
-    ({ otherNationalityConfirmation, otherNationalityPassport }, ctx) => {
+    (
+      {
+        otherNationalityConfirmation,
+        otherNationalityPassport,
+        otherNamesConfirmation,
+        otherNames,
+      },
+      ctx,
+    ) => {
       if (
         otherNationalityConfirmation === "Sim" &&
-        otherNationalityPassport &&
-        otherNationalityPassport.length === 0
+        (otherNationalityPassport === undefined ||
+          otherNationalityPassport?.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -75,22 +88,28 @@ const formSchema = z
           path: ["otherNationalityPassport"],
         });
       }
+
+      if (
+        otherNamesConfirmation === "Sim" &&
+        otherNames &&
+        otherNames.length === 0
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["otherNames"],
+        });
+      }
     },
   );
 
 interface Props {
+  profileId: string;
   currentForm: FullForm;
 }
 
-export function PersonalDataForm({ currentForm }: Props) {
-  const {
-    otherNames,
-    setOtherNames,
-    otherNamesIndex,
-    setOtherNamesIndex,
-    otherNamesError,
-  } = useFormStore();
-  const currentYear = getYear(new Date());
+export function PersonalDataForm({ currentForm, profileId }: Props) {
+  const [otherNamesValue, setOtherNamesValue] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -135,41 +154,63 @@ export function PersonalDataForm({ currentForm }: Props) {
     },
   });
 
+  const currentYear = getYear(new Date());
   const otherNamesConfirmationValue: "Sim" | "Não" = form.watch(
     "otherNamesConfirmation",
   );
   const otherNationalityConfirmation: "Sim" | "Não" = form.watch(
     "otherNationalityConfirmation",
   );
+  const otherNames = form.watch("otherNames");
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitPersonalData, isPending } =
+    trpc.formsRouter.submitPersonalData.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+        router.push(`/formulario/${profileId}?formStep=1`);
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error(
+          "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+        );
+      },
+    });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
-
-  function handleOtherNamesChange(
-    event: ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) {
-    const values = [...otherNames];
-    values[index] = event.target.value;
-    setOtherNames(values);
+    submitPersonalData({ ...values, profileId, step: 1 });
   }
 
   function handleAddOtherNamesInput() {
-    setOtherNamesIndex(otherNamesIndex + 1);
+    if (otherNamesValue === "") {
+      return;
+    }
 
-    const values = [...otherNames];
-    values[values.length] = "";
-    setOtherNames(values);
+    const currentNames = otherNames ?? [];
+
+    console.log(currentNames);
+
+    currentNames.push(otherNamesValue);
+
+    form.setValue("otherNames", currentNames);
+    setOtherNamesValue("");
   }
 
-  function handleRemoveOtherNamesInput(index: number) {
-    setOtherNamesIndex(otherNamesIndex - 1);
+  function handleRemoveOtherNames(index: number) {
+    const currentNames = otherNames ?? [];
 
-    const values = [...otherNames].filter(
-      (value: string, i: number) => i !== index,
+    if (currentNames.length === 0) {
+      return;
+    }
+
+    const namesUpdated = currentNames.filter(
+      (_, nameIndex) => nameIndex !== index,
     );
-    setOtherNames(values);
+
+    form.setValue("otherNames", namesUpdated);
   }
 
   function handleCPFPersonalDataChange(event: ChangeEvent<HTMLInputElement>) {
@@ -184,29 +225,29 @@ export function PersonalDataForm({ currentForm }: Props) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col gap-6"
+        className="w-full flex flex-col gap-12"
       >
-        <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-12">
+        <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold">
           Dados Pessoais
         </h2>
 
         <div className="w-full flex flex-col gap-12">
-          <div className="w-full flex flex-col gap-4">
+          <div className="w-full flex flex-col gap-10">
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col">
                     <FormLabel className="text-foreground text-sm">
                       Primeiro nome (Conforme passaporte)*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -215,16 +256,16 @@ export function PersonalDataForm({ currentForm }: Props) {
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col">
                     <FormLabel className="text-foreground text-sm">
                       Sobrenome (Conforme passaporte)*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -233,13 +274,14 @@ export function PersonalDataForm({ currentForm }: Props) {
                 control={form.control}
                 name="cpf"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col">
                     <FormLabel className="text-foreground text-sm">
                       CPF*
                     </FormLabel>
 
                     <FormControl>
                       <Input
+                        disabled={isPending}
                         maxLength={14}
                         value={field.value}
                         ref={field.ref}
@@ -249,7 +291,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -268,6 +310,7 @@ export function PersonalDataForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -290,69 +333,84 @@ export function PersonalDataForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
 
-              <div
-                className={cn(
-                  "w-full bg-secondary p-4 flex flex-col space-y-3",
-                  {
-                    hidden: otherNamesConfirmationValue === "Não",
-                  },
+              <FormField
+                name="otherNames"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      "w-full bg-secondary p-4 flex flex-col space-y-3",
+                      {
+                        hidden: otherNamesConfirmationValue === "Não",
+                      },
+                    )}
+                  >
+                    <FormLabel className="text-foreground">
+                      Outro nome
+                    </FormLabel>
+
+                    <FormControl>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2 justify-between">
+                          <Input
+                            disabled={isPending}
+                            name={field.name}
+                            ref={field.ref}
+                            onBlur={field.onBlur}
+                            value={otherNamesValue}
+                            onChange={(event) =>
+                              setOtherNamesValue(event.target.value)
+                            }
+                          />
+
+                          <Button
+                            type="button"
+                            size="xl"
+                            className="px-3"
+                            disabled={isPending}
+                            onClick={handleAddOtherNamesInput}
+                          >
+                            <Plus />
+                          </Button>
+                        </div>
+
+                        {otherNames && (
+                          <div className="w-full flex flex-wrap gap-2">
+                            {otherNames.map((name, index) => (
+                              <div
+                                key={`otherName-${index}`}
+                                className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
+                              >
+                                <span className="text-sm font-medium text-foreground">
+                                  {name}
+                                </span>
+
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  size="icon"
+                                  className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
+                                  disabled={isPending}
+                                  onClick={() => handleRemoveOtherNames(index)}
+                                >
+                                  <X strokeWidth={1} size={20} />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
                 )}
-              >
-                <label
-                  htmlFor="otherNames"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Outro nome
-                </label>
-
-                <div className="flex flex-col gap-4 w-full">
-                  {Array.from(Array(otherNamesIndex).keys()).map((i) => (
-                    <div
-                      key={i}
-                      className="flex gap-2 justify-between items-end"
-                    >
-                      <Input
-                        value={otherNames[i]}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleOtherNamesChange(e, i)
-                        }
-                      />
-
-                      {i === otherNamesIndex - 1 ? (
-                        <Button
-                          type="button"
-                          size="xl"
-                          className="px-3"
-                          disabled={otherNames[otherNames.length - 1] === ""}
-                          onClick={handleAddOtherNamesInput}
-                        >
-                          <Plus />
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          size="xl"
-                          className="px-3"
-                          onClick={() => handleRemoveOtherNamesInput(i)}
-                        >
-                          <Trash />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {otherNamesError.length > 0 && (
-                  <span className="text-sm text-red-500">
-                    {otherNamesError}
-                  </span>
-                )}
-              </div>
+              />
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -368,7 +426,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger disabled={isPending}>
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -380,7 +438,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                       </SelectContent>
                     </Select>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -399,7 +457,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger disabled={isPending}>
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -427,7 +485,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                       </SelectContent>
                     </Select>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -446,6 +504,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                         <FormControl>
                           <Button
                             variant={"outline"}
+                            disabled={isPending}
                             className={cn(
                               "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
@@ -488,7 +547,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -505,10 +564,10 @@ export function PersonalDataForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -523,10 +582,10 @@ export function PersonalDataForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -541,10 +600,10 @@ export function PersonalDataForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -561,14 +620,16 @@ export function PersonalDataForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
+            </div>
 
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="otherNationalityConfirmation"
@@ -580,6 +641,7 @@ export function PersonalDataForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -602,35 +664,41 @@ export function PersonalDataForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="otherNationalityPassport"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      "block",
+                      otherNationalityConfirmation === "Não" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="text-foreground">
+                      Número do passaporte da outra nacionalidade
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        disabled={
+                          otherNationalityConfirmation === "Não" || isPending
+                        }
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="otherNationalityPassport"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">
-                      Se respondeu sim anteriormente, digite o número do
-                      passaporte dessa nacionalidade
-                    </FormLabel>
-
-                    <FormControl>
-                      <Input
-                        disabled={otherNationalityConfirmation === "Não"}
-                        {...field}
-                      />
-                    </FormControl>
-
-                    <FormMessage className="text-sm text-red-500" />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="otherCountryResidentConfirmation"
@@ -642,6 +710,7 @@ export function PersonalDataForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -664,7 +733,7 @@ export function PersonalDataForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -682,10 +751,10 @@ export function PersonalDataForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -701,10 +770,10 @@ export function PersonalDataForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -717,22 +786,37 @@ export function PersonalDataForm({ currentForm }: Props) {
               variant="outline"
               type="button"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending}
             >
-              Salvar
-              <Save className="size-5" strokeWidth={1.5} />
+              {isPending ? (
+                <>
+                  Salvando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
+              ) : (
+                <>
+                  Salvar
+                  <Save className="size-5" strokeWidth={1.5} />
+                </>
+              )}
             </Button>
 
             <Button
               size="xl"
-              // disabled={isSubmitting || isSaving}
+              disabled={isPending}
               type="submit"
               className="w-full flex items-center gap-2 sm:w-fit"
             >
-              Enviar{" "}
-              {false ? (
-                <Loader2 className="animate-spin" />
+              {isPending ? (
+                <>
+                  Enviando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
               ) : (
-                <ArrowRight className="hidden" />
+                <>
+                  Proximo
+                  <ArrowRight className="size-5" strokeWidth={1.5} />
+                </>
               )}
             </Button>
           </div>

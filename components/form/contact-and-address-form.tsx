@@ -1,8 +1,6 @@
 "use client";
 
-import { Control } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
-import { Element } from "react-scroll";
 import { ChangeEvent } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -19,11 +17,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { FullForm, PrimaryFormControl } from "@/types";
+import { FullForm } from "@/types";
 import { Button } from "../ui/button";
 import { ArrowRight, Loader2, Save } from "lucide-react";
-
-import "react-phone-number-input/style.css";
 
 const formSchema = z
   .object({
