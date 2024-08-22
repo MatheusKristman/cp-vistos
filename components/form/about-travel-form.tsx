@@ -1,12 +1,10 @@
 "use client";
 
-import { ChangeEvent, useEffect } from "react";
-import { Control } from "react-hook-form";
-import { ArrowRight, Loader2, Plus, Save, Trash } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { Element } from "react-scroll";
 import PhoneInput from "react-phone-number-input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -29,10 +27,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { FullForm, PrimaryFormControl } from "@/types";
+import { FullForm } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
+import { trpc } from "@/lib/trpc-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   travelItineraryConfirmation: z.enum(["Sim", "Não"]),
@@ -43,6 +43,9 @@ const formSchema = z.object({
   returnFlyNumber: z.string(),
   returnCity: z.string(),
   estimatedTimeOnUSA: z.string().min(1, { message: "Campo obrigatório" }),
+  visitLocations: z
+    .array(z.string().min(1, { message: "Valor não pode ser vazio" }))
+    .optional(),
   USACompleteAddress: z.string(),
   USAZipCode: z.string(),
   USACity: z.string(),
@@ -59,18 +62,13 @@ const formSchema = z.object({
 
 interface Props {
   currentForm: FullForm;
+  profileId: string;
 }
 
-export function AboutTravelForm({ currentForm }: Props) {
-  const {
-    visitLocations,
-    visitLocationsError,
-    visitLocationsIndex,
-    myselfValue,
-    setMyselfValue,
-    setVisitLocations,
-    setVisitLocationsIndex,
-  } = useFormStore();
+export function AboutTravelForm({ currentForm, profileId }: Props) {
+  const [visitLocationsValue, setVisitLocationsValue] = useState<string>("");
+
+  const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -97,6 +95,9 @@ export function AboutTravelForm({ currentForm }: Props) {
       estimatedTimeOnUSA: currentForm.estimatedTimeOnUSA
         ? currentForm.estimatedTimeOnUSA
         : "",
+      visitLocations: currentForm.visitLocations
+        ? currentForm.visitLocations
+        : [],
       USACompleteAddress: currentForm.USACompleteAddress
         ? currentForm.USACompleteAddress
         : "",
@@ -114,54 +115,155 @@ export function AboutTravelForm({ currentForm }: Props) {
   });
 
   const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
+  const visitLocations = form.watch("visitLocations");
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitAboutTravel, isPending } =
+    trpc.formsRouter.submitAboutTravel.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+        router.push(`/formulario/${profileId}?formStep=4`);
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: saveAboutTravel, isPending: isSavePending } =
+    trpc.formsRouter.saveAboutTravel.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
 
   useEffect(() => {
-    form.setValue("payerNameOrCompany", "Eu mesmo");
-  }, [myselfValue]);
+    if (redirectStep !== null) {
+      const values = form.getValues();
 
-  function handleVisitLocationsChange(
-    event: ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) {
-    const values = [...visitLocations];
-    values[index] = event.target.value;
-    setVisitLocations(values);
+      saveAboutTravel({
+        profileId,
+        redirectStep,
+        travelItineraryConfirmation:
+          values.travelItineraryConfirmation ??
+          (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
+        USAPreviewArriveDate:
+          values.USAPreviewArriveDate ?? currentForm.USAPreviewArriveDate,
+        arriveFlyNumber:
+          values.arriveFlyNumber !== ""
+            ? values.arriveFlyNumber
+            : currentForm.arriveFlyNumber,
+        arriveCity:
+          values.arriveCity !== "" ? values.arriveCity : currentForm.arriveCity,
+        USAPreviewReturnDate:
+          values.USAPreviewReturnDate ?? currentForm.USAPreviewReturnDate,
+        returnFlyNumber:
+          values.returnFlyNumber !== ""
+            ? values.returnFlyNumber
+            : currentForm.returnFlyNumber,
+        returnCity:
+          values.returnCity !== "" ? values.returnCity : currentForm.returnCity,
+        estimatedTimeOnUSA:
+          values.estimatedTimeOnUSA !== ""
+            ? values.estimatedTimeOnUSA
+            : currentForm.estimatedTimeOnUSA,
+        visitLocations: values.visitLocations ?? currentForm.visitLocations,
+        USACompleteAddress:
+          values.USACompleteAddress !== ""
+            ? values.USACompleteAddress
+            : currentForm.USACompleteAddress,
+        USAZipCode:
+          values.USAZipCode !== "" ? values.USAZipCode : currentForm.USAZipCode,
+        USACity: values.USACity !== "" ? values.USACity : currentForm.USACity,
+        USAState:
+          values.USAState !== "" ? values.USAState : currentForm.USAState,
+        payerNameOrCompany:
+          values.payerNameOrCompany !== ""
+            ? values.payerNameOrCompany
+            : currentForm.payerNameOrCompany,
+        payerTel:
+          values.payerTel !== "" ? values.payerTel : currentForm.payerTel,
+        payerAddress:
+          values.payerAddress !== ""
+            ? values.payerAddress
+            : currentForm.payerAddress,
+        payerRelation:
+          values.payerRelation !== ""
+            ? values.payerRelation
+            : currentForm.payerRelation,
+        payerEmail:
+          values.payerEmail !== "" ? values.payerEmail : currentForm.payerEmail,
+      });
+      setRedirectStep(null);
+    }
+  }, [redirectStep, setRedirectStep, saveAboutTravel, profileId]);
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    submitAboutTravel({ ...values, profileId, step: 4 });
   }
 
   function handleAddVisitLocationsInput() {
-    setVisitLocationsIndex(visitLocationsIndex + 1);
+    if (visitLocationsValue === "") {
+      return;
+    }
 
-    const values = [...visitLocations];
-    values[values.length] = "";
-    setVisitLocations(values);
+    const currentLocations = visitLocations ?? [];
+
+    currentLocations.push(visitLocationsValue);
+
+    form.setValue("visitLocations", currentLocations);
+    setVisitLocationsValue("");
   }
 
-  function handleRemoveVisitLocationsInput(index: number) {
-    setVisitLocationsIndex(visitLocationsIndex - 1);
+  function handleRemoveVisitLocations(index: number) {
+    const currentLocations = visitLocations ?? [];
 
-    const values = [...visitLocations].filter(
-      (value: string, i: number) => i !== index,
+    if (currentLocations.length === 0) {
+      return;
+    }
+
+    const locationsUpdated = currentLocations.filter(
+      (_, locationIndex) => locationIndex !== index,
     );
-    setVisitLocations(values);
-  }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    form.setValue("visitLocations", locationsUpdated);
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col gap-6"
+        className="w-full flex flex-col flex-grow gap-6"
       >
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Sobre a Viagem
         </h2>
 
-        <div className="w-full flex flex-col gap-12">
-          <div className="w-full flex flex-col gap-4">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="w-full flex flex-col gap-12 justify-between flex-grow">
+          <div className="w-full flex flex-col">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="travelItineraryConfirmation"
@@ -173,6 +275,7 @@ export function AboutTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -195,11 +298,18 @@ export function AboutTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
+            </div>
 
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10",
+                travelItineraryConfirmation === "Não" && "hidden",
+              )}
+            >
               <FormField
                 control={form.control}
                 name="USAPreviewArriveDate"
@@ -213,21 +323,32 @@ export function AboutTravelForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            disabled={travelItineraryConfirmation === "Não"}
-                            variant={"outline"}
+                            disabled={
+                              travelItineraryConfirmation === "Não" ||
+                              isPending ||
+                              isSavePending
+                            }
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -255,7 +376,7 @@ export function AboutTravelForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -264,46 +385,59 @@ export function AboutTravelForm({ currentForm }: Props) {
                 control={form.control}
                 name="arriveFlyNumber"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Número do voo de chegada
                     </FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={travelItineraryConfirmation === "Não"}
+                        disabled={
+                          travelItineraryConfirmation === "Não" ||
+                          isPending ||
+                          isSavePending
+                        }
                         {...field}
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
-            </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-4 gap-4">
               <FormField
                 control={form.control}
                 name="arriveCity"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Cidade de chegada
                     </FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={travelItineraryConfirmation === "Não"}
+                        disabled={
+                          travelItineraryConfirmation === "Não" ||
+                          isPending ||
+                          isSavePending
+                        }
                         {...field}
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
+            </div>
 
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10",
+                travelItineraryConfirmation === "Não" && "hidden",
+              )}
+            >
               <FormField
                 control={form.control}
                 name="USAPreviewReturnDate"
@@ -317,21 +451,32 @@ export function AboutTravelForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            disabled={travelItineraryConfirmation === "Não"}
-                            variant={"outline"}
+                            disabled={
+                              travelItineraryConfirmation === "Não" ||
+                              isPending ||
+                              isSavePending
+                            }
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -359,7 +504,7 @@ export function AboutTravelForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -368,19 +513,23 @@ export function AboutTravelForm({ currentForm }: Props) {
                 control={form.control}
                 name="returnFlyNumber"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Número do voo de partida
                     </FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={travelItineraryConfirmation === "Não"}
+                        disabled={
+                          travelItineraryConfirmation === "Não" ||
+                          isPending ||
+                          isSavePending
+                        }
                         {...field}
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -389,119 +538,137 @@ export function AboutTravelForm({ currentForm }: Props) {
                 control={form.control}
                 name="returnCity"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Cidade de partida
                     </FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={travelItineraryConfirmation === "Não"}
+                        disabled={
+                          travelItineraryConfirmation === "Não" ||
+                          isPending ||
+                          isSavePending
+                        }
                         {...field}
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="estimatedTimeOnUSA"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem className="py-4">
+                    <FormLabel className="text-foreground">
                       Tempo estimado de permanência nos EUA*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
 
-              <div className="w-full bg-secondary p-4 flex flex-col space-y-3">
-                <label
-                  htmlFor="visitLocations"
-                  className="text-sm font-medium text-foreground"
-                >
-                  Locais que pretende visitar
-                </label>
+              <FormField
+                control={form.control}
+                name="visitLocations"
+                render={({ field }) => (
+                  <FormItem className="bg-secondary p-4">
+                    <FormLabel className="text-foreground">
+                      Locais que pretende visitar
+                    </FormLabel>
 
-                <div className="flex flex-col gap-4 w-full">
-                  {Array.from(Array(visitLocationsIndex).keys()).map((i) => (
-                    <div
-                      key={i}
-                      className="flex gap-2 justify-between items-end"
-                    >
-                      <Input
-                        name="visitLocations"
-                        value={visitLocations[i]}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleVisitLocationsChange(e, i)
-                        }
-                      />
+                    <FormControl>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2 justify-between">
+                          <Input
+                            disabled={isPending || isSavePending}
+                            name={field.name}
+                            ref={field.ref}
+                            onBlur={field.onBlur}
+                            value={visitLocationsValue}
+                            onChange={(event) =>
+                              setVisitLocationsValue(event.target.value)
+                            }
+                          />
 
-                      {i === visitLocationsIndex - 1 ? (
-                        <Button
-                          type="button"
-                          size="xl"
-                          className="px-3"
-                          disabled={
-                            visitLocations[visitLocations.length - 1] === ""
-                          }
-                          onClick={handleAddVisitLocationsInput}
-                        >
-                          <Plus />
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          size="xl"
-                          className="px-3"
-                          onClick={() => handleRemoveVisitLocationsInput(i)}
-                        >
-                          <Trash />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                          <Button
+                            disabled={isPending || isSavePending}
+                            type="button"
+                            size="xl"
+                            className="px-3"
+                            onClick={handleAddVisitLocationsInput}
+                          >
+                            <Plus />
+                          </Button>
+                        </div>
 
-                {visitLocationsError.length > 0 && (
-                  <span className="text-sm text-red-500">
-                    {visitLocationsError}
-                  </span>
+                        {visitLocations && (
+                          <div className="w-full flex flex-wrap gap-2">
+                            {visitLocations.map((location, index) => (
+                              <div
+                                key={`otherName-${index}`}
+                                className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
+                              >
+                                <span className="text-sm font-medium text-foreground">
+                                  {location}
+                                </span>
+
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  size="icon"
+                                  className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
+                                  disabled={isPending || isSavePending}
+                                  onClick={() =>
+                                    handleRemoveVisitLocations(index)
+                                  }
+                                >
+                                  <X strokeWidth={1} size={20} />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
                 )}
-              </div>
+              />
             </div>
 
-            <span className="text-foreground text-base font-medium mt-6">
+            <span className="text-foreground text-base font-medium mb-6">
               Referente ao endereço onde ficará nos EUA (preencha apenas se
               possuir)
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="USACompleteAddress"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Endereço completo de onde ficará nos EUA
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -510,36 +677,40 @@ export function AboutTravelForm({ currentForm }: Props) {
                 control={form.control}
                 name="USAZipCode"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Zip Code (caso souber)
                     </FormLabel>
 
                     <FormControl>
-                      <Input maxLength={5} {...field} />
+                      <Input
+                        disabled={isPending || isSavePending}
+                        maxLength={5}
+                        {...field}
+                      />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="USACity"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Cidade nos EUA
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -548,73 +719,57 @@ export function AboutTravelForm({ currentForm }: Props) {
                 control={form.control}
                 name="USAState"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Estado nos EUA
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mt-6">
+            <span className="text-foreground text-base font-medium mb-6">
               Referente ao indivíduo pagador
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="payerNameOrCompany"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Nome ou Empresa que pagará a viagem (caso seja você,
-                      marque a opção EU MESMO)*
+                      digite &quot;Eu mesmo&quot;)*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={myselfValue === true} {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
-
-              <div className="flex flex-col justify-between">
-                <label
-                  htmlFor="payerNameOrCompanyMeValue"
-                  className="text-sm text-foreground font-medium"
-                >
-                  Eu mesmo
-                </label>
-
-                <div className="h-12">
-                  <Checkbox
-                    id="payerNameOrCompanyMeValue"
-                    checked={myselfValue}
-                    onCheckedChange={setMyselfValue}
-                  />
-                </div>
-              </div>
 
               <FormField
                 control={form.control}
                 name="payerTel"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem className="sm:pt-[72px] md:pt-[48px] lg:pt-[24px]">
+                    <FormLabel className="text-foreground">
                       Telefone Residencial*
                     </FormLabel>
 
                     <FormControl>
                       <PhoneInput
+                        disabled={isPending || isSavePending}
                         limitMaxLength
                         smartCaret={false}
                         placeholder="Insira o telefone residencial..."
@@ -633,27 +788,7 @@ export function AboutTravelForm({ currentForm }: Props) {
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="payerAddress"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
-                      Endereço completo*
-                    </FormLabel>
-
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -662,16 +797,36 @@ export function AboutTravelForm({ currentForm }: Props) {
                 control={form.control}
                 name="payerRelation"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem className="sm:pt-[72px] md:pt-[48px] lg:pt-[24px]">
+                    <FormLabel className="text-foreground">
                       Relação com o Solicitante*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="payerAddress"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">
+                      Endereço completo*
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input disabled={isPending || isSavePending} {...field} />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -680,16 +835,14 @@ export function AboutTravelForm({ currentForm }: Props) {
                 control={form.control}
                 name="payerEmail"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
-                      E-mail*
-                    </FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-foreground">E-mail*</FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -702,22 +855,37 @@ export function AboutTravelForm({ currentForm }: Props) {
               variant="outline"
               type="button"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending || isSavePending}
             >
-              Salvar
-              <Save className="size-5" strokeWidth={1.5} />
+              {isSavePending ? (
+                <>
+                  Salvando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
+              ) : (
+                <>
+                  Salvar
+                  <Save className="size-5" strokeWidth={1.5} />
+                </>
+              )}
             </Button>
 
             <Button
               size="xl"
-              // disabled={isSubmitting || isSaving}
+              disabled={isPending || isSavePending}
               type="submit"
               className="w-full flex items-center gap-2 sm:w-fit"
             >
-              Enviar{" "}
-              {false ? (
-                <Loader2 className="animate-spin" />
+              {isPending ? (
+                <>
+                  Enviando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
               ) : (
-                <ArrowRight className="hidden" />
+                <>
+                  Enviar
+                  <ArrowRight className="size-5" strokeWidth={1.5} />
+                </>
               )}
             </Button>
           </div>

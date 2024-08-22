@@ -1,7 +1,7 @@
 "use client";
 
 import PhoneInput from "react-phone-number-input";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,18 +20,31 @@ import { cn } from "@/lib/utils";
 import { FullForm } from "@/types";
 import { Button } from "../ui/button";
 import { ArrowRight, Loader2, Save } from "lucide-react";
+import { trpc } from "@/lib/trpc-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z
   .object({
     address: z.string().min(1, { message: "Campo obrigatório" }),
     city: z.string().min(1, { message: "Campo obrigatório" }),
     state: z.string().min(1, { message: "Campo obrigatório" }),
-    cep: z.string().min(9, { message: "CEP inválido" }),
+    cep: z
+      .string()
+      .min(1, { message: "Campo obrigatório" })
+      .min(9, { message: "CEP inválido" }),
     country: z.string().min(1, { message: "Campo obrigatório" }),
     postalAddressConfirmation: z.enum(["Sim", "Não"]),
     otherPostalAddress: z.string(),
-    cel: z.string().min(14, { message: "Celular inválido" }),
-    tel: z.string().min(13, { message: "Telefone inválido" }),
+    cel: z
+      .string()
+      .min(1, { message: "Campo obrigatório" })
+      .min(14, { message: "Celular inválido" }),
+    tel: z
+      .string()
+      .min(1, { message: "Campo obrigatório" })
+      .min(13, { message: "Telefone inválido" }),
     fiveYearsOtherTelConfirmation: z.enum(["Sim", "Não"]),
     otherTel: z.string(),
     email: z
@@ -39,7 +52,10 @@ const formSchema = z
       .min(1, { message: "Campo obrigatório" })
       .email({ message: "E-mail inválido" }),
     fiveYearsOtherEmailConfirmation: z.enum(["Sim", "Não"]),
-    otherEmail: z.string().email({ message: "E-mail inválido" }).optional(),
+    otherEmail: z.union([
+      z.literal(""),
+      z.string().email({ message: "E-mail inválido" }),
+    ]),
     facebook: z.string(),
     linkedin: z.string(),
     instagram: z.string(),
@@ -70,8 +86,7 @@ const formSchema = z
 
       if (
         fiveYearsOtherTelConfirmation === "Sim" &&
-        otherTel &&
-        otherTel.length === 0
+        (otherTel === undefined || otherTel.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -82,8 +97,7 @@ const formSchema = z
 
       if (
         fiveYearsOtherEmailConfirmation === "Sim" &&
-        otherEmail &&
-        otherEmail.length === 0
+        (otherEmail === undefined || otherEmail.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -95,10 +109,13 @@ const formSchema = z
   );
 
 interface Props {
+  profileId: string;
   currentForm: FullForm;
 }
 
-export function ContactAndAddressForm({ currentForm }: Props) {
+export function ContactAndAddressForm({ currentForm, profileId }: Props) {
+  const { redirectStep, setRedirectStep } = useFormStore();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -149,6 +166,95 @@ export function ContactAndAddressForm({ currentForm }: Props) {
   const fiveYearsOtherEmailConfirmation: "Sim" | "Não" = form.watch(
     "fiveYearsOtherEmailConfirmation",
   );
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitContactAndAddress, isPending } =
+    trpc.formsRouter.submitContactAndAddress.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+        router.push(`/formulario/${profileId}?formStep=2`);
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: saveContactAndAddress, isPending: isSavePending } =
+    trpc.formsRouter.saveContactAndAddress.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
+
+  useEffect(() => {
+    if (redirectStep !== null) {
+      const values = form.getValues();
+
+      saveContactAndAddress({
+        profileId,
+        redirectStep,
+        address: values.address !== "" ? values.address : currentForm.address,
+        city: values.city !== "" ? values.city : currentForm.city,
+        state: values.state !== "" ? values.state : currentForm.state,
+        cep: values.cep !== "" ? values.cep : currentForm.cep,
+        country: values.country !== "" ? values.country : currentForm.country,
+        postalAddressConfirmation:
+          values.postalAddressConfirmation ??
+          (currentForm.postalAddressConfirmation ? "Sim" : "Não"),
+        otherPostalAddress:
+          values.otherPostalAddress !== ""
+            ? values.otherPostalAddress
+            : currentForm.otherPostalAddress,
+        cel: values.cel !== "" ? values.cel : currentForm.cel,
+        tel: values.tel !== "" ? values.tel : currentForm.tel,
+        fiveYearsOtherTelConfirmation:
+          values.fiveYearsOtherTelConfirmation ??
+          (currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não"),
+        otherTel:
+          values.otherTel !== "" ? values.otherTel : currentForm.otherTel,
+        email: values.email !== "" ? values.email : currentForm.email,
+        fiveYearsOtherEmailConfirmation:
+          values.fiveYearsOtherEmailConfirmation ??
+          (currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não"),
+        otherEmail:
+          values.otherEmail !== "" ? values.otherEmail : currentForm.otherEmail,
+        facebook:
+          values.facebook !== "" ? values.facebook : currentForm.facebook,
+        linkedin:
+          values.linkedin !== "" ? values.linkedin : currentForm.linkedin,
+        instagram:
+          values.instagram !== "" ? values.instagram : currentForm.instagram,
+        othersSocialMedia:
+          values.othersSocialMedia !== ""
+            ? values.othersSocialMedia
+            : currentForm.othersSocialMedia,
+      });
+      setRedirectStep(null);
+    }
+  }, [redirectStep, setRedirectStep, saveContactAndAddress, profileId]);
 
   function handleCEPContactAndAddressChange(
     event: ChangeEvent<HTMLInputElement>,
@@ -161,14 +267,14 @@ export function ContactAndAddressForm({ currentForm }: Props) {
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    submitContactAndAddress({ ...values, profileId, step: 2 });
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col gap-6"
+        className="w-full flex flex-col flex-grow gap-6"
       >
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Endereço e Contatos
@@ -178,23 +284,23 @@ export function ContactAndAddressForm({ currentForm }: Props) {
           Endereço de sua residencia
         </span>
 
-        <div className="w-full flex flex-col gap-12">
-          <div className="w-full flex flex-col gap-4">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="w-full flex flex-col gap-12 justify-between flex-grow">
+          <div className="w-full flex flex-col">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="address"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Endereço*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -203,16 +309,16 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                 control={form.control}
                 name="city"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Cidade*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -221,33 +327,34 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                 control={form.control}
                 name="state"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Estado*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="cep"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       CEP*
                     </FormLabel>
 
                     <FormControl>
                       <Input
+                        disabled={isPending || isSavePending}
                         maxLength={9}
                         value={field.value}
                         ref={field.ref}
@@ -257,7 +364,7 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -266,22 +373,22 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                 control={form.control}
                 name="country"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       País*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="postalAddressConfirmation"
@@ -294,6 +401,7 @@ export function ContactAndAddressForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -316,7 +424,7 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -335,31 +443,32 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mt-6">
+            <span className="text-foreground text-base font-medium mb-6">
               Telefone
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="cel"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Celular*
                     </FormLabel>
 
                     <FormControl>
                       <PhoneInput
+                        disabled={isPending || isSavePending}
                         limitMaxLength
                         smartCaret={false}
                         placeholder="Insira seu celular..."
@@ -378,7 +487,7 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -387,13 +496,14 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                 control={form.control}
                 name="tel"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Fixo*
                     </FormLabel>
 
                     <FormControl>
                       <PhoneInput
+                        disabled={isPending || isSavePending}
                         limitMaxLength
                         smartCaret={false}
                         placeholder="Insira seu telefone fixo..."
@@ -412,123 +522,43 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
-            </div>
-
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="w-full flex flex-col justify-between gap-4">
-                <FormField
-                  control={form.control}
-                  name="fiveYearsOtherTelConfirmation"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground">
-                        Nos últimos 5 anos você usou outros números de
-                        telefone?*
-                      </FormLabel>
-
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex space-x-4"
-                        >
-                          <FormItem className="flex items-center space-x-2 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value="Não" />
-                            </FormControl>
-
-                            <FormLabel className="font-normal">Não</FormLabel>
-                          </FormItem>
-
-                          <FormItem className="flex items-center space-x-2 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value="Sim" />
-                            </FormControl>
-
-                            <FormLabel className="font-normal">Sim</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-
-                      <FormMessage className="text-sm text-red-500" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="otherTel"
-                  render={({ field }) => (
-                    <FormItem
-                      className={cn("w-full bg-secondary p-4", {
-                        hidden: fiveYearsOtherTelConfirmation === "Não",
-                      })}
-                    >
-                      <FormLabel className="text-foreground text-sm">
-                        Informe seu outro telefone
-                      </FormLabel>
-
-                      <FormControl>
-                        <PhoneInput
-                          limitMaxLength
-                          smartCaret={false}
-                          placeholder="Insira seu outro telefone..."
-                          defaultCountry="BR"
-                          className={cn(
-                            "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
-                            {
-                              "input-error": false,
-                            },
-                          )}
-                          name={field.name}
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-
-                      <FormMessage className="text-sm text-red-500" />
-                    </FormItem>
-                  )}
-                />
-              </div>
 
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       E-mail*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
-                name="fiveYearsOtherEmailConfirmation"
+                name="fiveYearsOtherTelConfirmation"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Nos últimos 5 anos você teve outros e-mails?*
+                      Nos últimos 5 anos você usou outros números de telefone?*
                     </FormLabel>
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -551,7 +581,87 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="otherTel"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn("w-full bg-secondary p-4", {
+                      hidden: fiveYearsOtherTelConfirmation === "Não",
+                    })}
+                  >
+                    <FormLabel className="text-foreground text-sm">
+                      Informe seu outro telefone
+                    </FormLabel>
+
+                    <FormControl>
+                      <PhoneInput
+                        disabled={isPending || isSavePending}
+                        limitMaxLength
+                        smartCaret={false}
+                        placeholder="Insira seu outro telefone..."
+                        defaultCountry="BR"
+                        className={cn(
+                          "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                          {
+                            "input-error": false,
+                          },
+                        )}
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+              <FormField
+                control={form.control}
+                name="fiveYearsOtherEmailConfirmation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">
+                      Nos últimos 5 anos você teve outros e-mails?*
+                    </FormLabel>
+
+                    <FormControl>
+                      <RadioGroup
+                        disabled={isPending || isSavePending}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Não" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Não</FormLabel>
+                        </FormItem>
+
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Sim" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Sim</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -570,20 +680,20 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mt-6">
+            <span className="text-foreground text-base font-medium mb-6">
               Redes sociais (Somente @ ou nome)
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-10">
               <FormField
                 control={form.control}
                 name="facebook"
@@ -594,10 +704,10 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -612,10 +722,10 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -630,10 +740,10 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -648,10 +758,10 @@ export function ContactAndAddressForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -664,22 +774,37 @@ export function ContactAndAddressForm({ currentForm }: Props) {
               variant="outline"
               type="button"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending || isSavePending}
             >
-              Salvar
-              <Save className="size-5" strokeWidth={1.5} />
+              {isSavePending ? (
+                <>
+                  Salvando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
+              ) : (
+                <>
+                  Salvar
+                  <Save className="size-5" strokeWidth={1.5} />
+                </>
+              )}
             </Button>
 
             <Button
               size="xl"
-              // disabled={isSubmitting || isSaving}
+              disabled={isPending || isSavePending}
               type="submit"
               className="w-full flex items-center gap-2 sm:w-fit"
             >
-              Enviar{" "}
-              {false ? (
-                <Loader2 className="animate-spin" />
+              {isPending ? (
+                <>
+                  Enviando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
               ) : (
-                <ArrowRight className="hidden" />
+                <>
+                  Enviar
+                  <ArrowRight className="size-5" strokeWidth={1.5} />
+                </>
               )}
             </Button>
           </div>

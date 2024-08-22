@@ -14,20 +14,6 @@ interface IUseFormStore {
   setSubmitting: (value: boolean) => void;
   isSaving: boolean;
   setSaving: (value: boolean) => void;
-  otherNamesIndex: number;
-  setOtherNamesIndex: (index: number) => void;
-  otherNames: string[];
-  setOtherNames: (value: string[]) => void;
-  otherNamesError: string;
-  setOtherNamesError: (error: string) => void;
-  visitLocations: string[];
-  setVisitLocations: (value: string[]) => void;
-  visitLocationsIndex: number;
-  setVisitLocationsIndex: (index: number) => void;
-  visitLocationsError: string;
-  setVisitLocationsError: (error: string) => void;
-  myselfValue: CheckedState;
-  setMyselfValue: (value: CheckedState) => void;
   otherPeopleTraveling: OtherPeopleTraveling[] | null;
   setOtherPeopleTraveling: (value: OtherPeopleTraveling[]) => void;
   otherPeopleTravelingIndex: number;
@@ -106,6 +92,8 @@ interface IUseFormStore {
   setSecurityComplete: (value: boolean) => void;
   securityError: boolean;
   setSecurityError: (value: boolean) => void;
+  redirectStep: number | null;
+  setRedirectStep: (step: number | null) => void;
 }
 
 const useFormStore = create<IUseFormStore>((set) => ({
@@ -113,26 +101,14 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setSubmitting: (value) => set({ isSubmitting: value }),
   isSaving: false,
   setSaving: (value) => set({ isSaving: value }),
-  otherNamesIndex: 1,
-  setOtherNamesIndex: (index) => set({ otherNamesIndex: index }),
-  otherNames: [],
-  setOtherNames: (value) => set({ otherNames: value }),
-  otherNamesError: "",
-  setOtherNamesError: (error) => set({ otherNamesError: error }),
-  visitLocations: [],
-  setVisitLocations: (value) => set({ visitLocations: value }),
-  visitLocationsIndex: 1,
-  setVisitLocationsIndex: (index) => set({ visitLocationsIndex: index }),
-  visitLocationsError: "",
-  setVisitLocationsError: (error) => set({ visitLocationsError: error }),
-  myselfValue: false,
-  setMyselfValue: (value) => set({ myselfValue: value }),
   otherPeopleTraveling: null,
   setOtherPeopleTraveling: (value) => set({ otherPeopleTraveling: value }),
   otherPeopleTravelingIndex: 1,
-  setOtherPeopleTravelingIndex: (index) => set({ otherPeopleTravelingIndex: index }),
+  setOtherPeopleTravelingIndex: (index) =>
+    set({ otherPeopleTravelingIndex: index }),
   otherPeopleTravelingError: "",
-  setOtherPeopleTravelingError: (error) => set({ otherPeopleTravelingError: error }),
+  setOtherPeopleTravelingError: (error) =>
+    set({ otherPeopleTravelingError: error }),
   USALastTravel: null,
   setUSALastTravel: (value) => set({ USALastTravel: value }),
   USALastTravelIndex: 1,
@@ -150,9 +126,11 @@ const useFormStore = create<IUseFormStore>((set) => ({
   familyLivingInTheUSA: null,
   setFamilyLivingInTheUSA: (value) => set({ familyLivingInTheUSA: value }),
   familyLivingInTheUSAIndex: 1,
-  setFamilyLivingInTheUSAIndex: (index) => set({ familyLivingInTheUSAIndex: index }),
+  setFamilyLivingInTheUSAIndex: (index) =>
+    set({ familyLivingInTheUSAIndex: index }),
   familyLivingInTheUSAError: "",
-  setFamilyLivingInTheUSAError: (error) => set({ familyLivingInTheUSAError: error }),
+  setFamilyLivingInTheUSAError: (error) =>
+    set({ familyLivingInTheUSAError: error }),
   previousJobs: null,
   setPreviousJobs: (value) => set({ previousJobs: value }),
   previousJobsIndex: 1,
@@ -170,7 +148,8 @@ const useFormStore = create<IUseFormStore>((set) => ({
   personalDataError: false,
   setPersonalDataError: (value) => set({ personalDataError: value }),
   contactAndAddressComplete: false,
-  setContactAndAddressComplete: (value) => set({ contactAndAddressComplete: value }),
+  setContactAndAddressComplete: (value) =>
+    set({ contactAndAddressComplete: value }),
   contactAndAddressError: false,
   setContactAndAddressError: (value) => set({ contactAndAddressError: value }),
   passportComplete: false,
@@ -205,6 +184,8 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setSecurityComplete: (value) => set({ securityComplete: value }),
   securityError: false,
   setSecurityError: (value) => set({ securityError: value }),
+  redirectStep: null,
+  setRedirectStep: (step) => set({ redirectStep: step }),
 }));
 
 export default useFormStore;

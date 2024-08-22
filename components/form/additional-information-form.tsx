@@ -202,13 +202,13 @@ export function AdditionalInformationForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col gap-6"
+        className="w-full flex flex-col flex-grow gap-6"
       >
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Informações Adicionais
         </h2>
 
-        <div className="w-full flex flex-col gap-12">
+        <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col gap-4">
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField

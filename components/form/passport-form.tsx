@@ -1,15 +1,22 @@
 "use client";
 
-import { Control } from "react-hook-form";
-import { ArrowRight, CalendarIcon, Loader2, Save } from "lucide-react";
-import { ptBR } from "date-fns/locale";
-import { format, getYear } from "date-fns";
-import { Element } from "react-scroll";
 import { z } from "zod";
+import { toast } from "sonner";
+import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
+import { format, getYear } from "date-fns";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, CalendarIcon, Loader2, Save } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+import { FullForm } from "@/types";
+import { trpc } from "@/lib/trpc-client";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Form,
   FormControl,
@@ -18,18 +25,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { FullForm, PrimaryFormControl } from "@/types";
+import { useEffect } from "react";
+import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z
   .object({
@@ -39,7 +41,6 @@ const formSchema = z
     passportIssuingCountry: z.string().min(1, { message: "Campo obrigatório" }),
     passportIssuingDate: z.date({ message: "Selecione uma data" }),
     passportExpireDate: z.date({ message: "Selecione uma data" }).optional(),
-    passportNoExpireDate: z.boolean(),
     passportLostConfirmation: z.enum(["Sim", "Não"]),
     lostPassportNumber: z.string(),
     lostPassportCountry: z.string(),
@@ -52,15 +53,12 @@ const formSchema = z
         lostPassportNumber,
         lostPassportCountry,
         lostPassportDetails,
-        passportExpireDate,
-        passportNoExpireDate,
       },
       ctx,
     ) => {
       if (
         passportLostConfirmation === "Sim" &&
-        lostPassportNumber &&
-        lostPassportNumber.length === 0
+        (lostPassportNumber === undefined || lostPassportNumber.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -71,8 +69,7 @@ const formSchema = z
 
       if (
         passportLostConfirmation === "Sim" &&
-        lostPassportCountry &&
-        lostPassportCountry.length === 0
+        (lostPassportCountry === undefined || lostPassportCountry.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -83,8 +80,7 @@ const formSchema = z
 
       if (
         passportLostConfirmation === "Sim" &&
-        lostPassportDetails &&
-        lostPassportDetails.length === 0
+        (lostPassportDetails === undefined || lostPassportDetails.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -92,23 +88,18 @@ const formSchema = z
           path: ["lostPassportDetails"],
         });
       }
-
-      if (!passportNoExpireDate && passportExpireDate === undefined) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Campo obrigatório",
-          path: ["passportExpireDate"],
-        });
-      }
     },
   );
 
 interface Props {
+  profileId: string;
   currentForm: FullForm;
 }
 
-export function PassportForm({ currentForm }: Props) {
+export function PassportForm({ currentForm, profileId }: Props) {
   const currentYear = getYear(new Date());
+
+  const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -127,11 +118,6 @@ export function PassportForm({ currentForm }: Props) {
       passportExpireDate: currentForm.passportExpireDate
         ? currentForm.passportExpireDate
         : undefined,
-      passportNoExpireDate: currentForm.passportExpireDate
-        ? currentForm.passportExpireDate === null
-          ? true
-          : false
-        : true,
       passportLostConfirmation: currentForm.passportLostConfirmation
         ? currentForm.passportLostConfirmation === true
           ? "Sim"
@@ -149,42 +135,130 @@ export function PassportForm({ currentForm }: Props) {
     },
   });
 
-  const passportNoExpireDate: boolean = form.watch("passportNoExpireDate");
   const passportLostConfirmation: "Sim" | "Não" = form.watch(
     "passportLostConfirmation",
   );
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitPassport, isPending } =
+    trpc.formsRouter.submitPassport.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+        router.push(`/formulario/${profileId}?formStep=3`);
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: savePassport, isPending: isSavePending } =
+    trpc.formsRouter.savePassport.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
+
+  useEffect(() => {
+    if (redirectStep !== null) {
+      const values = form.getValues();
+
+      savePassport({
+        passportNumber:
+          values.passportNumber !== ""
+            ? values.passportNumber
+            : currentForm.passportNumber,
+        passportCity:
+          values.passportCity !== ""
+            ? values.passportCity
+            : currentForm.passportCity,
+        passportState:
+          values.passportState !== ""
+            ? values.passportState
+            : currentForm.passportState,
+        passportIssuingCountry:
+          values.passportIssuingCountry !== ""
+            ? values.passportIssuingCountry
+            : currentForm.passportIssuingCountry,
+        passportIssuingDate:
+          values.passportIssuingDate ?? currentForm.passportIssuingDate,
+        passportExpireDate:
+          values.passportExpireDate ?? currentForm.passportExpireDate,
+        passportLostConfirmation:
+          values.passportLostConfirmation ??
+          currentForm.passportLostConfirmation,
+        lostPassportNumber:
+          values.lostPassportNumber !== ""
+            ? values.lostPassportNumber
+            : currentForm.lostPassportNumber,
+        lostPassportCountry:
+          values.lostPassportCountry !== ""
+            ? values.lostPassportCountry
+            : currentForm.lostPassportCountry,
+        lostPassportDetails:
+          values.lostPassportDetails !== ""
+            ? values.lostPassportDetails
+            : currentForm.lostPassportDetails,
+        profileId,
+        redirectStep,
+      });
+      setRedirectStep(null);
+    }
+  }, [redirectStep, setRedirectStep, savePassport, profileId]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    submitPassport({ ...values, profileId, step: 3 });
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col gap-6"
+        className="w-full flex flex-col flex-grow gap-6"
       >
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Passaporte
         </h2>
 
-        <div className="w-full flex flex-col gap-12">
-          <div className="w-full flex flex-col gap-4">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="w-full flex flex-col gap-12 justify-between flex-grow">
+          <div className="w-full flex flex-col">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="passportNumber"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Número do passaporte*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -193,16 +267,16 @@ export function PassportForm({ currentForm }: Props) {
                 control={form.control}
                 name="passportCity"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Cidade*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -211,36 +285,36 @@ export function PassportForm({ currentForm }: Props) {
                 control={form.control}
                 name="passportState"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Estado*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="passportIssuingCountry"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       País emissor*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -258,20 +332,28 @@ export function PassportForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -301,7 +383,7 @@ export function PassportForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -312,28 +394,35 @@ export function PassportForm({ currentForm }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Data de expiração*
+                      Data de expiração (caso tenha)
                     </FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            disabled={passportNoExpireDate}
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -361,32 +450,13 @@ export function PassportForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="passportNoExpireDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col space-y-3">
-                    <FormLabel className="text-sm text-foreground">
-                      Sem expiração
-                    </FormLabel>
-
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="passportLostConfirmation"
@@ -398,6 +468,7 @@ export function PassportForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -420,31 +491,34 @@ export function PassportForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
             <div
-              className={cn("w-full grid grid-cols-1 sm:grid-cols-2 gap-4", {
-                hidden: passportLostConfirmation === "Não",
-              })}
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10",
+                {
+                  hidden: passportLostConfirmation === "Não",
+                },
+              )}
             >
               <FormField
                 control={form.control}
                 name="lostPassportNumber"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Informe o número do passaporte
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -453,16 +527,16 @@ export function PassportForm({ currentForm }: Props) {
                 control={form.control}
                 name="lostPassportCountry"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Informe o país do passaporte
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -477,16 +551,20 @@ export function PassportForm({ currentForm }: Props) {
                 control={form.control}
                 name="lostPassportDetails"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem>
                     <FormLabel className="text-foreground text-sm">
                       Explique o ocorrido
                     </FormLabel>
 
                     <FormControl>
-                      <Textarea className="resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -499,22 +577,37 @@ export function PassportForm({ currentForm }: Props) {
               variant="outline"
               type="button"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending || isSavePending}
             >
-              Salvar
-              <Save className="size-5" strokeWidth={1.5} />
+              {isSavePending ? (
+                <>
+                  Salvando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
+              ) : (
+                <>
+                  Salvar
+                  <Save className="size-5" strokeWidth={1.5} />
+                </>
+              )}
             </Button>
 
             <Button
               size="xl"
-              // disabled={isSubmitting || isSaving}
               type="submit"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending || isSavePending}
             >
-              Enviar{" "}
-              {false ? (
-                <Loader2 className="animate-spin" />
+              {isPending ? (
+                <>
+                  Enviando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
               ) : (
-                <ArrowRight className="hidden" />
+                <>
+                  Enviar
+                  <ArrowRight className="size-5" strokeWidth={1.5} />
+                </>
               )}
             </Button>
           </div>
