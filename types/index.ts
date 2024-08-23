@@ -1,14 +1,4 @@
-import {
-  AmericanLicense,
-  Comments,
-  Course,
-  FamilyLivingInTheUSADetails,
-  Form,
-  PreviousJobs,
-  Profile,
-  USALastTravel,
-  User,
-} from "@prisma/client";
+import { Comments, Form, Profile, User } from "@prisma/client";
 
 declare global {
   namespace PrismaJson {
@@ -25,6 +15,39 @@ declare global {
     type americanLicenseType = {
       licenseNumber: string;
       state: string;
+    };
+
+    type familyLivingInTheUSAType = {
+      name: string;
+      relation: string;
+      situation: string;
+    };
+
+    type previousJobsType = {
+      companyName: string;
+      companyAddress: string;
+      companyCity: string;
+      companyState: string;
+      companyCountry: string;
+      companyCep: string;
+      companyTel: string;
+      office: string;
+      supervisorName: string;
+      admissionDate: Date;
+      resignationDate: Date;
+      jobDescription: string;
+    };
+
+    type coursesType = {
+      institutionName: string;
+      address: string;
+      city: string;
+      state: string;
+      country: string;
+      cep: string;
+      courseName: string;
+      initialDate: Date;
+      finishDate: Date;
     };
   }
 }
@@ -183,18 +206,12 @@ export type PrimaryFormControl = {
   avoidTaxConfirmation: "Sim" | "Não";
 };
 
-export type FullForm = Form & {
-  familyLivingInTheUSA: FamilyLivingInTheUSADetails[];
-  previousJobs: PreviousJobs[];
-  courses: Course[];
-};
-
 export type UserWithForm = User & {
   form: Form[];
 };
 
 export type ProfilesWithUserAndForm = Profile & {
   user: User;
-  form: FullForm | null;
+  form: Form | null;
   comments: Comments[];
 };

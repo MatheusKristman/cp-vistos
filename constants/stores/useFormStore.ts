@@ -1,9 +1,3 @@
-import {
-  Course,
-  FamilyLivingInTheUSADetails,
-  PreviousJobs,
-} from "@prisma/client";
-import { CheckedState } from "@radix-ui/react-checkbox";
 import { create } from "zustand";
 
 interface IUseFormStore {
@@ -11,24 +5,6 @@ interface IUseFormStore {
   setSubmitting: (value: boolean) => void;
   isSaving: boolean;
   setSaving: (value: boolean) => void;
-  familyLivingInTheUSA: FamilyLivingInTheUSADetails[] | null;
-  setFamilyLivingInTheUSA: (value: FamilyLivingInTheUSADetails[]) => void;
-  familyLivingInTheUSAIndex: number;
-  setFamilyLivingInTheUSAIndex: (index: number) => void;
-  familyLivingInTheUSAError: string;
-  setFamilyLivingInTheUSAError: (error: string) => void;
-  previousJobs: PreviousJobs[] | null;
-  setPreviousJobs: (value: PreviousJobs[]) => void;
-  previousJobsIndex: number;
-  setPreviousJobsIndex: (index: number) => void;
-  previousJobsError: string;
-  setPreviousJobsError: (error: string) => void;
-  courses: Course[] | null;
-  setCourses: (value: Course[]) => void;
-  coursesIndex: number;
-  setCoursesIndex: (index: number) => void;
-  coursesError: string;
-  setCoursesError: (error: string) => void;
   personalDataComplete: boolean;
   setPersonalDataComplete: (value: boolean) => void;
   personalDataError: boolean;
@@ -78,26 +54,6 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setSubmitting: (value) => set({ isSubmitting: value }),
   isSaving: false,
   setSaving: (value) => set({ isSaving: value }),
-  familyLivingInTheUSA: null,
-  setFamilyLivingInTheUSA: (value) => set({ familyLivingInTheUSA: value }),
-  familyLivingInTheUSAIndex: 1,
-  setFamilyLivingInTheUSAIndex: (index) =>
-    set({ familyLivingInTheUSAIndex: index }),
-  familyLivingInTheUSAError: "",
-  setFamilyLivingInTheUSAError: (error) =>
-    set({ familyLivingInTheUSAError: error }),
-  previousJobs: null,
-  setPreviousJobs: (value) => set({ previousJobs: value }),
-  previousJobsIndex: 1,
-  setPreviousJobsIndex: (index) => set({ previousJobsIndex: index }),
-  previousJobsError: "",
-  setPreviousJobsError: (error) => set({ previousJobsError: error }),
-  courses: null,
-  setCourses: (value) => set({ courses: value }),
-  coursesIndex: 1,
-  setCoursesIndex: (index) => set({ coursesIndex: index }),
-  coursesError: "",
-  setCoursesError: (error) => set({ coursesError: error }),
   personalDataComplete: false,
   setPersonalDataComplete: (value) => set({ personalDataComplete: value }),
   personalDataError: false,

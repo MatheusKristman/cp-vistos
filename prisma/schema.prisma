@@ -276,77 +276,85 @@ model Form {
   motherLiveInTheUSAConfirmation                Boolean?
   motherUSASituation                            String?
   familyLivingInTheUSAConfirmation              Boolean?
-  familyLivingInTheUSA                          FamilyLivingInTheUSADetails[]
-  partnerCompleteName                           String?
-  partnerBirthdate                              DateTime?
-  partnerNationality                            String?
-  partnerCity                                   String?
-  partnerState                                  String?
-  partnerCountry                                String?
-  unionDate                                     DateTime?
-  divorceDate                                   DateTime?
-  occupation                                    String?
-  office                                        String?
-  companyOrBossName                             String?
-  companyAddress                                String?
-  companyCity                                   String?
-  companyState                                  String?
-  companyCountry                                String?
-  companyCep                                    String?
-  companyTel                                    String?
-  admissionDate                                 DateTime?
-  monthlySalary                                 String?
-  retireeDate                                   DateTime?
-  jobDetails                                    String?
-  previousJobConfirmation                       Boolean?
-  previousJobs                                  PreviousJobs[]
-  courses                                       Course[]
-  ClanTribeConfirmation                         Boolean?
-  knownLanguage                                 String?
-  lastTravelInFiveYearsConfirmation             Boolean?
-  lastTravelInFiveYears                         String[]
-  charitableOrganizationConfirmation            Boolean?
-  charitableOrganization                        String[]
-  gunTrainingConfirmation                       Boolean?
-  gunTrainingDetails                            String?
-  militaryServiceConfirmation                   Boolean?
-  militaryServiceCountry                        String?
-  militaryServiceLocation                       String?
-  militaryServicePatent                         String?
-  militaryServiceExpertise                      String?
-  militaryServiceBeginDate                      DateTime?
-  militaryServiceFinishDate                     DateTime?
-  insurgencyOrganizationConfirmation            Boolean?
-  insurgencyOrganizationDetails                 String?
-  contagiousDiseaseConfirmation                 Boolean?
-  phisicalMentalProblemConfirmation             Boolean?
-  crimeConfirmation                             Boolean?
-  drugsProblemConfirmation                      Boolean?
-  lawViolateConfirmation                        Boolean?
-  prostitutionConfirmation                      Boolean?
-  moneyLaundryConfirmation                      Boolean?
-  peopleTrafficConfirmation                     Boolean?
-  helpPeopleTrafficConfirmation                 Boolean?
-  parentPeopleTrafficConfirmation               Boolean?
-  spyConfirmation                               Boolean?
-  terrorismConfirmation                         Boolean?
-  financialAssistanceConfirmation               Boolean?
-  terrorismMemberConfirmation                   Boolean?
-  parentTerrorismConfirmation                   Boolean?
-  genocideConfirmation                          Boolean?
-  tortureConfirmation                           Boolean?
-  assassinConfirmation                          Boolean?
-  childSoldierConfirmation                      Boolean?
-  religionLibertyConfirmation                   Boolean?
-  abortConfirmation                             Boolean?
-  coerciveTransplantConfirmation                Boolean?
-  visaFraudConfirmation                         Boolean?
-  deportedConfirmation                          Boolean?
-  childCustodyConfirmation                      Boolean?
-  lawViolationConfirmation                      Boolean?
-  avoidTaxConfirmation                          Boolean?
-  createdAt                                     DateTime                      @default(now())
-  updatedAt                                     DateTime                      @updatedAt
+
+  /// [familyLivingInTheUSAType]
+  familyLivingInTheUSA Json[]
+
+  partnerCompleteName     String?
+  partnerBirthdate        DateTime?
+  partnerNationality      String?
+  partnerCity             String?
+  partnerState            String?
+  partnerCountry          String?
+  unionDate               DateTime?
+  divorceDate             DateTime?
+  occupation              String?
+  office                  String?
+  companyOrBossName       String?
+  companyAddress          String?
+  companyCity             String?
+  companyState            String?
+  companyCountry          String?
+  companyCep              String?
+  companyTel              String?
+  admissionDate           DateTime?
+  monthlySalary           String?
+  retireeDate             DateTime?
+  jobDetails              String?
+  previousJobConfirmation Boolean?
+
+  /// [previousJobsType]
+  previousJobs Json[]
+
+  /// [coursesType]
+  courses Json[]
+
+  ClanTribeConfirmation              Boolean?
+  knownLanguage                      String?
+  lastTravelInFiveYearsConfirmation  Boolean?
+  lastTravelInFiveYears              String[]
+  charitableOrganizationConfirmation Boolean?
+  charitableOrganization             String[]
+  gunTrainingConfirmation            Boolean?
+  gunTrainingDetails                 String?
+  militaryServiceConfirmation        Boolean?
+  militaryServiceCountry             String?
+  militaryServiceLocation            String?
+  militaryServicePatent              String?
+  militaryServiceExpertise           String?
+  militaryServiceBeginDate           DateTime?
+  militaryServiceFinishDate          DateTime?
+  insurgencyOrganizationConfirmation Boolean?
+  insurgencyOrganizationDetails      String?
+  contagiousDiseaseConfirmation      Boolean?
+  phisicalMentalProblemConfirmation  Boolean?
+  crimeConfirmation                  Boolean?
+  drugsProblemConfirmation           Boolean?
+  lawViolateConfirmation             Boolean?
+  prostitutionConfirmation           Boolean?
+  moneyLaundryConfirmation           Boolean?
+  peopleTrafficConfirmation          Boolean?
+  helpPeopleTrafficConfirmation      Boolean?
+  parentPeopleTrafficConfirmation    Boolean?
+  spyConfirmation                    Boolean?
+  terrorismConfirmation              Boolean?
+  financialAssistanceConfirmation    Boolean?
+  terrorismMemberConfirmation        Boolean?
+  parentTerrorismConfirmation        Boolean?
+  genocideConfirmation               Boolean?
+  tortureConfirmation                Boolean?
+  assassinConfirmation               Boolean?
+  childSoldierConfirmation           Boolean?
+  religionLibertyConfirmation        Boolean?
+  abortConfirmation                  Boolean?
+  coerciveTransplantConfirmation     Boolean?
+  visaFraudConfirmation              Boolean?
+  deportedConfirmation               Boolean?
+  childCustodyConfirmation           Boolean?
+  lawViolationConfirmation           Boolean?
+  avoidTaxConfirmation               Boolean?
+  createdAt                          DateTime  @default(now())
+  updatedAt                          DateTime  @updatedAt
 
   profileId String  @unique @db.ObjectId
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
@@ -355,48 +363,6 @@ model Form {
 enum Sex {
   Masculino
   Feminino
-}
-
-model FamilyLivingInTheUSADetails {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  name      String?
-  relation  String?
-  situation String?
-  formId    String  @db.ObjectId
-  form      Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
-}
-
-model PreviousJobs {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  companyName     String?
-  companyAddress  String?
-  companyCity     String?
-  companyState    String?
-  companyCountry  String?
-  companyCep      String?
-  companyTel      String?
-  office          String?
-  supervisorName  String?
-  admissionDate   DateTime?
-  resignationDate DateTime?
-  jobDescription  String?
-  formId          String    @db.ObjectId
-  form            Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
-}
-
-model Course {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  institutionName String?
-  address         String?
-  city            String?
-  state           String?
-  country         String?
-  cep             String?
-  courseName      String?
-  initialDate     DateTime?
-  finishDate      DateTime?
-  formId          String    @db.ObjectId
-  form            Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
 }
 
 model Annotations {

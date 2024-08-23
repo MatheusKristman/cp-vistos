@@ -149,8 +149,12 @@ export default function FormPage({
         {formStep === "6" && (
           <USAContactForm currentForm={data.form} profileId={profileId} />
         )}
-        {formStep === "7" && <FamilyForm currentForm={data.form} />}
-        {formStep === "8" && <WorkEducationForm currentForm={data.form} />}
+        {formStep === "7" && (
+          <FamilyForm currentForm={data.form} profileId={profileId} />
+        )}
+        {formStep === "8" && (
+          <WorkEducationForm currentForm={data.form} profileId={profileId} />
+        )}
         {formStep === "9" && <AdditionalInformationForm />}
         {formStep === "10" && <SecurityForm currentForm={data.form} />}
       </div>

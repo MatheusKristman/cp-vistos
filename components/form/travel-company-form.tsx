@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import useFormStore from "@/constants/stores/useFormStore";
-import { FullForm } from "@/types";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 
@@ -86,7 +86,7 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FullForm;
+  currentForm: FormType;
 }
 
 export function TravelCompanyForm({ currentForm, profileId }: Props) {

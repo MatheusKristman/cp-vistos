@@ -9,6 +9,9 @@ import PhoneInput from "react-phone-number-input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,11 +31,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { FullForm } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { trpc } from "@/lib/trpc-client";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   travelItineraryConfirmation: z.enum(["Sim", "Não"]),
@@ -61,7 +61,7 @@ const formSchema = z.object({
 });
 
 interface Props {
-  currentForm: FullForm;
+  currentForm: FormType;
   profileId: string;
 }
 

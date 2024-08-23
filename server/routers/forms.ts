@@ -19,9 +19,6 @@ export const formsRouter = router({
           profileId,
         },
         include: {
-          familyLivingInTheUSA: true,
-          previousJobs: true,
-          courses: true,
           profile: true,
         },
       });
@@ -1567,5 +1564,350 @@ export const formsRouter = router({
       });
 
       return { message: "Informações salvas", redirectStep };
+    }),
+  submitFamily: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        step: z.number(),
+        fatherCompleteName: z.string().min(1),
+        fatherBirthdate: z.date(),
+        fatherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+        fatherUSASituation: z.string(),
+        motherCompleteName: z.string().min(1),
+        motherBirthdate: z.date(),
+        motherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+        motherUSASituation: z.string(),
+        familyLivingInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+        familyLivingInTheUSA: z.array(
+          z.object({
+            name: z.string(),
+            relation: z.string(),
+            situation: z.string(),
+          }),
+        ),
+        partnerCompleteName: z.string(),
+        partnerBirthdate: z.date().optional(),
+        partnerNationality: z.string(),
+        partnerCity: z.string(),
+        partnerState: z.string(),
+        partnerCountry: z.string(),
+        unionDate: z.date().optional(),
+        divorceDate: z.date().optional(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        step,
+        fatherCompleteName,
+        fatherBirthdate,
+        fatherLiveInTheUSAConfirmation,
+        fatherUSASituation,
+        motherCompleteName,
+        motherBirthdate,
+        motherLiveInTheUSAConfirmation,
+        motherUSASituation,
+        familyLivingInTheUSAConfirmation,
+        familyLivingInTheUSA,
+        partnerCompleteName,
+        partnerBirthdate,
+        partnerNationality,
+        partnerCity,
+        partnerState,
+        partnerCountry,
+        unionDate,
+        divorceDate,
+      } = opts.input;
+
+      const profileUpdated = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          formStep: step,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profileUpdated) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profileUpdated.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profileUpdated.form.id,
+        },
+        data: {
+          fatherCompleteName,
+          fatherBirthdate,
+          fatherLiveInTheUSAConfirmation:
+            fatherLiveInTheUSAConfirmation === "Sim",
+          fatherUSASituation,
+          motherCompleteName,
+          motherBirthdate,
+          motherLiveInTheUSAConfirmation:
+            motherLiveInTheUSAConfirmation === "Sim",
+          motherUSASituation,
+          familyLivingInTheUSAConfirmation:
+            familyLivingInTheUSAConfirmation === "Sim",
+          familyLivingInTheUSA,
+          partnerCompleteName,
+          partnerBirthdate,
+          partnerNationality,
+          partnerCity,
+          partnerState,
+          partnerCountry,
+          unionDate,
+          divorceDate,
+        },
+      });
+
+      return { message: "Informações salvas" };
+    }),
+  saveFamily: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        redirectStep: z.number().optional(),
+        fatherCompleteName: z.string(),
+        fatherBirthdate: z.coerce.date(),
+        fatherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+        fatherUSASituation: z.string(),
+        motherCompleteName: z.string(),
+        motherBirthdate: z.coerce.date(),
+        motherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+        motherUSASituation: z.string(),
+        familyLivingInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+        familyLivingInTheUSA: z.array(
+          z.object({
+            name: z.string(),
+            relation: z.string(),
+            situation: z.string(),
+          }),
+        ),
+        partnerCompleteName: z.string(),
+        partnerBirthdate: z.coerce.date().optional().nullable(),
+        partnerNationality: z.string(),
+        partnerCity: z.string(),
+        partnerState: z.string(),
+        partnerCountry: z.string(),
+        unionDate: z.coerce.date().optional().nullable(),
+        divorceDate: z.coerce.date().optional().nullable(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        redirectStep,
+        fatherCompleteName,
+        fatherBirthdate,
+        fatherLiveInTheUSAConfirmation,
+        fatherUSASituation,
+        motherCompleteName,
+        motherBirthdate,
+        motherLiveInTheUSAConfirmation,
+        motherUSASituation,
+        familyLivingInTheUSAConfirmation,
+        familyLivingInTheUSA,
+        partnerCompleteName,
+        partnerBirthdate,
+        partnerNationality,
+        partnerCity,
+        partnerState,
+        partnerCountry,
+        unionDate,
+        divorceDate,
+      } = opts.input;
+
+      const profile = await prisma.profile.findUnique({
+        where: {
+          id: profileId,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profile.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profile.form.id,
+        },
+        data: {
+          fatherCompleteName,
+          fatherBirthdate,
+          fatherLiveInTheUSAConfirmation:
+            fatherLiveInTheUSAConfirmation === "Sim",
+          fatherUSASituation,
+          motherCompleteName,
+          motherBirthdate,
+          motherLiveInTheUSAConfirmation:
+            motherLiveInTheUSAConfirmation === "Sim",
+          motherUSASituation,
+          familyLivingInTheUSAConfirmation:
+            familyLivingInTheUSAConfirmation === "Sim",
+          familyLivingInTheUSA,
+          partnerCompleteName,
+          partnerBirthdate,
+          partnerNationality,
+          partnerCity,
+          partnerState,
+          partnerCountry,
+          unionDate,
+          divorceDate,
+        },
+      });
+
+      return { message: "Informações salvas", redirectStep };
+    }),
+  submitWorkEducation: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        step: z.number(),
+        occupation: z.string(),
+        office: z.string(),
+        companyOrBossName: z.string(),
+        companyAddress: z.string(),
+        companyCity: z.string(),
+        companyState: z.string(),
+        companyCountry: z.string(),
+        companyCep: z.string(),
+        companyTel: z.string(),
+        admissionDate: z.coerce.date().optional(),
+        monthlySalary: z.string(),
+        retireeDate: z.coerce.date().optional(),
+        jobDetails: z.string(),
+        previousJobConfirmation: z.enum(["Sim", "Não"]),
+        previousJobs: z.array(
+          z.object({
+            companyName: z.string(),
+            companyAddress: z.string(),
+            companyCity: z.string(),
+            companyState: z.string(),
+            companyCountry: z.string(),
+            companyCep: z.string(),
+            companyTel: z.string(),
+            office: z.string(),
+            supervisorName: z.string(),
+            admissionDate: z.coerce.date(),
+            resignationDate: z.coerce.date(),
+            jobDescription: z.string(),
+          }),
+        ),
+        courses: z.array(
+          z.object({
+            institutionName: z.string(),
+            address: z.string(),
+            city: z.string(),
+            state: z.string(),
+            country: z.string(),
+            cep: z.string(),
+            courseName: z.string(),
+            initialDate: z.coerce.date(),
+            finishDate: z.coerce.date(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        step,
+        occupation,
+        office,
+        companyOrBossName,
+        companyAddress,
+        companyCity,
+        companyState,
+        companyCountry,
+        companyCep,
+        companyTel,
+        admissionDate,
+        monthlySalary,
+        retireeDate,
+        jobDetails,
+        previousJobConfirmation,
+        previousJobs,
+        courses,
+      } = opts.input;
+
+      const profileUpdated = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          formStep: step,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profileUpdated) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profileUpdated.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profileUpdated.form.id,
+        },
+        data: {
+          occupation,
+          office,
+          companyOrBossName,
+          companyAddress,
+          companyCity,
+          companyState,
+          companyCountry,
+          companyCep,
+          companyTel,
+          admissionDate,
+          monthlySalary,
+          retireeDate,
+          jobDetails,
+          previousJobConfirmation: previousJobConfirmation === "Sim",
+          previousJobs,
+          courses,
+        },
+      });
+
+      return { message: "Informações salvas" };
     }),
 });

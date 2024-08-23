@@ -3,7 +3,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   Loader2,
   Plus,
@@ -11,12 +11,14 @@ import {
   Calendar as CalendarIcon,
   Save,
   ArrowRight,
+  X,
 } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,49 +37,133 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { FullForm, PrimaryFormControl } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
+import { trpc } from "@/lib/trpc-client";
 
-const formSchema = z.object({
-  fatherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
-  fatherBirthdate: z.date({ message: "Campo obrigatório" }),
-  fatherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
-  fatherUSASituation: z.string(),
-  motherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
-  motherBirthdate: z.date({ message: "Campo obrigatório" }),
-  motherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
-  motherUSASituation: z.string(),
-  familyLivingInTheUSAConfirmation: z.enum(["Sim", "Não"]),
-  partnerCompleteName: z.string(),
-  partnerBirthdate: z.date({ message: "Campo obrigatório" }).optional(),
-  partnerNationality: z.string(),
-  partnerCity: z.string(),
-  partnerState: z.string(),
-  partnerCountry: z.string(),
-  unionDate: z.date({ message: "Campo obrigatório" }).optional(),
-  divorceDate: z.date({ message: "Campo obrigatório" }).optional(),
-});
+const formSchema = z
+  .object({
+    fatherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
+    fatherBirthdate: z.date({ message: "Campo obrigatório" }),
+    fatherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+    fatherUSASituation: z.string(),
+    motherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
+    motherBirthdate: z.date({ message: "Campo obrigatório" }),
+    motherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+    motherUSASituation: z.string(),
+    familyLivingInTheUSAConfirmation: z.enum(["Sim", "Não"]),
+    familyLivingInTheUSA: z.array(
+      z.object({
+        name: z.string(),
+        relation: z.string(),
+        situation: z.string(),
+      }),
+    ),
+    partnerCompleteName: z.string(),
+    partnerBirthdate: z.date({ message: "Campo obrigatório" }).optional(),
+    partnerNationality: z.string(),
+    partnerCity: z.string(),
+    partnerState: z.string(),
+    partnerCountry: z.string(),
+    unionDate: z.date({ message: "Campo obrigatório" }).optional(),
+    divorceDate: z.date({ message: "Campo obrigatório" }).optional(),
+  })
+  .superRefine(
+    (
+      {
+        familyLivingInTheUSAConfirmation,
+        familyLivingInTheUSA,
+        fatherLiveInTheUSAConfirmation,
+        fatherUSASituation,
+        motherLiveInTheUSAConfirmation,
+        motherUSASituation,
+      },
+      ctx,
+    ) => {
+      if (
+        fatherLiveInTheUSAConfirmation === "Sim" &&
+        fatherUSASituation.length === 0
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["fatherUSASituation"],
+        });
+      }
+
+      if (
+        motherLiveInTheUSAConfirmation === "Sim" &&
+        motherUSASituation.length === 0
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["motherUSASituation"],
+        });
+      }
+
+      if (
+        familyLivingInTheUSAConfirmation === "Sim" &&
+        familyLivingInTheUSA.length === 1 &&
+        familyLivingInTheUSA.filter((item) => item.name === "").length === 1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: [
+            `familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.name`,
+          ],
+        });
+      }
+
+      if (
+        familyLivingInTheUSAConfirmation === "Sim" &&
+        familyLivingInTheUSA.length === 1 &&
+        familyLivingInTheUSA.filter((item) => item.relation === "").length === 1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: [
+            `familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.relation`,
+          ],
+        });
+      }
+
+      if (
+        familyLivingInTheUSAConfirmation === "Sim" &&
+        familyLivingInTheUSA.length === 1 &&
+        familyLivingInTheUSA.filter((item) => item.situation === "").length ===
+          1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: [
+            `familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.situation`,
+          ],
+        });
+      }
+    },
+  );
 
 interface Props {
-  currentForm: FullForm;
+  profileId: string;
+  currentForm: FormType;
 }
 
-export function FamilyForm({ currentForm }: Props) {
-  const [isFetching, setIsFetching] = useState<boolean>(false);
+export function FamilyForm({ currentForm, profileId }: Props) {
+  const [currentFamilyIndex, setCurrentFamilyIndex] = useState<number>(
+    currentForm.familyLivingInTheUSA.length || 0,
+  );
+  const [familyLivingInTheUSAItems, setFamilyLivingInTheUSAItems] = useState<
+    { name: string; relation: string; situation: string }[]
+  >([]);
+  const [resetFamilyFields, setResetFamilyFields] = useState<boolean>(false);
 
   const currentYear = getYear(new Date());
-  const params = useParams();
-  const {
-    familyLivingInTheUSA,
-    familyLivingInTheUSAIndex,
-    familyLivingInTheUSAError,
-    setFamilyLivingInTheUSA,
-    setFamilyLivingInTheUSAError,
-    setFamilyLivingInTheUSAIndex,
-  } = useFormStore();
+  const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -116,6 +202,13 @@ export function FamilyForm({ currentForm }: Props) {
             ? "Sim"
             : "Não"
           : "Não",
+      familyLivingInTheUSA:
+        currentForm.familyLivingInTheUSA.length > 0
+          ? [
+              ...currentForm.familyLivingInTheUSA,
+              { name: "", relation: "", situation: "" },
+            ]
+          : [{ name: "", relation: "", situation: "" }],
       partnerCompleteName: currentForm.partnerCompleteName
         ? currentForm.partnerCompleteName
         : "",
@@ -146,77 +239,213 @@ export function FamilyForm({ currentForm }: Props) {
   const familyLivingInTheUSAConfirmation = form.watch(
     "familyLivingInTheUSAConfirmation",
   );
+  const familyLivingInTheUSA = form.watch("familyLivingInTheUSA");
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitFamily, isPending } =
+    trpc.formsRouter.submitFamily.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+        router.push(`/formulario/${profileId}?formStep=8`);
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: saveFamily, isPending: isSavePending } =
+    trpc.formsRouter.saveFamily.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
 
   useEffect(() => {
-    if (currentForm && currentForm.familyLivingInTheUSA.length > 0) {
-      setFamilyLivingInTheUSA(currentForm.familyLivingInTheUSA);
-      setFamilyLivingInTheUSAIndex(currentForm.familyLivingInTheUSA.length);
+    if (currentForm.familyLivingInTheUSA.length > 0) {
+      setCurrentFamilyIndex(currentForm.familyLivingInTheUSA.length);
+
+      const familyFiltered = currentForm.familyLivingInTheUSA.filter(
+        (item) =>
+          (item.name !== "" && item.relation !== "") || item.situation !== "",
+      );
+
+      setFamilyLivingInTheUSAItems(familyFiltered);
     }
-  }, [currentForm, setFamilyLivingInTheUSA, setFamilyLivingInTheUSAIndex]);
+  }, [currentForm]);
 
-  function handleFamilyLivingInTheUSAChange(
-    value: string,
-    property: "name" | "relation" | "situation",
-    index: number,
-  ) {
-    if (!familyLivingInTheUSA) return;
+  useEffect(() => {
+    if (resetFamilyFields) {
+      form.setValue(`familyLivingInTheUSA.${currentFamilyIndex}.name`, "");
+      form.setValue(`familyLivingInTheUSA.${currentFamilyIndex}.relation`, "");
+      form.setValue(`familyLivingInTheUSA.${currentFamilyIndex}.situation`, "");
 
-    const arr = [...familyLivingInTheUSA];
+      setResetFamilyFields(false);
+    }
+  }, [resetFamilyFields]);
 
-    arr[index][property] = value;
+  useEffect(() => {
+    if (redirectStep !== null) {
+      const values = form.getValues();
 
-    setFamilyLivingInTheUSA(arr);
-  }
-
-  function handleAddFamilyLivingInTheUSAInput() {
-    if (!familyLivingInTheUSA) return;
-
-    setIsFetching(true);
-
-    axios
-      .post("/api/form/family-living-in-the-usa/create", {
-        familyLivingInTheUSA,
-        formId: params.formId,
-      })
-      .then((res) => {
-        setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex + 1);
-        setFamilyLivingInTheUSA(res.data.updatedFamilyLivingInTheUSA);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(error.response.data);
-      })
-      .finally(() => {
-        setIsFetching(false);
+      saveFamily({
+        profileId,
+        redirectStep,
+        fatherCompleteName:
+          values.fatherCompleteName !== ""
+            ? values.fatherCompleteName
+            : !currentForm.fatherCompleteName
+              ? ""
+              : currentForm.fatherCompleteName,
+        fatherBirthdate: values.fatherBirthdate ?? currentForm.fatherBirthdate,
+        fatherLiveInTheUSAConfirmation:
+          (values.fatherLiveInTheUSAConfirmation ??
+          currentForm.fatherLiveInTheUSAConfirmation)
+            ? "Sim"
+            : "Não",
+        fatherUSASituation:
+          values.fatherUSASituation !== ""
+            ? values.fatherUSASituation
+            : !currentForm.fatherUSASituation
+              ? ""
+              : currentForm.fatherUSASituation,
+        motherCompleteName:
+          values.motherCompleteName !== ""
+            ? values.motherCompleteName
+            : !currentForm.motherCompleteName
+              ? ""
+              : currentForm.motherCompleteName,
+        motherBirthdate: values.motherBirthdate ?? currentForm.motherBirthdate,
+        motherLiveInTheUSAConfirmation:
+          (values.motherLiveInTheUSAConfirmation ??
+          currentForm.motherLiveInTheUSAConfirmation)
+            ? "Sim"
+            : "Não",
+        motherUSASituation:
+          values.motherUSASituation !== ""
+            ? values.motherUSASituation
+            : !currentForm.motherUSASituation
+              ? ""
+              : currentForm.motherUSASituation,
+        familyLivingInTheUSAConfirmation:
+          (values.familyLivingInTheUSAConfirmation ??
+          currentForm.familyLivingInTheUSAConfirmation)
+            ? "Sim"
+            : "Não",
+        familyLivingInTheUSA:
+          values.familyLivingInTheUSA ?? currentForm.familyLivingInTheUSA,
+        partnerCompleteName:
+          values.partnerCompleteName !== ""
+            ? values.partnerCompleteName
+            : !currentForm.partnerCompleteName
+              ? ""
+              : currentForm.partnerCompleteName,
+        partnerBirthdate:
+          values.partnerBirthdate ?? currentForm.partnerBirthdate,
+        partnerNationality:
+          values.partnerNationality !== ""
+            ? values.partnerNationality
+            : !currentForm.partnerNationality
+              ? ""
+              : currentForm.partnerNationality,
+        partnerCity:
+          values.partnerCity !== ""
+            ? values.partnerCity
+            : !currentForm.partnerCity
+              ? ""
+              : currentForm.partnerCity,
+        partnerState:
+          values.partnerState !== ""
+            ? values.partnerState
+            : !currentForm.partnerState
+              ? ""
+              : currentForm.partnerState,
+        partnerCountry:
+          values.partnerCountry !== ""
+            ? values.partnerCountry
+            : !currentForm.partnerCountry
+              ? ""
+              : currentForm.partnerCountry,
+        unionDate: values.unionDate ?? currentForm.unionDate,
+        divorceDate: values.divorceDate ?? currentForm.divorceDate,
       });
-  }
-
-  function handleRemoveFamilyLivingInTheUSAInput(id: string) {
-    if (!familyLivingInTheUSA) return;
-
-    setIsFetching(true);
-
-    axios
-      .put("/api/form/family-living-in-the-usa/delete", {
-        familyLivingInTheUSAId: id,
-        familyLivingInTheUSA,
-        formId: params.formId,
-      })
-      .then((res) => {
-        setFamilyLivingInTheUSAIndex(familyLivingInTheUSAIndex - 1);
-        setFamilyLivingInTheUSA(res.data.updatedFamilyLivingInTheUSA);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(error.response.data);
-      })
-      .finally(() => {
-        setIsFetching(false);
-      });
-  }
+      setRedirectStep(null);
+    }
+  }, [redirectStep, setRedirectStep, saveFamily, profileId]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    submitFamily({
+      ...values,
+      familyLivingInTheUSA: familyLivingInTheUSAItems,
+      profileId,
+      step: 8,
+    });
+  }
+
+  function addFamily() {
+    form
+      .trigger([
+        `familyLivingInTheUSA.${currentFamilyIndex}.name`,
+        `familyLivingInTheUSA.${currentFamilyIndex}.relation`,
+        `familyLivingInTheUSA.${currentFamilyIndex}.situation`,
+      ])
+      .then(() => {
+        if (Object.keys(form.formState.errors).length === 0) {
+          form.setValue("familyLivingInTheUSA", [
+            ...familyLivingInTheUSA,
+            {
+              name: "",
+              relation: "",
+              situation: "",
+            },
+          ]);
+
+          const familyFiltered = familyLivingInTheUSA.filter(
+            (item) =>
+              item.name !== "" || item.relation !== "" || item.situation !== "",
+          );
+
+          setCurrentFamilyIndex((prev) => prev + 1);
+          setFamilyLivingInTheUSAItems(familyFiltered);
+          setResetFamilyFields(true);
+        }
+      });
+  }
+
+  function removeFamily(index: number) {
+    const newArr = familyLivingInTheUSA.filter((_, i) => i !== index);
+
+    form.setValue("familyLivingInTheUSA", newArr);
+
+    const familyFiltered = newArr.filter(
+      (item) =>
+        item.name !== "" && item.relation !== "" && item.situation !== "",
+    );
+
+    setCurrentFamilyIndex((prev) => prev - 1);
+    setFamilyLivingInTheUSAItems(familyFiltered);
   }
 
   return (
@@ -230,26 +459,26 @@ export function FamilyForm({ currentForm }: Props) {
         </h2>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
-          <div className="w-full flex flex-col gap-4">
-            <span className="text-foreground text-base font-medium">
+          <div className="w-full flex flex-col">
+            <span className="text-foreground text-base font-medium mb-6">
               Inserir todos os dados, mesmo se falecidos
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="fatherCompleteName"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Nome completo do pai*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -267,20 +496,28 @@ export function FamilyForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -310,13 +547,13 @@ export function FamilyForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="fatherLiveInTheUSAConfirmation"
@@ -328,6 +565,7 @@ export function FamilyForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -350,48 +588,50 @@ export function FamilyForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
 
-              {fatherLiveInTheUSAConfirmation === "Sim" && (
-                <FormField
-                  control={form.control}
-                  name="fatherUSASituation"
-                  render={({ field }) => (
-                    <FormItem className="w-full bg-secondary p-4">
-                      <FormLabel className="text-foreground text-sm">
-                        Em qual situação? (trabalhando legalmente, passeando,
-                        etc)
-                      </FormLabel>
+              <FormField
+                control={form.control}
+                name="fatherUSASituation"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      "w-full bg-secondary p-4",
+                      fatherLiveInTheUSAConfirmation === "Não" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="text-foreground">
+                      Em qual situação? (trabalhando legalmente, passeando, etc)
+                    </FormLabel>
 
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
+                    <FormControl>
+                      <Input disabled={isPending || isSavePending} {...field} />
+                    </FormControl>
 
-                      <FormMessage className="text-sm text-red-500" />
-                    </FormItem>
-                  )}
-                />
-              )}
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="motherCompleteName"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
-                    <FormLabel className="text-foreground text-sm">
+                  <FormItem>
+                    <FormLabel className="text-foreground">
                       Nome completo da mãe*
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -409,20 +649,28 @@ export function FamilyForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -452,13 +700,13 @@ export function FamilyForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="motherLiveInTheUSAConfirmation"
@@ -470,6 +718,7 @@ export function FamilyForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -492,34 +741,36 @@ export function FamilyForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
 
-              {motherLiveInTheUSAConfirmation === "Sim" && (
-                <FormField
-                  control={form.control}
-                  name="motherUSASituation"
-                  render={({ field }) => (
-                    <FormItem className="w-full bg-secondary p-4">
-                      <FormLabel className="text-foreground text-sm">
-                        Em qual situação? (trabalhando legalmente, passeando,
-                        etc)
-                      </FormLabel>
+              <FormField
+                control={form.control}
+                name="motherUSASituation"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      "w-full bg-secondary p-4",
+                      motherLiveInTheUSAConfirmation === "Não" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="text-foreground">
+                      Em qual situação? (trabalhando legalmente, passeando, etc)
+                    </FormLabel>
 
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
+                    <FormControl>
+                      <Input disabled={isPending || isSavePending} {...field} />
+                    </FormControl>
 
-                      <FormMessage className="text-sm text-red-500" />
-                    </FormItem>
-                  )}
-                />
-              )}
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="familyLivingInTheUSAConfirmation"
@@ -531,6 +782,7 @@ export function FamilyForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -553,156 +805,158 @@ export function FamilyForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
 
-              {familyLivingInTheUSAConfirmation === "Sim" && (
-                <div className="w-full  flex flex-col gap-8 mt-6">
-                  <span className="text-foreground text-base font-medium">
-                    Em caso afirmativo, informe:
-                  </span>
+              <div
+                className={cn(
+                  "w-full bg-secondary p-4 space-y-6",
+                  familyLivingInTheUSAConfirmation === "Não" && "hidden",
+                )}
+              >
+                <span className="text-foreground text-base font-medium">
+                  Em caso afirmativo, informe:
+                </span>
 
-                  <div className="w-full flex flex-col gap-6">
-                    {familyLivingInTheUSA ? (
-                      familyLivingInTheUSA.map((obj, index) => (
-                        <div
-                          key={obj.id}
-                          className="w-full bg-secondary p-4 flex sm:items-end gap-4"
-                        >
-                          <div className="w-full grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-[auto_1fr] gap-4">
-                            <div className="w-full flex flex-col gap-2 sm:h-fit">
-                              <label className="text-sm text-foreground font-medium">
-                                Nome
-                              </label>
+                <div className="w-full flex flex-col gap-4">
+                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`familyLivingInTheUSA.${currentFamilyIndex}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-foreground">
+                            Nome
+                          </FormLabel>
 
-                              <Input
-                                value={obj.name!}
-                                onChange={(
-                                  event: ChangeEvent<HTMLInputElement>,
-                                ) =>
-                                  handleFamilyLivingInTheUSAChange(
-                                    event.target.value,
-                                    "name",
-                                    index,
-                                  )
-                                }
-                              />
-                            </div>
+                          <FormControl>
+                            <Input
+                              disabled={isPending || isSavePending}
+                              {...field}
+                            />
+                          </FormControl>
 
-                            <div className="w-full flex flex-col gap-2 sm:h-fit">
-                              <label className="text-sm text-foreground font-medium">
-                                Parentesco
-                              </label>
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-                              <Input
-                                value={obj.relation!}
-                                onChange={(
-                                  event: ChangeEvent<HTMLInputElement>,
-                                ) =>
-                                  handleFamilyLivingInTheUSAChange(
-                                    event.target.value,
-                                    "relation",
-                                    index,
-                                  )
-                                }
-                              />
-                            </div>
+                    <FormField
+                      control={form.control}
+                      name={`familyLivingInTheUSA.${currentFamilyIndex}.relation`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-foreground">
+                            Relação Parental
+                          </FormLabel>
 
-                            <div className="w-full flex flex-col gap-2 sm:col-span-2">
-                              <label className="text-sm text-foreground font-medium">
-                                Situação (cidadão americano, residente legal,
-                                não imigrante, etc...)
-                              </label>
+                          <FormControl>
+                            <Input
+                              disabled={isPending || isSavePending}
+                              {...field}
+                            />
+                          </FormControl>
 
-                              <Textarea
-                                className="resize-none"
-                                value={obj.situation!}
-                                onChange={(
-                                  event: ChangeEvent<HTMLTextAreaElement>,
-                                ) =>
-                                  handleFamilyLivingInTheUSAChange(
-                                    event.target.value,
-                                    "situation",
-                                    index,
-                                  )
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          {index === familyLivingInTheUSAIndex - 1 ? (
-                            <Button
-                              type="button"
-                              size="xl"
-                              className="px-3"
-                              disabled={
-                                obj.name === "" ||
-                                obj.relation === "" ||
-                                obj.situation === "" ||
-                                isFetching
-                              }
-                              onClick={handleAddFamilyLivingInTheUSAInput}
-                            >
-                              {isFetching ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                <Plus />
-                              )}
-                            </Button>
-                          ) : (
-                            <Button
-                              type="button"
-                              size="xl"
-                              className="px-3"
-                              onClick={() =>
-                                handleRemoveFamilyLivingInTheUSAInput(obj.id)
-                              }
-                              disabled={isFetching}
-                            >
-                              {isFetching ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                <Trash />
-                              )}
-                            </Button>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div>Loading...</div>
-                    )}
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
-                  {familyLivingInTheUSAError.length > 0 && (
-                    <span className="text-sm text-red-500">
-                      {familyLivingInTheUSAError}
-                    </span>
-                  )}
+                  <FormField
+                    control={form.control}
+                    name={`familyLivingInTheUSA.${currentFamilyIndex}.situation`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-foreground">
+                          Situação (cidadão americano, residente legal, não
+                          imigrante, etc...)
+                        </FormLabel>
+
+                        <FormControl>
+                          <Textarea
+                            disabled={isPending || isSavePending}
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage className="text-sm text-destructive" />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              )}
+
+                <div className="w-full lg:flex">
+                  <Button
+                    type="button"
+                    size="xl"
+                    className="px-3 w-full flex items-center gap-2 lg:w-fit"
+                    disabled={isPending || isSavePending}
+                    onClick={addFamily}
+                  >
+                    Adicionar
+                    <Plus />
+                  </Button>
+                </div>
+
+                {familyLivingInTheUSAItems.length > 0 && (
+                  <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
+                    {familyLivingInTheUSAItems.map((item, index) => (
+                      <div
+                        key={`otherName-${index}`}
+                        className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
+                      >
+                        <div className="w-full flex flex-col items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">
+                            Nome: {item.name}
+                          </span>
+
+                          <div className="w-full h-px bg-primary" />
+
+                          <span className="text-sm font-medium text-foreground">
+                            Relação: {item.relation}
+                          </span>
+                        </div>
+
+                        <Button
+                          type="button"
+                          variant="link"
+                          size="icon"
+                          className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
+                          disabled={isPending || isSavePending}
+                          onClick={() => removeFamily(index)}
+                        >
+                          <X strokeWidth={1} size={20} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <span className="text-foreground text-base font-medium">
+            <span className="text-foreground text-base font-medium mb-6">
               Dados do cônjuge, parceiro doméstico ou ex-cônjuge
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="partnerCompleteName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       Nome completo
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -712,7 +966,7 @@ export function FamilyForm({ currentForm }: Props) {
                 name="partnerBirthdate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       Data de nascimento
                     </FormLabel>
 
@@ -720,20 +974,28 @@ export function FamilyForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -763,7 +1025,7 @@ export function FamilyForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -773,35 +1035,35 @@ export function FamilyForm({ currentForm }: Props) {
                 name="partnerNationality"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       Nacionalidade
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="partnerCity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       Cidade de nascimento
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -811,15 +1073,15 @@ export function FamilyForm({ currentForm }: Props) {
                 name="partnerState"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       Estado de nascimento
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -829,21 +1091,21 @@ export function FamilyForm({ currentForm }: Props) {
                 name="partnerCountry"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       País de nascimento
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <span className="text-foreground text-base font-medium">
+            <span className="text-foreground text-base font-medium mb-6">
               Se separado(a) ou divorciado(a)
             </span>
 
@@ -853,7 +1115,7 @@ export function FamilyForm({ currentForm }: Props) {
                 name="unionDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       Data da união
                     </FormLabel>
 
@@ -861,20 +1123,28 @@ export function FamilyForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -904,7 +1174,7 @@ export function FamilyForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -914,7 +1184,7 @@ export function FamilyForm({ currentForm }: Props) {
                 name="divorceDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
+                    <FormLabel className="text-foreground">
                       Data da separação
                     </FormLabel>
 
@@ -922,20 +1192,28 @@ export function FamilyForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -965,7 +1243,7 @@ export function FamilyForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -978,22 +1256,37 @@ export function FamilyForm({ currentForm }: Props) {
               variant="outline"
               type="button"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending || isSavePending}
             >
-              Salvar
-              <Save className="size-5" strokeWidth={1.5} />
+              {isSavePending ? (
+                <>
+                  Salvando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
+              ) : (
+                <>
+                  Salvar
+                  <Save className="size-5" strokeWidth={1.5} />
+                </>
+              )}
             </Button>
 
             <Button
               size="xl"
-              // disabled={isSubmitting || isSaving}
+              disabled={isPending || isSavePending}
               type="submit"
               className="w-full flex items-center gap-2 sm:w-fit"
             >
-              Enviar{" "}
-              {false ? (
-                <Loader2 className="animate-spin" />
+              {isPending ? (
+                <>
+                  Enviando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
               ) : (
-                <ArrowRight className="hidden" />
+                <>
+                  Enviar
+                  <ArrowRight className="size-5" strokeWidth={1.5} />
+                </>
               )}
             </Button>
           </div>

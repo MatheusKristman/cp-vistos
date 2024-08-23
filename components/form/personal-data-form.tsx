@@ -10,6 +10,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +37,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { FullForm } from "@/types";
 import { trpc } from "@/lib/trpc-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -106,7 +106,7 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FullForm;
+  currentForm: FormType;
 }
 
 export function PersonalDataForm({ currentForm, profileId }: Props) {

@@ -8,9 +8,9 @@ import { format, getYear } from "date-fns";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, CalendarIcon, Loader2, Save } from "lucide-react";
+import { Form as FormType } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
-import { FullForm } from "@/types";
 import { trpc } from "@/lib/trpc-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -93,7 +93,7 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FullForm;
+  currentForm: FormType;
 }
 
 export function PassportForm({ currentForm, profileId }: Props) {

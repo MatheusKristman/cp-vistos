@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader2, Save } from "lucide-react";
+import { Form as FormType } from "@prisma/client";
 
 import {
   Form,
@@ -15,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FullForm } from "@/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc-client";
@@ -38,7 +38,7 @@ const formSchema = z.object({
 
 interface Props {
   profileId: string;
-  currentForm: FullForm;
+  currentForm: FormType;
 }
 
 export function USAContactForm({ currentForm, profileId }: Props) {

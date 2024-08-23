@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +31,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { FullForm } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc-client";
@@ -194,7 +194,7 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FullForm;
+  currentForm: FormType;
 }
 
 export function PreviousTravelForm({ currentForm, profileId }: Props) {
