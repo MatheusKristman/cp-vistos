@@ -90,7 +90,7 @@ export default function FormPage({
       <Header />
       <MobileMenu />
 
-      <div className="w-full h-full px-6 my-6 flex flex-col sm:px-16 sm:my-12 sm:min-h-[calc(100vh-176px)] lg:container lg:mx-auto lg:min-h-[calc(100vh-192px)]">
+      <div className="w-full h-full p-6 flex flex-col sm:px-16 sm:py-12 sm:min-h-[calc(100vh-176px)] lg:container lg:mx-auto lg:min-h-[calc(100vh-192px)]">
         <div className="w-full flex flex-col items-center gap-4 mb-12 sm:mb-24">
           <h1 className="text-2xl sm:text-3xl text-center font-semibold text-foreground">
             Complete seu cadastro
@@ -140,9 +140,15 @@ export default function FormPage({
         {formStep === "3" && (
           <AboutTravelForm currentForm={data.form} profileId={profileId} />
         )}
-        {formStep === "4" && <TravelCompanyForm currentForm={data.form} />}
-        {formStep === "5" && <PreviousTravelForm currentForm={data.form} />}
-        {formStep === "6" && <USAContactForm currentForm={data.form} />}
+        {formStep === "4" && (
+          <TravelCompanyForm currentForm={data.form} profileId={profileId} />
+        )}
+        {formStep === "5" && (
+          <PreviousTravelForm currentForm={data.form} profileId={profileId} />
+        )}
+        {formStep === "6" && (
+          <USAContactForm currentForm={data.form} profileId={profileId} />
+        )}
         {formStep === "7" && <FamilyForm currentForm={data.form} />}
         {formStep === "8" && <WorkEducationForm currentForm={data.form} />}
         {formStep === "9" && <AdditionalInformationForm />}

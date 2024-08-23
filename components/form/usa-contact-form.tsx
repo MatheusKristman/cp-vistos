@@ -18,6 +18,11 @@ import { Input } from "@/components/ui/input";
 import { FullForm } from "@/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useEffect } from "react";
+import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z.object({
   organizationOrUSAResidentName: z.string(),
@@ -32,10 +37,13 @@ const formSchema = z.object({
 });
 
 interface Props {
+  profileId: string;
   currentForm: FullForm;
 }
 
-export function USAContactForm({ currentForm }: Props) {
+export function USAContactForm({ currentForm, profileId }: Props) {
+  const { redirectStep, setRedirectStep } = useFormStore();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,8 +81,117 @@ export function USAContactForm({ currentForm }: Props) {
     },
   });
 
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitUsaContact, isPending } =
+    trpc.formsRouter.submitUsaContact.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+        router.push(`/formulario/${profileId}?formStep=7`);
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: saveUsaContact, isPending: isSavePending } =
+    trpc.formsRouter.saveUsaContact.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
+
+  useEffect(() => {
+    if (redirectStep !== null) {
+      const values = form.getValues();
+
+      saveUsaContact({
+        profileId,
+        redirectStep,
+        organizationOrUSAResidentName:
+          values.organizationOrUSAResidentName !== ""
+            ? values.organizationOrUSAResidentName
+            : !currentForm.organizationOrUSAResidentName
+              ? ""
+              : currentForm.organizationOrUSAResidentName,
+        organizationOrUSAResidentRelation:
+          values.organizationOrUSAResidentRelation !== ""
+            ? values.organizationOrUSAResidentRelation
+            : !currentForm.organizationOrUSAResidentRelation
+              ? ""
+              : currentForm.organizationOrUSAResidentRelation,
+        organizationOrUSAResidentAddress:
+          values.organizationOrUSAResidentAddress !== ""
+            ? values.organizationOrUSAResidentAddress
+            : !currentForm.organizationOrUSAResidentAddress
+              ? ""
+              : currentForm.organizationOrUSAResidentAddress,
+        organizationOrUSAResidentZipCode:
+          values.organizationOrUSAResidentZipCode !== ""
+            ? values.organizationOrUSAResidentZipCode
+            : !currentForm.organizationOrUSAResidentZipCode
+              ? ""
+              : currentForm.organizationOrUSAResidentZipCode,
+        organizationOrUSAResidentCity:
+          values.organizationOrUSAResidentCity !== ""
+            ? values.organizationOrUSAResidentCity
+            : !currentForm.organizationOrUSAResidentCity
+              ? ""
+              : currentForm.organizationOrUSAResidentCity,
+        organizationOrUSAResidentState:
+          values.organizationOrUSAResidentState !== ""
+            ? values.organizationOrUSAResidentState
+            : !currentForm.organizationOrUSAResidentState
+              ? ""
+              : currentForm.organizationOrUSAResidentState,
+        organizationOrUSAResidentCountry:
+          values.organizationOrUSAResidentCountry !== ""
+            ? values.organizationOrUSAResidentCountry
+            : !currentForm.organizationOrUSAResidentCountry
+              ? ""
+              : currentForm.organizationOrUSAResidentCountry,
+        organizationOrUSAResidentTel:
+          values.organizationOrUSAResidentTel !== ""
+            ? values.organizationOrUSAResidentTel
+            : !currentForm.organizationOrUSAResidentTel
+              ? ""
+              : currentForm.organizationOrUSAResidentTel,
+        organizationOrUSAResidentEmail:
+          values.organizationOrUSAResidentEmail !== ""
+            ? values.organizationOrUSAResidentEmail
+            : !currentForm.organizationOrUSAResidentEmail
+              ? ""
+              : currentForm.organizationOrUSAResidentEmail,
+      });
+      setRedirectStep(null);
+    }
+  }, [redirectStep, setRedirectStep, saveUsaContact, profileId]);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    submitUsaContact({ ...values, profileId, step: 7 });
   }
 
   return (
@@ -88,12 +205,12 @@ export function USAContactForm({ currentForm }: Props) {
         </h2>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
-          <div className="w-full flex flex-col gap-4">
-            <span className="text-foreground text-base font-medium">
+          <div className="w-full flex flex-col">
+            <span className="text-foreground text-base font-medium mb-6">
               Preencher apenas se houver contato frequente com alguém dos EUA{" "}
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="organizationOrUSAResidentName"
@@ -104,10 +221,10 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -122,16 +239,16 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="organizationOrUSAResidentAddress"
@@ -142,10 +259,10 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -160,16 +277,20 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input maxLength={5} {...field} />
+                      <Input
+                        disabled={isPending || isSavePending}
+                        maxLength={5}
+                        {...field}
+                      />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="organizationOrUSAResidentCity"
@@ -180,10 +301,10 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -198,10 +319,10 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -216,10 +337,10 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -247,6 +368,7 @@ export function USAContactForm({ currentForm }: Props) {
                             "input-error": false,
                           },
                         )}
+                        disabled={isPending || isSavePending}
                         name={field.name}
                         ref={field.ref}
                         onBlur={field.onBlur}
@@ -255,7 +377,7 @@ export function USAContactForm({ currentForm }: Props) {
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -270,10 +392,10 @@ export function USAContactForm({ currentForm }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -286,6 +408,7 @@ export function USAContactForm({ currentForm }: Props) {
               variant="outline"
               type="button"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending || isSavePending}
             >
               Salvar
               <Save className="size-5" strokeWidth={1.5} />
@@ -293,15 +416,20 @@ export function USAContactForm({ currentForm }: Props) {
 
             <Button
               size="xl"
-              // disabled={isSubmitting || isSaving}
+              disabled={isPending || isSavePending}
               type="submit"
               className="w-full flex items-center gap-2 sm:w-fit"
             >
-              Enviar{" "}
-              {false ? (
-                <Loader2 className="animate-spin" />
+              {isPending ? (
+                <>
+                  Enviando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
               ) : (
-                <ArrowRight className="hidden" />
+                <>
+                  Enviar
+                  <ArrowRight className="size-5" strokeWidth={1.5} />
+                </>
               )}
             </Button>
           </div>

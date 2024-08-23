@@ -19,10 +19,7 @@ export const formsRouter = router({
           profileId,
         },
         include: {
-          otherPeopleTraveling: true,
           familyLivingInTheUSA: true,
-          americanLicense: true,
-          USALastTravel: true,
           previousJobs: true,
           courses: true,
           profile: true,
@@ -846,6 +843,726 @@ export const formsRouter = router({
           payerAddress,
           payerRelation,
           payerEmail,
+        },
+      });
+
+      return { message: "Informações salvas", redirectStep };
+    }),
+  submitTravelCompany: isUserAuthedProcedure
+    .input(
+      z
+        .object({
+          profileId: z.string().min(1),
+          step: z.number(),
+          otherPeopleTravelingConfirmation: z.enum(["Sim", "Não"]),
+          otherPeopleTraveling: z.array(
+            z.object({
+              name: z.string(),
+              relation: z.string(),
+            }),
+          ),
+          groupMemberConfirmation: z.enum(["Sim", "Não"]),
+          groupName: z.string(),
+        })
+        .superRefine(
+          (
+            {
+              otherPeopleTravelingConfirmation,
+              otherPeopleTraveling,
+              groupMemberConfirmation,
+              groupName,
+            },
+            ctx,
+          ) => {
+            if (groupMemberConfirmation === "Sim" && groupName.length === 0) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: ["groupName"],
+              });
+            }
+
+            if (
+              otherPeopleTravelingConfirmation === "Sim" &&
+              otherPeopleTraveling.length === 1 &&
+              otherPeopleTraveling.filter((item) => item.name === "").length ===
+                1
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: [
+                  `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.name`,
+                ],
+              });
+            }
+
+            if (
+              otherPeopleTravelingConfirmation === "Sim" &&
+              otherPeopleTraveling.length === 1 &&
+              otherPeopleTraveling.filter((item) => item.relation === "")
+                .length === 1
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: [
+                  `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`,
+                ],
+              });
+            }
+          },
+        ),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        step,
+        otherPeopleTravelingConfirmation,
+        otherPeopleTraveling,
+        groupMemberConfirmation,
+        groupName,
+      } = opts.input;
+
+      const profileUpdated = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          formStep: step,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profileUpdated) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profileUpdated.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profileUpdated.form.id,
+        },
+        data: {
+          otherPeopleTravelingConfirmation:
+            otherPeopleTravelingConfirmation === "Sim",
+          otherPeopleTraveling,
+          groupMemberConfirmation: groupMemberConfirmation === "Sim",
+          groupName,
+        },
+      });
+
+      return { message: "Informações salvas" };
+    }),
+  saveTravelCompany: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        redirectStep: z.number().optional(),
+        otherPeopleTravelingConfirmation: z.enum(["Sim", "Não"]).nullable(),
+        otherPeopleTraveling: z.array(
+          z.object({
+            name: z.string(),
+            relation: z.string(),
+          }),
+        ),
+        groupMemberConfirmation: z.enum(["Sim", "Não"]).nullable(),
+        groupName: z.string().nullable(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        redirectStep,
+        otherPeopleTravelingConfirmation,
+        otherPeopleTraveling,
+        groupMemberConfirmation,
+        groupName,
+      } = opts.input;
+
+      const profile = await prisma.profile.findUnique({
+        where: {
+          id: profileId,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profile.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profile.form.id,
+        },
+        data: {
+          otherPeopleTravelingConfirmation:
+            otherPeopleTravelingConfirmation === "Sim",
+          otherPeopleTraveling,
+          groupMemberConfirmation: groupMemberConfirmation === "Sim",
+          groupName,
+        },
+      });
+
+      return { message: "Informações salvas", redirectStep };
+    }),
+  submitPreviousTravel: isUserAuthedProcedure
+    .input(
+      z
+        .object({
+          profileId: z.string().min(1),
+          step: z.number(),
+          hasBeenOnUSAConfirmation: z.enum(["Sim", "Não"]),
+          USALastTravel: z.array(
+            z.object({
+              arriveDate: z.date(),
+              estimatedTime: z.string(),
+            }),
+          ),
+          americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
+          americanLicense: z.array(
+            z.object({
+              licenseNumber: z.string(),
+              state: z.string(),
+            }),
+          ),
+          USAVisaConfirmation: z.enum(["Sim", "Não"]),
+          visaIssuingDate: z.date().optional(),
+          visaNumber: z.string(),
+          newVisaConfirmation: z.enum(["Sim", "Não"]),
+          sameCountryResidenceConfirmation: z.enum(["Sim", "Não"]),
+          sameVisaTypeConfirmation: z.enum(["Sim", "Não"]),
+          fingerprintsProvidedConfirmation: z.enum(["Sim", "Não"]),
+          lostVisaConfirmation: z.enum(["Sim", "Não"]),
+          lostVisaDetails: z.string(),
+          canceledVisaConfirmation: z.enum(["Sim", "Não"]),
+          canceledVisaDetails: z.string(),
+          deniedVisaConfirmation: z.enum(["Sim", "Não"]),
+          deniedVisaDetails: z.string(),
+          consularPost: z.string(),
+          deniedVisaType: z.string(),
+          immigrationRequestByAnotherPersonConfirmation: z.enum(["Sim", "Não"]),
+          immigrationRequestByAnotherPersonDetails: z.string(),
+        })
+        .superRefine(
+          (
+            {
+              hasBeenOnUSAConfirmation,
+              USALastTravel,
+              americanLicenseToDriveConfirmation,
+              americanLicense,
+              USAVisaConfirmation,
+              visaIssuingDate,
+              visaNumber,
+              lostVisaConfirmation,
+              lostVisaDetails,
+              canceledVisaConfirmation,
+              canceledVisaDetails,
+              deniedVisaConfirmation,
+              deniedVisaDetails,
+              immigrationRequestByAnotherPersonConfirmation,
+              immigrationRequestByAnotherPersonDetails,
+            },
+            ctx,
+          ) => {
+            if (
+              hasBeenOnUSAConfirmation === "Sim" &&
+              USALastTravel.length === 1 &&
+              USALastTravel.filter((item) => item.arriveDate === undefined)
+                .length === 1
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: [`USALastTravel.${USALastTravel.length - 1}.arriveDate`],
+              });
+            }
+
+            if (
+              hasBeenOnUSAConfirmation === "Sim" &&
+              USALastTravel.length === 1 &&
+              USALastTravel.filter((item) => item.estimatedTime === "")
+                .length === 1
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: [
+                  `USALastTravel.${USALastTravel.length - 1}.estimatedTime`,
+                ],
+              });
+            }
+
+            if (
+              americanLicenseToDriveConfirmation === "Sim" &&
+              americanLicense.length === 1 &&
+              americanLicense.filter((item) => item.licenseNumber === "")
+                .length === 1
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: [
+                  `americanLicense.${americanLicense.length - 1}.licenseNumber`,
+                ],
+              });
+            }
+
+            if (
+              americanLicenseToDriveConfirmation === "Sim" &&
+              americanLicense.length === 1 &&
+              americanLicense.filter((item) => item.state === "").length === 1
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: [`americanLicense.${americanLicense.length - 1}.state`],
+              });
+            }
+
+            if (
+              USAVisaConfirmation === "Sim" &&
+              visaIssuingDate === undefined
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: ["visaIssuingDate"],
+              });
+            }
+
+            if (USAVisaConfirmation === "Sim" && visaNumber.length === 0) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: ["visaNumber"],
+              });
+            }
+
+            if (
+              lostVisaConfirmation === "Sim" &&
+              lostVisaDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: ["lostVisaDetails"],
+              });
+            }
+
+            if (
+              canceledVisaConfirmation === "Sim" &&
+              canceledVisaDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: ["canceledVisaDetails"],
+              });
+            }
+
+            if (
+              deniedVisaConfirmation === "Sim" &&
+              deniedVisaDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: ["deniedVisaDetails"],
+              });
+            }
+
+            if (
+              immigrationRequestByAnotherPersonConfirmation === "Sim" &&
+              immigrationRequestByAnotherPersonDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Campo vazio, preencha para prosseguir",
+                path: ["immigrationRequestByAnotherPersonDetails"],
+              });
+            }
+          },
+        ),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        step,
+        hasBeenOnUSAConfirmation,
+        USALastTravel,
+        americanLicenseToDriveConfirmation,
+        americanLicense,
+        USAVisaConfirmation,
+        visaIssuingDate,
+        visaNumber,
+        newVisaConfirmation,
+        sameCountryResidenceConfirmation,
+        sameVisaTypeConfirmation,
+        fingerprintsProvidedConfirmation,
+        lostVisaConfirmation,
+        lostVisaDetails,
+        canceledVisaConfirmation,
+        canceledVisaDetails,
+        deniedVisaConfirmation,
+        deniedVisaDetails,
+        consularPost,
+        deniedVisaType,
+        immigrationRequestByAnotherPersonConfirmation,
+        immigrationRequestByAnotherPersonDetails,
+      } = opts.input;
+
+      const profileUpdated = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          formStep: step,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profileUpdated) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profileUpdated.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profileUpdated.form.id,
+        },
+        data: {
+          hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
+          USALastTravel,
+          americanLicenseToDriveConfirmation:
+            americanLicenseToDriveConfirmation === "Sim",
+          americanLicense,
+          USAVisaConfirmation: USAVisaConfirmation === "Sim",
+          visaIssuingDate,
+          visaNumber,
+          newVisaConfirmation: newVisaConfirmation === "Sim",
+          sameCountryResidenceConfirmation:
+            sameCountryResidenceConfirmation === "Sim",
+          sameVisaTypeConfirmation: sameVisaTypeConfirmation === "Sim",
+          fingerprintsProvidedConfirmation:
+            fingerprintsProvidedConfirmation === "Sim",
+          lostVisaConfirmation: lostVisaConfirmation === "Sim",
+          lostVisaDetails,
+          canceledVisaConfirmation: canceledVisaConfirmation === "Sim",
+          canceledVisaDetails,
+          deniedVisaConfirmation: deniedVisaConfirmation === "Sim",
+          deniedVisaDetails,
+          consularPost,
+          deniedVisaType,
+          immigrationRequestByAnotherPersonConfirmation:
+            immigrationRequestByAnotherPersonConfirmation === "Sim",
+          immigrationRequestByAnotherPersonDetails,
+        },
+      });
+
+      return { message: "Informações salvas" };
+    }),
+  savePreviousTravel: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        redirectStep: z.number().optional(),
+        hasBeenOnUSAConfirmation: z.enum(["Sim", "Não"]),
+        USALastTravel: z.array(
+          z.object({
+            arriveDate: z.coerce.date(),
+            estimatedTime: z.string(),
+          }),
+        ),
+        americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
+        americanLicense: z.array(
+          z.object({
+            licenseNumber: z.string(),
+            state: z.string(),
+          }),
+        ),
+        USAVisaConfirmation: z.enum(["Sim", "Não"]),
+        visaIssuingDate: z.date().optional(),
+        visaNumber: z.string(),
+        newVisaConfirmation: z.enum(["Sim", "Não"]),
+        sameCountryResidenceConfirmation: z.enum(["Sim", "Não"]),
+        sameVisaTypeConfirmation: z.enum(["Sim", "Não"]),
+        fingerprintsProvidedConfirmation: z.enum(["Sim", "Não"]),
+        lostVisaConfirmation: z.enum(["Sim", "Não"]),
+        lostVisaDetails: z.string(),
+        canceledVisaConfirmation: z.enum(["Sim", "Não"]),
+        canceledVisaDetails: z.string(),
+        deniedVisaConfirmation: z.enum(["Sim", "Não"]),
+        deniedVisaDetails: z.string(),
+        consularPost: z.string(),
+        deniedVisaType: z.string(),
+        immigrationRequestByAnotherPersonConfirmation: z.enum(["Sim", "Não"]),
+        immigrationRequestByAnotherPersonDetails: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        redirectStep,
+        hasBeenOnUSAConfirmation,
+        USALastTravel,
+        americanLicenseToDriveConfirmation,
+        americanLicense,
+        USAVisaConfirmation,
+        visaIssuingDate,
+        visaNumber,
+        newVisaConfirmation,
+        sameCountryResidenceConfirmation,
+        sameVisaTypeConfirmation,
+        fingerprintsProvidedConfirmation,
+        lostVisaConfirmation,
+        lostVisaDetails,
+        canceledVisaConfirmation,
+        canceledVisaDetails,
+        deniedVisaConfirmation,
+        deniedVisaDetails,
+        consularPost,
+        deniedVisaType,
+        immigrationRequestByAnotherPersonConfirmation,
+        immigrationRequestByAnotherPersonDetails,
+      } = opts.input;
+
+      const profile = await prisma.profile.findUnique({
+        where: {
+          id: profileId,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profile.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profile.form.id,
+        },
+        data: {
+          hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
+          USALastTravel,
+          americanLicenseToDriveConfirmation:
+            americanLicenseToDriveConfirmation === "Sim",
+          americanLicense,
+          USAVisaConfirmation: USAVisaConfirmation === "Sim",
+          visaIssuingDate,
+          visaNumber,
+          newVisaConfirmation: newVisaConfirmation === "Sim",
+          sameCountryResidenceConfirmation:
+            sameCountryResidenceConfirmation === "Sim",
+          sameVisaTypeConfirmation: sameVisaTypeConfirmation === "Sim",
+          fingerprintsProvidedConfirmation:
+            fingerprintsProvidedConfirmation === "Sim",
+          lostVisaConfirmation: lostVisaConfirmation === "Sim",
+          lostVisaDetails,
+          canceledVisaConfirmation: canceledVisaConfirmation === "Sim",
+          canceledVisaDetails,
+          deniedVisaConfirmation: deniedVisaConfirmation === "Sim",
+          deniedVisaDetails,
+          consularPost,
+          deniedVisaType,
+          immigrationRequestByAnotherPersonConfirmation:
+            immigrationRequestByAnotherPersonConfirmation === "Sim",
+          immigrationRequestByAnotherPersonDetails,
+        },
+      });
+
+      return { message: "Informações salvas", redirectStep };
+    }),
+  submitUsaContact: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        step: z.number(),
+        organizationOrUSAResidentName: z.string(),
+        organizationOrUSAResidentRelation: z.string(),
+        organizationOrUSAResidentAddress: z.string(),
+        organizationOrUSAResidentZipCode: z.string(),
+        organizationOrUSAResidentCity: z.string(),
+        organizationOrUSAResidentState: z.string(),
+        organizationOrUSAResidentCountry: z.string(),
+        organizationOrUSAResidentTel: z.string(),
+        organizationOrUSAResidentEmail: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        step,
+        organizationOrUSAResidentName,
+        organizationOrUSAResidentRelation,
+        organizationOrUSAResidentAddress,
+        organizationOrUSAResidentZipCode,
+        organizationOrUSAResidentCity,
+        organizationOrUSAResidentState,
+        organizationOrUSAResidentCountry,
+        organizationOrUSAResidentTel,
+        organizationOrUSAResidentEmail,
+      } = opts.input;
+
+      const profileUpdated = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          formStep: step,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profileUpdated) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profileUpdated.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profileUpdated.form.id,
+        },
+        data: {
+          organizationOrUSAResidentName,
+          organizationOrUSAResidentRelation,
+          organizationOrUSAResidentAddress,
+          organizationOrUSAResidentZipCode,
+          organizationOrUSAResidentCity,
+          organizationOrUSAResidentState,
+          organizationOrUSAResidentCountry,
+          organizationOrUSAResidentTel,
+          organizationOrUSAResidentEmail,
+        },
+      });
+
+      return { message: "Informações salvas" };
+    }),
+  saveUsaContact: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        redirectStep: z.number().optional(),
+        organizationOrUSAResidentName: z.string(),
+        organizationOrUSAResidentRelation: z.string(),
+        organizationOrUSAResidentAddress: z.string(),
+        organizationOrUSAResidentZipCode: z.string(),
+        organizationOrUSAResidentCity: z.string(),
+        organizationOrUSAResidentState: z.string(),
+        organizationOrUSAResidentCountry: z.string(),
+        organizationOrUSAResidentTel: z.string(),
+        organizationOrUSAResidentEmail: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        profileId,
+        redirectStep,
+        organizationOrUSAResidentName,
+        organizationOrUSAResidentRelation,
+        organizationOrUSAResidentAddress,
+        organizationOrUSAResidentZipCode,
+        organizationOrUSAResidentCity,
+        organizationOrUSAResidentState,
+        organizationOrUSAResidentCountry,
+        organizationOrUSAResidentTel,
+        organizationOrUSAResidentEmail,
+      } = opts.input;
+
+      const profile = await prisma.profile.findUnique({
+        where: {
+          id: profileId,
+        },
+        include: {
+          form: true,
+        },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado",
+        });
+      }
+
+      if (!profile.form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o formulário",
+        });
+      }
+
+      await prisma.form.update({
+        where: {
+          id: profile.form.id,
+        },
+        data: {
+          organizationOrUSAResidentName,
+          organizationOrUSAResidentRelation,
+          organizationOrUSAResidentAddress,
+          organizationOrUSAResidentZipCode,
+          organizationOrUSAResidentCity,
+          organizationOrUSAResidentState,
+          organizationOrUSAResidentCountry,
+          organizationOrUSAResidentTel,
+          organizationOrUSAResidentEmail,
         },
       });
 

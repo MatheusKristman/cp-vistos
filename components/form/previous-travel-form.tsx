@@ -1,12 +1,10 @@
 "use client";
 
-import { Control } from "react-hook-form";
-import { ArrowRight, Loader2, Plus, Save, Trash } from "lucide-react";
+import { ArrowRight, Loader2, Plus, Save, Trash, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { useParams } from "next/navigation";
-import { Element } from "react-scroll";
+import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -31,16 +29,25 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { FullForm, PrimaryFormControl } from "@/types";
+import { FullForm } from "@/types";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
+import { trpc } from "@/lib/trpc-client";
 
 const formSchema = z
   .object({
     hasBeenOnUSAConfirmation: z.enum(["Sim", "Não"]),
+    USALastTravel: z.array(
+      z.object({ arriveDate: z.date().optional(), estimatedTime: z.string() }),
+    ),
     americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
+    americanLicense: z.array(
+      z.object({
+        licenseNumber: z.string(),
+        state: z.string(),
+      }),
+    ),
     USAVisaConfirmation: z.enum(["Sim", "Não"]),
     visaIssuingDate: z.date({ message: "Campo obrigatório" }).optional(),
     visaNumber: z.string(),
@@ -62,6 +69,10 @@ const formSchema = z
   .superRefine(
     (
       {
+        hasBeenOnUSAConfirmation,
+        USALastTravel,
+        americanLicenseToDriveConfirmation,
+        americanLicense,
         USAVisaConfirmation,
         visaIssuingDate,
         visaNumber,
@@ -76,7 +87,56 @@ const formSchema = z
       },
       ctx,
     ) => {
-      if (USAVisaConfirmation === "Sim" && !visaIssuingDate) {
+      if (
+        hasBeenOnUSAConfirmation === "Sim" &&
+        USALastTravel.length === 1 &&
+        USALastTravel.filter((item) => item.arriveDate === undefined).length ===
+          1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: [`USALastTravel.${USALastTravel.length - 1}.arriveDate`],
+        });
+      }
+
+      if (
+        hasBeenOnUSAConfirmation === "Sim" &&
+        USALastTravel.length === 1 &&
+        USALastTravel.filter((item) => item.estimatedTime === "").length === 1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: [`USALastTravel.${USALastTravel.length - 1}.estimatedTime`],
+        });
+      }
+
+      if (
+        americanLicenseToDriveConfirmation === "Sim" &&
+        americanLicense.length === 1 &&
+        americanLicense.filter((item) => item.licenseNumber === "").length === 1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: [`americanLicense.${americanLicense.length - 1}.licenseNumber`],
+        });
+      }
+
+      if (
+        americanLicenseToDriveConfirmation === "Sim" &&
+        americanLicense.length === 1 &&
+        americanLicense.filter((item) => item.state === "").length === 1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: [`americanLicense.${americanLicense.length - 1}.state`],
+        });
+      }
+
+      if (USAVisaConfirmation === "Sim" && visaIssuingDate === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -84,11 +144,7 @@ const formSchema = z
         });
       }
 
-      if (
-        USAVisaConfirmation === "Sim" &&
-        visaNumber &&
-        visaNumber.length === 0
-      ) {
+      if (USAVisaConfirmation === "Sim" && visaNumber.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -96,11 +152,7 @@ const formSchema = z
         });
       }
 
-      if (
-        lostVisaConfirmation === "Sim" &&
-        lostVisaDetails &&
-        lostVisaDetails.length === 0
-      ) {
+      if (lostVisaConfirmation === "Sim" && lostVisaDetails.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -110,7 +162,6 @@ const formSchema = z
 
       if (
         canceledVisaConfirmation === "Sim" &&
-        canceledVisaDetails &&
         canceledVisaDetails.length === 0
       ) {
         ctx.addIssue({
@@ -120,11 +171,7 @@ const formSchema = z
         });
       }
 
-      if (
-        deniedVisaConfirmation === "Sim" &&
-        deniedVisaDetails &&
-        deniedVisaDetails.length === 0
-      ) {
+      if (deniedVisaConfirmation === "Sim" && deniedVisaDetails.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -134,7 +181,6 @@ const formSchema = z
 
       if (
         immigrationRequestByAnotherPersonConfirmation === "Sim" &&
-        immigrationRequestByAnotherPersonDetails &&
         immigrationRequestByAnotherPersonDetails.length === 0
       ) {
         ctx.addIssue({
@@ -147,31 +193,30 @@ const formSchema = z
   );
 
 interface Props {
+  profileId: string;
   currentForm: FullForm;
 }
 
-export function PreviousTravelForm({ currentForm }: Props) {
-  const [isUSALastTravelFetching, setIsUSALastTravelFetching] =
+export function PreviousTravelForm({ currentForm, profileId }: Props) {
+  const [currentUSALastTravelIndex, setCurrentUSALastTravelIndex] = useState(
+    currentForm.USALastTravel.length ?? 0,
+  );
+  const [USALastTravelItems, setUSALastTravelItems] = useState<
+    { arriveDate?: Date | undefined; estimatedTime: string }[]
+  >([]);
+  const [resetUSALastTravelFields, setResetUSALastTravelFields] =
     useState<boolean>(false);
-  const [isAmericanLicenseFetching, setIsAmericanLicenseFetching] =
+  const [currentAmericanLicenseIndex, setCurrentAmericanLicenseIndex] =
+    useState(currentForm.americanLicense.length ?? 0);
+  const [americanLicenseItems, setAmericanLicenseItems] = useState<
+    { licenseNumber: string; state: string }[]
+  >([]);
+  const [resetAmericanLicenseFields, setResetAmericanLicenseFields] =
     useState<boolean>(false);
 
+  const { redirectStep, setRedirectStep } = useFormStore();
+
   const currentYear = getYear(new Date());
-  const params = useParams();
-  const {
-    USALastTravel,
-    setUSALastTravel,
-    USALastTravelIndex,
-    setUSALastTravelIndex,
-    USALastTravelError,
-    americanLicense,
-    setAmericanLicense,
-    americanLicenseError,
-    americanLicenseIndex,
-    setAmericanLicenseIndex,
-    noVisaNumber,
-    setNoVisaNumber,
-  } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -181,12 +226,23 @@ export function PreviousTravelForm({ currentForm }: Props) {
           ? "Sim"
           : "Não"
         : "Não",
+      USALastTravel:
+        currentForm.USALastTravel.length > 0
+          ? [
+              ...currentForm.USALastTravel,
+              { arriveDate: undefined, estimatedTime: "" },
+            ]
+          : [{ arriveDate: undefined, estimatedTime: "" }],
       americanLicenseToDriveConfirmation:
         currentForm.americanLicenseToDriveConfirmation
           ? currentForm.americanLicenseToDriveConfirmation === true
             ? "Sim"
             : "Não"
           : "Não",
+      americanLicense:
+        currentForm.americanLicense.length > 0
+          ? [...currentForm.americanLicense, { licenseNumber: "", state: "" }]
+          : [{ licenseNumber: "", state: "" }],
       USAVisaConfirmation: currentForm.USAVisaConfirmation
         ? currentForm.USAVisaConfirmation === true
           ? "Sim"
@@ -260,9 +316,11 @@ export function PreviousTravelForm({ currentForm }: Props) {
   });
 
   const hasBeenOnUSAConfirmation = form.watch("hasBeenOnUSAConfirmation");
+  const USALastTravel = form.watch("USALastTravel");
   const americanLicenseToDriveConfirmation = form.watch(
     "americanLicenseToDriveConfirmation",
   );
+  const americanLicense = form.watch("americanLicense");
   const USAVisaConfirmation = form.watch("USAVisaConfirmation");
   const lostVisaConfirmation = form.watch("lostVisaConfirmation");
   const canceledVisaConfirmation = form.watch("canceledVisaConfirmation");
@@ -270,165 +328,290 @@ export function PreviousTravelForm({ currentForm }: Props) {
   const immigrationRequestByAnotherPersonConfirmation = form.watch(
     "immigrationRequestByAnotherPersonConfirmation",
   );
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitPreviousTravel, isPending } =
+    trpc.formsRouter.submitPreviousTravel.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+        router.push(`/formulario/${profileId}?formStep=6`);
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: savePreviousTravel, isPending: isSavePending } =
+    trpc.formsRouter.savePreviousTravel.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
 
   useEffect(() => {
-    if (currentForm && currentForm.USALastTravel.length > 0) {
-      setUSALastTravel(currentForm.USALastTravel);
-      setUSALastTravelIndex(currentForm.USALastTravel.length);
+    console.log(currentForm.USALastTravel);
+
+    if (currentForm.USALastTravel.length > 0) {
+      setCurrentUSALastTravelIndex(currentForm.USALastTravel.length);
+
+      const USALastTravelFiltered = currentForm.USALastTravel.filter(
+        (item) => item.arriveDate !== undefined && item.estimatedTime !== "",
+      );
+
+      setUSALastTravelItems(USALastTravelFiltered);
     }
 
-    if (currentForm && currentForm.americanLicense.length > 0) {
-      setAmericanLicense(currentForm.americanLicense);
-      setAmericanLicenseIndex(currentForm.americanLicense.length);
+    if (currentForm.americanLicense.length > 0) {
+      setCurrentAmericanLicenseIndex(currentForm.americanLicense.length);
+
+      const americanLicenseFiltered = currentForm.americanLicense.filter(
+        (item) => item.licenseNumber !== "" && item.state !== "",
+      );
+
+      setAmericanLicenseItems(americanLicenseFiltered);
     }
-  }, [
-    currentForm,
-    setUSALastTravel,
-    setUSALastTravelIndex,
-    setAmericanLicense,
-    setAmericanLicenseIndex,
-  ]);
+  }, [currentForm]);
 
   useEffect(() => {
-    form.setValue("visaNumber", "Não sei");
-  }, [noVisaNumber]);
+    if (resetUSALastTravelFields) {
+      form.setValue(
+        `USALastTravel.${currentUSALastTravelIndex}.arriveDate`,
+        undefined,
+      );
+      form.setValue(
+        `USALastTravel.${currentUSALastTravelIndex}.estimatedTime`,
+        "",
+      );
 
-  function handleArrivalDate(value: Date, index: number) {
-    if (!USALastTravel) return;
+      setResetUSALastTravelFields(false);
+    }
 
-    const arr = [...USALastTravel];
+    if (resetAmericanLicenseFields) {
+      form.setValue(
+        `americanLicense.${currentAmericanLicenseIndex}.licenseNumber`,
+        "",
+      );
+      form.setValue(`americanLicense.${currentAmericanLicenseIndex}.state`, "");
 
-    arr[index].arriveDate = value;
+      setResetAmericanLicenseFields(false);
+    }
+  }, [resetUSALastTravelFields, resetAmericanLicenseFields]);
 
-    setUSALastTravel(arr);
-  }
+  useEffect(() => {
+    if (redirectStep !== null) {
+      const values = form.getValues();
 
-  function handleEstimatedTime(value: string, index: number) {
-    if (!USALastTravel) return;
-
-    const arr = [...USALastTravel];
-
-    arr[index].estimatedTime = value;
-
-    setUSALastTravel(arr);
-  }
-
-  function handleAddUSALastTravelInput() {
-    if (!USALastTravel) return;
-
-    setIsUSALastTravelFetching(true);
-
-    axios
-      .post("/api/form/usa-last-travel/create", {
-        usaLastTravel: USALastTravel,
-        formId: params.formId,
-      })
-      .then((res) => {
-        setUSALastTravelIndex(USALastTravelIndex + 1);
-        setUSALastTravel(res.data.updatedUSALastTravel);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(error.response.data);
-      })
-      .finally(() => {
-        setIsUSALastTravelFetching(false);
+      savePreviousTravel({
+        profileId,
+        redirectStep,
+        hasBeenOnUSAConfirmation:
+          values.hasBeenOnUSAConfirmation ??
+          currentForm.hasBeenOnUSAConfirmation,
+        USALastTravel:
+          USALastTravelItems.length > 0
+            ? (USALastTravelItems as {
+                arriveDate: Date;
+                estimatedTime: string;
+              }[])
+            : currentForm.USALastTravel,
+        americanLicenseToDriveConfirmation:
+          values.americanLicenseToDriveConfirmation ??
+          currentForm.americanLicenseToDriveConfirmation,
+        americanLicense:
+          americanLicenseItems.length > 0
+            ? americanLicenseItems
+            : currentForm.americanLicense,
+        USAVisaConfirmation:
+          values.USAVisaConfirmation ?? currentForm.USAVisaConfirmation,
+        visaIssuingDate:
+          values.visaIssuingDate !== undefined
+            ? values.visaIssuingDate
+            : !currentForm.visaIssuingDate
+              ? undefined
+              : currentForm.visaIssuingDate,
+        visaNumber:
+          values.visaNumber !== ""
+            ? values.visaNumber
+            : !currentForm.visaNumber
+              ? ""
+              : currentForm.visaNumber,
+        newVisaConfirmation:
+          values.newVisaConfirmation ?? currentForm.newVisaConfirmation,
+        sameCountryResidenceConfirmation:
+          values.sameCountryResidenceConfirmation ??
+          currentForm.sameCountryResidenceConfirmation,
+        sameVisaTypeConfirmation:
+          values.sameVisaTypeConfirmation ??
+          currentForm.sameVisaTypeConfirmation,
+        fingerprintsProvidedConfirmation:
+          values.fingerprintsProvidedConfirmation ??
+          currentForm.fingerprintsProvidedConfirmation,
+        lostVisaConfirmation:
+          values.lostVisaConfirmation ?? currentForm.lostVisaConfirmation,
+        lostVisaDetails:
+          values.lostVisaDetails !== ""
+            ? values.lostVisaDetails
+            : !currentForm.lostVisaDetails
+              ? ""
+              : currentForm.lostVisaDetails,
+        canceledVisaConfirmation:
+          values.canceledVisaConfirmation ??
+          currentForm.canceledVisaConfirmation,
+        canceledVisaDetails:
+          values.canceledVisaDetails !== ""
+            ? values.canceledVisaDetails
+            : !currentForm.canceledVisaDetails
+              ? ""
+              : currentForm.canceledVisaDetails,
+        deniedVisaConfirmation:
+          values.deniedVisaConfirmation ?? currentForm.deniedVisaConfirmation,
+        deniedVisaDetails:
+          values.deniedVisaDetails !== ""
+            ? values.deniedVisaDetails
+            : !currentForm.deniedVisaDetails
+              ? ""
+              : currentForm.deniedVisaDetails,
+        consularPost:
+          values.consularPost !== ""
+            ? values.consularPost
+            : !currentForm.consularPost
+              ? ""
+              : currentForm.consularPost,
+        deniedVisaType:
+          values.deniedVisaType !== ""
+            ? values.deniedVisaType
+            : !currentForm.deniedVisaType
+              ? ""
+              : currentForm.deniedVisaType,
+        immigrationRequestByAnotherPersonConfirmation:
+          values.immigrationRequestByAnotherPersonConfirmation ??
+          currentForm.immigrationRequestByAnotherPersonConfirmation,
+        immigrationRequestByAnotherPersonDetails:
+          values.immigrationRequestByAnotherPersonDetails !== ""
+            ? values.immigrationRequestByAnotherPersonDetails
+            : !currentForm.immigrationRequestByAnotherPersonDetails
+              ? ""
+              : currentForm.immigrationRequestByAnotherPersonDetails,
       });
-  }
-
-  function handleRemoveUSALastTravelInput(id: string) {
-    if (!USALastTravel) return;
-
-    setIsUSALastTravelFetching(true);
-
-    axios
-      .put("/api/form/usa-last-travel/delete", {
-        usaLastTravelId: id,
-        usaLastTravel: USALastTravel,
-        formId: params.formId,
-      })
-      .then((res) => {
-        setUSALastTravelIndex(USALastTravelIndex - 1);
-        setUSALastTravel(res.data.updatedUSALastTravel);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(error.response.data);
-      })
-      .finally(() => {
-        setIsUSALastTravelFetching(false);
-      });
-  }
-
-  function handleLicenseNumber(value: string, index: number) {
-    if (!americanLicense) return;
-
-    const arr = [...americanLicense];
-
-    arr[index].licenseNumber = value;
-
-    setAmericanLicense(arr);
-  }
-
-  function handleState(value: string, index: number) {
-    if (!americanLicense) return;
-
-    const arr = [...americanLicense];
-
-    arr[index].state = value;
-
-    setAmericanLicense(arr);
-  }
-
-  function handleAddAmericanLicenseInput() {
-    if (!americanLicense) return;
-
-    setIsAmericanLicenseFetching(true);
-
-    axios
-      .post("/api/form/american-license/create", {
-        americanLicense,
-        formId: params.formId,
-      })
-      .then((res) => {
-        setAmericanLicenseIndex(americanLicenseIndex + 1);
-        setAmericanLicense(res.data.updatedAmericanLicense);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(error.response.data);
-      })
-      .finally(() => {
-        setIsAmericanLicenseFetching(false);
-      });
-  }
-
-  function handleRemoveAmericanLicenseInput(id: string) {
-    if (!americanLicense) return;
-
-    setIsAmericanLicenseFetching(true);
-
-    axios
-      .put("/api/form/american-license/delete", {
-        americanLicenseId: id,
-        americanLicense,
-        formId: params.formId,
-      })
-      .then((res) => {
-        setAmericanLicenseIndex(americanLicenseIndex - 1);
-        setAmericanLicense(res.data.updatedAmericanLicense);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(error.response.data);
-      })
-      .finally(() => {
-        setIsAmericanLicenseFetching(false);
-      });
-  }
+      setRedirectStep(null);
+    }
+  }, [redirectStep, setRedirectStep, savePreviousTravel, profileId]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    submitPreviousTravel({
+      ...values,
+      USALastTravel: USALastTravelItems as {
+        arriveDate: Date;
+        estimatedTime: string;
+      }[],
+      americanLicense: americanLicenseItems,
+      profileId,
+      step: 6,
+    });
+  }
+
+  function addUSALastTravel() {
+    form
+      .trigger([
+        `USALastTravel.${currentUSALastTravelIndex}.arriveDate`,
+        `USALastTravel.${currentUSALastTravelIndex}.estimatedTime`,
+      ])
+      .then(() => {
+        if (Object.keys(form.formState.errors).length === 0) {
+          form.setValue("USALastTravel", [
+            ...USALastTravel,
+            {
+              arriveDate: undefined,
+              estimatedTime: "",
+            },
+          ]);
+
+          const USALastTravelFiltered = USALastTravel.filter(
+            (item) =>
+              item.arriveDate !== undefined || item.estimatedTime !== "",
+          );
+
+          setCurrentUSALastTravelIndex((prev) => prev + 1);
+          setUSALastTravelItems(USALastTravelFiltered);
+          setResetUSALastTravelFields(true);
+        }
+      });
+  }
+
+  function removeUSALastTravel(index: number) {
+    const newArr = USALastTravel.filter((_, i) => i !== index);
+
+    form.setValue("USALastTravel", newArr);
+
+    const USALastTravelFiltered = newArr.filter(
+      (item) => item.arriveDate !== undefined && item.estimatedTime !== "",
+    );
+
+    setCurrentUSALastTravelIndex((prev) => prev - 1);
+    setUSALastTravelItems(USALastTravelFiltered);
+  }
+
+  function addAmericanLicense() {
+    form
+      .trigger([
+        `americanLicense.${currentAmericanLicenseIndex}.licenseNumber`,
+        `americanLicense.${currentAmericanLicenseIndex}.state`,
+      ])
+      .then(() => {
+        if (Object.keys(form.formState.errors).length === 0) {
+          form.setValue("americanLicense", [
+            ...americanLicense,
+            {
+              licenseNumber: "",
+              state: "",
+            },
+          ]);
+
+          const americanLicenseFiltered = americanLicense.filter(
+            (item) => item.licenseNumber !== "" || item.state !== "",
+          );
+
+          setCurrentAmericanLicenseIndex((prev) => prev + 1);
+          setAmericanLicenseItems(americanLicenseFiltered);
+          setResetAmericanLicenseFields(true);
+        }
+      });
+  }
+
+  function removeAmericanLicense(index: number) {
+    const newArr = americanLicense.filter((_, i) => i !== index);
+
+    form.setValue("americanLicense", newArr);
+
+    const americanLicenseFiltered = newArr.filter(
+      (item) => item.licenseNumber !== "" && item.state !== "",
+    );
+
+    setCurrentAmericanLicenseIndex((prev) => prev - 1);
+    setAmericanLicenseItems(americanLicenseFiltered);
   }
 
   return (
@@ -442,8 +625,8 @@ export function PreviousTravelForm({ currentForm }: Props) {
         </h2>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
-          <div className="w-full flex flex-col gap-4">
-            <div className="w-full grid grid-cols-1 gap-4">
+          <div className="w-full flex flex-col">
+            <div className="w-full grid grid-cols-1 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="hasBeenOnUSAConfirmation"
@@ -455,6 +638,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -477,154 +661,168 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
 
-              {hasBeenOnUSAConfirmation === "Sim" && (
-                <div className="w-full bg-secondary p-4 flex flex-col space-y-8">
-                  <span className="text-foreground text-base font-medium">
+              <div
+                className={cn(
+                  "w-full bg-secondary p-4 space-y-6",
+                  hasBeenOnUSAConfirmation === "Não" && "hidden",
+                )}
+              >
+                <div className="w-full flex flex-col gap-2">
+                  <span className="text-base text-foreground font-medium">
                     Informe as datas das suas últimas 5 viagens aos EUA (data de
                     entrada) e tempo de permanência
                   </span>
 
-                  <div className="flex flex-col gap-6">
-                    {USALastTravel ? (
-                      USALastTravel.map((obj, i) => (
-                        <div
-                          key={obj.id}
-                          className="w-full flex sm:items-end gap-4"
-                        >
-                          <div className="w-full flex flex-col sm:flex-row gap-4">
-                            <div className="w-full flex flex-col gap-2">
-                              <label className="text-foreground text-sm font-medium">
-                                Data prevista de chegada aos EUA
-                              </label>
+                  <div className="w-full flex flex-col lg:flex-row gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`USALastTravel.${currentUSALastTravelIndex}.arriveDate`}
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel className="text-foreground">
+                            Data prevista de chegada aos EUA
+                          </FormLabel>
 
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                      "w-full bg-background h-12 pl-3 text-left border-secondary font-normal group",
-                                      !obj.arriveDate &&
-                                        "text-muted-foreground",
-                                    )}
-                                  >
-                                    {obj.arriveDate ? (
-                                      format(obj.arriveDate, "PPP", {
-                                        locale: ptBR,
-                                      })
-                                    ) : (
-                                      <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
-                                        Selecione a data
-                                      </span>
-                                    )}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                  </Button>
-                                </PopoverTrigger>
-
-                                <PopoverContent
-                                  className="w-auto p-0"
-                                  align="start"
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  disabled={isPending || isSavePending}
+                                  variant="date"
+                                  className={cn(
+                                    !field.value && "text-muted-foreground",
+                                  )}
                                 >
-                                  <Calendar
-                                    mode="single"
-                                    locale={ptBR}
-                                    selected={obj.arriveDate!}
-                                    onSelect={(
-                                      day,
-                                      selectedDay,
-                                      activeModifiers,
-                                      e,
-                                    ) => handleArrivalDate(selectedDay, i)}
-                                    disabled={(date) =>
-                                      date > new Date() ||
-                                      date < new Date("1900-01-01")
-                                    }
-                                    captionLayout="dropdown"
-                                    fromYear={1900}
-                                    toYear={currentYear}
-                                    classNames={{
-                                      day_hidden: "invisible",
-                                      dropdown:
-                                        "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                                      caption_dropdowns: "flex gap-3",
-                                      vhidden: "hidden",
-                                      caption_label: "hidden",
-                                    }}
-                                    initialFocus
+                                  <CalendarIcon
+                                    strokeWidth={1.5}
+                                    className="h-5 w-5 text-muted-foreground flex-shrink-0"
                                   />
-                                </PopoverContent>
-                              </Popover>
-                            </div>
 
-                            <div className="w-full flex flex-col gap-2">
-                              <label className="text-foreground text-sm font-medium">
-                                Tempo estimado de permanência nos EUA
-                              </label>
-                              <Input
-                                value={obj.estimatedTime!}
-                                onChange={(event) =>
-                                  handleEstimatedTime(event.target.value, i)
+                                  <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                                  {field.value ? (
+                                    format(field.value, "PPP", {
+                                      locale: ptBR,
+                                    })
+                                  ) : (
+                                    <span className="text-muted-foreground">
+                                      Selecione a data
+                                    </span>
+                                  )}
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                locale={ptBR}
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date < new Date("1900-01-01")
                                 }
+                                captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={2100}
+                                classNames={{
+                                  day_hidden: "invisible",
+                                  dropdown:
+                                    "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  caption_dropdowns: "flex gap-3",
+                                  vhidden: "hidden",
+                                  caption_label: "hidden",
+                                }}
+                                initialFocus
                               />
-                            </div>
-                          </div>
+                            </PopoverContent>
+                          </Popover>
 
-                          {i === USALastTravelIndex - 1 ? (
-                            <Button
-                              type="button"
-                              size="xl"
-                              className="px-3"
-                              disabled={
-                                obj.estimatedTime === "" ||
-                                !obj.arriveDate ||
-                                isUSALastTravelFetching
-                              }
-                              onClick={handleAddUSALastTravelInput}
-                            >
-                              {isUSALastTravelFetching ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                <Plus />
-                              )}
-                            </Button>
-                          ) : (
-                            <Button
-                              type="button"
-                              size="xl"
-                              className="px-3"
-                              onClick={() =>
-                                handleRemoveUSALastTravelInput(obj.id)
-                              }
-                              disabled={isUSALastTravelFetching}
-                            >
-                              {isUSALastTravelFetching ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                <Trash />
-                              )}
-                            </Button>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div>Loading...</div>
-                    )}
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="w-full flex flex-col gap-4 lg:flex-row lg:gap-2">
+                      <FormField
+                        control={form.control}
+                        name={`USALastTravel.${currentUSALastTravelIndex}.estimatedTime`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel className="text-foreground">
+                              Tempo estimado de permanência nos EUA
+                            </FormLabel>
+
+                            <FormControl>
+                              <Input
+                                disabled={isPending || isSavePending}
+                                {...field}
+                              />
+                            </FormControl>
+
+                            <FormMessage className="text-sm text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button
+                        disabled={isPending || isSavePending}
+                        type="button"
+                        size="xl"
+                        className="px-3 shrink-0 lg:mt-[32px]"
+                        onClick={addUSALastTravel}
+                      >
+                        <Plus />
+                      </Button>
+                    </div>
                   </div>
-
-                  {USALastTravelError.length > 0 && (
-                    <span className="text-sm text-red-500">
-                      {USALastTravelError}
-                    </span>
-                  )}
                 </div>
-              )}
+
+                {USALastTravelItems.length > 0 && (
+                  <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
+                    {USALastTravelItems.map((item, index) => (
+                      <div
+                        key={`otherName-${index}`}
+                        className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
+                      >
+                        <div className="w-full flex flex-col items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">
+                            Data: {format(item.arriveDate!, "dd/MM/yyyy")}
+                          </span>
+
+                          <div className="w-full h-px bg-primary" />
+
+                          <span className="text-sm font-medium text-foreground">
+                            Estimado: {item.estimatedTime}
+                          </span>
+                        </div>
+
+                        <Button
+                          type="button"
+                          variant="link"
+                          size="icon"
+                          className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
+                          disabled={isPending || isSavePending}
+                          onClick={() => removeUSALastTravel(index)}
+                        >
+                          <X strokeWidth={1} size={20} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="americanLicenseToDriveConfirmation"
@@ -636,6 +834,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -658,98 +857,110 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
 
-              {americanLicenseToDriveConfirmation === "Sim" && (
-                <div className="w-full bg-secondary p-4 flex flex-col space-y-8">
-                  <div className="flex flex-col gap-6">
-                    {americanLicense ? (
-                      americanLicense.map((obj, i) => (
-                        <div
-                          key={`american-license-${i}`}
-                          className="w-full flex sm:items-end gap-4"
-                        >
-                          <div className="w-full flex flex-col sm:flex-row gap-4">
-                            <div className="w-full flex flex-col gap-2">
-                              <label className="text-foreground text-sm font-medium">
-                                Número da licença
-                              </label>
-                              <Input
-                                value={obj.licenseNumber!}
-                                onChange={(event) =>
-                                  handleLicenseNumber(event.target.value, i)
-                                }
-                              />
-                            </div>
+              <div
+                className={cn(
+                  "w-full bg-secondary p-4 flex flex-col space-y-6",
+                  americanLicenseToDriveConfirmation === "Não" && "hidden",
+                )}
+              >
+                <div className="w-full flex flex-col lg:flex-row gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`americanLicense.${currentAmericanLicenseIndex}.licenseNumber`}
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel className="text-foreground">
+                          Número da licença
+                        </FormLabel>
 
-                            <div className="w-full flex flex-col gap-2">
-                              <label className="text-foreground text-sm font-medium">
-                                Estado
-                              </label>
-                              <Input
-                                value={obj.state!}
-                                onChange={(event) =>
-                                  handleState(event.target.value, i)
-                                }
-                              />
-                            </div>
-                          </div>
+                        <FormControl>
+                          <Input
+                            disabled={isPending || isSavePending}
+                            {...field}
+                          />
+                        </FormControl>
 
-                          {i === americanLicenseIndex - 1 ? (
-                            <Button
-                              type="button"
-                              size="xl"
-                              className="px-3"
-                              disabled={
-                                obj.licenseNumber === "" ||
-                                obj.state === "" ||
-                                isAmericanLicenseFetching
-                              }
-                              onClick={handleAddAmericanLicenseInput}
-                            >
-                              {isAmericanLicenseFetching ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                <Plus />
-                              )}
-                            </Button>
-                          ) : (
-                            <Button
-                              type="button"
-                              size="xl"
-                              className="px-3"
-                              onClick={() =>
-                                handleRemoveAmericanLicenseInput(obj.id)
-                              }
-                              disabled={isAmericanLicenseFetching}
-                            >
-                              {isAmericanLicenseFetching ? (
-                                <Loader2 className="animate-spin" />
-                              ) : (
-                                <Trash />
-                              )}
-                            </Button>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div>Loading...</div>
+                        <FormMessage className="text-sm text-destructive" />
+                      </FormItem>
                     )}
-                  </div>
+                  />
 
-                  {americanLicenseError.length > 0 && (
-                    <span className="text-sm text-red-500">
-                      {americanLicenseError}
-                    </span>
-                  )}
+                  <div className="w-full flex flex-col gap-4 lg:flex-row lg:gap-2">
+                    <FormField
+                      control={form.control}
+                      name={`americanLicense.${currentAmericanLicenseIndex}.state`}
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel className="text-foreground">
+                            Estado
+                          </FormLabel>
+
+                          <FormControl>
+                            <Input
+                              disabled={isPending || isSavePending}
+                              {...field}
+                            />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="button"
+                      size="xl"
+                      className="px-3 shrink-0 lg:mt-[32px]"
+                      disabled={isPending || isSavePending}
+                      onClick={addAmericanLicense}
+                    >
+                      <Plus />
+                    </Button>
+                  </div>
                 </div>
-              )}
+
+                {americanLicenseItems.length > 0 && (
+                  <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
+                    {americanLicenseItems.map((item, index) => (
+                      <div
+                        key={`otherName-${index}`}
+                        className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
+                      >
+                        <div className="w-full flex flex-col items-center gap-2">
+                          <span className="text-sm font-medium text-foreground">
+                            Nº Licença: {item.licenseNumber}
+                          </span>
+
+                          <div className="w-full h-px bg-primary" />
+
+                          <span className="text-sm font-medium text-foreground">
+                            Estado: {item.state}
+                          </span>
+                        </div>
+
+                        <Button
+                          type="button"
+                          variant="link"
+                          size="icon"
+                          className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
+                          disabled={isPending || isSavePending}
+                          onClick={() => removeAmericanLicense(index)}
+                        >
+                          <X strokeWidth={1} size={20} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="USAVisaConfirmation"
@@ -761,6 +972,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -783,7 +995,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -801,7 +1013,11 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            disabled={USAVisaConfirmation === "Não"}
+                            disabled={
+                              USAVisaConfirmation === "Não" ||
+                              isPending ||
+                              isSavePending
+                            }
                             variant={"outline"}
                             className={cn(
                               "w-full h-12 pl-3 text-left border-secondary font-normal group",
@@ -845,7 +1061,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </PopoverContent>
                     </Popover>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -862,201 +1078,185 @@ export function PreviousTravelForm({ currentForm }: Props) {
                     <FormControl>
                       <Input
                         disabled={
-                          noVisaNumber === true || USAVisaConfirmation === "Não"
+                          USAVisaConfirmation === "Não" ||
+                          isPending ||
+                          isSavePending
                         }
                         {...field}
                       />
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
-
-              <div className="flex flex-col justify-between">
-                <label
-                  htmlFor="noVisaNumber"
-                  className="text-sm text-foreground font-medium"
-                >
-                  Não sei o número
-                </label>
-
-                <div className="h-12">
-                  <Checkbox
-                    disabled={USAVisaConfirmation === "Não"}
-                    id="noVisaNumber"
-                    checked={noVisaNumber}
-                    onCheckedChange={setNoVisaNumber}
-                  />
-                </div>
-              </div>
             </div>
 
-            <span className="text-foreground text-base font-medium mt-6">
+            <span className="text-foreground text-base font-medium mb-6">
               Responda as próximas 6 perguntas somente se você está{" "}
               <strong>renovando</strong> o visto
             </span>
 
-            <div className="w-full grid grid-cols-1 gap-4">
-              <FormField
-                control={form.control}
-                name="newVisaConfirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">
-                      Está solicitando o novo visto do mesmo País ou localização
-                      daquele concedido previamente?
-                    </FormLabel>
+            <FormField
+              control={form.control}
+              name="newVisaConfirmation"
+              render={({ field }) => (
+                <FormItem className="mb-10">
+                  <FormLabel className="text-foreground">
+                    Está solicitando o novo visto do mesmo País ou localização
+                    daquele concedido previamente?
+                  </FormLabel>
 
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
+                  <FormControl>
+                    <RadioGroup
+                      disabled={isPending || isSavePending}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Não" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
+                        <FormLabel className="font-normal">Não</FormLabel>
+                      </FormItem>
 
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sim" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
+                        <FormLabel className="font-normal">Sim</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
-                  </FormItem>
-                )}
-              />
+                  <FormMessage className="text-sm text-destructive" />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="sameCountryResidenceConfirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">
-                      Este País é o mesmo onde está localizada sua residência
-                      principal?
-                    </FormLabel>
+            <FormField
+              control={form.control}
+              name="sameCountryResidenceConfirmation"
+              render={({ field }) => (
+                <FormItem className="mb-10">
+                  <FormLabel className="text-foreground">
+                    Este País é o mesmo onde está localizada sua residência
+                    principal?
+                  </FormLabel>
 
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
+                  <FormControl>
+                    <RadioGroup
+                      disabled={isPending || isSavePending}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Não" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
+                        <FormLabel className="font-normal">Não</FormLabel>
+                      </FormItem>
 
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sim" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
+                        <FormLabel className="font-normal">Sim</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
-                  </FormItem>
-                )}
-              />
-            </div>
+                  <FormMessage className="text-sm text-destructive" />
+                </FormItem>
+              )}
+            />
 
-            <div className="w-full grid grid-cols-1 gap-4">
-              <FormField
-                control={form.control}
-                name="sameVisaTypeConfirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">
-                      Está solicitando o mesmo tipo de visto concedido
-                      anteriormente?
-                    </FormLabel>
+            <FormField
+              control={form.control}
+              name="sameVisaTypeConfirmation"
+              render={({ field }) => (
+                <FormItem className="mb-10">
+                  <FormLabel className="text-foreground">
+                    Está solicitando o mesmo tipo de visto concedido
+                    anteriormente?
+                  </FormLabel>
 
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
+                  <FormControl>
+                    <RadioGroup
+                      disabled={isPending || isSavePending}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Não" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
+                        <FormLabel className="font-normal">Não</FormLabel>
+                      </FormItem>
 
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sim" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
+                        <FormLabel className="font-normal">Sim</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
-                  </FormItem>
-                )}
-              />
+                  <FormMessage className="text-sm text-destructive" />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="fingerprintsProvidedConfirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">
-                      Forneceu digitais dos 10 dedos
-                    </FormLabel>
+            <FormField
+              control={form.control}
+              name="fingerprintsProvidedConfirmation"
+              render={({ field }) => (
+                <FormItem className="mb-10">
+                  <FormLabel className="text-foreground">
+                    Forneceu digitais dos 10 dedos
+                  </FormLabel>
 
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
+                  <FormControl>
+                    <RadioGroup
+                      disabled={isPending || isSavePending}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Não" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
+                        <FormLabel className="font-normal">Não</FormLabel>
+                      </FormItem>
 
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sim" />
+                        </FormControl>
 
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
+                        <FormLabel className="font-normal">Sim</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
-                  </FormItem>
-                )}
-              />
-            </div>
+                  <FormMessage className="text-sm text-destructive" />
+                </FormItem>
+              )}
+            />
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="lostVisaConfirmation"
@@ -1068,6 +1268,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -1090,7 +1291,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -1106,17 +1307,21 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </FormLabel>
 
                       <FormControl>
-                        <Textarea className="resize-none" {...field} />
+                        <Textarea
+                          disabled={isPending || isSavePending}
+                          className="resize-none"
+                          {...field}
+                        />
                       </FormControl>
 
-                      <FormMessage className="text-sm text-red-500" />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
               )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="canceledVisaConfirmation"
@@ -1128,6 +1333,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -1150,7 +1356,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -1166,17 +1372,21 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </FormLabel>
 
                       <FormControl>
-                        <Textarea className="resize-none" {...field} />
+                        <Textarea
+                          disabled={isPending || isSavePending}
+                          className="resize-none"
+                          {...field}
+                        />
                       </FormControl>
 
-                      <FormMessage className="text-sm text-red-500" />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
               )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-4 mb-10">
               <FormField
                 control={form.control}
                 name="deniedVisaConfirmation"
@@ -1188,6 +1398,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -1210,7 +1421,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -1223,15 +1434,19 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       name="deniedVisaDetails"
                       render={({ field }) => (
                         <FormItem className="w-full">
-                          <FormLabel className="text-foreground text-sm">
+                          <FormLabel className="text-foreground">
                             Em qual ano? Explique o ocorrido
                           </FormLabel>
 
                           <FormControl>
-                            <Textarea className="resize-none" {...field} />
+                            <Textarea
+                              disabled={isPending || isSavePending}
+                              className="resize-none"
+                              {...field}
+                            />
                           </FormControl>
 
-                          <FormMessage className="text-sm text-red-500" />
+                          <FormMessage className="text-sm text-destructive" />
                         </FormItem>
                       )}
                     />
@@ -1243,15 +1458,18 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       name="consularPost"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground text-sm">
+                          <FormLabel className="text-foreground">
                             Qual posto consular do Brasil?
                           </FormLabel>
 
                           <FormControl>
-                            <Input {...field} />
+                            <Input
+                              disabled={isPending || isSavePending}
+                              {...field}
+                            />
                           </FormControl>
 
-                          <FormMessage className="text-sm text-red-500" />
+                          <FormMessage className="text-sm text-destructive" />
                         </FormItem>
                       )}
                     />
@@ -1261,15 +1479,18 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       name="deniedVisaType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground text-sm">
+                          <FormLabel className="text-foreground">
                             Categoria/tipo de visto negado
                           </FormLabel>
 
                           <FormControl>
-                            <Input {...field} />
+                            <Input
+                              disabled={isPending || isSavePending}
+                              {...field}
+                            />
                           </FormControl>
 
-                          <FormMessage className="text-sm text-red-500" />
+                          <FormMessage className="text-sm text-destructive" />
                         </FormItem>
                       )}
                     />
@@ -1292,6 +1513,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
 
                     <FormControl>
                       <RadioGroup
+                        disabled={isPending || isSavePending}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -1314,7 +1536,7 @@ export function PreviousTravelForm({ currentForm }: Props) {
                       </RadioGroup>
                     </FormControl>
 
-                    <FormMessage className="text-sm text-red-500" />
+                    <FormMessage className="text-sm text-destructive" />
                   </FormItem>
                 )}
               />
@@ -1325,15 +1547,19 @@ export function PreviousTravelForm({ currentForm }: Props) {
                   name="immigrationRequestByAnotherPersonDetails"
                   render={({ field }) => (
                     <FormItem className="w-full bg-secondary p-4">
-                      <FormLabel className="text-foreground text-sm">
+                      <FormLabel className="text-foreground">
                         Explique o motivo
                       </FormLabel>
 
                       <FormControl>
-                        <Textarea className="resize-none" {...field} />
+                        <Textarea
+                          disabled={isPending || isSavePending}
+                          className="resize-none"
+                          {...field}
+                        />
                       </FormControl>
 
-                      <FormMessage className="text-sm text-red-500" />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -1347,22 +1573,37 @@ export function PreviousTravelForm({ currentForm }: Props) {
               variant="outline"
               type="button"
               className="w-full flex items-center gap-2 sm:w-fit"
+              disabled={isPending || isSavePending}
             >
-              Salvar
-              <Save className="size-5" strokeWidth={1.5} />
+              {isSavePending ? (
+                <>
+                  Salvando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
+              ) : (
+                <>
+                  Salvar
+                  <Save className="size-5" strokeWidth={1.5} />
+                </>
+              )}
             </Button>
 
             <Button
               size="xl"
-              // disabled={isSubmitting || isSaving}
+              disabled={isPending || isSavePending}
               type="submit"
               className="w-full flex items-center gap-2 sm:w-fit"
             >
-              Enviar{" "}
-              {false ? (
-                <Loader2 className="animate-spin" />
+              {isPending ? (
+                <>
+                  Enviando
+                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                </>
               ) : (
-                <ArrowRight className="hidden" />
+                <>
+                  Enviar
+                  <ArrowRight className="size-5" strokeWidth={1.5} />
+                </>
               )}
             </Button>
           </div>

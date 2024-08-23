@@ -1,10 +1,7 @@
 import {
-  AmericanLicense,
   Course,
   FamilyLivingInTheUSADetails,
-  OtherPeopleTraveling,
   PreviousJobs,
-  USALastTravel,
 } from "@prisma/client";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { create } from "zustand";
@@ -14,26 +11,6 @@ interface IUseFormStore {
   setSubmitting: (value: boolean) => void;
   isSaving: boolean;
   setSaving: (value: boolean) => void;
-  otherPeopleTraveling: OtherPeopleTraveling[] | null;
-  setOtherPeopleTraveling: (value: OtherPeopleTraveling[]) => void;
-  otherPeopleTravelingIndex: number;
-  setOtherPeopleTravelingIndex: (index: number) => void;
-  otherPeopleTravelingError: string;
-  setOtherPeopleTravelingError: (error: string) => void;
-  USALastTravel: USALastTravel[] | null;
-  setUSALastTravel: (value: USALastTravel[]) => void;
-  USALastTravelIndex: number;
-  setUSALastTravelIndex: (index: number) => void;
-  USALastTravelError: string;
-  setUSALastTravelError: (error: string) => void;
-  americanLicense: AmericanLicense[] | null;
-  setAmericanLicense: (value: AmericanLicense[]) => void;
-  americanLicenseIndex: number;
-  setAmericanLicenseIndex: (index: number) => void;
-  americanLicenseError: string;
-  setAmericanLicenseError: (error: string) => void;
-  noVisaNumber: CheckedState;
-  setNoVisaNumber: (value: CheckedState) => void;
   familyLivingInTheUSA: FamilyLivingInTheUSADetails[] | null;
   setFamilyLivingInTheUSA: (value: FamilyLivingInTheUSADetails[]) => void;
   familyLivingInTheUSAIndex: number;
@@ -101,28 +78,6 @@ const useFormStore = create<IUseFormStore>((set) => ({
   setSubmitting: (value) => set({ isSubmitting: value }),
   isSaving: false,
   setSaving: (value) => set({ isSaving: value }),
-  otherPeopleTraveling: null,
-  setOtherPeopleTraveling: (value) => set({ otherPeopleTraveling: value }),
-  otherPeopleTravelingIndex: 1,
-  setOtherPeopleTravelingIndex: (index) =>
-    set({ otherPeopleTravelingIndex: index }),
-  otherPeopleTravelingError: "",
-  setOtherPeopleTravelingError: (error) =>
-    set({ otherPeopleTravelingError: error }),
-  USALastTravel: null,
-  setUSALastTravel: (value) => set({ USALastTravel: value }),
-  USALastTravelIndex: 1,
-  setUSALastTravelIndex: (index) => set({ USALastTravelIndex: index }),
-  USALastTravelError: "",
-  setUSALastTravelError: (error) => set({ USALastTravelError: error }),
-  americanLicense: null,
-  setAmericanLicense: (value) => set({ americanLicense: value }),
-  americanLicenseIndex: 1,
-  setAmericanLicenseIndex: (index) => set({ americanLicenseIndex: index }),
-  americanLicenseError: "",
-  setAmericanLicenseError: (error) => set({ americanLicenseError: error }),
-  noVisaNumber: false,
-  setNoVisaNumber: (value) => set({ noVisaNumber: value }),
   familyLivingInTheUSA: null,
   setFamilyLivingInTheUSA: (value) => set({ familyLivingInTheUSA: value }),
   familyLivingInTheUSAIndex: 1,

@@ -8,6 +8,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+  // namespace = "PrismaJson"
+  // clientOutput = "<finds it automatically>"
+  // (./ -> relative to schema, or an importable path to require() it)
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -151,80 +158,89 @@ model Session {
 }
 
 model Form {
-  id                                            String                        @id @default(auto()) @map("_id") @db.ObjectId
-  firstName                                     String?
-  lastName                                      String?
-  cpf                                           String?
-  warNameConfirmation                           Boolean?
-  warName                                       String?
-  otherNamesConfirmation                        Boolean?
-  otherNames                                    String[]
-  sex                                           String?
-  maritalStatus                                 String?
-  birthDate                                     DateTime?
-  birthCity                                     String?
-  birthState                                    String?
-  birthCountry                                  String?
-  originCountry                                 String?
-  otherNationalityConfirmation                  Boolean?
-  otherNationalityPassport                      String?
-  otherCountryResidentConfirmation              Boolean?
-  USSocialSecurityNumber                        String?
-  USTaxpayerIDNumber                            String?
-  address                                       String?
-  city                                          String?
-  state                                         String?
-  cep                                           String?
-  country                                       String?
-  postalAddressConfirmation                     Boolean?
-  otherPostalAddress                            String?
-  cel                                           String?
-  tel                                           String?
-  fiveYearsOtherTelConfirmation                 Boolean?
-  otherTel                                      String?
-  email                                         String?
-  fiveYearsOtherEmailConfirmation               Boolean?
-  otherEmail                                    String?
-  facebook                                      String?
-  linkedin                                      String?
-  instagram                                     String?
-  othersSocialMedia                             String?
-  passportNumber                                String?
-  passportCity                                  String?
-  passportState                                 String?
-  passportIssuingCountry                        String?
-  passportIssuingDate                           DateTime?
-  passportExpireDate                            DateTime?
-  passportLostConfirmation                      Boolean?
-  lostPassportNumber                            String?
-  lostPassportCountry                           String?
-  lostPassportDetails                           String?
-  travelItineraryConfirmation                   Boolean?
-  USAPreviewArriveDate                          DateTime?
-  arriveFlyNumber                               String?
-  arriveCity                                    String?
-  USAPreviewReturnDate                          DateTime?
-  returnFlyNumber                               String?
-  returnCity                                    String?
-  estimatedTimeOnUSA                            String?
-  visitLocations                                String[]
-  USACompleteAddress                            String?
-  USAZipCode                                    String?
-  USACity                                       String?
-  USAState                                      String?
-  payerNameOrCompany                            String?
-  payerTel                                      String?
-  payerAddress                                  String?
-  payerRelation                                 String?
-  payerEmail                                    String?
-  otherPeopleTravelingConfirmation              Boolean?
-  otherPeopleTraveling                          OtherPeopleTraveling[]
-  groupMemberConfirmation                       Boolean?
-  groupName                                     String?
-  hasBeenOnUSAConfirmation                      Boolean?
-  USALastTravel                                 USALastTravel[]
-  americanLicenseToDriveConfirmation            Boolean?
-  americanLicense                               AmericanLicense[]
+  id                               String    @id @default(auto()) @map("_id") @db.ObjectId
+  firstName                        String?
+  lastName                         String?
+  cpf                              String?
+  warNameConfirmation              Boolean?
+  warName                          String?
+  otherNamesConfirmation           Boolean?
+  otherNames                       String[]
+  sex                              String?
+  maritalStatus                    String?
+  birthDate                        DateTime?
+  birthCity                        String?
+  birthState                       String?
+  birthCountry                     String?
+  originCountry                    String?
+  otherNationalityConfirmation     Boolean?
+  otherNationalityPassport         String?
+  otherCountryResidentConfirmation Boolean?
+  USSocialSecurityNumber           String?
+  USTaxpayerIDNumber               String?
+  address                          String?
+  city                             String?
+  state                            String?
+  cep                              String?
+  country                          String?
+  postalAddressConfirmation        Boolean?
+  otherPostalAddress               String?
+  cel                              String?
+  tel                              String?
+  fiveYearsOtherTelConfirmation    Boolean?
+  otherTel                         String?
+  email                            String?
+  fiveYearsOtherEmailConfirmation  Boolean?
+  otherEmail                       String?
+  facebook                         String?
+  linkedin                         String?
+  instagram                        String?
+  othersSocialMedia                String?
+  passportNumber                   String?
+  passportCity                     String?
+  passportState                    String?
+  passportIssuingCountry           String?
+  passportIssuingDate              DateTime?
+  passportExpireDate               DateTime?
+  passportLostConfirmation         Boolean?
+  lostPassportNumber               String?
+  lostPassportCountry              String?
+  lostPassportDetails              String?
+  travelItineraryConfirmation      Boolean?
+  USAPreviewArriveDate             DateTime?
+  arriveFlyNumber                  String?
+  arriveCity                       String?
+  USAPreviewReturnDate             DateTime?
+  returnFlyNumber                  String?
+  returnCity                       String?
+  estimatedTimeOnUSA               String?
+  visitLocations                   String[]
+  USACompleteAddress               String?
+  USAZipCode                       String?
+  USACity                          String?
+  USAState                         String?
+  payerNameOrCompany               String?
+  payerTel                         String?
+  payerAddress                     String?
+  payerRelation                    String?
+  payerEmail                       String?
+  otherPeopleTravelingConfirmation Boolean?
+
+  /// [otherPeopleTravelingType]
+  otherPeopleTraveling Json[]
+
+  groupMemberConfirmation  Boolean?
+  groupName                String?
+  hasBeenOnUSAConfirmation Boolean?
+
+  /// [USALastTravelType]
+  USALastTravel Json[]
+
+  americanLicenseToDriveConfirmation Boolean?
+
+  /// [americanLicenseType]
+  americanLicense Json[]
+
   USAVisaConfirmation                           Boolean?
   visaIssuingDate                               DateTime?
   visaNumber                                    String?
@@ -339,30 +355,6 @@ model Form {
 enum Sex {
   Masculino
   Feminino
-}
-
-model OtherPeopleTraveling {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String?
-  relation String?
-  form     Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
-  formId   String  @db.ObjectId
-}
-
-model USALastTravel {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  arriveDate    DateTime?
-  estimatedTime String?
-  formId        String    @db.ObjectId
-  form          Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
-}
-
-model AmericanLicense {
-  id            String  @id @default(auto()) @map("_id") @db.ObjectId
-  licenseNumber String?
-  state         String?
-  formId        String  @db.ObjectId
-  form          Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
 }
 
 model FamilyLivingInTheUSADetails {

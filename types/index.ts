@@ -4,12 +4,30 @@ import {
   Course,
   FamilyLivingInTheUSADetails,
   Form,
-  OtherPeopleTraveling,
   PreviousJobs,
   Profile,
   USALastTravel,
   User,
 } from "@prisma/client";
+
+declare global {
+  namespace PrismaJson {
+    type otherPeopleTravelingType = {
+      name: string;
+      relation: string;
+    };
+
+    type USALastTravelType = {
+      arriveDate: Date;
+      estimatedTime: string;
+    };
+
+    type americanLicenseType = {
+      licenseNumber: string;
+      state: string;
+    };
+  }
+}
 
 export type PrimaryFormControl = {
   firstName: string;
@@ -166,9 +184,6 @@ export type PrimaryFormControl = {
 };
 
 export type FullForm = Form & {
-  otherPeopleTraveling: OtherPeopleTraveling[];
-  USALastTravel: USALastTravel[];
-  americanLicense: AmericanLicense[];
   familyLivingInTheUSA: FamilyLivingInTheUSADetails[];
   previousJobs: PreviousJobs[];
   courses: Course[];
