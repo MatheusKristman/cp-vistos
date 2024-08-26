@@ -10,8 +10,6 @@ import { MobileBtns } from "./mobile-btns";
 export function Header() {
   const session = useSession();
 
-  console.log(session);
-
   return (
     <header className="w-full bg-background h-20 lg:h-24 flex items-center">
       <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">

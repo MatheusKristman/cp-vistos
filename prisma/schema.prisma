@@ -309,52 +309,52 @@ model Form {
   /// [coursesType]
   courses Json[]
 
-  ClanTribeConfirmation              Boolean?
-  knownLanguage                      String?
-  lastTravelInFiveYearsConfirmation  Boolean?
-  lastTravelInFiveYears              String[]
-  charitableOrganizationConfirmation Boolean?
-  charitableOrganization             String[]
-  gunTrainingConfirmation            Boolean?
-  gunTrainingDetails                 String?
-  militaryServiceConfirmation        Boolean?
-  militaryServiceCountry             String?
-  militaryServiceLocation            String?
-  militaryServicePatent              String?
-  militaryServiceExpertise           String?
-  militaryServiceBeginDate           DateTime?
-  militaryServiceFinishDate          DateTime?
-  insurgencyOrganizationConfirmation Boolean?
-  insurgencyOrganizationDetails      String?
-  contagiousDiseaseConfirmation      Boolean?
-  phisicalMentalProblemConfirmation  Boolean?
-  crimeConfirmation                  Boolean?
-  drugsProblemConfirmation           Boolean?
-  lawViolateConfirmation             Boolean?
-  prostitutionConfirmation           Boolean?
-  moneyLaundryConfirmation           Boolean?
-  peopleTrafficConfirmation          Boolean?
-  helpPeopleTrafficConfirmation      Boolean?
-  parentPeopleTrafficConfirmation    Boolean?
-  spyConfirmation                    Boolean?
-  terrorismConfirmation              Boolean?
-  financialAssistanceConfirmation    Boolean?
-  terrorismMemberConfirmation        Boolean?
-  parentTerrorismConfirmation        Boolean?
-  genocideConfirmation               Boolean?
-  tortureConfirmation                Boolean?
-  assassinConfirmation               Boolean?
-  childSoldierConfirmation           Boolean?
-  religionLibertyConfirmation        Boolean?
-  abortConfirmation                  Boolean?
-  coerciveTransplantConfirmation     Boolean?
-  visaFraudConfirmation              Boolean?
-  deportedConfirmation               Boolean?
-  childCustodyConfirmation           Boolean?
-  lawViolationConfirmation           Boolean?
-  avoidTaxConfirmation               Boolean?
-  createdAt                          DateTime  @default(now())
-  updatedAt                          DateTime  @updatedAt
+  tribeParticipateConfirmation             Boolean?
+  languages                                String[]
+  fiveYearsOtherCountryTravelsConfirmation Boolean?
+  fiveYearsOtherCountryTravels             String[]
+  socialOrganizationConfirmation           Boolean?
+  socialOrganization                       String[]
+  weaponTrainingConfirmation               Boolean?
+  weaponTrainingDetails                    String?
+  militaryServiceConfirmation              Boolean?
+  militaryServiceCountry                   String?
+  militaryServiceLocal                     String?
+  militaryServicePatent                    String?
+  militaryServiceSpecialty                 String?
+  militaryServiceStartDate                 DateTime?
+  militaryServiceEndDate                   DateTime?
+  insurgencyOrganizationConfirmation       Boolean?
+  insurgencyOrganizationDetails            String?
+  contagiousDiseaseConfirmation            Boolean?
+  phisicalMentalProblemConfirmation        Boolean?
+  crimeConfirmation                        Boolean?
+  drugsProblemConfirmation                 Boolean?
+  lawViolateConfirmation                   Boolean?
+  prostitutionConfirmation                 Boolean?
+  moneyLaundryConfirmation                 Boolean?
+  peopleTrafficConfirmation                Boolean?
+  helpPeopleTrafficConfirmation            Boolean?
+  parentPeopleTrafficConfirmation          Boolean?
+  spyConfirmation                          Boolean?
+  terrorismConfirmation                    Boolean?
+  financialAssistanceConfirmation          Boolean?
+  terrorismMemberConfirmation              Boolean?
+  parentTerrorismConfirmation              Boolean?
+  genocideConfirmation                     Boolean?
+  tortureConfirmation                      Boolean?
+  assassinConfirmation                     Boolean?
+  childSoldierConfirmation                 Boolean?
+  religionLibertyConfirmation              Boolean?
+  abortConfirmation                        Boolean?
+  coerciveTransplantConfirmation           Boolean?
+  visaFraudConfirmation                    Boolean?
+  deportedConfirmation                     Boolean?
+  childCustodyConfirmation                 Boolean?
+  lawViolationConfirmation                 Boolean?
+  avoidTaxConfirmation                     Boolean?
+  createdAt                                DateTime  @default(now())
+  updatedAt                                DateTime  @updatedAt
 
   profileId String  @unique @db.ObjectId
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
