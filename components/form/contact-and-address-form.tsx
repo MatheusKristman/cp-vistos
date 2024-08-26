@@ -7,14 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as FormType } from "@prisma/client";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
@@ -30,32 +23,17 @@ const formSchema = z
     address: z.string().min(1, { message: "Campo obrigatório" }),
     city: z.string().min(1, { message: "Campo obrigatório" }),
     state: z.string().min(1, { message: "Campo obrigatório" }),
-    cep: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .min(9, { message: "CEP inválido" }),
+    cep: z.string().min(1, { message: "Campo obrigatório" }).min(9, { message: "CEP inválido" }),
     country: z.string().min(1, { message: "Campo obrigatório" }),
     postalAddressConfirmation: z.enum(["Sim", "Não"]),
     otherPostalAddress: z.string(),
-    cel: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .min(14, { message: "Celular inválido" }),
-    tel: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .min(13, { message: "Telefone inválido" }),
+    cel: z.string().min(1, { message: "Campo obrigatório" }).min(14, { message: "Celular inválido" }),
+    tel: z.string().min(1, { message: "Campo obrigatório" }).min(13, { message: "Telefone inválido" }),
     fiveYearsOtherTelConfirmation: z.enum(["Sim", "Não"]),
     otherTel: z.string(),
-    email: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .email({ message: "E-mail inválido" }),
+    email: z.string().min(1, { message: "Campo obrigatório" }).email({ message: "E-mail inválido" }),
     fiveYearsOtherEmailConfirmation: z.enum(["Sim", "Não"]),
-    otherEmail: z.union([
-      z.literal(""),
-      z.string().email({ message: "E-mail inválido" }),
-    ]),
+    otherEmail: z.union([z.literal(""), z.string().email({ message: "E-mail inválido" })]),
     facebook: z.string(),
     linkedin: z.string(),
     instagram: z.string(),
@@ -71,12 +49,9 @@ const formSchema = z
         fiveYearsOtherEmailConfirmation,
         otherEmail,
       },
-      ctx,
+      ctx
     ) => {
-      if (
-        postalAddressConfirmation === "Sim" &&
-        otherPostalAddress.length === 0
-      ) {
+      if (postalAddressConfirmation === "Sim" && otherPostalAddress.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -84,10 +59,7 @@ const formSchema = z
         });
       }
 
-      if (
-        fiveYearsOtherTelConfirmation === "Sim" &&
-        (otherTel === undefined || otherTel.length === 0)
-      ) {
+      if (fiveYearsOtherTelConfirmation === "Sim" && (otherTel === undefined || otherTel.length === 0)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -95,17 +67,14 @@ const formSchema = z
         });
       }
 
-      if (
-        fiveYearsOtherEmailConfirmation === "Sim" &&
-        (otherEmail === undefined || otherEmail.length === 0)
-      ) {
+      if (fiveYearsOtherEmailConfirmation === "Sim" && (otherEmail === undefined || otherEmail.length === 0)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
           path: ["otherEmail"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -124,70 +93,44 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
       state: currentForm.state ? currentForm.state : "",
       cep: currentForm.cep ? currentForm.cep : "",
       country: currentForm.country ? currentForm.country : "",
-      postalAddressConfirmation: currentForm.postalAddressConfirmation
-        ? currentForm.postalAddressConfirmation === true
-          ? "Sim"
-          : "Não"
-        : "Não",
-      otherPostalAddress: currentForm.otherPostalAddress
-        ? currentForm.otherPostalAddress
-        : "",
+      postalAddressConfirmation: currentForm.postalAddressConfirmation ? "Sim" : "Não",
+      otherPostalAddress: currentForm.otherPostalAddress ? currentForm.otherPostalAddress : "",
       cel: currentForm.cel ? currentForm.cel : "",
       tel: currentForm.tel ? currentForm.tel : "",
-      fiveYearsOtherTelConfirmation: currentForm.fiveYearsOtherTelConfirmation
-        ? currentForm.fiveYearsOtherTelConfirmation === true
-          ? "Sim"
-          : "Não"
-        : "Não",
+      fiveYearsOtherTelConfirmation: currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não",
       otherTel: currentForm.otherTel ? currentForm.otherTel : "",
       email: currentForm.email ? currentForm.email : "",
-      fiveYearsOtherEmailConfirmation:
-        currentForm.fiveYearsOtherEmailConfirmation
-          ? currentForm.fiveYearsOtherEmailConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
+      fiveYearsOtherEmailConfirmation: currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não",
       otherEmail: currentForm.otherEmail ? currentForm.otherEmail : "",
       facebook: currentForm.facebook ? currentForm.facebook : "",
       linkedin: currentForm.linkedin ? currentForm.linkedin : "",
       instagram: currentForm.instagram ? currentForm.instagram : "",
-      othersSocialMedia: currentForm.othersSocialMedia
-        ? currentForm.othersSocialMedia
-        : "",
+      othersSocialMedia: currentForm.othersSocialMedia ? currentForm.othersSocialMedia : "",
     },
   });
 
-  const postalAddressConfirmation: "Sim" | "Não" = form.watch(
-    "postalAddressConfirmation",
-  );
-  const fiveYearsOtherTelConfirmation: "Sim" | "Não" = form.watch(
-    "fiveYearsOtherTelConfirmation",
-  );
-  const fiveYearsOtherEmailConfirmation: "Sim" | "Não" = form.watch(
-    "fiveYearsOtherEmailConfirmation",
-  );
+  const postalAddressConfirmation: "Sim" | "Não" = form.watch("postalAddressConfirmation");
+  const fiveYearsOtherTelConfirmation: "Sim" | "Não" = form.watch("fiveYearsOtherTelConfirmation");
+  const fiveYearsOtherEmailConfirmation: "Sim" | "Não" = form.watch("fiveYearsOtherEmailConfirmation");
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitContactAndAddress, isPending } =
-    trpc.formsRouter.submitContactAndAddress.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
-        router.push(`/formulario/${profileId}?formStep=2`);
-      },
-      onError: (error) => {
-        console.error(error.data);
+  const { mutate: submitContactAndAddress, isPending } = trpc.formsRouter.submitContactAndAddress.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
+      router.push(`/formulario/${profileId}?formStep=2`);
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
   const { mutate: saveContactAndAddress, isPending: isSavePending } =
     trpc.formsRouter.saveContactAndAddress.useMutation({
       onSuccess: (data) => {
@@ -222,43 +165,28 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
         cep: values.cep !== "" ? values.cep : currentForm.cep,
         country: values.country !== "" ? values.country : currentForm.country,
         postalAddressConfirmation:
-          values.postalAddressConfirmation ??
-          (currentForm.postalAddressConfirmation ? "Sim" : "Não"),
+          values.postalAddressConfirmation ?? (currentForm.postalAddressConfirmation ? "Sim" : "Não"),
         otherPostalAddress:
-          values.otherPostalAddress !== ""
-            ? values.otherPostalAddress
-            : currentForm.otherPostalAddress,
+          values.otherPostalAddress !== "" ? values.otherPostalAddress : currentForm.otherPostalAddress,
         cel: values.cel !== "" ? values.cel : currentForm.cel,
         tel: values.tel !== "" ? values.tel : currentForm.tel,
         fiveYearsOtherTelConfirmation:
-          values.fiveYearsOtherTelConfirmation ??
-          (currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não"),
-        otherTel:
-          values.otherTel !== "" ? values.otherTel : currentForm.otherTel,
+          values.fiveYearsOtherTelConfirmation ?? (currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não"),
+        otherTel: values.otherTel !== "" ? values.otherTel : currentForm.otherTel,
         email: values.email !== "" ? values.email : currentForm.email,
         fiveYearsOtherEmailConfirmation:
-          values.fiveYearsOtherEmailConfirmation ??
-          (currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não"),
-        otherEmail:
-          values.otherEmail !== "" ? values.otherEmail : currentForm.otherEmail,
-        facebook:
-          values.facebook !== "" ? values.facebook : currentForm.facebook,
-        linkedin:
-          values.linkedin !== "" ? values.linkedin : currentForm.linkedin,
-        instagram:
-          values.instagram !== "" ? values.instagram : currentForm.instagram,
-        othersSocialMedia:
-          values.othersSocialMedia !== ""
-            ? values.othersSocialMedia
-            : currentForm.othersSocialMedia,
+          values.fiveYearsOtherEmailConfirmation ?? (currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não"),
+        otherEmail: values.otherEmail !== "" ? values.otherEmail : currentForm.otherEmail,
+        facebook: values.facebook !== "" ? values.facebook : currentForm.facebook,
+        linkedin: values.linkedin !== "" ? values.linkedin : currentForm.linkedin,
+        instagram: values.instagram !== "" ? values.instagram : currentForm.instagram,
+        othersSocialMedia: values.othersSocialMedia !== "" ? values.othersSocialMedia : currentForm.othersSocialMedia,
       });
       setRedirectStep(null);
     }
   }, [redirectStep, setRedirectStep, saveContactAndAddress, profileId]);
 
-  function handleCEPContactAndAddressChange(
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
+  function handleCEPContactAndAddressChange(event: ChangeEvent<HTMLInputElement>) {
     let value = event.target.value.replace(/[^\d]/g, "");
 
     value = value.replace(/(\d{5})(\d{3})/, "$1-$2");
@@ -272,17 +200,12 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Endereço e Contatos
         </h2>
 
-        <span className="text-foreground text-base font-medium">
-          Endereço de sua residencia
-        </span>
+        <span className="text-foreground text-base font-medium">Endereço de sua residencia</span>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
@@ -292,9 +215,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Endereço*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Endereço*</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -310,9 +231,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Cidade*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Cidade*</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -328,9 +247,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="state"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Estado*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Estado*</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -348,9 +265,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="cep"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      CEP*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">CEP*</FormLabel>
 
                     <FormControl>
                       <Input
@@ -374,9 +289,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="country"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      País*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">País*</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -395,8 +308,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Seu endereço de correio é diferente do endereço de sua
-                      residência?*
+                      Seu endereço de correio é diferente do endereço de sua residência?*
                     </FormLabel>
 
                     <FormControl>
@@ -438,9 +350,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                       hidden: postalAddressConfirmation === "Não",
                     })}
                   >
-                    <FormLabel className="text-foreground text-sm">
-                      Informe seu outro endereço
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Informe seu outro endereço</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -452,9 +362,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mb-6">
-              Telefone
-            </span>
+            <span className="text-foreground text-base font-medium mb-6">Telefone</span>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
               <FormField
@@ -462,9 +370,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="cel"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Celular*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Celular*</FormLabel>
 
                     <FormControl>
                       <PhoneInput
@@ -477,7 +383,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                           "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -497,9 +403,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="tel"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Fixo*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Fixo*</FormLabel>
 
                     <FormControl>
                       <PhoneInput
@@ -512,7 +416,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                           "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -532,9 +436,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      E-mail*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">E-mail*</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -595,9 +497,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                       hidden: fiveYearsOtherTelConfirmation === "Não",
                     })}
                   >
-                    <FormLabel className="text-foreground text-sm">
-                      Informe seu outro telefone
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Informe seu outro telefone</FormLabel>
 
                     <FormControl>
                       <PhoneInput
@@ -610,7 +510,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                           "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -632,9 +532,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="fiveYearsOtherEmailConfirmation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Nos últimos 5 anos você teve outros e-mails?*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Nos últimos 5 anos você teve outros e-mails?*</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -675,9 +573,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                       hidden: fiveYearsOtherEmailConfirmation === "Não",
                     })}
                   >
-                    <FormLabel className="text-foreground text-sm">
-                      Informe seu outro e-mail
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Informe seu outro e-mail</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -689,9 +585,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mb-6">
-              Redes sociais (Somente @ ou nome)
-            </span>
+            <span className="text-foreground text-base font-medium mb-6">Redes sociais (Somente @ ou nome)</span>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-10">
               <FormField
@@ -699,9 +593,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="facebook"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Facebook
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Facebook</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -717,9 +609,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="linkedin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Linkedin
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Linkedin</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -735,9 +625,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="instagram"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Instagram
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Instagram</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -753,9 +641,7 @@ export function ContactAndAddressForm({ currentForm, profileId }: Props) {
                 name="othersSocialMedia"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground text-sm">
-                      Outras Redes
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Outras Redes</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />

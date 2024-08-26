@@ -10,14 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import useFormStore from "@/constants/stores/useFormStore";
@@ -31,21 +24,13 @@ const formSchema = z
       z.object({
         name: z.string(),
         relation: z.string(),
-      }),
+      })
     ),
     groupMemberConfirmation: z.enum(["Sim", "Não"]),
     groupName: z.string(),
   })
   .superRefine(
-    (
-      {
-        otherPeopleTravelingConfirmation,
-        otherPeopleTraveling,
-        groupMemberConfirmation,
-        groupName,
-      },
-      ctx,
-    ) => {
+    ({ otherPeopleTravelingConfirmation, otherPeopleTraveling, groupMemberConfirmation, groupName }, ctx) => {
       if (groupMemberConfirmation === "Sim" && groupName.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -62,9 +47,7 @@ const formSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [
-            `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.name`,
-          ],
+          path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.name`],
         });
       }
 
@@ -76,12 +59,10 @@ const formSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [
-            `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`,
-          ],
+          path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -90,102 +71,78 @@ interface Props {
 }
 
 export function TravelCompanyForm({ currentForm, profileId }: Props) {
-  const [
-    currentOtherPeopleTravelingIndex,
-    setCurrentOtherPeopleTravelingIndex,
-  ] = useState<number>(currentForm.otherPeopleTraveling.length ?? 0);
-  const [otherPeopleTravelingItems, setOtherPeopleTravelingItems] = useState<
-    { name: string; relation: string }[]
-  >([]);
-  const [resetOtherPeopleTravelingFields, setResetOtherPeopleTravelingFields] =
-    useState<boolean>(false);
+  const [currentOtherPeopleTravelingIndex, setCurrentOtherPeopleTravelingIndex] = useState<number>(
+    currentForm.otherPeopleTraveling.length ?? 0
+  );
+  const [otherPeopleTravelingItems, setOtherPeopleTravelingItems] = useState<{ name: string; relation: string }[]>([]);
+  const [resetOtherPeopleTravelingFields, setResetOtherPeopleTravelingFields] = useState<boolean>(false);
 
   const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      otherPeopleTravelingConfirmation:
-        currentForm.otherPeopleTravelingConfirmation
-          ? currentForm.otherPeopleTravelingConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
+      otherPeopleTravelingConfirmation: currentForm.otherPeopleTravelingConfirmation ? "Sim" : "Não",
       otherPeopleTraveling:
         currentForm.otherPeopleTraveling.length > 0
           ? [...currentForm.otherPeopleTraveling, { name: "", relation: "" }]
           : [{ name: "", relation: "" }],
-      groupMemberConfirmation: currentForm.groupMemberConfirmation
-        ? currentForm.groupMemberConfirmation === true
-          ? "Sim"
-          : "Não"
-        : "Não",
+      groupMemberConfirmation: currentForm.groupMemberConfirmation ? "Sim" : "Não",
       groupName: currentForm.groupName ? currentForm.groupName : "",
     },
   });
 
-  const otherPeopleTravelingConfirmation: "Sim" | "Não" = form.watch(
-    "otherPeopleTravelingConfirmation",
-  );
-  const groupMemberConfirmation: "Sim" | "Não" = form.watch(
-    "groupMemberConfirmation",
-  );
+  const otherPeopleTravelingConfirmation: "Sim" | "Não" = form.watch("otherPeopleTravelingConfirmation");
+  const groupMemberConfirmation: "Sim" | "Não" = form.watch("groupMemberConfirmation");
   const otherPeopleTraveling = form.watch("otherPeopleTraveling");
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitTravelCompany, isPending } =
-    trpc.formsRouter.submitTravelCompany.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
-        router.push(`/formulario/${profileId}?formStep=5`);
-      },
-      onError: (error) => {
-        console.error(error.data);
+  const { mutate: submitTravelCompany, isPending } = trpc.formsRouter.submitTravelCompany.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
+      router.push(`/formulario/${profileId}?formStep=5`);
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
-  const { mutate: saveTravelCompany, isPending: isSavePending } =
-    trpc.formsRouter.saveTravelCompany.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
+  const { mutate: saveTravelCompany, isPending: isSavePending } = trpc.formsRouter.saveTravelCompany.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.redirectStep !== undefined) {
-          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.redirectStep !== undefined) {
+        router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao salvar os dados");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao salvar os dados");
+      }
+    },
+  });
 
   useEffect(() => {
     console.log(currentForm.otherPeopleTraveling);
 
     if (currentForm.otherPeopleTraveling.length > 0) {
-      setCurrentOtherPeopleTravelingIndex(
-        currentForm.otherPeopleTraveling.length,
-      );
+      setCurrentOtherPeopleTravelingIndex(currentForm.otherPeopleTraveling.length);
 
-      const otherPeopleTravelingFiltered =
-        currentForm.otherPeopleTraveling.filter(
-          (item) => item.name !== "" && item.relation !== "",
-        );
+      const otherPeopleTravelingFiltered = currentForm.otherPeopleTraveling.filter(
+        (item) => item.name !== "" && item.relation !== ""
+      );
 
       setOtherPeopleTravelingItems(otherPeopleTravelingFiltered);
     }
@@ -193,14 +150,8 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
 
   useEffect(() => {
     if (resetOtherPeopleTravelingFields) {
-      form.setValue(
-        `otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.name`,
-        "",
-      );
-      form.setValue(
-        `otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.relation`,
-        "",
-      );
+      form.setValue(`otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.name`, "");
+      form.setValue(`otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.relation`, "");
 
       console.log("resetando campos");
       setResetOtherPeopleTravelingFields(false);
@@ -215,14 +166,10 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
         profileId,
         redirectStep,
         otherPeopleTravelingConfirmation:
-          values.otherPeopleTravelingConfirmation ??
-          currentForm.otherPeopleTravelingConfirmation,
-        otherPeopleTraveling:
-          values.otherPeopleTraveling ?? currentForm.otherPeopleTraveling,
-        groupMemberConfirmation:
-          values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
-        groupName:
-          values.groupName !== "" ? values.groupName : currentForm.groupName,
+          values.otherPeopleTravelingConfirmation ?? currentForm.otherPeopleTravelingConfirmation,
+        otherPeopleTraveling: values.otherPeopleTraveling ?? currentForm.otherPeopleTraveling,
+        groupMemberConfirmation: values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
+        groupName: values.groupName !== "" ? values.groupName : currentForm.groupName,
       });
       setRedirectStep(null);
     }
@@ -254,7 +201,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
           ]);
 
           const otherPeopleTravelingFiltered = otherPeopleTraveling.filter(
-            (item) => item.name !== "" && item.relation !== "",
+            (item) => item.name !== "" && item.relation !== ""
           );
 
           setCurrentOtherPeopleTravelingIndex((prev) => prev + 1);
@@ -269,9 +216,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
 
     form.setValue("otherPeopleTraveling", newArr);
 
-    const otherPeopleTravelingFiltered = newArr.filter(
-      (item) => item.name !== "" && item.relation !== "",
-    );
+    const otherPeopleTravelingFiltered = newArr.filter((item) => item.name !== "" && item.relation !== "");
 
     setCurrentOtherPeopleTravelingIndex((prev) => prev - 1);
     setOtherPeopleTravelingItems(otherPeopleTravelingFiltered);
@@ -279,10 +224,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Companhia de Viagem
         </h2>
@@ -295,9 +237,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
                 name="otherPeopleTravelingConfirmation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Há outras pessoas viajando com você?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Há outras pessoas viajando com você?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -329,12 +269,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
                 )}
               />
 
-              <div
-                className={cn(
-                  "space-y-2 bg-secondary p-4",
-                  otherPeopleTravelingConfirmation === "Não" && "hidden",
-                )}
-              >
+              <div className={cn("space-y-2 bg-secondary p-4", otherPeopleTravelingConfirmation === "Não" && "hidden")}>
                 <span className="text-sm font-medium text-foreground">
                   Adicione as pessoas que estão viajando com você
                 </span>
@@ -346,11 +281,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input
-                            disabled={isPending || isSavePending}
-                            {...field}
-                            placeholder="Nome completo"
-                          />
+                          <Input disabled={isPending || isSavePending} {...field} placeholder="Nome completo" />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -365,11 +296,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <FormControl>
-                            <Input
-                              disabled={isPending || isSavePending}
-                              {...field}
-                              placeholder="Relação parental"
-                            />
+                            <Input disabled={isPending || isSavePending} {...field} placeholder="Relação parental" />
                           </FormControl>
 
                           <FormMessage className="text-sm text-destructive" />
@@ -396,9 +323,7 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
                         key={`otherName-${index}`}
                         className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
                       >
-                        <span className="text-sm font-medium text-foreground">
-                          {item.name}
-                        </span>
+                        <span className="text-sm font-medium text-foreground">{item.name}</span>
 
                         <Button
                           type="button"
@@ -462,14 +387,9 @@ export function TravelCompanyForm({ currentForm, profileId }: Props) {
                 name="groupName"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col justify-between",
-                      groupMemberConfirmation === "Não" && "hidden",
-                    )}
+                    className={cn("flex flex-col justify-between", groupMemberConfirmation === "Não" && "hidden")}
                   >
-                    <FormLabel className="text-foreground text-sm">
-                      Nome da Organização ou Grupo
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Nome da Organização ou Grupo</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />

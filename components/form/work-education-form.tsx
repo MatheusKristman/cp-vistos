@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ArrowRight,
-  CircleDollarSign,
-  Loader2,
-  Plus,
-  Save,
-  X,
-} from "lucide-react";
+import { ArrowRight, CircleDollarSign, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -22,29 +15,12 @@ import { Form as FormType } from "@prisma/client";
 import CurrencyInput from "react-currency-input-field";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
@@ -80,7 +56,7 @@ const formSchema = z
         admissionDate: z.date({ message: "Data inválida" }).optional(),
         resignationDate: z.date({ message: "Data inválida" }).optional(),
         jobDescription: z.string(),
-      }),
+      })
     ),
     courses: z.array(
       z.object({
@@ -93,7 +69,7 @@ const formSchema = z
         courseName: z.string(),
         initialDate: z.date({ message: "Data inválida" }).optional(),
         finishDate: z.date({ message: "Data inválida" }).optional(),
-      }),
+      })
     ),
   })
   .superRefine(({ previousJobConfirmation, previousJobs }, ctx) => {
@@ -220,8 +196,7 @@ const formSchema = z
     if (
       previousJobConfirmation === "Sim" &&
       previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.admissionDate === undefined).length ===
-        1
+      previousJobs.filter((item) => item.admissionDate === undefined).length === 1
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -233,8 +208,7 @@ const formSchema = z
     if (
       previousJobConfirmation === "Sim" &&
       previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.resignationDate === undefined)
-        .length === 1
+      previousJobs.filter((item) => item.resignationDate === undefined).length === 1
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -250,10 +224,10 @@ interface Props {
 }
 
 export function WorkEducationForm({ currentForm, profileId }: Props) {
-  const [currentPreviousJobsIndex, setCurrentPreviousJobsIndex] =
-    useState<number>(currentForm.previousJobs.length ?? 0);
-  const [resetPreviousJobsFields, setResetPreviousJobsFields] =
-    useState<boolean>(false);
+  const [currentPreviousJobsIndex, setCurrentPreviousJobsIndex] = useState<number>(
+    currentForm.previousJobs.length ?? 0
+  );
+  const [resetPreviousJobsFields, setResetPreviousJobsFields] = useState<boolean>(false);
   const [previousJobsItems, setPreviousJobsItems] = useState<
     {
       companyName: string;
@@ -270,9 +244,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
       jobDescription: string;
     }[]
   >([]);
-  const [currentCoursesIndex, setCurrentCoursesIndex] = useState<number>(
-    currentForm.courses.length ?? 0,
-  );
+  const [currentCoursesIndex, setCurrentCoursesIndex] = useState<number>(currentForm.courses.length ?? 0);
   const [resetCoursesFields, setResetCoursesFields] = useState<boolean>(false);
   const [coursesItems, setCoursesItems] = useState<
     {
@@ -294,36 +266,20 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      occupation: currentForm.occupation
-        ? currentForm.occupation
-        : "Aposentado",
+      occupation: currentForm.occupation ? currentForm.occupation : "Aposentado",
       office: currentForm.office ? currentForm.office : "",
-      companyOrBossName: currentForm.companyOrBossName
-        ? currentForm.companyOrBossName
-        : "",
-      companyAddress: currentForm.companyAddress
-        ? currentForm.companyAddress
-        : "",
+      companyOrBossName: currentForm.companyOrBossName ? currentForm.companyOrBossName : "",
+      companyAddress: currentForm.companyAddress ? currentForm.companyAddress : "",
       companyCity: currentForm.companyCity ? currentForm.companyCity : "",
       companyState: currentForm.companyState ? currentForm.companyState : "",
-      companyCountry: currentForm.companyCountry
-        ? currentForm.companyCountry
-        : "",
+      companyCountry: currentForm.companyCountry ? currentForm.companyCountry : "",
       companyCep: currentForm.companyCep ? currentForm.companyCep : "",
       companyTel: currentForm.companyTel ? currentForm.companyTel : "",
-      admissionDate: currentForm.admissionDate
-        ? currentForm.admissionDate
-        : undefined,
+      admissionDate: currentForm.admissionDate ? currentForm.admissionDate : undefined,
       monthlySalary: currentForm.monthlySalary ? currentForm.monthlySalary : "",
-      retireeDate: currentForm.retireeDate
-        ? currentForm.retireeDate
-        : undefined,
+      retireeDate: currentForm.retireeDate ? currentForm.retireeDate : undefined,
       jobDetails: currentForm.jobDetails ? currentForm.jobDetails : "",
-      previousJobConfirmation: currentForm.previousJobConfirmation
-        ? currentForm.previousJobConfirmation === true
-          ? "Sim"
-          : "Não"
-        : "Não",
+      previousJobConfirmation: currentForm.previousJobConfirmation ? "Sim" : "Não",
       previousJobs:
         currentForm.previousJobs.length > 0
           ? [
@@ -398,45 +354,41 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitWorkEducation, isPending } =
-    trpc.formsRouter.submitWorkEducation.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
-        router.push(`/formulario/${profileId}?formStep=9`);
-      },
-      onError: (error) => {
-        console.error(error.data);
+  const { mutate: submitWorkEducation, isPending } = trpc.formsRouter.submitWorkEducation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
+      router.push(`/formulario/${profileId}?formStep=9`);
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
-  const { mutate: saveWorkEducation, isPending: isSavePending } =
-    trpc.formsRouter.saveWorkEducation.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
+  const { mutate: saveWorkEducation, isPending: isSavePending } = trpc.formsRouter.saveWorkEducation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.redirectStep !== undefined) {
-          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.redirectStep !== undefined) {
+        router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao salvar os dados");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao salvar os dados");
+      }
+    },
+  });
 
   useEffect(() => {
     if (currentForm.previousJobs.length > 0) {
@@ -455,7 +407,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
           item.supervisorName !== "" ||
           item.admissionDate !== undefined ||
           item.resignationDate !== undefined ||
-          item.jobDescription !== "",
+          item.jobDescription !== ""
       );
 
       setPreviousJobsItems(previousJobsFiltered);
@@ -474,7 +426,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
           item.cep !== "" ||
           item.courseName !== "" ||
           item.initialDate !== undefined ||
-          item.finishDate !== undefined,
+          item.finishDate !== undefined
       );
 
       setCoursesItems(coursesFiltered);
@@ -484,38 +436,17 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
   useEffect(() => {
     if (resetPreviousJobsFields) {
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyName`, "");
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.companyAddress`,
-        "",
-      );
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyAddress`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCity`, "");
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.companyState`,
-        "",
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.companyCountry`,
-        "",
-      );
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyState`, "");
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCountry`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCep`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyTel`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.office`, "");
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.supervisorName`,
-        "",
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.admissionDate`,
-        undefined,
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.resignationDate`,
-        undefined,
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.jobDescription`,
-        "",
-      );
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.supervisorName`, "");
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.admissionDate`, undefined);
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.resignationDate`, undefined);
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.jobDescription`, "");
 
       setResetPreviousJobsFields(false);
     }
@@ -543,100 +474,59 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
         profileId,
         redirectStep,
         occupation:
-          values.occupation !== ""
-            ? values.occupation
-            : !currentForm.occupation
-              ? ""
-              : currentForm.occupation,
-        office:
-          values.occupation !== ""
-            ? values.occupation
-            : !currentForm.occupation
-              ? ""
-              : currentForm.occupation,
+          values.occupation !== "" ? values.occupation : !currentForm.occupation ? "" : currentForm.occupation,
+        office: values.occupation !== "" ? values.occupation : !currentForm.occupation ? "" : currentForm.occupation,
         companyOrBossName:
           values.companyOrBossName !== ""
             ? values.companyOrBossName
             : !currentForm.companyOrBossName
-              ? ""
-              : currentForm.companyOrBossName,
+            ? ""
+            : currentForm.companyOrBossName,
         companyAddress:
           values.companyAddress !== ""
             ? values.companyAddress
             : !currentForm.companyAddress
-              ? ""
-              : currentForm.companyAddress,
+            ? ""
+            : currentForm.companyAddress,
         companyCity:
-          values.companyCity !== ""
-            ? values.companyCity
-            : !currentForm.companyCity
-              ? ""
-              : currentForm.companyCity,
+          values.companyCity !== "" ? values.companyCity : !currentForm.companyCity ? "" : currentForm.companyCity,
         companyState:
-          values.companyState !== ""
-            ? values.companyState
-            : !currentForm.companyState
-              ? ""
-              : currentForm.companyState,
+          values.companyState !== "" ? values.companyState : !currentForm.companyState ? "" : currentForm.companyState,
         companyCountry:
           values.companyCountry !== ""
             ? values.companyCountry
             : !currentForm.companyCountry
-              ? ""
-              : currentForm.companyCountry,
+            ? ""
+            : currentForm.companyCountry,
         companyCep:
-          values.companyCep !== ""
-            ? values.companyCep
-            : !currentForm.companyCep
-              ? ""
-              : currentForm.companyCep,
+          values.companyCep !== "" ? values.companyCep : !currentForm.companyCep ? "" : currentForm.companyCep,
         companyTel:
-          values.companyTel !== ""
-            ? values.companyTel
-            : !currentForm.companyTel
-              ? ""
-              : currentForm.companyTel,
+          values.companyTel !== "" ? values.companyTel : !currentForm.companyTel ? "" : currentForm.companyTel,
         admissionDate:
           values.admissionDate !== undefined
             ? values.admissionDate
             : !currentForm.admissionDate
-              ? undefined
-              : currentForm.admissionDate,
+            ? undefined
+            : currentForm.admissionDate,
         monthlySalary:
           values.monthlySalary !== ""
             ? values.monthlySalary
             : !currentForm.monthlySalary
-              ? ""
-              : currentForm.monthlySalary,
+            ? ""
+            : currentForm.monthlySalary,
         retireeDate:
           values.retireeDate !== undefined
             ? values.retireeDate
             : !currentForm.retireeDate
-              ? undefined
-              : currentForm.retireeDate,
+            ? undefined
+            : currentForm.retireeDate,
         jobDetails:
-          values.jobDetails !== ""
-            ? values.jobDetails
-            : !currentForm.jobDetails
-              ? ""
-              : currentForm.jobDetails,
+          values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
         previousJobConfirmation:
-          (values.previousJobConfirmation ??
-          currentForm.previousJobConfirmation)
-            ? "Sim"
-            : "Não",
+          values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
         previousJobs:
-          previousJobsItems.length > 0
-            ? previousJobsItems
-            : !currentForm.previousJobs
-              ? []
-              : currentForm.previousJobs,
-        courses:
-          coursesItems.length > 0
-            ? coursesItems
-            : !currentForm.courses
-              ? []
-              : currentForm.courses,
+          previousJobsItems.length > 0 ? previousJobsItems : !currentForm.previousJobs ? [] : currentForm.previousJobs,
+        courses: coursesItems.length > 0 ? coursesItems : !currentForm.courses ? [] : currentForm.courses,
       });
       setRedirectStep(null);
     }
@@ -691,7 +581,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
           item.supervisorName === "" ||
           item.admissionDate === undefined ||
           item.resignationDate === undefined ||
-          item.jobDescription === "",
+          item.jobDescription === ""
       ).length > 0
     ) {
       toast.error("Preencha todos os campos para adicionar");
@@ -747,7 +637,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
             jobDescription: string;
           }[] = previousJobs.filter(
             (
-              item,
+              item
             ): item is {
               companyName: string;
               companyAddress: string;
@@ -775,7 +665,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                 item.resignationDate !== undefined ||
                 item.jobDescription !== "") &&
               item.admissionDate instanceof Date &&
-              item.resignationDate instanceof Date,
+              item.resignationDate instanceof Date
           );
 
           setCurrentPreviousJobsIndex((prev) => prev + 1);
@@ -805,7 +695,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
       jobDescription: string;
     }[] = newArr.filter(
       (
-        item,
+        item
       ): item is {
         companyName: string;
         companyAddress: string;
@@ -833,7 +723,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
           item.resignationDate !== undefined ||
           item.jobDescription !== "") &&
         item.admissionDate instanceof Date &&
-        item.resignationDate instanceof Date,
+        item.resignationDate instanceof Date
     );
 
     setCurrentPreviousJobsIndex((prev) => prev - 1);
@@ -852,7 +742,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
           item.cep === "" ||
           item.courseName === "" ||
           item.initialDate === undefined ||
-          item.finishDate === undefined,
+          item.finishDate === undefined
       ).length > 0
     ) {
       toast.error("Preencha todos os campos para adicionar");
@@ -900,7 +790,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
             finishDate: Date;
           }[] = courses.filter(
             (
-              item,
+              item
             ): item is {
               institutionName: string;
               address: string;
@@ -922,7 +812,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                 item.initialDate !== undefined ||
                 item.finishDate !== undefined) &&
               item.initialDate instanceof Date &&
-              item.finishDate instanceof Date,
+              item.finishDate instanceof Date
           );
 
           setCurrentCoursesIndex((prev) => prev + 1);
@@ -949,7 +839,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
       finishDate: Date;
     }[] = newArr.filter(
       (
-        item,
+        item
       ): item is {
         institutionName: string;
         address: string;
@@ -971,7 +861,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
           item.initialDate !== undefined ||
           item.finishDate !== undefined) &&
         item.initialDate instanceof Date &&
-        item.finishDate instanceof Date,
+        item.finishDate instanceof Date
     );
 
     setCurrentCoursesIndex((prev) => prev - 1);
@@ -980,10 +870,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Trabalho e Educação
         </h2>
@@ -996,14 +883,9 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                 name="occupation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Selecione a sua ocupação atual?*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Selecione a sua ocupação atual?*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger disabled={isPending}>
                           <SelectValue placeholder="Selecione a opção" />
@@ -1011,19 +893,13 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                       </FormControl>
 
                       <SelectContent>
-                        <SelectItem value="Empresário/Proprietário">
-                          Empresário/Proprietário
-                        </SelectItem>
+                        <SelectItem value="Empresário/Proprietário">Empresário/Proprietário</SelectItem>
 
-                        <SelectItem value="Registrado (CLT/PJ)">
-                          Registrado (CLT/PJ)
-                        </SelectItem>
+                        <SelectItem value="Registrado (CLT/PJ)">Registrado (CLT/PJ)</SelectItem>
 
                         <SelectItem value="Autônomo">Autônomo</SelectItem>
 
-                        <SelectItem value="Não Trabalho">
-                          Não Trabalho
-                        </SelectItem>
+                        <SelectItem value="Não Trabalho">Não Trabalho</SelectItem>
 
                         <SelectItem value="Aposentado">Aposentado</SelectItem>
 
@@ -1038,12 +914,9 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
             </div>
 
             <div
-              className={cn(
-                "w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-10",
-                {
-                  hidden: occupation === "Não Trabalho",
-                },
-              )}
+              className={cn("w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-10", {
+                hidden: occupation === "Não Trabalho",
+              })}
             >
               <FormField
                 control={form.control}
@@ -1057,9 +930,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                         occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Cargo / Função
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Cargo / Função</FormLabel>
 
                     <FormControl>
                       <Input
@@ -1085,9 +956,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                   <FormItem
                     className={cn({
                       "md:col-span-1": occupation === "Empresário/Proprietário",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">
@@ -1098,11 +967,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
 
                     <FormControl>
                       <Input
-                        disabled={
-                          occupation === "Aposentado" ||
-                          occupation === "Não Trabalho" ||
-                          isPending
-                        }
+                        disabled={occupation === "Aposentado" || occupation === "Não Trabalho" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1119,18 +984,11 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                   <FormItem
                     className={cn({
                       "md:col-span-2": occupation === "Empresário/Proprietário",
-                      "md:row-start-3 md:col-start-1":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Autônomo" ||
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      "md:row-start-3 md:col-start-1": occupation === "Registrado (CLT/PJ)" || occupation === "Outro",
+                      hidden: occupation === "Autônomo" || occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Endereço completo
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Endereço completo</FormLabel>
 
                     <FormControl>
                       <Input
@@ -1156,23 +1014,15 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                   <FormItem
                     className={cn({
                       "md:row-start-2 md:col-start-1":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                        occupation === "Registrado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">Cidade</FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1189,23 +1039,15 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                   <FormItem
                     className={cn({
                       "md:row-start-2 md:col-start-2":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                        occupation === "Registrado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">Estado</FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1222,23 +1064,15 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                   <FormItem
                     className={cn({
                       "md:row-start-2 md:col-start-3":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                        occupation === "Registrado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">País</FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1254,25 +1088,16 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn({
-                      "md:row-start-3 md:col-start-2":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro",
-                      "md:row-start-3 md:col-start-1":
-                        occupation === "Autônomo",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      "md:row-start-3 md:col-start-2": occupation === "Registrado (CLT/PJ)" || occupation === "Outro",
+                      "md:row-start-3 md:col-start-1": occupation === "Autônomo",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">CEP</FormLabel>
 
                     <FormControl>
                       <Input
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         maxLength={9}
                         name={field.name}
                         ref={field.ref}
@@ -1293,25 +1118,16 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn({
-                      "md:row-start-3 md:col-start-3":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro",
-                      "md:row-start-3 md:col-start-2":
-                        occupation === "Autônomo",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      "md:row-start-3 md:col-start-3": occupation === "Registrado (CLT/PJ)" || occupation === "Outro",
+                      "md:row-start-3 md:col-start-2": occupation === "Autônomo",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">Telefone</FormLabel>
 
                     <FormControl>
                       <PhoneInput
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         limitMaxLength
                         smartCaret={false}
                         placeholder="Insira o telefone da empresa..."
@@ -1320,7 +1136,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                           "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -1346,28 +1162,20 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                         occupation === "Registrado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Data de admissão
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data de admissão</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            disabled={
-                              occupation === "Não Trabalho" ||
-                              occupation === "Aposentado" ||
-                              isPending
-                            }
+                            disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                             variant={"outline"}
                             className={cn(
                               "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value ? (
@@ -1388,16 +1196,13 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1426,9 +1231,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                         occupation === "Outro",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Data de aposentadoria
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data de aposentadoria</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -1445,7 +1248,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                             variant={"outline"}
                             className={cn(
                               "w-full h-12 pl-3 text-left border-secondary font-normal group",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value !== undefined ? (
@@ -1466,16 +1269,13 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1501,34 +1301,21 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                         occupation === "Registrado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Renda mensal (R$)
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Renda mensal (R$)</FormLabel>
 
                     <FormControl>
                       <div className="h-12 flex items-center gap-2 border border-muted transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
-                        <CircleDollarSign
-                          className="size-5 text-border flex-shrink-0"
-                          strokeWidth={1.5}
-                        />
+                        <CircleDollarSign className="size-5 text-border flex-shrink-0" strokeWidth={1.5} />
 
                         <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
                         <CurrencyInput
-                          disabled={
-                            occupation === "Não Trabalho" ||
-                            occupation === "Aposentado" ||
-                            isPending
-                          }
+                          disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                           placeholder="Insira o valor do serviço"
-                          onValueChange={(value, name) =>
-                            form.setValue(name as "monthlySalary", value ?? "0")
-                          }
+                          onValueChange={(value, name) => form.setValue(name as "monthlySalary", value ?? "0")}
                           decimalsLimit={2}
                           ref={field.ref}
                           onBlur={field.onBlur}
@@ -1555,24 +1342,17 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                         occupation === "Registrado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">
-                      Descreva quais são suas funções dentro da sua empresa, se
-                      possui funcionários registrados e outras informações
-                      relacionadas ao seu negócio
+                      Descreva quais são suas funções dentro da sua empresa, se possui funcionários registrados e outras
+                      informações relacionadas ao seu negócio
                     </FormLabel>
 
                     <FormControl>
                       <Textarea
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         className="resize-none"
                         {...field}
                       />
@@ -1591,8 +1371,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Já trabalhou anteriormente? Se sim, informe abaixo os dois
-                      últimos
+                      Já trabalhou anteriormente? Se sim, informe abaixo os dois últimos
                     </FormLabel>
 
                     <FormControl>
@@ -1638,9 +1417,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.companyName`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Nome do empregador ou empresa anterior
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Nome do empregador ou empresa anterior</FormLabel>
 
                         <FormControl>
                           <Input disabled={isPending} {...field} />
@@ -1656,9 +1433,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.companyAddress`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Endereço completo
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Endereço completo</FormLabel>
 
                         <FormControl>
                           <Input disabled={isPending} {...field} />
@@ -1676,9 +1451,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.companyCity`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Cidade
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Cidade</FormLabel>
 
                         <FormControl>
                           <Input disabled={isPending} {...field} />
@@ -1694,9 +1467,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.companyState`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Estado
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Estado</FormLabel>
 
                         <FormControl>
                           <Input disabled={isPending} {...field} />
@@ -1767,7 +1538,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                               {
                                 "input-error": false,
-                              },
+                              }
                             )}
                             name={field.name}
                             ref={field.ref}
@@ -1789,9 +1560,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.office`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Cargo / Função
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Cargo / Função</FormLabel>
 
                         <FormControl>
                           <Input disabled={isPending} {...field} />
@@ -1807,9 +1576,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.supervisorName`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Nome completo do supervisor
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Nome completo do supervisor</FormLabel>
 
                         <FormControl>
                           <Input disabled={isPending} {...field} />
@@ -1827,9 +1594,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.admissionDate`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Data de admissão
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Data de admissão</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -1837,9 +1602,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn(!field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -1853,9 +1616,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -1867,17 +1628,13 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -1897,9 +1654,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                     name={`previousJobs.${currentPreviousJobsIndex}.resignationDate`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-foreground">
-                          Data de demissão
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Data de demissão</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -1907,9 +1662,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn(!field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -1923,9 +1676,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -1937,17 +1688,13 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -1968,16 +1715,10 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                   name={`previousJobs.${currentPreviousJobsIndex}.jobDescription`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">
-                        Faça descrição da tarefa exercida
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Faça descrição da tarefa exercida</FormLabel>
 
                       <FormControl>
-                        <Textarea
-                          disabled={isPending}
-                          className="resize-none"
-                          {...field}
-                        />
+                        <Textarea disabled={isPending} className="resize-none" {...field} />
                       </FormControl>
 
                       <FormMessage className="text-sm text-destructive" />
@@ -2005,9 +1746,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                       className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
                     >
                       <div className="w-full flex flex-col items-center gap-2">
-                        <span className="text-sm font-medium text-foreground">
-                          Cargo: {item.office}
-                        </span>
+                        <span className="text-sm font-medium text-foreground">Cargo: {item.office}</span>
                       </div>
 
                       <Button
@@ -2170,9 +1909,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn(!field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -2186,9 +1923,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -2200,17 +1935,13 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -2238,9 +1969,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn(!field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -2254,9 +1983,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -2268,17 +1995,13 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -2314,9 +2037,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
                       className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
                     >
                       <div className="w-full flex flex-col items-center gap-2">
-                        <span className="text-sm font-medium text-foreground">
-                          Curso: {item.courseName}
-                        </span>
+                        <span className="text-sm font-medium text-foreground">Curso: {item.courseName}</span>
                       </div>
 
                       <Button
@@ -2348,12 +2069,7 @@ export function WorkEducationForm({ currentForm, profileId }: Props) {
               <Save className="size-5" strokeWidth={1.5} />
             </Button>
 
-            <Button
-              size="xl"
-              type="submit"
-              className="w-full flex items-center gap-2 sm:w-fit"
-              disabled={isPending}
-            >
+            <Button size="xl" type="submit" className="w-full flex items-center gap-2 sm:w-fit" disabled={isPending}>
               {isPending ? (
                 <>
                   Enviando

@@ -242,12 +242,11 @@ export function AdditionalInformationForm({ currentForm, profileId }: Props) {
         profileId,
         redirectStep,
         tribeParticipateConfirmation:
-          values.tribeParticipateConfirmation ?? currentForm.travelItineraryConfirmation ? "Sim" : "Não",
+          values.tribeParticipateConfirmation ?? (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
         languages: values.languages.length > 0 ? values.languages : !currentForm.languages ? [] : currentForm.languages,
         fiveYearsOtherCountryTravelsConfirmation:
-          values.fiveYearsOtherCountryTravelsConfirmation ?? currentForm.fiveYearsOtherCountryTravelsConfirmation
-            ? "Sim"
-            : "Não",
+          values.fiveYearsOtherCountryTravelsConfirmation ??
+          (currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
         fiveYearsOtherCountryTravels:
           values.fiveYearsOtherCountryTravels.length > 0
             ? values.fiveYearsOtherCountryTravels
@@ -255,7 +254,7 @@ export function AdditionalInformationForm({ currentForm, profileId }: Props) {
             ? []
             : currentForm.fiveYearsOtherCountryTravels,
         socialOrganizationConfirmation:
-          values.socialOrganizationConfirmation ?? currentForm.socialOrganizationConfirmation ? "Sim" : "Não",
+          values.socialOrganizationConfirmation ?? (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
         socialOrganization:
           values.socialOrganization.length > 0
             ? values.socialOrganization
@@ -263,7 +262,7 @@ export function AdditionalInformationForm({ currentForm, profileId }: Props) {
             ? []
             : currentForm.socialOrganization,
         weaponTrainingConfirmation:
-          values.weaponTrainingConfirmation ?? currentForm.weaponTrainingConfirmation ? "Sim" : "Não",
+          values.weaponTrainingConfirmation ?? (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
         weaponTrainingDetails:
           values.weaponTrainingDetails !== ""
             ? values.weaponTrainingDetails
@@ -271,7 +270,7 @@ export function AdditionalInformationForm({ currentForm, profileId }: Props) {
             ? ""
             : currentForm.weaponTrainingDetails,
         militaryServiceConfirmation:
-          values.militaryServiceConfirmation ?? currentForm.militaryServiceConfirmation ? "Sim" : "Não",
+          values.militaryServiceConfirmation ?? (currentForm.militaryServiceConfirmation ? "Sim" : "Não"),
         militaryServiceCountry:
           values.militaryServiceCountry !== ""
             ? values.militaryServiceCountry
@@ -309,7 +308,7 @@ export function AdditionalInformationForm({ currentForm, profileId }: Props) {
             ? undefined
             : currentForm.militaryServiceEndDate,
         insurgencyOrganizationConfirmation:
-          values.insurgencyOrganizationConfirmation ?? currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não",
+          values.insurgencyOrganizationConfirmation ?? (currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
         insurgencyOrganizationDetails:
           values.insurgencyOrganizationDetails !== ""
             ? values.insurgencyOrganizationDetails

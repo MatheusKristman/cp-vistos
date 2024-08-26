@@ -4,15 +4,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
-import {
-  Loader2,
-  Plus,
-  Trash,
-  Calendar as CalendarIcon,
-  Save,
-  ArrowRight,
-  X,
-} from "lucide-react";
+import { Loader2, Plus, Trash, Calendar as CalendarIcon, Save, ArrowRight, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { z } from "zod";
@@ -21,22 +13,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,7 +39,7 @@ const formSchema = z
         name: z.string(),
         relation: z.string(),
         situation: z.string(),
-      }),
+      })
     ),
     partnerCompleteName: z.string(),
     partnerBirthdate: z.date({ message: "Campo obrigatório" }).optional(),
@@ -79,12 +60,9 @@ const formSchema = z
         motherLiveInTheUSAConfirmation,
         motherUSASituation,
       },
-      ctx,
+      ctx
     ) => {
-      if (
-        fatherLiveInTheUSAConfirmation === "Sim" &&
-        fatherUSASituation.length === 0
-      ) {
+      if (fatherLiveInTheUSAConfirmation === "Sim" && fatherUSASituation.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -92,10 +70,7 @@ const formSchema = z
         });
       }
 
-      if (
-        motherLiveInTheUSAConfirmation === "Sim" &&
-        motherUSASituation.length === 0
-      ) {
+      if (motherLiveInTheUSAConfirmation === "Sim" && motherUSASituation.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -111,9 +86,7 @@ const formSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [
-            `familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.name`,
-          ],
+          path: [`familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.name`],
         });
       }
 
@@ -125,27 +98,22 @@ const formSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [
-            `familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.relation`,
-          ],
+          path: [`familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.relation`],
         });
       }
 
       if (
         familyLivingInTheUSAConfirmation === "Sim" &&
         familyLivingInTheUSA.length === 1 &&
-        familyLivingInTheUSA.filter((item) => item.situation === "").length ===
-          1
+        familyLivingInTheUSA.filter((item) => item.situation === "").length === 1
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [
-            `familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.situation`,
-          ],
+          path: [`familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.situation`],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -154,9 +122,7 @@ interface Props {
 }
 
 export function FamilyForm({ currentForm, profileId }: Props) {
-  const [currentFamilyIndex, setCurrentFamilyIndex] = useState<number>(
-    currentForm.familyLivingInTheUSA.length || 0,
-  );
+  const [currentFamilyIndex, setCurrentFamilyIndex] = useState<number>(currentForm.familyLivingInTheUSA.length || 0);
   const [familyLivingInTheUSAItems, setFamilyLivingInTheUSAItems] = useState<
     { name: string; relation: string; situation: string }[]
   >([]);
@@ -168,128 +134,79 @@ export function FamilyForm({ currentForm, profileId }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fatherCompleteName: currentForm.fatherCompleteName
-        ? currentForm.fatherCompleteName
-        : "",
-      fatherBirthdate: currentForm.fatherBirthdate
-        ? currentForm.fatherBirthdate
-        : undefined,
-      fatherLiveInTheUSAConfirmation: currentForm.fatherLiveInTheUSAConfirmation
-        ? currentForm.fatherLiveInTheUSAConfirmation === true
-          ? "Sim"
-          : "Não"
-        : "Não",
-      fatherUSASituation: currentForm.fatherUSASituation
-        ? currentForm.fatherUSASituation
-        : "",
-      motherCompleteName: currentForm.motherCompleteName
-        ? currentForm.motherCompleteName
-        : "",
-      motherBirthdate: currentForm.motherBirthdate
-        ? currentForm.motherBirthdate
-        : undefined,
-      motherLiveInTheUSAConfirmation: currentForm.motherLiveInTheUSAConfirmation
-        ? currentForm.motherLiveInTheUSAConfirmation === true
-          ? "Sim"
-          : "Não"
-        : "Não",
-      motherUSASituation: currentForm.motherUSASituation
-        ? currentForm.motherUSASituation
-        : "",
-      familyLivingInTheUSAConfirmation:
-        currentForm.familyLivingInTheUSAConfirmation
-          ? currentForm.familyLivingInTheUSAConfirmation === true
-            ? "Sim"
-            : "Não"
-          : "Não",
+      fatherCompleteName: currentForm.fatherCompleteName ? currentForm.fatherCompleteName : "",
+      fatherBirthdate: currentForm.fatherBirthdate ? currentForm.fatherBirthdate : undefined,
+      fatherLiveInTheUSAConfirmation: currentForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não",
+      fatherUSASituation: currentForm.fatherUSASituation ? currentForm.fatherUSASituation : "",
+      motherCompleteName: currentForm.motherCompleteName ? currentForm.motherCompleteName : "",
+      motherBirthdate: currentForm.motherBirthdate ? currentForm.motherBirthdate : undefined,
+      motherLiveInTheUSAConfirmation: currentForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não",
+      motherUSASituation: currentForm.motherUSASituation ? currentForm.motherUSASituation : "",
+      familyLivingInTheUSAConfirmation: currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não",
       familyLivingInTheUSA:
         currentForm.familyLivingInTheUSA.length > 0
-          ? [
-              ...currentForm.familyLivingInTheUSA,
-              { name: "", relation: "", situation: "" },
-            ]
+          ? [...currentForm.familyLivingInTheUSA, { name: "", relation: "", situation: "" }]
           : [{ name: "", relation: "", situation: "" }],
-      partnerCompleteName: currentForm.partnerCompleteName
-        ? currentForm.partnerCompleteName
-        : "",
-      partnerBirthdate: currentForm.partnerBirthdate
-        ? currentForm.partnerBirthdate
-        : undefined,
-      partnerNationality: currentForm.partnerNationality
-        ? currentForm.partnerNationality
-        : "",
+      partnerCompleteName: currentForm.partnerCompleteName ? currentForm.partnerCompleteName : "",
+      partnerBirthdate: currentForm.partnerBirthdate ? currentForm.partnerBirthdate : undefined,
+      partnerNationality: currentForm.partnerNationality ? currentForm.partnerNationality : "",
       partnerCity: currentForm.partnerCity ? currentForm.partnerCity : "",
       partnerState: currentForm.partnerState ? currentForm.partnerState : "",
-      partnerCountry: currentForm.partnerCountry
-        ? currentForm.partnerCountry
-        : "",
+      partnerCountry: currentForm.partnerCountry ? currentForm.partnerCountry : "",
       unionDate: currentForm.unionDate ? currentForm.unionDate : undefined,
-      divorceDate: currentForm.divorceDate
-        ? currentForm.divorceDate
-        : undefined,
+      divorceDate: currentForm.divorceDate ? currentForm.divorceDate : undefined,
     },
   });
 
-  const fatherLiveInTheUSAConfirmation = form.watch(
-    "fatherLiveInTheUSAConfirmation",
-  );
-  const motherLiveInTheUSAConfirmation = form.watch(
-    "motherLiveInTheUSAConfirmation",
-  );
-  const familyLivingInTheUSAConfirmation = form.watch(
-    "familyLivingInTheUSAConfirmation",
-  );
+  const fatherLiveInTheUSAConfirmation = form.watch("fatherLiveInTheUSAConfirmation");
+  const motherLiveInTheUSAConfirmation = form.watch("motherLiveInTheUSAConfirmation");
+  const familyLivingInTheUSAConfirmation = form.watch("familyLivingInTheUSAConfirmation");
   const familyLivingInTheUSA = form.watch("familyLivingInTheUSA");
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitFamily, isPending } =
-    trpc.formsRouter.submitFamily.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
-        router.push(`/formulario/${profileId}?formStep=8`);
-      },
-      onError: (error) => {
-        console.error(error.data);
+  const { mutate: submitFamily, isPending } = trpc.formsRouter.submitFamily.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
+      router.push(`/formulario/${profileId}?formStep=8`);
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
-  const { mutate: saveFamily, isPending: isSavePending } =
-    trpc.formsRouter.saveFamily.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
+  const { mutate: saveFamily, isPending: isSavePending } = trpc.formsRouter.saveFamily.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.redirectStep !== undefined) {
-          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.redirectStep !== undefined) {
+        router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao salvar os dados");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao salvar os dados");
+      }
+    },
+  });
 
   useEffect(() => {
     if (currentForm.familyLivingInTheUSA.length > 0) {
       setCurrentFamilyIndex(currentForm.familyLivingInTheUSA.length);
 
       const familyFiltered = currentForm.familyLivingInTheUSA.filter(
-        (item) =>
-          (item.name !== "" && item.relation !== "") || item.situation !== "",
+        (item) => (item.name !== "" && item.relation !== "") || item.situation !== ""
       );
 
       setFamilyLivingInTheUSAItems(familyFiltered);
@@ -317,77 +234,58 @@ export function FamilyForm({ currentForm, profileId }: Props) {
           values.fatherCompleteName !== ""
             ? values.fatherCompleteName
             : !currentForm.fatherCompleteName
-              ? ""
-              : currentForm.fatherCompleteName,
+            ? ""
+            : currentForm.fatherCompleteName,
         fatherBirthdate: values.fatherBirthdate ?? currentForm.fatherBirthdate,
         fatherLiveInTheUSAConfirmation:
-          (values.fatherLiveInTheUSAConfirmation ??
-          currentForm.fatherLiveInTheUSAConfirmation)
-            ? "Sim"
-            : "Não",
+          values.fatherLiveInTheUSAConfirmation ?? (currentForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"),
         fatherUSASituation:
           values.fatherUSASituation !== ""
             ? values.fatherUSASituation
             : !currentForm.fatherUSASituation
-              ? ""
-              : currentForm.fatherUSASituation,
+            ? ""
+            : currentForm.fatherUSASituation,
         motherCompleteName:
           values.motherCompleteName !== ""
             ? values.motherCompleteName
             : !currentForm.motherCompleteName
-              ? ""
-              : currentForm.motherCompleteName,
+            ? ""
+            : currentForm.motherCompleteName,
         motherBirthdate: values.motherBirthdate ?? currentForm.motherBirthdate,
         motherLiveInTheUSAConfirmation:
-          (values.motherLiveInTheUSAConfirmation ??
-          currentForm.motherLiveInTheUSAConfirmation)
-            ? "Sim"
-            : "Não",
+          values.motherLiveInTheUSAConfirmation ?? (currentForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não"),
         motherUSASituation:
           values.motherUSASituation !== ""
             ? values.motherUSASituation
             : !currentForm.motherUSASituation
-              ? ""
-              : currentForm.motherUSASituation,
+            ? ""
+            : currentForm.motherUSASituation,
         familyLivingInTheUSAConfirmation:
-          (values.familyLivingInTheUSAConfirmation ??
-          currentForm.familyLivingInTheUSAConfirmation)
-            ? "Sim"
-            : "Não",
-        familyLivingInTheUSA:
-          values.familyLivingInTheUSA ?? currentForm.familyLivingInTheUSA,
+          values.familyLivingInTheUSAConfirmation ?? (currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
+        familyLivingInTheUSA: values.familyLivingInTheUSA ?? currentForm.familyLivingInTheUSA,
         partnerCompleteName:
           values.partnerCompleteName !== ""
             ? values.partnerCompleteName
             : !currentForm.partnerCompleteName
-              ? ""
-              : currentForm.partnerCompleteName,
-        partnerBirthdate:
-          values.partnerBirthdate ?? currentForm.partnerBirthdate,
+            ? ""
+            : currentForm.partnerCompleteName,
+        partnerBirthdate: values.partnerBirthdate ?? currentForm.partnerBirthdate,
         partnerNationality:
           values.partnerNationality !== ""
             ? values.partnerNationality
             : !currentForm.partnerNationality
-              ? ""
-              : currentForm.partnerNationality,
+            ? ""
+            : currentForm.partnerNationality,
         partnerCity:
-          values.partnerCity !== ""
-            ? values.partnerCity
-            : !currentForm.partnerCity
-              ? ""
-              : currentForm.partnerCity,
+          values.partnerCity !== "" ? values.partnerCity : !currentForm.partnerCity ? "" : currentForm.partnerCity,
         partnerState:
-          values.partnerState !== ""
-            ? values.partnerState
-            : !currentForm.partnerState
-              ? ""
-              : currentForm.partnerState,
+          values.partnerState !== "" ? values.partnerState : !currentForm.partnerState ? "" : currentForm.partnerState,
         partnerCountry:
           values.partnerCountry !== ""
             ? values.partnerCountry
             : !currentForm.partnerCountry
-              ? ""
-              : currentForm.partnerCountry,
+            ? ""
+            : currentForm.partnerCountry,
         unionDate: values.unionDate ?? currentForm.unionDate,
         divorceDate: values.divorceDate ?? currentForm.divorceDate,
       });
@@ -423,8 +321,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
           ]);
 
           const familyFiltered = familyLivingInTheUSA.filter(
-            (item) =>
-              item.name !== "" || item.relation !== "" || item.situation !== "",
+            (item) => item.name !== "" || item.relation !== "" || item.situation !== ""
           );
 
           setCurrentFamilyIndex((prev) => prev + 1);
@@ -439,10 +336,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
 
     form.setValue("familyLivingInTheUSA", newArr);
 
-    const familyFiltered = newArr.filter(
-      (item) =>
-        item.name !== "" && item.relation !== "" && item.situation !== "",
-    );
+    const familyFiltered = newArr.filter((item) => item.name !== "" && item.relation !== "" && item.situation !== "");
 
     setCurrentFamilyIndex((prev) => prev - 1);
     setFamilyLivingInTheUSAItems(familyFiltered);
@@ -450,10 +344,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Informações da Família
         </h2>
@@ -470,9 +361,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="fatherCompleteName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Nome completo do pai*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Nome completo do pai*</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -488,9 +377,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="fatherBirthdate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Data de nascimento do pai*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data de nascimento do pai*</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -498,14 +385,9 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           <Button
                             disabled={isPending || isSavePending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -514,9 +396,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
@@ -528,16 +408,13 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -559,9 +436,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="fatherLiveInTheUSAConfirmation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Seu pai se encontra nos EUA?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Seu pai se encontra nos EUA?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -598,10 +473,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="fatherUSASituation"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "w-full bg-secondary p-4",
-                      fatherLiveInTheUSAConfirmation === "Não" && "hidden",
-                    )}
+                    className={cn("w-full bg-secondary p-4", fatherLiveInTheUSAConfirmation === "Não" && "hidden")}
                   >
                     <FormLabel className="text-foreground">
                       Em qual situação? (trabalhando legalmente, passeando, etc)
@@ -623,9 +495,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="motherCompleteName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Nome completo da mãe*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Nome completo da mãe*</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -641,9 +511,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="motherBirthdate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Data de nascimento da mãe*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data de nascimento da mãe*</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -651,14 +519,9 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           <Button
                             disabled={isPending || isSavePending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -667,9 +530,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
@@ -681,16 +542,13 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -712,9 +570,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="motherLiveInTheUSAConfirmation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Sua mãe se encontra nos EUA?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Sua mãe se encontra nos EUA?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -751,10 +607,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="motherUSASituation"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "w-full bg-secondary p-4",
-                      motherLiveInTheUSAConfirmation === "Não" && "hidden",
-                    )}
+                    className={cn("w-full bg-secondary p-4", motherLiveInTheUSAConfirmation === "Não" && "hidden")}
                   >
                     <FormLabel className="text-foreground">
                       Em qual situação? (trabalhando legalmente, passeando, etc)
@@ -813,12 +666,10 @@ export function FamilyForm({ currentForm, profileId }: Props) {
               <div
                 className={cn(
                   "w-full bg-secondary p-4 space-y-6",
-                  familyLivingInTheUSAConfirmation === "Não" && "hidden",
+                  familyLivingInTheUSAConfirmation === "Não" && "hidden"
                 )}
               >
-                <span className="text-foreground text-base font-medium">
-                  Em caso afirmativo, informe:
-                </span>
+                <span className="text-foreground text-base font-medium">Em caso afirmativo, informe:</span>
 
                 <div className="w-full flex flex-col gap-4">
                   <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -827,15 +678,10 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                       name={`familyLivingInTheUSA.${currentFamilyIndex}.name`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">
-                            Nome
-                          </FormLabel>
+                          <FormLabel className="text-foreground">Nome</FormLabel>
 
                           <FormControl>
-                            <Input
-                              disabled={isPending || isSavePending}
-                              {...field}
-                            />
+                            <Input disabled={isPending || isSavePending} {...field} />
                           </FormControl>
 
                           <FormMessage className="text-sm text-destructive" />
@@ -848,15 +694,10 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                       name={`familyLivingInTheUSA.${currentFamilyIndex}.relation`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">
-                            Relação Parental
-                          </FormLabel>
+                          <FormLabel className="text-foreground">Relação Parental</FormLabel>
 
                           <FormControl>
-                            <Input
-                              disabled={isPending || isSavePending}
-                              {...field}
-                            />
+                            <Input disabled={isPending || isSavePending} {...field} />
                           </FormControl>
 
                           <FormMessage className="text-sm text-destructive" />
@@ -871,16 +712,11 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-foreground">
-                          Situação (cidadão americano, residente legal, não
-                          imigrante, etc...)
+                          Situação (cidadão americano, residente legal, não imigrante, etc...)
                         </FormLabel>
 
                         <FormControl>
-                          <Textarea
-                            disabled={isPending || isSavePending}
-                            className="resize-none"
-                            {...field}
-                          />
+                          <Textarea disabled={isPending || isSavePending} className="resize-none" {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -910,15 +746,11 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                         className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
                       >
                         <div className="w-full flex flex-col items-center gap-2">
-                          <span className="text-sm font-medium text-foreground">
-                            Nome: {item.name}
-                          </span>
+                          <span className="text-sm font-medium text-foreground">Nome: {item.name}</span>
 
                           <div className="w-full h-px bg-primary" />
 
-                          <span className="text-sm font-medium text-foreground">
-                            Relação: {item.relation}
-                          </span>
+                          <span className="text-sm font-medium text-foreground">Relação: {item.relation}</span>
                         </div>
 
                         <Button
@@ -948,9 +780,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="partnerCompleteName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Nome completo
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Nome completo</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -966,9 +796,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="partnerBirthdate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Data de nascimento
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data de nascimento</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -976,14 +804,9 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           <Button
                             disabled={isPending || isSavePending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -992,9 +815,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
@@ -1006,16 +827,13 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1035,9 +853,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="partnerNationality"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Nacionalidade
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Nacionalidade</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -1055,9 +871,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="partnerCity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Cidade de nascimento
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Cidade de nascimento</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -1073,9 +887,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="partnerState"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Estado de nascimento
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Estado de nascimento</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -1091,9 +903,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="partnerCountry"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      País de nascimento
-                    </FormLabel>
+                    <FormLabel className="text-foreground">País de nascimento</FormLabel>
 
                     <FormControl>
                       <Input disabled={isPending || isSavePending} {...field} />
@@ -1105,9 +915,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mb-6">
-              Se separado(a) ou divorciado(a)
-            </span>
+            <span className="text-foreground text-base font-medium mb-6">Se separado(a) ou divorciado(a)</span>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
@@ -1115,9 +923,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="unionDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Data da união
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data da união</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -1125,14 +931,9 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           <Button
                             disabled={isPending || isSavePending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1141,9 +942,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
@@ -1155,16 +954,13 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1184,9 +980,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                 name="divorceDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Data da separação
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data da separação</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -1194,14 +988,9 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           <Button
                             disabled={isPending || isSavePending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1210,9 +999,7 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
@@ -1224,16 +1011,13 @@ export function FamilyForm({ currentForm, profileId }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",

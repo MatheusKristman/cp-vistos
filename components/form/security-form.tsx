@@ -66,7 +66,7 @@ export function SecurityForm({ currentForm, profileId }: Props) {
       peopleTrafficConfirmation: currentForm.peopleTrafficConfirmation ? "Sim" : "Não",
       helpPeopleTrafficConfirmation: currentForm.helpPeopleTrafficConfirmation ? "Sim" : "Não",
       parentPeopleTrafficConfirmation: currentForm.parentPeopleTrafficConfirmation ? "Sim" : "Não",
-      spyConfirmation: currentForm.spyConfirmation ? (currentForm.spyConfirmation === true ? "Sim" : "Não") : "Não",
+      spyConfirmation: currentForm.spyConfirmation ? "Sim" : "Não",
       terrorismConfirmation: currentForm.terrorismConfirmation ? "Sim" : "Não",
       financialAssistanceConfirmation: currentForm.financialAssistanceConfirmation ? "Sim" : "Não",
       terrorismMemberConfirmation: currentForm.terrorismMemberConfirmation ? "Sim" : "Não",
