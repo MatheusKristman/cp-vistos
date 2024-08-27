@@ -39,9 +39,10 @@ const formSchema = z.object({
 interface Props {
   profileId: string;
   currentForm: FormType;
+  isEditing: boolean;
 }
 
-export function USAContactForm({ currentForm, profileId }: Props) {
+export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
   const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -89,7 +90,12 @@ export function USAContactForm({ currentForm, profileId }: Props) {
       onSuccess: (data) => {
         toast.success(data.message);
         utils.formsRouter.getForm.invalidate();
-        router.push(`/formulario/${profileId}?formStep=7`);
+
+        if (data.isEditing) {
+          router.push(`/resumo-formulario/${profileId}`);
+        } else {
+          router.push(`/formulario/${profileId}?formStep=7`);
+        }
       },
       onError: (error) => {
         console.error(error.data);
@@ -191,7 +197,69 @@ export function USAContactForm({ currentForm, profileId }: Props) {
   }, [redirectStep, setRedirectStep, saveUsaContact, profileId]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    submitUsaContact({ ...values, profileId, step: 7 });
+    submitUsaContact({ ...values, profileId, step: 7, isEditing });
+  }
+
+  function onSave() {
+    const values = form.getValues();
+
+    saveUsaContact({
+      profileId,
+      organizationOrUSAResidentName:
+        values.organizationOrUSAResidentName !== ""
+          ? values.organizationOrUSAResidentName
+          : !currentForm.organizationOrUSAResidentName
+            ? ""
+            : currentForm.organizationOrUSAResidentName,
+      organizationOrUSAResidentRelation:
+        values.organizationOrUSAResidentRelation !== ""
+          ? values.organizationOrUSAResidentRelation
+          : !currentForm.organizationOrUSAResidentRelation
+            ? ""
+            : currentForm.organizationOrUSAResidentRelation,
+      organizationOrUSAResidentAddress:
+        values.organizationOrUSAResidentAddress !== ""
+          ? values.organizationOrUSAResidentAddress
+          : !currentForm.organizationOrUSAResidentAddress
+            ? ""
+            : currentForm.organizationOrUSAResidentAddress,
+      organizationOrUSAResidentZipCode:
+        values.organizationOrUSAResidentZipCode !== ""
+          ? values.organizationOrUSAResidentZipCode
+          : !currentForm.organizationOrUSAResidentZipCode
+            ? ""
+            : currentForm.organizationOrUSAResidentZipCode,
+      organizationOrUSAResidentCity:
+        values.organizationOrUSAResidentCity !== ""
+          ? values.organizationOrUSAResidentCity
+          : !currentForm.organizationOrUSAResidentCity
+            ? ""
+            : currentForm.organizationOrUSAResidentCity,
+      organizationOrUSAResidentState:
+        values.organizationOrUSAResidentState !== ""
+          ? values.organizationOrUSAResidentState
+          : !currentForm.organizationOrUSAResidentState
+            ? ""
+            : currentForm.organizationOrUSAResidentState,
+      organizationOrUSAResidentCountry:
+        values.organizationOrUSAResidentCountry !== ""
+          ? values.organizationOrUSAResidentCountry
+          : !currentForm.organizationOrUSAResidentCountry
+            ? ""
+            : currentForm.organizationOrUSAResidentCountry,
+      organizationOrUSAResidentTel:
+        values.organizationOrUSAResidentTel !== ""
+          ? values.organizationOrUSAResidentTel
+          : !currentForm.organizationOrUSAResidentTel
+            ? ""
+            : currentForm.organizationOrUSAResidentTel,
+      organizationOrUSAResidentEmail:
+        values.organizationOrUSAResidentEmail !== ""
+          ? values.organizationOrUSAResidentEmail
+          : !currentForm.organizationOrUSAResidentEmail
+            ? ""
+            : currentForm.organizationOrUSAResidentEmail,
+    });
   }
 
   return (
@@ -403,35 +471,79 @@ export function USAContactForm({ currentForm, profileId }: Props) {
           </div>
 
           <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
-            <Button
-              size="xl"
-              variant="outline"
-              type="button"
-              className="w-full flex items-center gap-2 sm:w-fit"
-              disabled={isPending || isSavePending}
-            >
-              Salvar
-              <Save className="size-5" strokeWidth={1.5} />
-            </Button>
+            {isEditing ? (
+              <>
+                <Button
+                  size="xl"
+                  type="submit"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                >
+                  {isPending ? (
+                    <>
+                      Salvando
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Salvar
+                      <Save className="size-5" strokeWidth={1.5} />
+                    </>
+                  )}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={onSave}
+                >
+                  {isSavePending ? (
+                    <>
+                      Salvando
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Salvar
+                      <Save className="size-5" strokeWidth={1.5} />
+                    </>
+                  )}
+                </Button>
 
-            <Button
-              size="xl"
-              disabled={isPending || isSavePending}
-              type="submit"
-              className="w-full flex items-center gap-2 sm:w-fit"
-            >
-              {isPending ? (
-                <>
-                  Enviando
-                  <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
-                </>
-              ) : (
-                <>
-                  Enviar
-                  <ArrowRight className="size-5" strokeWidth={1.5} />
-                </>
-              )}
-            </Button>
+                <Button
+                  size="xl"
+                  type="submit"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                >
+                  {isPending ? (
+                    <>
+                      Enviando
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Enviar
+                      <ArrowRight className="size-5" strokeWidth={1.5} />
+                    </>
+                  )}
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </form>

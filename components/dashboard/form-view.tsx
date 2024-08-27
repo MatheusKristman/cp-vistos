@@ -1,75 +1,37 @@
 "use client";
 
-import { Edit, Loader2, Trash } from "lucide-react";
-import { format } from "date-fns";
 import Link from "next/link";
-import axios from "axios";
-import { toast } from "sonner";
+import { format } from "date-fns";
+import { Edit, MoveRight } from "lucide-react";
+import { Form as FormType } from "@prisma/client";
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { FullForm } from "@/types";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface Props {
-  form: FullForm;
+  form: FormType;
+  profileId: string;
 }
 
-export function FormView({ form }: Props) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const router = useRouter();
-
+export function FormView({ form, profileId }: Props) {
   function formatPhone(value: string) {
     if (!value) return;
 
     return value.replace(/\D+/g, "").replace(/(\d{2})(\d{2})(\d{4,5})(\d{4})/, "+$1 ($2) $3-$4");
   }
 
-  function handleDelete() {
-    if (!form) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    axios
-      .delete(`/api/form/delete/${form.id}`)
-      .then((res) => {
-        toast.success(res.data);
-        router.refresh();
-      })
-      .catch((error) => {
-        console.error(error);
-
-        toast.error(error.response.data);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }
-
   return (
     <div className="w-full flex flex-col gap-9 bg-secondary py-8 px-11">
-      <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6">
-        <h2 className="text-xl text-center text-foreground w-full font-semibold sm:w-fit">
-          {form.firstName ? `Formulário ${form.firstName}` : `Formulário adicional não preenchido`}
+      <div className="w-full flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <h2 className="text-2xl text-center text-foreground w-full font-semibold sm:text-left sm:w-fit sm:text-3xl">
+          Resumo do formulário
         </h2>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <Button variant="secondary" className="flex items-center gap-2" disabled={isLoading} asChild>
-            <Link href={`/formulario/editar/${form.id}`}>
-              <Edit />
-              Editar
-            </Link>
-          </Button>
-
-          <Button onClick={handleDelete} disabled={form.order === 0 || isLoading} className="flex items-center gap-2">
-            {isLoading ? <Loader2 className="animate-spin" /> : <Trash />}
-            Excluir
-          </Button>
-        </div>
+        <Button size="xl" className="w-full flex items-center gap-2 sm:w-fit" asChild>
+          <Link href="/area-do-cliente">
+            Voltar para painel <MoveRight className="size-5" strokeWidth={1.5} />
+          </Link>
+        </Button>
       </div>
 
       <Accordion type="single" collapsible className="flex flex-col gap-6">
@@ -83,19 +45,19 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Primeiro Nome</span>
 
-                <span className="text-base text-foreground">{form.firstName ? form.firstName : "---"}</span>
+                <span className="text-base text-foreground">{form.firstName ? form.firstName : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Sobrenome</span>
 
-                <span className="text-base text-foreground">{form.lastName ? form.lastName : "---"}</span>
+                <span className="text-base text-foreground">{form.lastName ? form.lastName : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">CPF</span>
 
-                <span className="text-base text-foreground">{form.cpf ? form.cpf : "---"}</span>
+                <span className="text-base text-foreground">{form.cpf ? form.cpf : "Não Preenchido"}</span>
               </div>
             </div>
 
@@ -121,20 +83,22 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Sexo</span>
 
-                <span className="text-base text-foreground">{form.sex ? form.sex : "---"}</span>
+                <span className="text-base text-foreground">{form.sex ? form.sex : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado Civil</span>
 
-                <span className="text-base text-foreground">{form.maritalStatus ? form.maritalStatus : "---"}</span>
+                <span className="text-base text-foreground">
+                  {form.maritalStatus ? form.maritalStatus : "Não Preenchido"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Data de Nascimento</span>
 
                 <span className="text-base text-foreground">
-                  {form.birthDate ? format(form.birthDate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.birthDate ? format(form.birthDate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -143,19 +107,23 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade de Nascença</span>
 
-                <span className="text-base text-foreground">{form.birthCity ? form.birthCity : "---"}</span>
+                <span className="text-base text-foreground">{form.birthCity ? form.birthCity : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado de Nascença</span>
 
-                <span className="text-base text-foreground">{form.birthState ? form.birthState : "---"}</span>
+                <span className="text-base text-foreground">
+                  {form.birthState ? form.birthState : "Não Preenchido"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País de Nascença</span>
 
-                <span className="text-base text-foreground">{form.birthCountry ? form.birthCountry : "---"}</span>
+                <span className="text-base text-foreground">
+                  {form.birthCountry ? form.birthCountry : "Não Preenchido"}
+                </span>
               </div>
             </div>
 
@@ -163,7 +131,9 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País de Origem (Nacionalidade)</span>
 
-                <span className="text-base text-foreground">{form.originCountry ? form.originCountry : "---"}</span>
+                <span className="text-base text-foreground">
+                  {form.originCountry ? form.originCountry : "Não Preenchido"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -206,6 +176,12 @@ export function FormView({ form }: Props) {
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=0&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -219,19 +195,19 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Endereço</span>
 
-                <span className="text-base text-foreground">{form.address ? form.address : "---"}</span>
+                <span className="text-base text-foreground">{form.address ? form.address : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade</span>
 
-                <span className="text-base text-foreground">{form.city ? form.city : "---"}</span>
+                <span className="text-base text-foreground">{form.city ? form.city : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado</span>
 
-                <span className="text-base text-foreground">{form.state ? form.state : "---"}</span>
+                <span className="text-base text-foreground">{form.state ? form.state : "Não Preenchido"}</span>
               </div>
             </div>
 
@@ -239,13 +215,13 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">CEP</span>
 
-                <span className="text-base text-foreground">{form.cep ? form.cep : "---"}</span>
+                <span className="text-base text-foreground">{form.cep ? form.cep : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">País</span>
 
-                <span className="text-base text-foreground">{form.country ? form.country : "---"}</span>
+                <span className="text-base text-foreground">{form.country ? form.country : "Não Preenchido"}</span>
               </div>
             </div>
 
@@ -265,13 +241,13 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Celular</span>
 
-                <span className="text-base text-foreground">{form.cel ? formatPhone(form.cel) : "---"}</span>
+                <span className="text-base text-foreground">{form.cel ? formatPhone(form.cel) : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Telefone</span>
 
-                <span className="text-base text-foreground">{form.tel ? formatPhone(form.tel) : "---"}</span>
+                <span className="text-base text-foreground">{form.tel ? formatPhone(form.tel) : "Não Preenchido"}</span>
               </div>
             </div>
 
@@ -279,7 +255,7 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">E-mail</span>
 
-                <span className="text-base text-foreground">{form.email ? form.email : "---"}</span>
+                <span className="text-base text-foreground">{form.email ? form.email : "Não Preenchido"}</span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
@@ -330,6 +306,12 @@ export function FormView({ form }: Props) {
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=1&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -343,19 +325,25 @@ export function FormView({ form }: Props) {
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Número do Passaporte</span>
 
-                <span className="text-base text-foreground">{form.passportNumber ? form.passportNumber : "---"}</span>
+                <span className="text-base text-foreground">
+                  {form.passportNumber ? form.passportNumber : "Não Preenchido"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Cidade de Emissão</span>
 
-                <span className="text-base text-foreground">{form.passportCity ? form.passportCity : "---"}</span>
+                <span className="text-base text-foreground">
+                  {form.passportCity ? form.passportCity : "Não Preenchido"}
+                </span>
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <span className="text-base text-foreground font-medium">Estado de Emissão</span>
 
-                <span className="text-base text-foreground">{form.passportState ? form.passportState : "---"}</span>
+                <span className="text-base text-foreground">
+                  {form.passportState ? form.passportState : "Não Preenchido"}
+                </span>
               </div>
             </div>
 
@@ -364,7 +352,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">País de Emissão</span>
 
                 <span className="text-base text-foreground">
-                  {form.passportIssuingCountry ? form.passportIssuingCountry : "---"}
+                  {form.passportIssuingCountry ? form.passportIssuingCountry : "Não Preenchido"}
                 </span>
               </div>
 
@@ -372,7 +360,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Data de Emissão</span>
 
                 <span className="text-base text-foreground">
-                  {form.passportIssuingDate ? format(form.passportIssuingDate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.passportIssuingDate ? format(form.passportIssuingDate, "dd/MM/yyyy") : "Não preenchido"}
                 </span>
               </div>
 
@@ -398,7 +386,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.passportLostConfirmation && form.lostPassportNumber && form.lostPassportNumber.length > 0
                     ? form.lostPassportNumber
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -408,7 +396,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.passportLostConfirmation && form.lostPassportCountry && form.lostPassportCountry.length > 0
                     ? form.lostPassportCountry
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -420,10 +408,16 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.passportLostConfirmation && form.lostPassportDetails && form.lostPassportDetails.length > 0
                     ? form.lostPassportDetails
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=2&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -446,7 +440,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.travelItineraryConfirmation && form.USAPreviewArriveDate
                     ? format(form.USAPreviewArriveDate, "dd/MM/yyyy")
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -456,7 +450,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.travelItineraryConfirmation && form.arriveFlyNumber && form.arriveFlyNumber.length > 0
                     ? form.arriveFlyNumber
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -466,7 +460,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.travelItineraryConfirmation && form.arriveCity && form.arriveCity.length > 0
                     ? form.arriveCity
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -478,7 +472,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.travelItineraryConfirmation && form.USAPreviewReturnDate
                     ? format(form.USAPreviewReturnDate, "dd/MM/yyyy")
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -488,7 +482,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.travelItineraryConfirmation && form.returnFlyNumber && form.returnFlyNumber.length > 0
                     ? form.returnFlyNumber
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -498,7 +492,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.travelItineraryConfirmation && form.returnCity && form.returnCity.length > 0
                     ? form.returnCity
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -516,7 +510,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Locais que irá visitar</span>
 
                 <span className="text-base text-foreground">
-                  {form.visitLocations && form.visitLocations.length > 0 ? form.visitLocations.join(" | ") : "---"}
+                  {form.visitLocations && form.visitLocations.length > 0
+                    ? form.visitLocations.join(" | ")
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -526,7 +522,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Endereço completo onde ficará nos EUA</span>
 
                 <span className="text-base text-foreground">
-                  {form.USACompleteAddress && form.USACompleteAddress.length > 0 ? form.USACompleteAddress : "---"}
+                  {form.USACompleteAddress && form.USACompleteAddress.length > 0
+                    ? form.USACompleteAddress
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -534,7 +532,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">ZIP Code de onde ficará nos EUA</span>
 
                 <span className="text-base text-foreground">
-                  {form.USAZipCode && form.USAZipCode.length > 0 ? form.USAZipCode : "---"}
+                  {form.USAZipCode && form.USAZipCode.length > 0 ? form.USAZipCode : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -544,7 +542,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Cidade nos EUA</span>
 
                 <span className="text-base text-foreground">
-                  {form.USACity && form.USACity.length > 0 ? form.USACity : "---"}
+                  {form.USACity && form.USACity.length > 0 ? form.USACity : "Não Preenchido"}
                 </span>
               </div>
 
@@ -552,7 +550,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Estado nos EUA</span>
 
                 <span className="text-base text-foreground">
-                  {form.USAState && form.USAState.length > 0 ? form.USAState : "---"}
+                  {form.USAState && form.USAState.length > 0 ? form.USAState : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -562,7 +560,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Nome ou empresa que pagará a viagem</span>
 
                 <span className="text-base text-foreground">
-                  {form.payerNameOrCompany && form.payerNameOrCompany.length > 0 ? form.payerNameOrCompany : "---"}
+                  {form.payerNameOrCompany && form.payerNameOrCompany.length > 0
+                    ? form.payerNameOrCompany
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -570,7 +570,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Telefone Residencial</span>
 
                 <span className="text-base text-foreground">
-                  {form.payerTel && form.payerTel.length > 0 ? formatPhone(form.payerTel) : "---"}
+                  {form.payerTel && form.payerTel.length > 0 ? formatPhone(form.payerTel) : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -580,7 +580,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Endereço Completo</span>
 
                 <span className="text-base text-foreground">
-                  {form.payerAddress && form.payerAddress.length > 0 ? form.payerAddress : "---"}
+                  {form.payerAddress && form.payerAddress.length > 0 ? form.payerAddress : "Não Preenchido"}
                 </span>
               </div>
 
@@ -588,7 +588,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Relação com o solicitante</span>
 
                 <span className="text-base text-foreground">
-                  {form.payerRelation && form.payerRelation.length > 0 ? form.payerRelation : "---"}
+                  {form.payerRelation && form.payerRelation.length > 0 ? form.payerRelation : "Não Preenchido"}
                 </span>
               </div>
 
@@ -596,10 +596,16 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">E-mail</span>
 
                 <span className="text-base text-foreground">
-                  {form.payerEmail && form.payerEmail.length > 0 ? form.payerEmail : "---"}
+                  {form.payerEmail && form.payerEmail.length > 0 ? form.payerEmail : "Não Preenchido"}
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=3&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -614,7 +620,7 @@ export function FormView({ form }: Props) {
               form.otherPeopleTraveling &&
               form.otherPeopleTraveling.length > 0 ? (
                 form.otherPeopleTraveling.map((otherPeople, index) => (
-                  <div key={otherPeople.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                  <div key={`otherPeopleTraveling-${index}`} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
                     <div className="w-full flex items-center gap-2">
                       <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
                         <span className="text-white text-lg font-medium">{index + 1}</span>
@@ -660,10 +666,18 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Nome da organização ou grupo</span>
 
                 <span className="text-base text-foreground">
-                  {form.groupMemberConfirmation && form.groupName && form.groupName.length > 0 ? form.groupName : "---"}
+                  {form.groupMemberConfirmation && form.groupName && form.groupName.length > 0
+                    ? form.groupName
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=4&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -684,7 +698,7 @@ export function FormView({ form }: Props) {
             <div className="w-full flex flex-col gap-9">
               {form.hasBeenOnUSAConfirmation && form.USALastTravel && form.USALastTravel.length > 0 ? (
                 form.USALastTravel.map((lastTravel, index) => (
-                  <div key={lastTravel.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                  <div key={`USALastTravel-${index}`} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
                     <div className="w-full flex items-center gap-2">
                       <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
                         <span className="text-white text-lg font-medium">{index + 1}</span>
@@ -698,7 +712,7 @@ export function FormView({ form }: Props) {
                         <span className="text-base text-foreground font-medium">Data prevista de chegada nos EUA</span>
 
                         <span className="text-base text-foreground">
-                          {lastTravel.arriveDate ? format(lastTravel.arriveDate, "dd/MM/yyyy") : "--/--/----"}
+                          {lastTravel.arriveDate ? format(lastTravel.arriveDate, "dd/MM/yyyy") : "Não Preenchido"}
                         </span>
                       </div>
 
@@ -734,7 +748,7 @@ export function FormView({ form }: Props) {
             <div className="w-full flex flex-col gap-9">
               {form.americanLicenseToDriveConfirmation && form.americanLicense && form.americanLicense.length > 0 ? (
                 form.americanLicense.map((americanLicense, index) => (
-                  <div key={americanLicense.id} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
+                  <div key={`americanLicense-${index}`} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
                     <div className="w-full flex items-center gap-2">
                       <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
                         <span className="text-white text-lg font-medium">{index + 1}</span>
@@ -776,7 +790,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Data de Emissão do Visto</span>
 
                 <span className="text-base text-foreground">
-                  {form.visaIssuingDate ? format(form.visaIssuingDate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.visaIssuingDate ? format(form.visaIssuingDate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
 
@@ -840,7 +854,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.lostVisaDetails && form.lostVisaDetails.length > 0 ? form.lostVisaDetails : "---"}
+                  {form.lostVisaDetails && form.lostVisaDetails.length > 0 ? form.lostVisaDetails : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -858,7 +872,9 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.canceledVisaDetails && form.canceledVisaDetails.length > 0 ? form.canceledVisaDetails : "---"}
+                  {form.canceledVisaDetails && form.canceledVisaDetails.length > 0
+                    ? form.canceledVisaDetails
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -874,7 +890,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">O que ocorreu com o visto negado</span>
 
                 <span className="text-base text-foreground">
-                  {form.deniedVisaDetails && form.deniedVisaDetails.length > 0 ? form.deniedVisaDetails : "---"}
+                  {form.deniedVisaDetails && form.deniedVisaDetails.length > 0
+                    ? form.deniedVisaDetails
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -884,7 +902,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Posto Consular no Brasil</span>
 
                 <span className="text-base text-foreground">
-                  {form.consularPost && form.consularPost.length > 0 ? form.consularPost : "---"}
+                  {form.consularPost && form.consularPost.length > 0 ? form.consularPost : "Não Preenchido"}
                 </span>
               </div>
 
@@ -892,7 +910,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Categoria/tipo de visto negado</span>
 
                 <span className="text-base text-foreground">
-                  {form.deniedVisaType && form.deniedVisaType.length > 0 ? form.deniedVisaType : "---"}
+                  {form.deniedVisaType && form.deniedVisaType.length > 0 ? form.deniedVisaType : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -916,10 +934,16 @@ export function FormView({ form }: Props) {
                   {form.immigrationRequestByAnotherPersonDetails &&
                   form.immigrationRequestByAnotherPersonDetails.length > 0
                     ? form.immigrationRequestByAnotherPersonDetails
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=5&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -936,7 +960,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentName && form.organizationOrUSAResidentName.length > 0
                     ? form.organizationOrUSAResidentName
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -946,7 +970,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentRelation && form.organizationOrUSAResidentRelation.length > 0
                     ? form.organizationOrUSAResidentRelation
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -958,7 +982,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentAddress && form.organizationOrUSAResidentAddress.length > 0
                     ? form.organizationOrUSAResidentAddress
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -968,7 +992,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentZipCode && form.organizationOrUSAResidentZipCode.length > 0
                     ? form.organizationOrUSAResidentZipCode
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -980,7 +1004,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentCity && form.organizationOrUSAResidentCity.length > 0
                     ? form.organizationOrUSAResidentCity
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -990,7 +1014,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentState && form.organizationOrUSAResidentState.length > 0
                     ? form.organizationOrUSAResidentState
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1000,7 +1024,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentCountry && form.organizationOrUSAResidentCountry.length > 0
                     ? form.organizationOrUSAResidentCountry
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1012,7 +1036,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentTel && form.organizationOrUSAResidentTel.length > 0
                     ? formatPhone(form.organizationOrUSAResidentTel)
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1022,10 +1046,16 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">
                   {form.organizationOrUSAResidentEmail && form.organizationOrUSAResidentEmail.length > 0
                     ? form.organizationOrUSAResidentEmail
-                    : "---"}
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=6&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -1040,7 +1070,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Nome Completo do Pai</span>
 
                 <span className="text-base text-foreground">
-                  {form.fatherCompleteName && form.fatherCompleteName.length > 0 ? form.fatherCompleteName : "---"}
+                  {form.fatherCompleteName && form.fatherCompleteName.length > 0
+                    ? form.fatherCompleteName
+                    : "Não preenchido"}
                 </span>
               </div>
 
@@ -1048,7 +1080,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Data de Nascimento do Pai</span>
 
                 <span className="text-base text-foreground">
-                  {form.fatherBirthdate ? format(form.fatherBirthdate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.fatherBirthdate ? format(form.fatherBirthdate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1064,7 +1096,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Situação do Pai</span>
 
                 <span className="text-base text-foreground">
-                  {form.fatherUSASituation && form.fatherUSASituation.length > 0 ? form.fatherUSASituation : "---"}
+                  {form.fatherUSASituation && form.fatherUSASituation.length > 0
+                    ? form.fatherUSASituation
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1074,7 +1108,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Nome Completo do Mãe</span>
 
                 <span className="text-base text-foreground">
-                  {form.motherCompleteName && form.motherCompleteName.length > 0 ? form.motherCompleteName : "---"}
+                  {form.motherCompleteName && form.motherCompleteName.length > 0
+                    ? form.motherCompleteName
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1082,7 +1118,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Data de Nascimento do Mãe</span>
 
                 <span className="text-base text-foreground">
-                  {form.motherBirthdate ? format(form.motherBirthdate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.motherBirthdate ? format(form.motherBirthdate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1098,7 +1134,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Situação do Mãe</span>
 
                 <span className="text-base text-foreground">
-                  {form.motherUSASituation && form.motherUSASituation.length > 0 ? form.motherUSASituation : "---"}
+                  {form.motherUSASituation && form.motherUSASituation.length > 0
+                    ? form.motherUSASituation
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1118,7 +1156,7 @@ export function FormView({ form }: Props) {
               form.familyLivingInTheUSA &&
               form.familyLivingInTheUSA.length > 0 ? (
                 form.familyLivingInTheUSA.map((familyLivingInTheUSA, index) => (
-                  <div key={familyLivingInTheUSA.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                  <div key={`familyLivingInTheUSA-${index}`} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
                     <div className="w-full flex items-center gap-2">
                       <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
                         <span className="text-white text-lg font-medium">{index + 1}</span>
@@ -1162,7 +1200,9 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.partnerCompleteName && form.partnerCompleteName.length > 0 ? form.partnerCompleteName : "---"}
+                  {form.partnerCompleteName && form.partnerCompleteName.length > 0
+                    ? form.partnerCompleteName
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1172,7 +1212,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.partnerBirthdate ? format(form.partnerBirthdate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.partnerBirthdate ? format(form.partnerBirthdate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1184,7 +1224,9 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.partnerNationality && form.partnerNationality.length > 0 ? form.partnerNationality : "---"}
+                  {form.partnerNationality && form.partnerNationality.length > 0
+                    ? form.partnerNationality
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1194,7 +1236,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.partnerCity && form.partnerCity.length > 0 ? form.partnerCity : "---"}
+                  {form.partnerCity && form.partnerCity.length > 0 ? form.partnerCity : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1206,7 +1248,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.partnerState && form.partnerState.length > 0 ? form.partnerState : "---"}
+                  {form.partnerState && form.partnerState.length > 0 ? form.partnerState : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1216,7 +1258,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.partnerCountry && form.partnerCountry.length > 0 ? form.partnerCountry : "---"}
+                  {form.partnerCountry && form.partnerCountry.length > 0 ? form.partnerCountry : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1228,7 +1270,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.unionDate ? format(form.unionDate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.unionDate ? format(form.unionDate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1238,10 +1280,16 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.divorceDate ? format(form.divorceDate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.divorceDate ? format(form.divorceDate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=7&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -1256,7 +1304,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Ocupação atual</span>
 
                 <span className="text-base text-foreground">
-                  {form.occupation && form.occupation.length > 0 ? form.occupation : "---"}
+                  {form.occupation && form.occupation.length > 0 ? form.occupation : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1264,7 +1312,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Cargo/Função</span>
 
                 <span className="text-base text-foreground">
-                  {form.office && form.office.length > 0 ? form.office : "---"}
+                  {form.office && form.office.length > 0 ? form.office : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1272,7 +1320,9 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Nome do empregador ou empresa atual</span>
 
                 <span className="text-base text-foreground">
-                  {form.companyOrBossName && form.companyOrBossName.length > 0 ? form.companyOrBossName : "---"}
+                  {form.companyOrBossName && form.companyOrBossName.length > 0
+                    ? form.companyOrBossName
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1282,7 +1332,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Endereço completo da empresa</span>
 
                 <span className="text-base text-foreground">
-                  {form.companyAddress && form.companyAddress.length > 0 ? form.companyAddress : "---"}
+                  {form.companyAddress && form.companyAddress.length > 0 ? form.companyAddress : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1290,7 +1340,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Cidade da empresa</span>
 
                 <span className="text-base text-foreground">
-                  {form.companyCity && form.companyCity.length > 0 ? form.companyCity : "---"}
+                  {form.companyCity && form.companyCity.length > 0 ? form.companyCity : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1298,7 +1348,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Estado da empresa</span>
 
                 <span className="text-base text-foreground">
-                  {form.companyState && form.companyState.length > 0 ? form.companyState : "---"}
+                  {form.companyState && form.companyState.length > 0 ? form.companyState : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1308,7 +1358,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">País da empresa</span>
 
                 <span className="text-base text-foreground">
-                  {form.companyCountry && form.companyCountry.length > 0 ? form.companyCountry : "---"}
+                  {form.companyCountry && form.companyCountry.length > 0 ? form.companyCountry : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1316,7 +1366,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Cep da empresa</span>
 
                 <span className="text-base text-foreground">
-                  {form.companyCep && form.companyCep.length > 0 ? form.companyCep : "---"}
+                  {form.companyCep && form.companyCep.length > 0 ? form.companyCep : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1324,7 +1374,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Telefone da empresa</span>
 
                 <span className="text-base text-foreground">
-                  {form.companyTel && form.companyTel.length > 0 ? formatPhone(form.companyTel) : "---"}
+                  {form.companyTel && form.companyTel.length > 0 ? formatPhone(form.companyTel) : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1334,7 +1384,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Data de admissão</span>
 
                 <span className="text-base text-foreground">
-                  {form.admissionDate ? format(form.admissionDate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.admissionDate ? format(form.admissionDate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1342,7 +1392,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Data de aposentadoria</span>
 
                 <span className="text-base text-foreground">
-                  {form.retireeDate ? format(form.retireeDate, "dd/MM/yyyy") : "--/--/----"}
+                  {form.retireeDate ? format(form.retireeDate, "dd/MM/yyyy") : "Não Preenchido"}
                 </span>
               </div>
 
@@ -1350,7 +1400,7 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground font-medium">Renda mensal (R$)</span>
 
                 <span className="text-base text-foreground">
-                  {form.monthlySalary && form.monthlySalary.length > 0 ? form.monthlySalary : "---"}
+                  {form.monthlySalary && form.monthlySalary.length > 0 ? form.monthlySalary : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1363,7 +1413,7 @@ export function FormView({ form }: Props) {
                 </span>
 
                 <span className="text-base text-foreground">
-                  {form.jobDetails && form.jobDetails.length > 0 ? form.jobDetails : "---"}
+                  {form.jobDetails && form.jobDetails.length > 0 ? form.jobDetails : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1371,7 +1421,7 @@ export function FormView({ form }: Props) {
             <div className="w-full flex flex-col gap-9">
               {form.previousJobConfirmation && form.previousJobs && form.previousJobs.length > 0 ? (
                 form.previousJobs.map((previousJobs, index) => (
-                  <div key={previousJobs.id} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
+                  <div key={`previousJobs-${index}`} className="w-full bg-[#D3D3E2] p-5 flex flex-col gap-4">
                     <div className="w-full flex items-center gap-2">
                       <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
                         <span className="text-white text-lg font-medium">{index + 1}</span>
@@ -1426,7 +1476,7 @@ export function FormView({ form }: Props) {
                         <span className="text-base text-foreground font-medium">Telefone da empresa</span>
 
                         <span className="text-base text-foreground">
-                          {previousJobs.companyTel ? formatPhone(previousJobs.companyTel) : "---"}
+                          {previousJobs.companyTel ? formatPhone(previousJobs.companyTel) : "Não Preenchido"}
                         </span>
                       </div>
                     </div>
@@ -1450,7 +1500,9 @@ export function FormView({ form }: Props) {
                         <span className="text-base text-foreground font-medium">Data de admissão</span>
 
                         <span className="text-base text-foreground">
-                          {previousJobs.admissionDate ? format(previousJobs.admissionDate, "dd/MM/yyyy") : "--/--/----"}
+                          {previousJobs.admissionDate
+                            ? format(previousJobs.admissionDate, "dd/MM/yyyy")
+                            : "Não Preenchido"}
                         </span>
                       </div>
 
@@ -1460,7 +1512,7 @@ export function FormView({ form }: Props) {
                         <span className="text-base text-foreground">
                           {previousJobs.resignationDate
                             ? format(previousJobs.resignationDate, "dd/MM/yyyy")
-                            : "--/--/----"}
+                            : "Não Preenchido"}
                         </span>
                       </div>
                     </div>
@@ -1484,7 +1536,7 @@ export function FormView({ form }: Props) {
             <div className="w-full flex flex-col gap-9">
               {form.courses && form.courses.length > 0 ? (
                 form.courses.map((course, index) => (
-                  <div key={course.id} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
+                  <div key={`courses-${index}`} className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4">
                     <div className="w-full flex items-center gap-2">
                       <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
                         <span className="text-white text-lg font-medium">{index + 1}</span>
@@ -1545,7 +1597,7 @@ export function FormView({ form }: Props) {
                         <span className="text-base text-foreground font-medium">Data de início</span>
 
                         <span className="text-base text-foreground">
-                          {course.initialDate ? format(course.initialDate, "dd/MM/yyyy") : "--/--/----"}
+                          {course.initialDate ? format(course.initialDate, "dd/MM/yyyy") : "Não Preenchido"}
                         </span>
                       </div>
 
@@ -1553,7 +1605,7 @@ export function FormView({ form }: Props) {
                         <span className="text-base text-foreground font-medium">Data de término</span>
 
                         <span className="text-base text-foreground">
-                          {course.finishDate ? format(course.finishDate, "dd/MM/yyyy") : "--/--/----"}
+                          {course.finishDate ? format(course.finishDate, "dd/MM/yyyy") : "Não Preenchido"}
                         </span>
                       </div>
                     </div>
@@ -1565,6 +1617,193 @@ export function FormView({ form }: Props) {
                 </div>
               )}
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=8&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="additional-information" className="bg-white p-6 flex flex-col gap-9 border-0">
+          <AccordionTrigger className="text-lg text-foreground font-semibold hover:no-underline">
+            Informação Adicional
+          </AccordionTrigger>
+
+          <AccordionContent className="w-full flex flex-col gap-9">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Você participa de algum clã ou tribo?</span>
+
+                <span className="text-base text-foreground">{form.tribeParticipateConfirmation ? "Sim" : "Não"}</span>
+              </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Quais idiomas você fala?</span>
+
+                <span className="text-base text-foreground">
+                  {form.languages.length > 0 ? form.languages.join(" | ") : "Não possui"}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">
+                  Viajou nos últimos 5 anos para outro país?
+                </span>
+
+                <span className="text-base text-foreground">
+                  {form.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"}
+                </span>
+              </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Países que viajou</span>
+
+                <span className="text-base text-foreground">
+                  {form.fiveYearsOtherCountryTravels.length > 0
+                    ? form.fiveYearsOtherCountryTravels.join(" | ")
+                    : "Não possui"}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">
+                  Contribui ou faz parte de alguma instituição de caridade ou organização social?
+                </span>
+
+                <span className="text-base text-foreground">{form.socialOrganizationConfirmation ? "Sim" : "Não"}</span>
+              </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Organizações que você faz parte</span>
+
+                <span className="text-base text-foreground">
+                  {form.socialOrganization.length > 0 ? form.socialOrganization.join(" | ") : "Não possui"}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Você tem treinamento com arma de fogo?</span>
+
+                <span className="text-base text-foreground">{form.weaponTrainingConfirmation ? "Sim" : "Não"}</span>
+              </div>
+            </div>
+
+            {form.weaponTrainingConfirmation && form.weaponTrainingDetails && (
+              <div className="w-full grid grid-cols-1 gap-6">
+                <div className="w-full flex flex-col gap-1">
+                  <span className="text-base text-foreground font-medium">Mais detalhes sobre o treinamento</span>
+
+                  <span className="text-base text-foreground">
+                    {form.weaponTrainingDetails ? form.weaponTrainingDetails : "Não possui"}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="w-full grid grid-cols-1 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Já prestou serviço militar?</span>
+
+                <span className="text-base text-foreground">{form.militaryServiceConfirmation ? "Sim" : "Não"}</span>
+              </div>
+            </div>
+
+            {form.militaryServiceConfirmation && (
+              <>
+                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div className="w-full flex flex-col gap-1">
+                    <span className="text-base text-foreground font-medium">País que serviu</span>
+
+                    <span className="text-base text-foreground">
+                      {form.militaryServiceCountry ? form.militaryServiceCountry : "Não Preenchido"}
+                    </span>
+                  </div>
+
+                  <div className="w-full flex flex-col gap-1">
+                    <span className="text-base text-foreground font-medium">Local que serviu</span>
+
+                    <span className="text-base text-foreground">
+                      {form.militaryServiceLocal ? form.militaryServiceLocal : "Não Preenchido"}
+                    </span>
+                  </div>
+
+                  <div className="w-full flex flex-col gap-1">
+                    <span className="text-base text-foreground font-medium">Patente</span>
+
+                    <span className="text-base text-foreground">
+                      {form.militaryServicePatent ? form.militaryServicePatent : "Não Preenchido"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div className="w-full flex flex-col gap-1">
+                    <span className="text-base text-foreground font-medium">Especialidade</span>
+
+                    <span className="text-base text-foreground">
+                      {form.militaryServiceSpecialty ? form.militaryServiceSpecialty : "Não Preenchido"}
+                    </span>
+                  </div>
+
+                  <div className="w-full flex flex-col gap-1">
+                    <span className="text-base text-foreground font-medium">Data de início</span>
+
+                    <span className="text-base text-foreground">
+                      {form.militaryServiceStartDate
+                        ? format(form.militaryServiceStartDate, "dd/MM/yyyy")
+                        : "Não Preenchido"}
+                    </span>
+                  </div>
+
+                  <div className="w-full flex flex-col gap-1">
+                    <span className="text-base text-foreground font-medium">Data de início</span>
+
+                    <span className="text-base text-foreground">
+                      {form.militaryServiceEndDate
+                        ? format(form.militaryServiceEndDate, "dd/MM/yyyy")
+                        : "Não Preenchido"}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="w-full grid grid-cols-1 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">
+                  Você já serviu, foi membro ou esteve envolvido em uma unidade paramilitar, unidade de vigilantes,
+                  grupo rebelde, grupo guerrilheiro ou organização insurgente?
+                </span>
+
+                <span className="text-base text-foreground">
+                  {form.insurgencyOrganizationConfirmation ? "Sim" : "Não"}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-base text-foreground font-medium">Mais detalhes sobre sua participação</span>
+
+                <span className="text-base text-foreground">
+                  {form.insurgencyOrganizationDetails ? form.insurgencyOrganizationDetails : "Não Preenchido"}
+                </span>
+              </div>
+            </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=9&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
 
@@ -1868,6 +2107,12 @@ export function FormView({ form }: Props) {
                 <span className="text-base text-foreground">{form.avoidTaxConfirmation ? "Sim" : "Não"}</span>
               </div>
             </div>
+
+            <Button size="xl" className="w-full sm:w-fit flex items-center gap-2" asChild>
+              <Link href={`/formulario/${profileId}?formStep=10&isEditing=true`}>
+                Editar <Edit className="size-5" strokeWidth={1.5} />
+              </Link>
+            </Button>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

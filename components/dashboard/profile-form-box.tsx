@@ -34,7 +34,10 @@ export function ProfileFormBox({
   const [statusDSFormatted, setStatusDSFormatted] = useState<string>("");
   const [statusFormFormatted, setStatusFormFormatted] = useState<string>("");
 
-  const formLink = `/formulario/${profileId}?formStep=${formStep}`;
+  const formLink =
+    formStep > 10
+      ? `/resumo-formulario/${profileId}`
+      : `/formulario/${profileId}?formStep=${formStep}`;
 
   useEffect(() => {
     switch (statusDS) {
