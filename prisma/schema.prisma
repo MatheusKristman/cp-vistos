@@ -179,6 +179,9 @@ model Form {
   USSocialSecurityNumber           String?
   USTaxpayerIDNumber               String?
   address                          String?
+  addressNumber                    String?
+  complement                       String?
+  district                         String?
   city                             String?
   state                            String?
   cep                              String?

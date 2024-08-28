@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader2, Save } from "lucide-react";
 import { Form as FormType } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 import {
   Form,
@@ -19,9 +22,6 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc-client";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { useEffect } from "react";
 import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z.object({
@@ -269,7 +269,7 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
         className="w-full flex flex-col flex-grow gap-6"
       >
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
-          Contato nos estados unidades
+          Contato nos Estados Unidos
         </h2>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">

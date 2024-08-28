@@ -9,6 +9,7 @@ import { ClientDetailsAnnotations } from "./client-details-annotations";
 import { ClientDetailsEditAccount } from "./client-details-edit-account";
 import { ClientDetailsComments } from "./client-details-comments";
 import { ClientDetailsEditProfile } from "./client-details-edit-profile";
+import { ClientDetailsForm } from "./client-details-form";
 import { trpc } from "@/lib/trpc-client";
 
 export function ClientDetailsModal() {
@@ -22,11 +23,13 @@ export function ClientDetailsModal() {
     isEditAccount,
     isComment,
     isEditProfile,
+    isForm,
     unsetToAnnotation,
     unsetToEditAccount,
     unsetToResume,
     unsetToComment,
     unsetToEditProfile,
+    unsetToForm,
   } = useClientDetailsModalStore();
 
   if (!client) {
@@ -43,6 +46,7 @@ export function ClientDetailsModal() {
       unsetToEditAccount();
       unsetToComment();
       unsetToEditProfile();
+      unsetToForm();
     }, 300);
   }
 
@@ -93,6 +97,12 @@ export function ClientDetailsModal() {
               {isEditProfile && (
                 <ClientDetailsEditProfile
                   key="client-edit-profile"
+                  handleClose={handleClose}
+                />
+              )}
+              {isForm && (
+                <ClientDetailsForm
+                  key="client-form"
                   handleClose={handleClose}
                 />
               )}

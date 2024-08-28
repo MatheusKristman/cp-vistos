@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: adicionar função de salvar dados
-
 import { ChangeEvent, useEffect, useState } from "react";
 import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
@@ -370,7 +368,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 sm:mb-10">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -432,7 +430,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
               <FormField
                 control={form.control}
                 name="otherNamesConfirmation"
@@ -548,7 +546,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 sm:mb-10">
               <FormField
                 control={form.control}
                 name="sex"
@@ -695,14 +693,14 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 sm:mb-10">
               <FormField
                 control={form.control}
                 name="birthCity"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Cidade que nasceu*
+                      Cidade de Nascimento*
                     </FormLabel>
 
                     <FormControl>
@@ -720,7 +718,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Estado que nasceu*
+                      Estado de Nascimento*
                     </FormLabel>
 
                     <FormControl>
@@ -738,7 +736,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      País que nasceu*
+                      País de Nascimento*
                     </FormLabel>
 
                     <FormControl>
@@ -751,7 +749,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
               <FormField
                 control={form.control}
                 name="originCountry"
@@ -771,7 +769,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
               <FormField
                 control={form.control}
                 name="otherNationalityConfirmation"
@@ -842,7 +840,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
               <FormField
                 control={form.control}
                 name="otherCountryResidentConfirmation"

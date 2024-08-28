@@ -5,6 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader2, Save } from "lucide-react";
 import { Form as FormType } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 import {
   Form,
@@ -18,9 +21,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import useFormStore from "@/constants/stores/useFormStore";
 import { trpc } from "@/lib/trpc-client";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { useEffect } from "react";
 
 const formSchema = z.object({
   contagiousDiseaseConfirmation: z.enum(["Sim", "Não"]),

@@ -10,14 +10,8 @@ import {
 import { TRPCError } from "@trpc/server";
 import { addDays } from "date-fns";
 
-import {
-  adminProcedure,
-  collaboratorProcedure,
-  publicProcedure,
-  router,
-} from "../trpc";
+import { adminProcedure, collaboratorProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
-import { auth } from "@/auth";
 
 export const userRouter = router({
   getRole: collaboratorProcedure.query(async (opts) => {
@@ -388,16 +382,7 @@ export const userRouter = router({
         include: {
           user: true,
           comments: true,
-          form: {
-            include: {
-              otherPeopleTraveling: true,
-              familyLivingInTheUSA: true,
-              americanLicense: true,
-              USALastTravel: true,
-              previousJobs: true,
-              courses: true,
-            },
-          },
+          form: true,
         },
       });
 
@@ -429,16 +414,7 @@ export const userRouter = router({
         include: {
           user: true,
           comments: true,
-          form: {
-            include: {
-              otherPeopleTraveling: true,
-              familyLivingInTheUSA: true,
-              americanLicense: true,
-              USALastTravel: true,
-              previousJobs: true,
-              courses: true,
-            },
-          },
+          form: true,
         },
       });
 
@@ -471,16 +447,7 @@ export const userRouter = router({
         include: {
           user: true,
           comments: true,
-          form: {
-            include: {
-              otherPeopleTraveling: true,
-              familyLivingInTheUSA: true,
-              americanLicense: true,
-              USALastTravel: true,
-              previousJobs: true,
-              courses: true,
-            },
-          },
+          form: true,
         },
       });
 
@@ -513,16 +480,7 @@ export const userRouter = router({
         include: {
           user: true,
           comments: true,
-          form: {
-            include: {
-              otherPeopleTraveling: true,
-              familyLivingInTheUSA: true,
-              americanLicense: true,
-              USALastTravel: true,
-              previousJobs: true,
-              courses: true,
-            },
-          },
+          form: true,
         },
       });
 
@@ -703,16 +661,7 @@ export const userRouter = router({
         include: {
           user: true,
           comments: true,
-          form: {
-            include: {
-              otherPeopleTraveling: true,
-              familyLivingInTheUSA: true,
-              americanLicense: true,
-              USALastTravel: true,
-              previousJobs: true,
-              courses: true,
-            },
-          },
+          form: true,
         },
       });
 
@@ -888,16 +837,7 @@ export const userRouter = router({
         include: {
           user: true,
           comments: true,
-          form: {
-            include: {
-              otherPeopleTraveling: true,
-              familyLivingInTheUSA: true,
-              americanLicense: true,
-              USALastTravel: true,
-              previousJobs: true,
-              courses: true,
-            },
-          },
+          form: true,
         },
       });
 

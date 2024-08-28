@@ -1,11 +1,10 @@
 "use client";
 
-import { ArrowRight, Loader2, Plus, Save, Trash, X } from "lucide-react";
+import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -1092,7 +1091,9 @@ export function PreviousTravelForm({
                 control={form.control}
                 name="visaIssuingDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem
+                    className={cn(USAVisaConfirmation === "Não" && "hidden")}
+                  >
                     <FormLabel className="text-foreground">
                       Data exata de Emissão
                     </FormLabel>
@@ -1101,25 +1102,28 @@ export function PreviousTravelForm({
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            disabled={
-                              USAVisaConfirmation === "Não" ||
-                              isPending ||
-                              isSavePending
-                            }
-                            variant={"outline"}
+                            disabled={isPending || isSavePending}
+                            variant="date"
                             className={cn(
-                              "w-full h-12 pl-3 text-left border-secondary font-normal group",
                               !field.value && "text-muted-foreground",
                             )}
                           >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
                             ) : (
-                              <span className="text-foreground opacity-80 group-hover:text-white group-hover:opacity-100">
+                              <span className="text-muted-foreground">
                                 Selecione a data
                               </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -1158,7 +1162,12 @@ export function PreviousTravelForm({
                 control={form.control}
                 name="visaNumber"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem
+                    className={cn(
+                      "flex flex-col justify-between",
+                      USAVisaConfirmation === "Não" && "hidden",
+                    )}
+                  >
                     <FormLabel className="text-foreground text-sm">
                       Número do visto
                     </FormLabel>

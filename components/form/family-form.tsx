@@ -1,13 +1,11 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Loader2,
   Plus,
-  Trash,
   Calendar as CalendarIcon,
   Save,
   ArrowRight,
