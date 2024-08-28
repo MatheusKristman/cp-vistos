@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: verificar salvamento dos arrays de objeto
-
 import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -349,7 +347,9 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
           values.familyLivingInTheUSAConfirmation ??
           (currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
         familyLivingInTheUSA:
-          values.familyLivingInTheUSA ?? currentForm.familyLivingInTheUSA,
+          familyLivingInTheUSAItems.length > 0
+            ? familyLivingInTheUSAItems
+            : currentForm.familyLivingInTheUSA,
         partnerCompleteName:
           values.partnerCompleteName !== ""
             ? values.partnerCompleteName
@@ -440,7 +440,9 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
         values.familyLivingInTheUSAConfirmation ??
         (currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
       familyLivingInTheUSA:
-        values.familyLivingInTheUSA ?? currentForm.familyLivingInTheUSA,
+        familyLivingInTheUSAItems.length > 0
+          ? familyLivingInTheUSAItems
+          : currentForm.familyLivingInTheUSA,
       partnerCompleteName:
         values.partnerCompleteName !== ""
           ? values.partnerCompleteName

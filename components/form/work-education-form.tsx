@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: verificar salvamento dos arrays de objetos
-
 import {
   ArrowRight,
   CircleDollarSign,
@@ -411,6 +409,11 @@ export function WorkEducationForm({
   const utils = trpc.useUtils();
   const router = useRouter();
 
+  console.log("previousJobs", previousJobs);
+  console.log("previousJobsItems", previousJobsItems);
+  console.log("courses", courses);
+  console.log("coursesItems", coursesItems);
+
   const { mutate: submitWorkEducation, isPending } =
     trpc.formsRouter.submitWorkEducation.useMutation({
       onSuccess: (data) => {
@@ -644,15 +647,8 @@ export function WorkEducationForm({
         previousJobs:
           previousJobsItems.length > 0
             ? previousJobsItems
-            : !currentForm.previousJobs
-              ? []
-              : currentForm.previousJobs,
-        courses:
-          coursesItems.length > 0
-            ? coursesItems
-            : !currentForm.courses
-              ? []
-              : currentForm.courses,
+            : currentForm.previousJobs,
+        courses: coursesItems.length > 0 ? coursesItems : currentForm.courses,
       });
       setRedirectStep(null);
     }
@@ -782,15 +778,8 @@ export function WorkEducationForm({
       previousJobs:
         previousJobsItems.length > 0
           ? previousJobsItems
-          : !currentForm.previousJobs
-            ? []
-            : currentForm.previousJobs,
-      courses:
-        coursesItems.length > 0
-          ? coursesItems
-          : !currentForm.courses
-            ? []
-            : currentForm.courses,
+          : currentForm.previousJobs,
+      courses: coursesItems.length > 0 ? coursesItems : currentForm.courses,
     });
   }
 

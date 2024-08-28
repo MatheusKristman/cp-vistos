@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: verificar salvamento dos arrays de objetos
-
 import { ArrowRight, Loader2, Plus, Save, Trash, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";

@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: verificar salvamento dos arrays de objetos
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Loader2, Plus, Save, Trash, X } from "lucide-react";
@@ -181,8 +179,6 @@ export function TravelCompanyForm({
     });
 
   useEffect(() => {
-    console.log(currentForm.otherPeopleTraveling);
-
     if (currentForm.otherPeopleTraveling.length > 0) {
       setCurrentOtherPeopleTravelingIndex(
         currentForm.otherPeopleTraveling.length,
@@ -208,7 +204,6 @@ export function TravelCompanyForm({
         "",
       );
 
-      console.log("resetando campos");
       setResetOtherPeopleTravelingFields(false);
     }
   }, [resetOtherPeopleTravelingFields]);
@@ -224,7 +219,9 @@ export function TravelCompanyForm({
           values.otherPeopleTravelingConfirmation ??
           currentForm.otherPeopleTravelingConfirmation,
         otherPeopleTraveling:
-          values.otherPeopleTraveling ?? currentForm.otherPeopleTraveling,
+          otherPeopleTravelingItems.length > 0
+            ? otherPeopleTravelingItems
+            : currentForm.otherPeopleTraveling,
         groupMemberConfirmation:
           values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
         groupName:
@@ -253,7 +250,9 @@ export function TravelCompanyForm({
         values.otherPeopleTravelingConfirmation ??
         currentForm.otherPeopleTravelingConfirmation,
       otherPeopleTraveling:
-        values.otherPeopleTraveling ?? currentForm.otherPeopleTraveling,
+        otherPeopleTravelingItems.length > 0
+          ? otherPeopleTravelingItems
+          : currentForm.otherPeopleTraveling,
       groupMemberConfirmation:
         values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
       groupName:

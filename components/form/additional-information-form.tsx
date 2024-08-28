@@ -261,6 +261,10 @@ export function AdditionalInformationForm({
   const utils = trpc.useUtils();
   const router = useRouter();
 
+  console.log("languages", languages);
+  console.log("fiveYearsOtherCountryTravels", fiveYearsOtherCountryTravels);
+  console.log("socialOrganization", socialOrganization);
+
   const { mutate: submitAdditionalInformation, isPending } =
     trpc.formsRouter.submitAdditionalInformation.useMutation({
       onSuccess: (data) => {
@@ -319,9 +323,7 @@ export function AdditionalInformationForm({
         languages:
           values.languages.length > 0
             ? values.languages
-            : !currentForm.languages
-              ? []
-              : currentForm.languages,
+            : currentForm.languages,
         fiveYearsOtherCountryTravelsConfirmation:
           values.fiveYearsOtherCountryTravelsConfirmation ??
           (currentForm.fiveYearsOtherCountryTravelsConfirmation
@@ -330,18 +332,14 @@ export function AdditionalInformationForm({
         fiveYearsOtherCountryTravels:
           values.fiveYearsOtherCountryTravels.length > 0
             ? values.fiveYearsOtherCountryTravels
-            : !currentForm.fiveYearsOtherCountryTravels
-              ? []
-              : currentForm.fiveYearsOtherCountryTravels,
+            : currentForm.fiveYearsOtherCountryTravels,
         socialOrganizationConfirmation:
           values.socialOrganizationConfirmation ??
           (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
         socialOrganization:
           values.socialOrganization.length > 0
             ? values.socialOrganization
-            : !currentForm.socialOrganization
-              ? []
-              : currentForm.socialOrganization,
+            : currentForm.socialOrganization,
         weaponTrainingConfirmation:
           values.weaponTrainingConfirmation ??
           (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
@@ -498,29 +496,21 @@ export function AdditionalInformationForm({
         values.tribeParticipateConfirmation ??
         (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
       languages:
-        values.languages.length > 0
-          ? values.languages
-          : !currentForm.languages
-            ? []
-            : currentForm.languages,
+        values.languages.length > 0 ? values.languages : currentForm.languages,
       fiveYearsOtherCountryTravelsConfirmation:
         values.fiveYearsOtherCountryTravelsConfirmation ??
         (currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
       fiveYearsOtherCountryTravels:
         values.fiveYearsOtherCountryTravels.length > 0
           ? values.fiveYearsOtherCountryTravels
-          : !currentForm.fiveYearsOtherCountryTravels
-            ? []
-            : currentForm.fiveYearsOtherCountryTravels,
+          : currentForm.fiveYearsOtherCountryTravels,
       socialOrganizationConfirmation:
         values.socialOrganizationConfirmation ??
         (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
       socialOrganization:
         values.socialOrganization.length > 0
           ? values.socialOrganization
-          : !currentForm.socialOrganization
-            ? []
-            : currentForm.socialOrganization,
+          : currentForm.socialOrganization,
       weaponTrainingConfirmation:
         values.weaponTrainingConfirmation ??
         (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),

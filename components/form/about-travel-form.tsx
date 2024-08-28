@@ -94,9 +94,8 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
       estimatedTimeOnUSA: currentForm.estimatedTimeOnUSA
         ? currentForm.estimatedTimeOnUSA
         : "",
-      visitLocations: currentForm.visitLocations
-        ? currentForm.visitLocations
-        : [],
+      visitLocations:
+        currentForm.visitLocations.length > 0 ? currentForm.visitLocations : [],
       USACompleteAddress: currentForm.USACompleteAddress
         ? currentForm.USACompleteAddress
         : "",

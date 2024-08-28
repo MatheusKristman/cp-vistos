@@ -124,7 +124,8 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
       otherNamesConfirmation: currentForm.otherNamesConfirmation
         ? "Sim"
         : "Não",
-      otherNames: currentForm.otherNames ? currentForm.otherNames : [],
+      otherNames:
+        currentForm.otherNames.length > 0 ? currentForm.otherNames : [],
       sex: currentForm.sex ? currentForm.sex : undefined,
       maritalStatus: currentForm.maritalStatus
         ? currentForm.maritalStatus
