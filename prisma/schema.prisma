@@ -68,6 +68,12 @@ enum StatusForm {
   filled
 }
 
+enum NotificationStatusForm {
+  filling
+  filled
+  updated
+}
+
 model User {
   id              String           @id @default(auto()) @map("_id") @db.ObjectId
   name            String
@@ -115,10 +121,11 @@ model Profile {
   statusForm    StatusForm @default(awaiting)
   formStep      Int        @default(0)
 
-  userId   String     @db.ObjectId
-  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  form     Form?
-  comments Comments[]
+  userId       String         @db.ObjectId
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  form         Form?
+  comments     Comments[]
+  notification Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -388,4 +395,14 @@ model Comments {
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   authorId  String  @db.ObjectId
   author    User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id         String                 @id @default(auto()) @map("_id") @db.ObjectId
+  statusForm NotificationStatusForm
+  viewed     Boolean                @default(false)
+  createdAt  DateTime               @default(now())
+
+  profileId String  @db.ObjectId
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }

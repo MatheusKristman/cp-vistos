@@ -2,12 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
+import { Bell, LogIn, LogOut, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useSession, signOut } from "next-auth/react";
-import { LogIn, LogOut, Users } from "lucide-react";
+import { NotificationHeaderMenu } from "@/components/dashboard/notification-header-menu";
 
-export function DashboardHeader() {
+interface Props {
+  isColab?: boolean;
+}
+
+export function DashboardHeader({ isColab }: Props) {
   const session = useSession();
 
   return (
@@ -25,6 +30,8 @@ export function DashboardHeader() {
         </div>
 
         <div className="lg:hidden h-full flex items-center">
+          {isColab && <NotificationHeaderMenu />}
+
           <Button
             variant="link"
             size="icon"
@@ -52,6 +59,8 @@ export function DashboardHeader() {
         </div>
 
         <div className="hidden lg:flex items-center h-full">
+          {isColab && <NotificationHeaderMenu />}
+
           <Button
             variant="link"
             size="icon"
