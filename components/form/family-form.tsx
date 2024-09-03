@@ -537,7 +537,8 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               Inserir todos os dados, mesmo se falecidos
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
+              {/* TODO: pai não é obrigatório */}
               <FormField
                 control={form.control}
                 name="fatherCompleteName"
@@ -556,6 +557,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
+              {/* TODO: data não é obrigatório */}
               <FormField
                 control={form.control}
                 name="fatherBirthdate"
@@ -626,7 +628,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="fatherLiveInTheUSAConfirmation"
@@ -666,6 +668,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
+              {/* TODO: adicionar select com options enviados no whatsapp */}
               <FormField
                 control={form.control}
                 name="fatherUSASituation"
@@ -690,7 +693,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="motherCompleteName"
@@ -709,6 +712,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
+              {/* TODO: data não é obrigatório */}
               <FormField
                 control={form.control}
                 name="motherBirthdate"
@@ -779,7 +783,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="motherLiveInTheUSAConfirmation"
@@ -819,6 +823,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
+              {/* TODO: adicionar select com options enviados no whatsapp */}
               <FormField
                 control={form.control}
                 name="motherUSASituation"
@@ -843,7 +848,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-10">
               <FormField
                 control={form.control}
                 name="familyLivingInTheUSAConfirmation"
@@ -938,6 +943,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                     />
                   </div>
 
+                  {/* TODO: adicionar select com options enviados no whatsapp */}
                   <FormField
                     control={form.control}
                     name={`familyLivingInTheUSA.${currentFamilyIndex}.situation`}
@@ -1011,11 +1017,13 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               </div>
             </div>
 
+            {/* TODO: se for solteiro não aparece, se for viuvo ou casado ou união estavel apenas o nome, data e local de nascimento, se for divorciado vai pedir data de casamento e de separação */}
+            {/* TODO: alterar o titulo para, se divorciado aparece ex-cônjuge, se for viuvo aparece do cônjuge falecido, se for casado ou união estavel aparece cônjuge, e solteiro não aparece nada */}
             <span className="text-foreground text-base font-medium mb-6">
               Dados do cônjuge, parceiro doméstico ou ex-cônjuge
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="partnerCompleteName"
@@ -1122,7 +1130,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-10">
               <FormField
                 control={form.control}
                 name="partnerCity"
@@ -1182,7 +1190,7 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               Se separado(a) ou divorciado(a)
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
               <FormField
                 control={form.control}
                 name="unionDate"

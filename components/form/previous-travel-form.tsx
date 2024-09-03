@@ -1,5 +1,7 @@
 "use client";
 
+//TODO: americanLicense é apenas um
+
 import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -713,7 +715,7 @@ export function PreviousTravelForm({
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="hasBeenOnUSAConfirmation"
@@ -772,7 +774,7 @@ export function PreviousTravelForm({
                       render={({ field }) => (
                         <FormItem className="w-full">
                           <FormLabel className="text-foreground">
-                            Data prevista de chegada aos EUA
+                            Data de chegada aos EUA
                           </FormLabel>
 
                           <Popover>
@@ -845,7 +847,7 @@ export function PreviousTravelForm({
                         render={({ field }) => (
                           <FormItem className="w-full">
                             <FormLabel className="text-foreground">
-                              Tempo estimado de permanência nos EUA
+                              Tempo de permanência nos EUA
                             </FormLabel>
 
                             <FormControl>
@@ -909,7 +911,7 @@ export function PreviousTravelForm({
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="americanLicenseToDriveConfirmation"
@@ -1047,7 +1049,7 @@ export function PreviousTravelForm({
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-10">
               <FormField
                 control={form.control}
                 name="USAVisaConfirmation"
@@ -1189,6 +1191,7 @@ export function PreviousTravelForm({
               />
             </div>
 
+            {/* TODO: inserir um campo com sim ou não perguntando "você já teve um visto americano?", caso sim, apresentar os inputs abaixo, remover title */}
             <span className="text-foreground text-base font-medium mb-6">
               Responda as próximas 6 perguntas somente se você está{" "}
               <strong>renovando</strong> o visto
@@ -1198,7 +1201,7 @@ export function PreviousTravelForm({
               control={form.control}
               name="newVisaConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-10">
+                <FormItem className="mb-4 sm:mb-10">
                   <FormLabel className="text-foreground">
                     Está solicitando o novo visto do mesmo País ou localização
                     daquele concedido previamente?
@@ -1238,7 +1241,7 @@ export function PreviousTravelForm({
               control={form.control}
               name="sameCountryResidenceConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-10">
+                <FormItem className="mb-4 sm:mb-10">
                   <FormLabel className="text-foreground">
                     Este País é o mesmo onde está localizada sua residência
                     principal?
@@ -1278,7 +1281,7 @@ export function PreviousTravelForm({
               control={form.control}
               name="sameVisaTypeConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-10">
+                <FormItem className="mb-4 sm:mb-10">
                   <FormLabel className="text-foreground">
                     Está solicitando o mesmo tipo de visto concedido
                     anteriormente?
@@ -1318,7 +1321,7 @@ export function PreviousTravelForm({
               control={form.control}
               name="fingerprintsProvidedConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-10">
+                <FormItem className="mb-4 sm:mb-10">
                   <FormLabel className="text-foreground">
                     Forneceu digitais dos 10 dedos
                   </FormLabel>
@@ -1353,7 +1356,7 @@ export function PreviousTravelForm({
               )}
             />
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="lostVisaConfirmation"
@@ -1418,7 +1421,7 @@ export function PreviousTravelForm({
               )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="canceledVisaConfirmation"
@@ -1483,7 +1486,7 @@ export function PreviousTravelForm({
               )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="deniedVisaConfirmation"
@@ -1596,7 +1599,7 @@ export function PreviousTravelForm({
               )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6">
               <FormField
                 control={form.control}
                 name="immigrationRequestByAnotherPersonConfirmation"

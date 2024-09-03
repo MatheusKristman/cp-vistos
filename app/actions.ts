@@ -19,10 +19,25 @@ export async function getUserFromLogin(email: string, password: string) {
       return null;
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    const isAdminPasswordCorrect = await bcrypt.compare(
+      password,
+      user.password,
+    );
+    const isPasswordCorrect = password === user.password;
 
-    if (!isPasswordCorrect) {
-      return null;
+    if (
+      (user.role === "ADMIN" || user.role === "COLLABORATOR") &&
+      !isAdminPasswordCorrect
+    ) {
+      return new Response("Dados inválidos, verifique e tente novamente", {
+        status: 401,
+      });
+    }
+
+    if (user.role === "CLIENT" && !isPasswordCorrect) {
+      return new Response("Dados inválidos, verifique e tente novamente", {
+        status: 401,
+      });
     }
 
     return user;

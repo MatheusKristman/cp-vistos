@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: adicionar campo de valor e status do pagamento somente no modo admin, não aparecer para colaborador
-
 import { ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -13,29 +11,17 @@ import { CircleDollarSign, Loader2 } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import { toast } from "sonner";
 
-import { FormAnimation } from "@/constants/animations/modal";
-import { Button } from "@/components/ui/button";
-import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormItem,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Form, FormField, FormLabel, FormItem, FormControl, FormMessage } from "@/components/ui/form";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc-client";
+import { FormAnimation } from "@/constants/animations/modal";
+import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 
 import "react-phone-number-input/style.css";
-import { trpc } from "@/lib/trpc-client";
 
 interface Props {
   handleClose: () => void;
@@ -64,12 +50,9 @@ const formSchema = z
         invalid_type_error: "Celular inválido",
       })
       .optional()
-      .refine(
-        (val) => !val || (val && (val.length === 0 || val.length === 14)),
-        {
-          message: "Celular inválido",
-        },
-      ),
+      .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+        message: "Celular inválido",
+      }),
     address: z.string({
       required_error: "Endereço é obrigatório",
       invalid_type_error: "Endereço inválido",
@@ -89,6 +72,21 @@ const formSchema = z
       required_error: "Confirmação da senha é obrigatório",
       invalid_type_error: "Confirmação da senha inválida",
     }),
+    emailScheduleAccount: z
+      .string({
+        required_error: "E-mail é obrigatório",
+        invalid_type_error: "E-mail inválido",
+      })
+      .email({ message: "E-mail inválido" })
+      .min(1, { message: "E-mail é obrigatório" }),
+    passwordScheduleAccount: z.string({
+      required_error: "Senha é obrigatório",
+      invalid_type_error: "Senha inválida",
+    }),
+    passwordConfirmScheduleAccount: z.string({
+      required_error: "Confirmação da senha é obrigatório",
+      invalid_type_error: "Confirmação da senha inválida",
+    }),
     budget: z
       .string({
         required_error: "Valor é obrigatório",
@@ -104,7 +102,7 @@ const formSchema = z
       message: "Conta de Agendamento é obrigatório",
     }),
   })
-  .superRefine(({ password, passwordConfirm }, ctx) => {
+  .superRefine(({ password, passwordConfirm, passwordScheduleAccount, passwordConfirmScheduleAccount }, ctx) => {
     if (password.length > 0 && password.length < 6) {
       ctx.addIssue({
         path: ["password"],
@@ -121,6 +119,22 @@ const formSchema = z
       });
     }
 
+    if (passwordScheduleAccount.length > 0 && passwordScheduleAccount.length < 6) {
+      ctx.addIssue({
+        path: ["passwordScheduleAccount"],
+        code: "custom",
+        message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+      });
+    }
+
+    if (passwordConfirmScheduleAccount.length > 0 && passwordConfirmScheduleAccount.length < 6) {
+      ctx.addIssue({
+        path: ["passwordConfirmScheduleAccount"],
+        code: "custom",
+        message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+      });
+    }
+
     if (passwordConfirm !== password) {
       ctx.addIssue({
         path: ["passwordConfirm"],
@@ -128,29 +142,35 @@ const formSchema = z
         message: "As senhas não coincidem, verifique e tente novamente",
       });
     }
+
+    if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
+      ctx.addIssue({
+        path: ["passwordConfirmScheduleAccount"],
+        code: "custom",
+        message: "As senhas não coincidem, verifique e tente novamente",
+      });
+    }
   });
 
 export function ClientDetailsEditAccount({ handleClose }: Props) {
-  const { unsetToEditAccount, setToResume, role, client, setClient } =
-    useClientDetailsModalStore();
+  const { unsetToEditAccount, setToResume, role, client, setClient } = useClientDetailsModalStore();
 
   const utils = trpc.useUtils();
 
-  const { mutate: editAccount, isPending } =
-    trpc.userRouter.editAccount.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
+  const { mutate: editAccount, isPending } = trpc.userRouter.editAccount.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
 
-        utils.userRouter.getClients.invalidate();
+      utils.userRouter.getClients.invalidate();
 
-        setClient(data.clientUpdated);
-      },
-      onError: (error) => {
-        console.log(error);
+      setClient(data.clientUpdated);
+    },
+    onError: (error) => {
+      console.log(error);
 
-        toast.error("Ocorreu um erro ao editar a conta");
-      },
-    });
+      toast.error("Ocorreu um erro ao editar a conta");
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -160,21 +180,24 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
       cel: client?.user.cel ?? "",
       address: client?.user.address ?? "",
       email: client?.user.email ?? "",
-      password: "",
-      passwordConfirm: "",
+      password: client?.user.password ?? "",
+      passwordConfirm: client?.user.password ?? "",
+      emailScheduleAccount: client?.user.emailScheduleAccount ?? "",
+      passwordScheduleAccount: client?.user.passwordScheduleAccount ?? "",
+      passwordConfirmScheduleAccount: client?.user.passwordScheduleAccount ?? "",
       budget: client?.user.budget?.toString() ?? "",
       budgetPaid:
         (client && client.user.budgetPaid === "paid"
           ? "Pago"
           : client && client.user.budgetPaid === "pending"
-            ? "Pendente"
-            : "") ?? "",
+          ? "Pendente"
+          : "") ?? "",
       scheduleAccount:
         (client && client.user.scheduleAccount === "active"
           ? "Ativado"
           : client && client.user.scheduleAccount === "inactive"
-            ? "Inativo"
-            : "") ?? "",
+          ? "Inativo"
+          : "") ?? "",
     },
   });
 
@@ -200,26 +223,10 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
   }
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={FormAnimation}
-    >
+    <motion.div initial="initial" animate="animate" exit="exit" variants={FormAnimation}>
       <div className="w-full grid grid-cols-2 grid-rows-2 gap-4 mb-9 sm:flex sm:flex-row sm:items-center sm:justify-between">
-        <Button
-          onClick={handleBack}
-          variant="link"
-          size="icon"
-          className="row-start-1 row-end-2"
-          disabled={isPending}
-        >
-          <Image
-            src="/assets/icons/arrow-left-dark.svg"
-            alt="Voltar"
-            width={24}
-            height={24}
-          />
+        <Button onClick={handleBack} variant="link" size="icon" className="row-start-1 row-end-2" disabled={isPending}>
+          <Image src="/assets/icons/arrow-left-dark.svg" alt="Voltar" width={24} height={24} />
         </Button>
 
         <h1 className="text-2xl font-semibold text-foreground text-center sm:text-3xl row-end-3 row-start-2 col-span-2">
@@ -233,20 +240,12 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
           className="row-start-1 row-end-2 justify-self-end"
           disabled={isPending}
         >
-          <Image
-            src="/assets/icons/cross-blue.svg"
-            alt="Fechar"
-            width={24}
-            height={24}
-          />
+          <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
         </Button>
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full flex flex-col gap-9"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-9">
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <FormField
@@ -257,10 +256,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>Nome*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira o nome do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Insira o nome do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -307,10 +303,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>Endereço</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira o endereço completo do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Insira o endereço completo do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -332,7 +325,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                         placeholder="Insira o celular do cliente"
                         defaultCountry="BR"
                         className={cn(
-                          "flex h-12 w-full border border-muted transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted",
+                          "flex h-12 w-full border border-muted transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted"
                         )}
                         {...field}
                       />
@@ -353,10 +346,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>E-mail*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira o e-mail do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Insira o e-mail do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -369,13 +359,10 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nova senha*</FormLabel>
+                    <FormLabel>Senha*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira a nova senha do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Insira a senha do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -388,13 +375,60 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                 name="passwordConfirm"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirmar Nova Senha*</FormLabel>
+                    <FormLabel>Confirmar Senha*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Confirme a nova senha do cliente"
-                        {...field}
-                      />
+                      <Input placeholder="Confirme a senha do cliente" {...field} />
+                    </FormControl>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <FormField
+                control={form.control}
+                name="emailScheduleAccount"
+                render={({ field }) => (
+                  <FormItem className="sm:pt-[24px]">
+                    <FormLabel>E-mail (agendamento)*</FormLabel>
+
+                    <FormControl>
+                      <Input placeholder="Insira o e-mail da conta de agendamento" {...field} />
+                    </FormControl>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="passwordScheduleAccount"
+                render={({ field }) => (
+                  <FormItem className="sm:pt-[24px]">
+                    <FormLabel>Senha (agendamento)*</FormLabel>
+
+                    <FormControl>
+                      <Input placeholder="Insira a senha da conta de agendamento" {...field} />
+                    </FormControl>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="passwordConfirmScheduleAccount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirmar Senha (agendamento)*</FormLabel>
+
+                    <FormControl>
+                      <Input placeholder="Confirme a senha da conta de agendamento" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -417,18 +451,13 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
 
                     <FormControl>
                       <div className="h-12 flex items-center gap-2 border border-muted transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
-                        <CircleDollarSign
-                          className="w-5 h-5 text-border flex-shrink-0"
-                          strokeWidth={1.5}
-                        />
+                        <CircleDollarSign className="w-5 h-5 text-border flex-shrink-0" strokeWidth={1.5} />
 
                         <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
                         <CurrencyInput
                           placeholder="Insira o valor do serviço"
-                          onValueChange={(value, name) =>
-                            form.setValue(name as "budget", value ?? "0")
-                          }
+                          onValueChange={(value, name) => form.setValue(name as "budget", value ?? "0")}
                           decimalsLimit={2}
                           ref={field.ref}
                           onBlur={field.onBlur}
@@ -449,20 +478,13 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                 control={form.control}
                 name="budgetPaid"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className={cn({ hidden: role !== "ADMIN" })}>
                     <FormLabel>Status do pagamento*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground [&>span]:text-left",
-                          )}
+                          className={cn(field.value === "" && "[&>span]:text-muted-foreground [&>span]:text-left")}
                         >
                           <SelectValue placeholder="Selecione o status do pagamento" />
                         </SelectTrigger>
@@ -486,17 +508,10 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                   <FormItem>
                     <FormLabel>Conta de Agendamento*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground [&>span]:text-left",
-                          )}
+                          className={cn(field.value === "" && "[&>span]:text-muted-foreground [&>span]:text-left")}
                         >
                           <SelectValue placeholder="Selecione o status da conta de agendamento" />
                         </SelectTrigger>
@@ -527,12 +542,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
               Cancelar
             </Button>
 
-            <Button
-              disabled={isPending}
-              type="submit"
-              size="xl"
-              className="w-full sm:w-fit flex items-center gap-2"
-            >
+            <Button disabled={isPending} type="submit" size="xl" className="w-full sm:w-fit flex items-center gap-2">
               {isPending ? (
                 <>
                   <Loader2 className="animate-spin" />

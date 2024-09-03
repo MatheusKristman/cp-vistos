@@ -1,5 +1,11 @@
 "use client";
 
+//TODO: checar funçao de salvar quando tem alguns campos vazios
+//TODO: dependendo do valor birthDate menor do que 14 anos, o campo work-education-form é removido
+//TODO: adicionar campo de país diferente da sua nacionalidade
+//TODO: adicionar campo de nacionalidade e passaporte ao ser confirmado o campo otherNationalityConfirmation
+//TODO: adicionar campo de pais ao ser confirmado o campo otherCountryResidentConfirmation
+
 import { ChangeEvent, useEffect, useState } from "react";
 import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
@@ -368,7 +374,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 sm:mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -430,7 +436,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="otherNamesConfirmation"
@@ -546,7 +552,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 sm:mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="sex"
@@ -693,7 +699,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 sm:mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="birthCity"
@@ -749,7 +755,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="originCountry"
@@ -769,7 +775,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="otherNationalityConfirmation"
@@ -840,7 +846,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="otherCountryResidentConfirmation"
@@ -881,7 +887,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
               <FormField
                 control={form.control}
                 name="USSocialSecurityNumber"

@@ -15,7 +15,7 @@ interface Props {
   profileName: string;
   CASVDate: Date | null;
   interviewDate: Date | null;
-  DSNumber: number;
+  DSNumber: string;
   updatedAt: Date;
   formStep: number;
 }
@@ -34,10 +34,7 @@ export function ProfileFormBox({
   const [statusDSFormatted, setStatusDSFormatted] = useState<string>("");
   const [statusFormFormatted, setStatusFormFormatted] = useState<string>("");
 
-  const formLink =
-    formStep > 10
-      ? `/resumo-formulario/${profileId}`
-      : `/formulario/${profileId}?formStep=${formStep}`;
+  const formLink = formStep > 10 ? `/resumo-formulario/${profileId}` : `/formulario/${profileId}?formStep=${formStep}`;
 
   useEffect(() => {
     switch (statusDS) {
@@ -83,26 +80,17 @@ export function ProfileFormBox({
           <h6 className="text-2xl font-semibold text-white">{profileName}</h6>
 
           <span
-            className={cn(
-              "w-fit px-2 py-1 text-base font-semibold uppercase text-center",
-              {
-                "bg-destructive text-destructive-foreground":
-                  statusForm === "awaiting",
-                "bg-caution text-caution-foreground": statusForm === "filling",
-                "bg-confirm text-confirm-foreground": statusForm === "filled",
-              },
-            )}
+            className={cn("w-fit px-2 py-1 text-base font-semibold uppercase text-center", {
+              "bg-destructive text-destructive-foreground": statusForm === "awaiting",
+              "bg-caution text-caution-foreground": statusForm === "filling",
+              "bg-confirm text-confirm-foreground": statusForm === "filled",
+            })}
           >
             Formulário {statusFormFormatted}
           </span>
         </div>
 
-        <Button
-          variant="secondary"
-          size="xl"
-          className="flex items-center gap-2"
-          asChild
-        >
+        <Button variant="secondary" size="xl" className="flex items-center gap-2" asChild>
           <Link href={formLink}>
             Formulário
             <ArrowUpRight />
@@ -113,24 +101,16 @@ export function ProfileFormBox({
       <div className="w-full flex flex-col gap-4">
         <div className="w-full flex flex-col gap-4 items-center p-9 bg-[#6A7DA6] sm:flex-row sm:justify-around md:flex-col md:justify-start 2xl:flex-row 2xl:justify-around">
           <div className="w-fit flex flex-col items-center gap-1">
-            <span className="text-sm font-medium text-white/75">
-              Data do CASV
-            </span>
+            <span className="text-sm font-medium text-white/75">Data do CASV</span>
             <span className="text-lg font-semibold text-white">
-              {CASVDate
-                ? format(new Date(CASVDate), "dd/MM/yyyy")
-                : "--/--/----"}
+              {CASVDate ? format(new Date(CASVDate), "dd/MM/yyyy") : "--/--/----"}
             </span>
           </div>
 
           <div className="w-fit flex flex-col items-center gap-1">
-            <span className="text-sm font-medium text-white/75">
-              Data da Entrevista
-            </span>
+            <span className="text-sm font-medium text-white/75">Data da Entrevista</span>
             <span className="text-lg font-semibold text-white">
-              {interviewDate
-                ? format(new Date(interviewDate), "dd/MM/yyyy")
-                : "--/--/----"}
+              {interviewDate ? format(new Date(interviewDate), "dd/MM/yyyy") : "--/--/----"}
             </span>
           </div>
 
@@ -142,13 +122,9 @@ export function ProfileFormBox({
 
         <div className="w-full flex flex-col gap-2 items-center sm:flex-row sm:justify-between md:flex-col md:justify-start 2xl:flex-row 2xl:justify-between">
           <div className="flex items-center gap-2 h-5">
-            <span className="text-muted-foreground text-base font-medium">
-              Status DS
-            </span>
+            <span className="text-muted-foreground text-base font-medium">Status DS</span>
             <div className="h-full w-[1.5px] rounded-full bg-muted-foreground" />
-            <strong className="text-muted-foreground text-base font-semibold">
-              {statusDSFormatted}
-            </strong>
+            <strong className="text-muted-foreground text-base font-semibold">{statusDSFormatted}</strong>
           </div>
 
           <span className="text-muted-foreground text-sm font-medium">

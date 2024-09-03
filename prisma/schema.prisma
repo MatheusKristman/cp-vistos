@@ -75,19 +75,21 @@ enum NotificationStatusForm {
 }
 
 model User {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  email           String           @unique
-  password        String
-  role            Role
-  emailVerified   DateTime?
-  image           String?
-  budget          Float?
-  budgetPaid      BudgetPaid?
-  cpf             String?
-  cel             String?
-  address         String?
-  scheduleAccount ScheduleAccount?
+  id                      String           @id @default(auto()) @map("_id") @db.ObjectId
+  name                    String
+  email                   String           @unique
+  password                String
+  role                    Role
+  emailVerified           DateTime?
+  image                   String?
+  budget                  Float?
+  budgetPaid              BudgetPaid?
+  cpf                     String?
+  cel                     String?
+  address                 String?
+  emailScheduleAccount    String?
+  passwordScheduleAccount String?
+  scheduleAccount         ScheduleAccount?
 
   profiles    Profile[]
   annotations Annotations[]
@@ -111,8 +113,8 @@ model Profile {
   visaClass     VisaClass
   visaStatus    VisaStatus @default(awaiting)
   statusDS      StatusDS   @default(awaiting)
-  DSNumber      Int
-  DSValid       DateTime   @default(now())
+  DSNumber      String
+  DSValid       DateTime
   passport      String?
   taxDate       DateTime?
   meetingDate   DateTime?

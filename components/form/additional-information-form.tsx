@@ -583,7 +583,8 @@ export function AdditionalInformationForm({
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
+              {/* TODO: pode ser removido */}
               <FormField
                 control={form.control}
                 name="tribeParticipateConfirmation"
@@ -689,14 +690,14 @@ export function AdditionalInformationForm({
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 name="fiveYearsOtherCountryTravelsConfirmation"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Viajou nos últimos 5 anos para outro país?
+                      Viajou para outros países?
                     </FormLabel>
 
                     <FormControl>
@@ -800,7 +801,7 @@ export function AdditionalInformationForm({
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 name="socialOrganizationConfirmation"
                 control={form.control}
@@ -912,7 +913,7 @@ export function AdditionalInformationForm({
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 name="weaponTrainingConfirmation"
                 control={form.control}
@@ -959,13 +960,11 @@ export function AdditionalInformationForm({
               render={({ field }) => (
                 <FormItem
                   className={cn(
-                    "mb-10",
+                    "mb-6",
                     weaponTrainingConfirmation === "Não" && "hidden",
                   )}
                 >
-                  <FormLabel className="text-foreground">
-                    Conte mais sobre o treinamento
-                  </FormLabel>
+                  <FormLabel className="text-foreground">Explique</FormLabel>
 
                   <FormControl>
                     <Textarea
@@ -980,7 +979,7 @@ export function AdditionalInformationForm({
               )}
             />
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 name="militaryServiceConfirmation"
                 control={form.control}
@@ -1023,11 +1022,11 @@ export function AdditionalInformationForm({
 
             <div
               className={cn(
-                "w-full bg-secondary p-4 flex flex-col gap-4 mb-10",
+                "w-full bg-secondary p-4 flex flex-col gap-x-4 gap-y-6 mb-6",
                 militaryServiceConfirmation === "Não" && "hidden",
               )}
             >
-              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6">
                 <FormField
                   name="militaryServiceCountry"
                   control={form.control}
@@ -1090,7 +1089,7 @@ export function AdditionalInformationForm({
                 />
               </div>
 
-              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6">
                 <FormField
                   name="militaryServiceSpecialty"
                   control={form.control}
@@ -1258,7 +1257,7 @@ export function AdditionalInformationForm({
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 name="insurgencyOrganizationConfirmation"
                 control={form.control}
@@ -1310,9 +1309,7 @@ export function AdditionalInformationForm({
                     insurgencyOrganizationConfirmation === "Não" && "hidden",
                   )}
                 >
-                  <FormLabel className="text-foreground">
-                    Conte mais detalhes
-                  </FormLabel>
+                  <FormLabel className="text-foreground">Explique</FormLabel>
 
                   <FormControl>
                     <Textarea
@@ -1328,7 +1325,7 @@ export function AdditionalInformationForm({
             />
           </div>
 
-          <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
+          <div className="w-full flex flex-col-reverse items-center gap-x-4 gap-y-6 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
                 <Button

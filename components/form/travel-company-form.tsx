@@ -312,7 +312,7 @@ export function TravelCompanyForm({
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="otherPeopleTravelingConfirmation"
@@ -440,7 +440,7 @@ export function TravelCompanyForm({
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
               <FormField
                 control={form.control}
                 name="groupMemberConfirmation"

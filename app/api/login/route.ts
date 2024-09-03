@@ -21,9 +21,22 @@ export async function POST(req: Request) {
       return new Response("Usuário não esta cadastrado", { status: 404 });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    const isAdminPasswordCorrect = await bcrypt.compare(
+      password,
+      user.password,
+    );
+    const isPasswordCorrect = password === user.password;
 
-    if (!isPasswordCorrect) {
+    if (
+      (user.role === "ADMIN" || user.role === "COLLABORATOR") &&
+      !isAdminPasswordCorrect
+    ) {
+      return new Response("Dados inválidos, verifique e tente novamente", {
+        status: 401,
+      });
+    }
+
+    if (user.role === "CLIENT" && !isPasswordCorrect) {
       return new Response("Dados inválidos, verifique e tente novamente", {
         status: 401,
       });

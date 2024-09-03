@@ -76,6 +76,29 @@ export const userRouter = router({
           .min(6, {
             message: "Confirmação da senha precisa ter no mínimo 6 caracteres",
           }),
+        emailScheduleAccount: z
+          .string({
+            required_error: "E-mail é obrigatório",
+            invalid_type_error: "E-mail inválido",
+          })
+          .email({ message: "E-mail inválido" })
+          .min(1, { message: "E-mail é obrigatório" }),
+        passwordScheduleAccount: z
+          .string({
+            required_error: "Senha é obrigatório",
+            invalid_type_error: "Senha inválida",
+          })
+          .min(1, { message: "Senha é obrigatória" })
+          .min(6, { message: "Senha precisa ter no mínimo 6 caracteres" }),
+        passwordConfirmScheduleAccount: z
+          .string({
+            required_error: "Confirmação da senha é obrigatório",
+            invalid_type_error: "Confirmação da senha inválida",
+          })
+          .min(1, { message: "Confirmação da senha é obrigatório" })
+          .min(6, {
+            message: "Confirmação da senha precisa ter no mínimo 6 caracteres",
+          }),
         budget: z
           .string({
             required_error: "Valor é obrigatório",
@@ -187,8 +210,6 @@ export const userRouter = router({
 
       const { input } = opts;
 
-      const pwHash = await bcrypt.hash(input.password, 12);
-
       if (input.scheduleAccount === "Ativado") {
         scheduleAccount = ScheduleAccount.active;
       } else if (input.scheduleAccount === "Inativo") {
@@ -224,7 +245,9 @@ export const userRouter = router({
         data: {
           name: input.name,
           email: input.email,
-          password: pwHash,
+          password: input.password,
+          emailScheduleAccount: input.emailScheduleAccount,
+          passwordScheduleAccount: input.passwordScheduleAccount,
           role: Role.CLIENT,
           address: input.address,
           budget: parseFloat(input.budget),
@@ -273,7 +296,8 @@ export const userRouter = router({
 
         const newProfile = await prisma.profile.create({
           data: {
-            DSNumber: parseInt(profile.DSNumber),
+            DSNumber: profile.DSNumber,
+            DSValid: addDays(new Date(), 30),
             name: profile.profileName,
             visaClass,
             visaType,
@@ -309,6 +333,117 @@ export const userRouter = router({
       await Promise.all(profilesPromises);
 
       return { message: "Conta criada com sucesso" };
+    }),
+  addProfile: collaboratorProcedure
+    .input(
+      z.object({
+        userId: z.string().min(1),
+        profileName: z.string().min(1).min(6),
+        profileCpf: z
+          .string()
+          .refine((val) => val.length > 0 && val.length === 14),
+        profileAddress: z.string(),
+        birthDate: z.date().optional(),
+        passport: z.string(),
+        visaType: z
+          .enum(["Renovação", "Primeiro Visto", ""])
+          .refine((val) => val.length !== 0),
+        visaClass: z
+          .enum([
+            "B1 Babá",
+            "B1/B2 Turismo",
+            "O1 Capacidade Extraordinária",
+            "O2 Estrangeiro Acompanhante/Assistente",
+            "O3 Cônjuge ou Filho de um O1 ou O2",
+            "",
+          ])
+          .refine((val) => val.length !== 0),
+        issuanceDate: z.date().optional(),
+        expireDate: z.date().optional(),
+        DSNumber: z.string(),
+        CASVDate: z.date().optional(),
+        interviewDate: z.date().optional(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const {
+        userId,
+        profileName,
+        profileCpf,
+        profileAddress,
+        birthDate,
+        passport,
+        issuanceDate,
+        expireDate,
+        DSNumber,
+        CASVDate,
+        interviewDate,
+      } = opts.input;
+      let visaClass;
+      let visaType;
+
+      switch (opts.input.visaClass) {
+        case "B1 Babá":
+          visaClass = VisaClass.B1;
+          break;
+        case "B1/B2 Turismo":
+          visaClass = VisaClass.B2_B1;
+          break;
+        case "O1 Capacidade Extraordinária":
+          visaClass = VisaClass.O1;
+          break;
+        case "O2 Estrangeiro Acompanhante/Assistente":
+          visaClass = VisaClass.O2;
+          break;
+        case "O3 Cônjuge ou Filho de um O1 ou O2":
+          visaClass = VisaClass.O3;
+          break;
+        default:
+          visaClass = VisaClass.B1;
+          break;
+      }
+
+      switch (opts.input.visaType) {
+        case "Primeiro Visto":
+          visaType = VisaType.primeiro_visto;
+          break;
+        case "Renovação":
+          visaType = VisaType.renovacao;
+          break;
+        default:
+          visaType = VisaType.primeiro_visto;
+          break;
+      }
+
+      const clientUpdated = await prisma.profile.create({
+        data: {
+          DSNumber: DSNumber,
+          DSValid: addDays(new Date(), 30),
+          name: profileName,
+          visaClass,
+          visaType,
+          address: profileAddress,
+          cpf: profileCpf,
+          birthDate: birthDate,
+          passport: passport,
+          issuanceDate: issuanceDate,
+          expireDate: expireDate,
+          CASVDate: CASVDate,
+          interviewDate: interviewDate,
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+        },
+        include: {
+          user: true,
+          comments: true,
+          form: true,
+        },
+      });
+
+      return { clientUpdated, message: "Perfil criado com sucesso" };
     }),
   getClients: collaboratorProcedure.query(async () => {
     const profiles = await prisma.profile.findMany({
@@ -572,35 +707,78 @@ export const userRouter = router({
           email: z.string().email().min(1),
           password: z.string(),
           passwordConfirm: z.string(),
+          emailScheduleAccount: z.string().email().min(1),
+          passwordScheduleAccount: z.string(),
+          passwordConfirmScheduleAccount: z.string(),
           budget: z.string().refine((val) => Number(val) >= 0),
           budgetPaid: z.enum(["", "Pago", "Pendente"]),
           scheduleAccount: z.enum(["Ativado", "Inativo", ""]),
         })
-        .superRefine(({ password, passwordConfirm }, ctx) => {
-          if (password.length > 0 && password.length < 6) {
-            ctx.addIssue({
-              path: ["password"],
-              code: "custom",
-              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-            });
-          }
+        .superRefine(
+          (
+            {
+              password,
+              passwordConfirm,
+              passwordScheduleAccount,
+              passwordConfirmScheduleAccount,
+            },
+            ctx,
+          ) => {
+            if (password.length > 0 && password.length < 6) {
+              ctx.addIssue({
+                path: ["password"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
 
-          if (passwordConfirm.length > 0 && passwordConfirm.length < 6) {
-            ctx.addIssue({
-              path: ["passwordConfirm"],
-              code: "custom",
-              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-            });
-          }
+            if (passwordConfirm.length > 0 && passwordConfirm.length < 6) {
+              ctx.addIssue({
+                path: ["passwordConfirm"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
 
-          if (passwordConfirm !== password) {
-            ctx.addIssue({
-              path: ["passwordConfirm"],
-              code: "custom",
-              message: "As senhas não coincidem, verifique e tente novamente",
-            });
-          }
-        }),
+            if (passwordConfirm !== password) {
+              ctx.addIssue({
+                path: ["passwordConfirm"],
+                code: "custom",
+                message: "As senhas não coincidem, verifique e tente novamente",
+              });
+            }
+
+            if (
+              passwordScheduleAccount.length > 0 &&
+              passwordScheduleAccount.length < 6
+            ) {
+              ctx.addIssue({
+                path: ["passwordScheduleAccount"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
+
+            if (
+              passwordConfirmScheduleAccount.length > 0 &&
+              passwordConfirmScheduleAccount.length < 6
+            ) {
+              ctx.addIssue({
+                path: ["passwordConfirmScheduleAccount"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
+
+            if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
+              ctx.addIssue({
+                path: ["passwordConfirmScheduleAccount"],
+                code: "custom",
+                message: "As senhas não coincidem, verifique e tente novamente",
+              });
+            }
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -612,14 +790,14 @@ export const userRouter = router({
         address,
         email,
         password,
+        emailScheduleAccount,
+        passwordScheduleAccount,
         budget,
       } = opts.input;
       let budgetPaid;
       let scheduleAccount;
 
       if (password.length > 0) {
-        const pwHash = await bcrypt.hash(password, 12);
-
         await prisma.user.update({
           where: {
             id: userId,
@@ -630,7 +808,9 @@ export const userRouter = router({
             cel,
             address,
             email,
-            password: pwHash,
+            password,
+            emailScheduleAccount,
+            passwordScheduleAccount,
             budget: parseFloat(budget),
             budgetPaid,
             scheduleAccount,
@@ -821,7 +1001,7 @@ export const userRouter = router({
           id: profileId,
         },
         data: {
-          DSNumber: parseInt(DSNumber),
+          DSNumber: DSNumber,
           name: profileName,
           visaClass,
           visaType,

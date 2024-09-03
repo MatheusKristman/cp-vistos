@@ -274,11 +274,12 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
+            {/* TODO: adicionar um campo com sim ou não perguntando o seguinte "Você possui contato com alguém dos EUA, caso sim, abrir inputs abaixo */}
             <span className="text-foreground text-base font-medium mb-6">
               Preencher apenas se houver contato frequente com alguém dos EUA{" "}
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="organizationOrUSAResidentName"
@@ -316,7 +317,7 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="organizationOrUSAResidentAddress"
@@ -358,7 +359,7 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="organizationOrUSAResidentCity"
@@ -414,7 +415,7 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
               <FormField
                 control={form.control}
                 name="organizationOrUSAResidentTel"

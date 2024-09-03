@@ -2,13 +2,14 @@
 
 import { ScheduleAccount, StatusDS, VisaType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { ArrowUpDown, Loader2, MoreHorizontal } from "lucide-react";
+import { differenceInDays, format } from "date-fns";
+import { AlertTriangle, ArrowUpDown, Loader2, MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 import { trpc } from "@/lib/trpc-client";
-import { toast } from "sonner";
 
 export type UserTable = {
   id: string;
@@ -54,11 +55,36 @@ export const columns: ColumnDef<UserTable>[] = [
         return <span>--/--/----</span>;
       }
 
-      //TODO: adicionar função de notificação com ícones para quando estiver próximo
-
       const dateFormatted = format(row.getValue("DSValid"), "dd/MM/yyyy");
 
-      return <span>{dateFormatted}</span>;
+      return (
+        <span className="w-full flex items-center justify-center gap-2">
+          {dateFormatted}
+          {differenceInDays(row.getValue("DSValid"), new Date()) <= 0 ? (
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <AlertTriangle className="text-rose-400" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Vencido</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : differenceInDays(row.getValue("DSValid"), new Date()) <= 10 ? (
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <AlertTriangle className="text-amber-400" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Proximo do vencimento</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : null}
+        </span>
+      );
     },
   },
   {

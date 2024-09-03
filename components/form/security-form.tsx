@@ -366,7 +366,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="contagiousDiseaseConfirmation"
@@ -411,7 +411,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="phisicalMentalProblemConfirmation"
@@ -453,7 +453,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="crimeConfirmation"
@@ -496,7 +496,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="drugsProblemConfirmation"
@@ -537,7 +537,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="lawViolateConfirmation"
@@ -580,7 +580,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="prostitutionConfirmation"
@@ -624,7 +624,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="moneyLaundryConfirmation"
@@ -666,7 +666,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="peopleTrafficConfirmation"
@@ -709,7 +709,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="helpPeopleTrafficConfirmation"
@@ -753,7 +753,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="parentPeopleTrafficConfirmation"
@@ -797,7 +797,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="spyConfirmation"
@@ -840,7 +840,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="terrorismConfirmation"
@@ -883,7 +883,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="financialAssistanceConfirmation"
@@ -926,7 +926,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="terrorismMemberConfirmation"
@@ -968,7 +968,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="parentTerrorismConfirmation"
@@ -1012,7 +1012,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="genocideConfirmation"
@@ -1054,7 +1054,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="tortureConfirmation"
@@ -1096,7 +1096,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="assassinConfirmation"
@@ -1139,7 +1139,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="childSoldierConfirmation"
@@ -1181,7 +1181,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="religionLibertyConfirmation"
@@ -1224,7 +1224,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="abortConfirmation"
@@ -1269,7 +1269,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="coerciveTransplantConfirmation"
@@ -1311,7 +1311,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="visaFraudConfirmation"
@@ -1355,7 +1355,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="deportedConfirmation"
@@ -1396,7 +1396,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="childCustodyConfirmation"
@@ -1439,7 +1439,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="lawViolationConfirmation"
@@ -1481,7 +1481,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6">
               <FormField
                 control={form.control}
                 name="avoidTaxConfirmation"
@@ -1524,7 +1524,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             </div>
           </div>
 
-          <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
+          <div className="w-full flex flex-col-reverse items-center gap-x-4 gap-y-6 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
                 <Button

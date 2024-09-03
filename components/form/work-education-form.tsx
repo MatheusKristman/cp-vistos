@@ -1097,7 +1097,7 @@ export function WorkEducationForm({
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="occupation"
@@ -1146,12 +1146,13 @@ export function WorkEducationForm({
 
             <div
               className={cn(
-                "w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-10",
+                "w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6 mb-6",
                 {
                   hidden: occupation === "Não Trabalho",
                 },
               )}
             >
+              {/* TODO: quando estiver como Autônomo o label "cargo" muda para "Área de atuação" */}
               <FormField
                 control={form.control}
                 name="office"
@@ -1164,9 +1165,7 @@ export function WorkEducationForm({
                         occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Cargo / Função
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Cargo</FormLabel>
 
                     <FormControl>
                       <Input
@@ -1185,6 +1184,7 @@ export function WorkEducationForm({
                 )}
               />
 
+              {/* TODO: quando estiver como Autônomo o label muda para "Nome da MEI (se houver)" */}
               <FormField
                 control={form.control}
                 name="companyOrBossName"
@@ -1219,6 +1219,7 @@ export function WorkEducationForm({
                 )}
               />
 
+              {/* TODO: adicionar endereço caso seja Autônomo */}
               <FormField
                 control={form.control}
                 name="companyAddress"
@@ -1442,6 +1443,7 @@ export function WorkEducationForm({
                 )}
               />
 
+              {/* TODO: se for empresario, o label muda para "Data de abertura" */}
               <FormField
                 control={form.control}
                 name="admissionDate"
@@ -1651,6 +1653,9 @@ export function WorkEducationForm({
                 )}
               />
 
+              {/* TODO: mudar para "Descreva quais as suas funções dentro da empresa" quando for Registrado (CLT) */}
+              {/* TODO: mudar para "Descreva suas atividades" quando for Autônomo */}
+              {/* TODO: mudar para "Descreva sobre a sua atual ocupação" quando for Outro */}
               <FormField
                 control={form.control}
                 name="jobDetails"
@@ -1691,7 +1696,7 @@ export function WorkEducationForm({
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="previousJobConfirmation"
@@ -1739,7 +1744,7 @@ export function WorkEducationForm({
               })}
             >
               <div className="w-full flex flex-col gap-y-4">
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`previousJobs.${currentPreviousJobsIndex}.companyName`}
@@ -1777,7 +1782,7 @@ export function WorkEducationForm({
                   />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`previousJobs.${currentPreviousJobsIndex}.companyCity`}
@@ -1831,7 +1836,7 @@ export function WorkEducationForm({
                   />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`previousJobs.${currentPreviousJobsIndex}.companyCep`}
@@ -1890,7 +1895,7 @@ export function WorkEducationForm({
                   />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`previousJobs.${currentPreviousJobsIndex}.office`}
@@ -1928,7 +1933,7 @@ export function WorkEducationForm({
                   />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`previousJobs.${currentPreviousJobsIndex}.admissionDate`}
@@ -2076,7 +2081,7 @@ export function WorkEducationForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Faça descrição da tarefa exercida
+                        Descreva brevemente as tarefas exercidas do seu cargo
                       </FormLabel>
 
                       <FormControl>
@@ -2138,8 +2143,8 @@ export function WorkEducationForm({
             </span>
 
             <div className="w-full bg-secondary p-4 space-y-6">
-              <div className="w-full flex flex-col gap-4">
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="w-full flex flex-col gap-x-4 gap-y-6">
+                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`courses.${currentCoursesIndex}.institutionName`}
@@ -2197,7 +2202,7 @@ export function WorkEducationForm({
                   />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`courses.${currentCoursesIndex}.city`}
@@ -2247,7 +2252,7 @@ export function WorkEducationForm({
                   />
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
                   <FormField
                     control={form.control}
                     name={`courses.${currentCoursesIndex}.courseName`}
@@ -2443,7 +2448,7 @@ export function WorkEducationForm({
             </div>
           </div>
 
-          <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
+          <div className="w-full flex flex-col-reverse items-center gap-x-4 gap-y-6 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
                 <Button

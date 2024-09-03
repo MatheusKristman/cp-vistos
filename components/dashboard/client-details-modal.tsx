@@ -10,7 +10,7 @@ import { ClientDetailsEditAccount } from "./client-details-edit-account";
 import { ClientDetailsComments } from "./client-details-comments";
 import { ClientDetailsEditProfile } from "./client-details-edit-profile";
 import { ClientDetailsForm } from "./client-details-form";
-import { trpc } from "@/lib/trpc-client";
+import { ClientDetailsNewProfile } from "./client-details-new-profile";
 
 export function ClientDetailsModal() {
   const {
@@ -24,12 +24,14 @@ export function ClientDetailsModal() {
     isComment,
     isEditProfile,
     isForm,
+    isNewProfile,
     unsetToAnnotation,
     unsetToEditAccount,
     unsetToResume,
     unsetToComment,
     unsetToEditProfile,
     unsetToForm,
+    unsetToNewProfile,
   } = useClientDetailsModalStore();
 
   if (!client) {
@@ -47,6 +49,7 @@ export function ClientDetailsModal() {
       unsetToComment();
       unsetToEditProfile();
       unsetToForm();
+      unsetToNewProfile();
     }, 300);
   }
 
@@ -70,42 +73,13 @@ export function ClientDetailsModal() {
             className="w-full max-w-[800px] bg-white p-6 inline-block align-middle overflow-x-hidden text-left"
           >
             <AnimatePresence initial={false} mode="wait">
-              {isResume && (
-                <ClientDetailsResume
-                  key="client-resume"
-                  handleClose={handleClose}
-                />
-              )}
-              {isAnnotation && (
-                <ClientDetailsAnnotations
-                  key="client-annotation"
-                  handleClose={handleClose}
-                />
-              )}
-              {isEditAccount && (
-                <ClientDetailsEditAccount
-                  key="client-edit-account"
-                  handleClose={handleClose}
-                />
-              )}
-              {isComment && (
-                <ClientDetailsComments
-                  key="client-comments"
-                  handleClose={handleClose}
-                />
-              )}
-              {isEditProfile && (
-                <ClientDetailsEditProfile
-                  key="client-edit-profile"
-                  handleClose={handleClose}
-                />
-              )}
-              {isForm && (
-                <ClientDetailsForm
-                  key="client-form"
-                  handleClose={handleClose}
-                />
-              )}
+              {isResume && <ClientDetailsResume key="client-resume" handleClose={handleClose} />}
+              {isAnnotation && <ClientDetailsAnnotations key="client-annotation" handleClose={handleClose} />}
+              {isEditAccount && <ClientDetailsEditAccount key="client-edit-account" handleClose={handleClose} />}
+              {isNewProfile && <ClientDetailsNewProfile key="client-new-profile" handleClose={handleClose} />}
+              {isComment && <ClientDetailsComments key="client-comments" handleClose={handleClose} />}
+              {isEditProfile && <ClientDetailsEditProfile key="client-edit-profile" handleClose={handleClose} />}
+              {isForm && <ClientDetailsForm key="client-form" handleClose={handleClose} />}
             </AnimatePresence>
           </motion.div>
         </motion.div>

@@ -290,7 +290,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="passportNumber"
@@ -346,7 +346,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="passportIssuingCountry"
@@ -502,7 +502,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-4 mb-10">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="passportLostConfirmation"
@@ -545,7 +545,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
 
             <div
               className={cn(
-                "w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10",
+                "w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6",
                 {
                   hidden: passportLostConfirmation === "Não",
                 },
@@ -589,7 +589,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
             </div>
 
             <div
-              className={cn("w-full grid grid-cols-1 gap-4", {
+              className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6", {
                 hidden: passportLostConfirmation === "Não",
               })}
             >
