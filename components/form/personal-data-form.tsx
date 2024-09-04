@@ -1,11 +1,5 @@
 "use client";
 
-//TODO: checar funçao de salvar quando tem alguns campos vazios
-//TODO: dependendo do valor birthDate menor do que 14 anos, o campo work-education-form é removido
-//TODO: adicionar campo de país diferente da sua nacionalidade
-//TODO: adicionar campo de nacionalidade e passaporte ao ser confirmado o campo otherNationalityConfirmation
-//TODO: adicionar campo de pais ao ser confirmado o campo otherCountryResidentConfirmation
-
 import { ChangeEvent, useEffect, useState } from "react";
 import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
@@ -68,7 +62,9 @@ const formSchema = z
     originCountry: z.string().min(1, "Campo obrigatório"),
     otherNationalityConfirmation: z.enum(["Sim", "Não"]),
     otherNationalityPassport: z.string().optional(),
+    otherNationalityCountry: z.string().optional(),
     otherCountryResidentConfirmation: z.enum(["Sim", "Não"]),
+    otherCountryResident: z.string().optional(),
     USSocialSecurityNumber: z.string(),
     USTaxpayerIDNumber: z.string(),
   })
@@ -77,8 +73,11 @@ const formSchema = z
       {
         otherNationalityConfirmation,
         otherNationalityPassport,
+        otherNationalityCountry,
         otherNamesConfirmation,
         otherNames,
+        otherCountryResidentConfirmation,
+        otherCountryResident,
       },
       ctx,
     ) => {
@@ -95,6 +94,18 @@ const formSchema = z
       }
 
       if (
+        otherNationalityConfirmation === "Sim" &&
+        (otherNationalityCountry === undefined ||
+          otherNationalityCountry?.length === 0)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["otherNationalityCountry"],
+        });
+      }
+
+      if (
         otherNamesConfirmation === "Sim" &&
         otherNames &&
         otherNames.length === 0
@@ -103,6 +114,18 @@ const formSchema = z
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
           path: ["otherNames"],
+        });
+      }
+
+      if (
+        otherCountryResidentConfirmation === "Sim" &&
+        (otherCountryResident === undefined ||
+          otherCountryResident?.length === 0)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["otherCountryResident"],
         });
       }
     },
@@ -145,8 +168,14 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
       otherNationalityPassport: currentForm.otherNationalityPassport
         ? currentForm.otherNationalityPassport
         : "",
+      otherNationalityCountry: currentForm.otherNationalityCountry
+        ? currentForm.otherNationalityCountry
+        : "",
       otherCountryResidentConfirmation:
         currentForm.otherCountryResidentConfirmation ? "Sim" : "Não",
+      otherCountryResident: currentForm.otherCountryResident
+        ? currentForm.otherCountryResident
+        : "",
       USSocialSecurityNumber: currentForm.USSocialSecurityNumber
         ? currentForm.USSocialSecurityNumber
         : "",
@@ -162,6 +191,9 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
   );
   const otherNationalityConfirmation: "Sim" | "Não" = form.watch(
     "otherNationalityConfirmation",
+  );
+  const otherCountryResidentConfirmation: "Sim" | "Não" = form.watch(
+    "otherCountryResidentConfirmation",
   );
   const otherNames = form.watch("otherNames");
   const utils = trpc.useUtils();
@@ -228,11 +260,18 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
           values.otherNamesConfirmation ??
           (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
         otherNames: values.otherNames ?? currentForm.otherNames,
-        sex: values.sex !== "" ? values.sex : currentForm.sex,
+        sex:
+          values.sex !== ""
+            ? values.sex
+            : !currentForm.sex
+              ? undefined
+              : currentForm.sex,
         maritalStatus:
           values.maritalStatus !== ""
             ? values.maritalStatus
-            : currentForm.maritalStatus,
+            : !currentForm.maritalStatus
+              ? undefined
+              : currentForm.maritalStatus,
         birthDate: values.birthDate ?? currentForm.birthDate,
         birthCity:
           values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
@@ -253,9 +292,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
           values.otherNationalityPassport !== ""
             ? values.otherNationalityPassport
             : currentForm.otherNationalityPassport,
+        otherNationalityCountry:
+          values.otherNationalityCountry !== ""
+            ? values.otherNationalityCountry
+            : currentForm.otherNationalityCountry,
         otherCountryResidentConfirmation:
           values.otherCountryResidentConfirmation ??
           (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
+        otherCountryResident:
+          values.otherCountryResident !== ""
+            ? values.otherCountryResident
+            : currentForm.otherCountryResident,
         USSocialSecurityNumber:
           values.USSocialSecurityNumber !== ""
             ? values.USSocialSecurityNumber
@@ -282,11 +329,18 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
         values.otherNamesConfirmation ??
         (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
       otherNames: values.otherNames ?? currentForm.otherNames,
-      sex: values.sex !== "" ? values.sex : currentForm.sex,
+      sex:
+        values.sex !== ""
+          ? values.sex
+          : !currentForm.sex
+            ? undefined
+            : currentForm.sex,
       maritalStatus:
         values.maritalStatus !== ""
           ? values.maritalStatus
-          : currentForm.maritalStatus,
+          : !currentForm.maritalStatus
+            ? undefined
+            : currentForm.maritalStatus,
       birthDate: values.birthDate ?? currentForm.birthDate,
       birthCity:
         values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
@@ -307,9 +361,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
         values.otherNationalityPassport !== ""
           ? values.otherNationalityPassport
           : currentForm.otherNationalityPassport,
+      otherNationalityCountry:
+        values.otherNationalityCountry !== ""
+          ? values.otherNationalityCountry
+          : currentForm.otherNationalityCountry,
       otherCountryResidentConfirmation:
         values.otherCountryResidentConfirmation ??
         (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
+      otherCountryResident:
+        values.otherCountryResident !== ""
+          ? values.otherCountryResident
+          : currentForm.otherCountryResident,
       USSocialSecurityNumber:
         values.USSocialSecurityNumber !== ""
           ? values.USSocialSecurityNumber
@@ -775,7 +837,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="otherNationalityConfirmation"
@@ -817,11 +879,39 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
               <FormField
                 control={form.control}
+                name="otherNationalityCountry"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      otherNationalityConfirmation === "Não" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="text-foreground">
+                      País da outra nacionalidade
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        disabled={
+                          otherNationalityConfirmation === "Não" ||
+                          isPending ||
+                          isSavePending
+                        }
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="otherNationalityPassport"
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "flex",
                       otherNationalityConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -879,6 +969,28 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                           <FormLabel className="font-normal">Sim</FormLabel>
                         </FormItem>
                       </RadioGroup>
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="otherCountryResident"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      otherCountryResidentConfirmation === "Não" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="text-foreground">
+                      País diferente da nacionalidade
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />

@@ -415,7 +415,7 @@ export const userRouter = router({
           break;
       }
 
-      const clientUpdated = await prisma.profile.create({
+      const profileUpdated = await prisma.profile.create({
         data: {
           DSNumber: DSNumber,
           DSValid: addDays(new Date(), 30),
@@ -443,7 +443,20 @@ export const userRouter = router({
         },
       });
 
-      return { clientUpdated, message: "Perfil criado com sucesso" };
+      await prisma.form.create({
+        data: {
+          profile: {
+            connect: {
+              id: profileUpdated.id,
+            },
+          },
+        },
+      });
+
+      return {
+        clientUpdated: profileUpdated,
+        message: "Perfil criado com sucesso",
+      };
     }),
   getClients: collaboratorProcedure.query(async () => {
     const profiles = await prisma.profile.findMany({

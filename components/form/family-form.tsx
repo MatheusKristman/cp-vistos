@@ -1,5 +1,7 @@
 "use client";
 
+//TODO: dependendo do valor birthDate menor do que 14 anos, o campo work-education-form é removido
+
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

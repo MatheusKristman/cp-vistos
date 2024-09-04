@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: adicionar verificação caso o telefone fixo tenha ao menos um valor nele
-
 import PhoneInput from "react-phone-number-input";
 import { ChangeEvent, useEffect } from "react";
 import { z } from "zod";
@@ -66,6 +64,7 @@ const formSchema = z
   .superRefine(
     (
       {
+        tel,
         postalAddressConfirmation,
         otherPostalAddress,
         fiveYearsOtherTelConfirmation,
@@ -75,6 +74,14 @@ const formSchema = z
       },
       ctx,
     ) => {
+      if (tel.length > 0 && tel.length < 14) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["tel"],
+        });
+      }
+
       if (
         postalAddressConfirmation === "Sim" &&
         otherPostalAddress.length === 0

@@ -184,7 +184,9 @@ model Form {
   originCountry                    String?
   otherNationalityConfirmation     Boolean?
   otherNationalityPassport         String?
+  otherNationalityCountry          String?
   otherCountryResidentConfirmation Boolean?
+  otherCountryResident             String?
   USSocialSecurityNumber           String?
   USTaxpayerIDNumber               String?
   address                          String?
@@ -226,11 +228,13 @@ model Form {
   returnFlyNumber                  String?
   returnCity                       String?
   estimatedTimeOnUSA               String?
-  visitLocations                   String[]
+  visitLocations                   String?
+  hasAddressInUSA                  Boolean?
   USACompleteAddress               String?
   USAZipCode                       String?
   USACity                          String?
   USAState                         String?
+  hasPayer                         Boolean?
   payerNameOrCompany               String?
   payerTel                         String?
   payerAddress                     String?
