@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: dependendo do valor birthDate menor do que 14 anos, o campo work-education-form é removido
-
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -13,12 +11,12 @@ import {
   ArrowRight,
   X,
 } from "lucide-react";
-import { format, getYear } from "date-fns";
+import { format, getYear, differenceInYears } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form as FormType } from "@prisma/client";
+import { Form as FormType, Profile } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +27,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
@@ -44,12 +49,12 @@ import { trpc } from "@/lib/trpc-client";
 
 const formSchema = z
   .object({
-    fatherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
-    fatherBirthdate: z.date({ message: "Campo obrigatório" }),
+    fatherCompleteName: z.string(),
+    fatherBirthdate: z.date({ message: "Campo obrigatório" }).optional(),
     fatherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
     fatherUSASituation: z.string(),
     motherCompleteName: z.string().min(1, { message: "Campo obrigatório" }),
-    motherBirthdate: z.date({ message: "Campo obrigatório" }),
+    motherBirthdate: z.date({ message: "Campo obrigatório" }).optional(),
     motherLiveInTheUSAConfirmation: z.enum(["Sim", "Não"]),
     motherUSASituation: z.string(),
     familyLivingInTheUSAConfirmation: z.enum(["Sim", "Não"]),
@@ -152,9 +157,15 @@ interface Props {
   profileId: string;
   currentForm: FormType;
   isEditing: boolean;
+  profile: Profile;
 }
 
-export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
+export function FamilyForm({
+  currentForm,
+  profileId,
+  isEditing,
+  profile,
+}: Props) {
   const [currentFamilyIndex, setCurrentFamilyIndex] = useState<number>(
     currentForm.familyLivingInTheUSA.length || 0,
   );
@@ -235,6 +246,10 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
   const familyLivingInTheUSA = form.watch("familyLivingInTheUSA");
   const utils = trpc.useUtils();
   const router = useRouter();
+  const maritalStatus = currentForm.maritalStatus;
+  const isMinor = profile.birthDate
+    ? differenceInYears(new Date(), profile.birthDate) < 14
+    : false;
 
   const { mutate: submitFamily, isPending } =
     trpc.formsRouter.submitFamily.useMutation({
@@ -245,7 +260,11 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
         if (data.isEditing) {
           router.push(`/resumo-formulario/${profileId}`);
         } else {
-          router.push(`/formulario/${profileId}?formStep=8`);
+          if (isMinor) {
+            router.push(`/formulario/${profileId}?formStep=9`);
+          } else {
+            router.push(`/formulario/${profileId}?formStep=8`);
+          }
         }
       },
       onError: (error) => {
@@ -390,13 +409,23 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
   }, [redirectStep, setRedirectStep, saveFamily, profileId]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    submitFamily({
-      ...values,
-      familyLivingInTheUSA: familyLivingInTheUSAItems,
-      profileId,
-      step: 8,
-      isEditing,
-    });
+    if (isMinor) {
+      submitFamily({
+        ...values,
+        familyLivingInTheUSA: familyLivingInTheUSAItems,
+        profileId,
+        step: 9,
+        isEditing,
+      });
+    } else {
+      submitFamily({
+        ...values,
+        familyLivingInTheUSA: familyLivingInTheUSAItems,
+        profileId,
+        step: 8,
+        isEditing,
+      });
+    }
   }
 
   function onSave() {
@@ -540,14 +569,13 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
             </span>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
-              {/* TODO: pai não é obrigatório */}
               <FormField
                 control={form.control}
                 name="fatherCompleteName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Nome completo do pai*
+                      Nome completo do pai
                     </FormLabel>
 
                     <FormControl>
@@ -559,14 +587,13 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
-              {/* TODO: data não é obrigatório */}
               <FormField
                 control={form.control}
                 name="fatherBirthdate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Data de nascimento do pai*
+                      Data de nascimento do pai
                     </FormLabel>
 
                     <Popover>
@@ -670,7 +697,6 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
-              {/* TODO: adicionar select com options enviados no whatsapp */}
               <FormField
                 control={form.control}
                 name="fatherUSASituation"
@@ -685,9 +711,34 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                       Em qual situação? (trabalhando legalmente, passeando, etc)
                     </FormLabel>
 
-                    <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger disabled={isPending}>
+                          <SelectValue placeholder="Selecione a opção" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        <SelectItem value="Cidadão Dos EUA">
+                          Cidadão Dos EUA
+                        </SelectItem>
+
+                        <SelectItem value="Residente Permanente Legal Dos EUA">
+                          Residente Permanente Legal Dos EUA
+                        </SelectItem>
+
+                        <SelectItem value="Não Imigrante">
+                          Não Imigrante
+                        </SelectItem>
+
+                        <SelectItem value="Outro/Não Sei">
+                          Outro/Não Sei
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
 
                     <FormMessage className="text-sm text-destructive" />
                   </FormItem>
@@ -714,14 +765,13 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
-              {/* TODO: data não é obrigatório */}
               <FormField
                 control={form.control}
                 name="motherBirthdate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Data de nascimento da mãe*
+                      Data de nascimento da mãe
                     </FormLabel>
 
                     <Popover>
@@ -825,7 +875,6 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                 )}
               />
 
-              {/* TODO: adicionar select com options enviados no whatsapp */}
               <FormField
                 control={form.control}
                 name="motherUSASituation"
@@ -840,9 +889,34 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                       Em qual situação? (trabalhando legalmente, passeando, etc)
                     </FormLabel>
 
-                    <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger disabled={isPending}>
+                          <SelectValue placeholder="Selecione a opção" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        <SelectItem value="Cidadão Dos EUA">
+                          Cidadão Dos EUA
+                        </SelectItem>
+
+                        <SelectItem value="Residente Permanente Legal Dos EUA">
+                          Residente Permanente Legal Dos EUA
+                        </SelectItem>
+
+                        <SelectItem value="Não Imigrante">
+                          Não Imigrante
+                        </SelectItem>
+
+                        <SelectItem value="Outro/Não Sei">
+                          Outro/Não Sei
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
 
                     <FormMessage className="text-sm text-destructive" />
                   </FormItem>
@@ -945,24 +1019,43 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
                     />
                   </div>
 
-                  {/* TODO: adicionar select com options enviados no whatsapp */}
                   <FormField
                     control={form.control}
                     name={`familyLivingInTheUSA.${currentFamilyIndex}.situation`}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-foreground">
-                          Situação (cidadão americano, residente legal, não
-                          imigrante, etc...)
+                          Situação
                         </FormLabel>
 
-                        <FormControl>
-                          <Textarea
-                            disabled={isPending || isSavePending}
-                            className="resize-none"
-                            {...field}
-                          />
-                        </FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger disabled={isPending}>
+                              <SelectValue placeholder="Selecione a opção" />
+                            </SelectTrigger>
+                          </FormControl>
+
+                          <SelectContent>
+                            <SelectItem value="Cidadão Dos EUA">
+                              Cidadão Dos EUA
+                            </SelectItem>
+
+                            <SelectItem value="Residente Permanente Legal Dos EUA">
+                              Residente Permanente Legal Dos EUA
+                            </SelectItem>
+
+                            <SelectItem value="Não Imigrante">
+                              Não Imigrante
+                            </SelectItem>
+
+                            <SelectItem value="Outro/Não Sei">
+                              Outro/Não Sei
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
 
                         <FormMessage className="text-sm text-destructive" />
                       </FormItem>
@@ -1019,13 +1112,31 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               </div>
             </div>
 
-            {/* TODO: se for solteiro não aparece, se for viuvo ou casado ou união estavel apenas o nome, data e local de nascimento, se for divorciado vai pedir data de casamento e de separação */}
-            {/* TODO: alterar o titulo para, se divorciado aparece ex-cônjuge, se for viuvo aparece do cônjuge falecido, se for casado ou união estavel aparece cônjuge, e solteiro não aparece nada */}
-            <span className="text-foreground text-base font-medium mb-6">
-              Dados do cônjuge, parceiro doméstico ou ex-cônjuge
+            <span
+              className={cn("text-foreground text-base font-medium mb-6", {
+                hidden: maritalStatus === "Solteiro(a)",
+              })}
+            >
+              {maritalStatus === "Divorciado(a)" ||
+              maritalStatus === "Separado(a)" ? (
+                <>Dados do ex-cônjuge</>
+              ) : maritalStatus === "Viúvo(a)" ? (
+                <>Dados do cônjuge falecido</>
+              ) : maritalStatus === "Casado(a)" ||
+                maritalStatus === "União Estavel" ||
+                maritalStatus === "Parceiro(a) Doméstico(a)" ? (
+                <>Dados do cônjuge</>
+              ) : null}
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
+                {
+                  hidden: maritalStatus === "Solteiro(a)",
+                },
+              )}
+            >
               <FormField
                 control={form.control}
                 name="partnerCompleteName"
@@ -1132,7 +1243,14 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-10">
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-10",
+                {
+                  hidden: maritalStatus === "Solteiro(a)",
+                },
+              )}
+            >
               <FormField
                 control={form.control}
                 name="partnerCity"
@@ -1188,11 +1306,32 @@ export function FamilyForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mb-6">
+            <span
+              className={cn("text-foreground text-base font-medium mb-6", {
+                hidden:
+                  maritalStatus === "Solteiro(a)" ||
+                  maritalStatus === "Casado(a)" ||
+                  maritalStatus === "Viúvo(a)" ||
+                  maritalStatus === "União Estavel" ||
+                  maritalStatus === "Parceiro(a) Doméstico(a)",
+              })}
+            >
               Se separado(a) ou divorciado(a)
             </span>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6",
+                {
+                  hidden:
+                    maritalStatus === "Solteiro(a)" ||
+                    maritalStatus === "Casado(a)" ||
+                    maritalStatus === "Viúvo(a)" ||
+                    maritalStatus === "União Estavel" ||
+                    maritalStatus === "Parceiro(a) Doméstico(a)",
+                },
+              )}
+            >
               <FormField
                 control={form.control}
                 name="unionDate"

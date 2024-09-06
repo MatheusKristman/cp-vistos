@@ -748,9 +748,7 @@ export function FormView({ form, profileId }: Props) {
                 </span>
 
                 <span className="text-lg font-medium text-foreground">
-                  {form.visitLocations && form.visitLocations.length > 0
-                    ? form.visitLocations.join(" | ")
-                    : "Não Preenchido"}
+                  {form.visitLocations ? form.visitLocations : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -1071,57 +1069,34 @@ export function FormView({ form, profileId }: Props) {
               </div>
             </div>
 
-            <div className="w-full flex flex-col gap-9">
-              {form.americanLicenseToDriveConfirmation &&
-              form.americanLicense &&
-              form.americanLicense.length > 0 ? (
-                form.americanLicense.map((americanLicense, index) => (
-                  <div
-                    key={`americanLicense-${index}`}
-                    className="w-full bg-[#FDF0D2] p-5 flex flex-col gap-4"
-                  >
-                    <div className="w-full flex flex-col sm:flex-row items-center gap-2">
-                      <div className="w-8 min-w-[32px] h-8 min-h-[32px] rounded-full bg-primary flex items-center justify-center">
-                        <span className="text-white text-lg font-medium">
-                          {index + 1}
-                        </span>
-                      </div>
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Número da licença
+                </span>
 
-                      <span className="text-foreground text-lg text-center font-medium">
-                        Licença
-                      </span>
-                    </div>
+                <span className="text-lg font-medium text-foreground">
+                  {form.americanLicenseToDriveConfirmation
+                    ? form.americanLicense
+                      ? form.americanLicense.licenseNumber
+                      : "Não Preenchido"
+                    : "Não Possui"}
+                </span>
+              </div>
 
-                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="w-full flex flex-col gap-1">
-                        <span className="text-sm text-foreground/70 font-medium">
-                          Número da licença
-                        </span>
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Estado
+                </span>
 
-                        <span className="text-lg font-medium text-foreground">
-                          {americanLicense.licenseNumber}
-                        </span>
-                      </div>
-
-                      <div className="w-full flex flex-col gap-1">
-                        <span className="text-sm text-foreground/70 font-medium">
-                          Estado
-                        </span>
-
-                        <span className="text-lg font-medium text-foreground">
-                          {americanLicense.state}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="w-full bg-[#FDF0D2] p-5 flex items-center justify-center">
-                  <span className="text-foreground text-lg text-center font-semibold">
-                    Não possui licença
-                  </span>
-                </div>
-              )}
+                <span className="text-lg font-medium text-foreground">
+                  {form.americanLicenseToDriveConfirmation
+                    ? form.americanLicense
+                      ? form.americanLicense.state
+                      : "Não Preenchido"
+                    : "Não Possui"}
+                </span>
+              </div>
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">

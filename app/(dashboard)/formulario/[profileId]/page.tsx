@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { differenceInYears } from "date-fns";
 
 import { Header } from "@/components/global/header";
 import { MobileMenu } from "@/components/global/mobile-menu";
@@ -68,9 +69,12 @@ export default function FormPage({
     );
   }
 
-  const { data } = trpc.formsRouter.getForm.useQuery({ profileId });
+  const { data: formData } = trpc.formsRouter.getForm.useQuery({ profileId });
+  const { data: profileData } = trpc.formsRouter.getProfile.useQuery({
+    profileId,
+  });
 
-  if (data === undefined) {
+  if (formData === undefined || profileData === undefined) {
     return (
       <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
         <Loader2 size={100} strokeWidth={1} className="animate-spin" />
@@ -82,8 +86,11 @@ export default function FormPage({
     );
   }
 
-  const currentStep = data.form.profile.formStep;
+  const currentStep = formData.form.profile.formStep;
   const stepDisabled = (step: number) => step > currentStep;
+  const isMinor = profileData.profile.birthDate
+    ? differenceInYears(new Date(), profileData.profile.birthDate) < 14
+    : false;
 
   return (
     <>
@@ -103,106 +110,131 @@ export default function FormPage({
 
           <div className="hidden lg:flex items-center gap-4">
             <TooltipProvider>
-              {STEPS.map((step) => {
-                const disabled = stepDisabled(step.step);
+              {isMinor
+                ? STEPS.filter((step) => step.step !== 8).map((step) => {
+                    const disabled = stepDisabled(step.step);
 
-                return (
-                  <Tooltip key={step.step} delayDuration={0}>
-                    <TooltipTrigger
-                      disabled={disabled}
-                      onClick={() => setRedirectStep(step.step)}
-                      className={cn(
-                        "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
-                        {
-                          "bg-primary hover:bg-primary":
-                            formStep === step.step.toString(),
-                        },
-                      )}
-                    />
+                    return (
+                      <Tooltip key={step.step} delayDuration={0}>
+                        <TooltipTrigger
+                          disabled={disabled}
+                          onClick={() => setRedirectStep(step.step)}
+                          className={cn(
+                            "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
+                            {
+                              "bg-primary hover:bg-primary":
+                                formStep === step.step.toString(),
+                            },
+                          )}
+                        />
 
-                    <TooltipContent side="bottom">
-                      <p className="font-medium">{step.label}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
+                        <TooltipContent side="bottom">
+                          <p className="font-medium">{step.label}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })
+                : STEPS.map((step) => {
+                    const disabled = stepDisabled(step.step);
+
+                    return (
+                      <Tooltip key={step.step} delayDuration={0}>
+                        <TooltipTrigger
+                          disabled={disabled}
+                          onClick={() => setRedirectStep(step.step)}
+                          className={cn(
+                            "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
+                            {
+                              "bg-primary hover:bg-primary":
+                                formStep === step.step.toString(),
+                            },
+                          )}
+                        />
+
+                        <TooltipContent side="bottom">
+                          <p className="font-medium">{step.label}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
             </TooltipProvider>
           </div>
         </div>
 
         {formStep === "0" && (
           <PersonalDataForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "1" && (
           <ContactAndAddressForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "2" && (
           <PassportForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "3" && (
           <AboutTravelForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "4" && (
           <TravelCompanyForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "5" && (
           <PreviousTravelForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "6" && (
           <USAContactForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "7" && (
           <FamilyForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
+            profile={profileData.profile}
           />
         )}
         {formStep === "8" && (
           <WorkEducationForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "9" && (
           <AdditionalInformationForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />
         )}
         {formStep === "10" && (
           <SecurityForm
-            currentForm={data.form}
+            currentForm={formData.form}
             profileId={profileId}
             isEditing={isEditing}
           />

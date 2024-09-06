@@ -255,11 +255,13 @@ model Form {
   americanLicenseToDriveConfirmation Boolean?
 
   /// [americanLicenseType]
-  americanLicense Json[]
+  americanLicense Json?
 
   USAVisaConfirmation                           Boolean?
   visaIssuingDate                               DateTime?
   visaNumber                                    String?
+  alreadyHaveVisa                               Boolean?
+  hasVisaConfirmation                           Boolean?
   newVisaConfirmation                           Boolean?
   sameCountryResidenceConfirmation              Boolean?
   sameVisaTypeConfirmation                      Boolean?
@@ -274,6 +276,7 @@ model Form {
   deniedVisaType                                String?
   immigrationRequestByAnotherPersonConfirmation Boolean?
   immigrationRequestByAnotherPersonDetails      String?
+  hasUSAOrganizationOrResident                  Boolean?
   organizationOrUSAResidentName                 String?
   organizationOrUSAResidentRelation             String?
   organizationOrUSAResidentAddress              String?

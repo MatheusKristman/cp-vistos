@@ -409,11 +409,6 @@ export function WorkEducationForm({
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  console.log("previousJobs", previousJobs);
-  console.log("previousJobsItems", previousJobsItems);
-  console.log("courses", courses);
-  console.log("coursesItems", coursesItems);
-
   const { mutate: submitWorkEducation, isPending } =
     trpc.formsRouter.submitWorkEducation.useMutation({
       onSuccess: (data) => {
@@ -1152,7 +1147,6 @@ export function WorkEducationForm({
                 },
               )}
             >
-              {/* TODO: quando estiver como Autônomo o label "cargo" muda para "Área de atuação" */}
               <FormField
                 control={form.control}
                 name="office"
@@ -1165,10 +1159,27 @@ export function WorkEducationForm({
                         occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">Cargo</FormLabel>
+                    <FormLabel className="text-foreground">
+                      {occupation === "Outro" ? (
+                        <>Área de atuação</>
+                      ) : (
+                        <>Cargo</>
+                      )}
+                    </FormLabel>
 
                     <FormControl>
                       <Input
+                        tabIndex={
+                          occupation === "Empresário/Proprietário" ||
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado"
+                            ? -1
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 1
+                              : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||
@@ -1184,7 +1195,6 @@ export function WorkEducationForm({
                 )}
               />
 
-              {/* TODO: quando estiver como Autônomo o label muda para "Nome da MEI (se houver)" */}
               <FormField
                 control={form.control}
                 name="companyOrBossName"
@@ -1200,11 +1210,25 @@ export function WorkEducationForm({
                     <FormLabel className="text-foreground">
                       {occupation === "Empresário/Proprietário"
                         ? "Nome fantasia ou razão social"
-                        : "Nome do empregador atual ou empresa"}
+                        : occupation === "Autônomo"
+                          ? "Nome da MEI (se houver)"
+                          : "Nome do empregador atual ou empresa"}
                     </FormLabel>
 
                     <FormControl>
                       <Input
+                        tabIndex={
+                          occupation === "Empresário/Proprietário"
+                            ? 1
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 2
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Aposentado" ||
                           occupation === "Não Trabalho" ||
@@ -1219,7 +1243,6 @@ export function WorkEducationForm({
                 )}
               />
 
-              {/* TODO: adicionar endereço caso seja Autônomo */}
               <FormField
                 control={form.control}
                 name="companyAddress"
@@ -1229,9 +1252,9 @@ export function WorkEducationForm({
                       "md:col-span-2": occupation === "Empresário/Proprietário",
                       "md:row-start-3 md:col-start-1":
                         occupation === "Registrado (CLT/PJ)" ||
+                        occupation === "Autônomo" ||
                         occupation === "Outro",
                       hidden:
-                        occupation === "Autônomo" ||
                         occupation === "Não Trabalho" ||
                         occupation === "Aposentado",
                     })}
@@ -1242,10 +1265,22 @@ export function WorkEducationForm({
 
                     <FormControl>
                       <Input
+                        tabIndex={
+                          occupation === "Empresário/Proprietário" ||
+                          occupation === "Não Trabalho"
+                            ? 2
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 6
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||
-                          occupation === "Autônomo" ||
                           isPending
                         }
                         {...field}
@@ -1276,6 +1311,19 @@ export function WorkEducationForm({
 
                     <FormControl>
                       <Input
+                        tabIndex={
+                          occupation === "Empresário/Proprietário" ||
+                          occupation === "Não Trabalho"
+                            ? 3
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 3
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||
@@ -1309,6 +1357,18 @@ export function WorkEducationForm({
 
                     <FormControl>
                       <Input
+                        tabIndex={
+                          occupation === "Empresário/Proprietário"
+                            ? 4
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 4
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||
@@ -1342,6 +1402,18 @@ export function WorkEducationForm({
 
                     <FormControl>
                       <Input
+                        tabIndex={
+                          occupation === "Empresário/Proprietário"
+                            ? 5
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 5
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||
@@ -1364,8 +1436,7 @@ export function WorkEducationForm({
                     className={cn({
                       "md:row-start-3 md:col-start-2":
                         occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro",
-                      "md:row-start-3 md:col-start-1":
+                        occupation === "Outro" ||
                         occupation === "Autônomo",
                       hidden:
                         occupation === "Não Trabalho" ||
@@ -1376,6 +1447,18 @@ export function WorkEducationForm({
 
                     <FormControl>
                       <Input
+                        tabIndex={
+                          occupation === "Empresário/Proprietário"
+                            ? 6
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 7
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||
@@ -1403,8 +1486,7 @@ export function WorkEducationForm({
                     className={cn({
                       "md:row-start-3 md:col-start-3":
                         occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro",
-                      "md:row-start-3 md:col-start-2":
+                        occupation === "Outro" ||
                         occupation === "Autônomo",
                       hidden:
                         occupation === "Não Trabalho" ||
@@ -1415,6 +1497,18 @@ export function WorkEducationForm({
 
                     <FormControl>
                       <PhoneInput
+                        tabIndex={
+                          occupation === "Empresário/Proprietário"
+                            ? 7
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 8
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||
@@ -1443,7 +1537,6 @@ export function WorkEducationForm({
                 )}
               />
 
-              {/* TODO: se for empresario, o label muda para "Data de abertura" */}
               <FormField
                 control={form.control}
                 name="admissionDate"
@@ -1461,13 +1554,27 @@ export function WorkEducationForm({
                     })}
                   >
                     <FormLabel className="text-foreground">
-                      Data de admissão
+                      {occupation === "Empresário/Proprietário"
+                        ? "Data de abertura"
+                        : "Data de admissão"}
                     </FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
+                            tabIndex={
+                              occupation === "Empresário/Proprietário"
+                                ? 8
+                                : occupation === "Registrado (CLT/PJ)" ||
+                                    occupation === "Autônomo" ||
+                                    occupation === "Outro"
+                                  ? 9
+                                  : occupation === "Não Trabalho" ||
+                                      occupation === "Aposentado"
+                                    ? -1
+                                    : 0
+                            }
                             disabled={
                               occupation === "Não Trabalho" ||
                               occupation === "Aposentado" ||
@@ -1543,6 +1650,17 @@ export function WorkEducationForm({
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
+                            tabIndex={
+                              occupation === "Empresário/Proprietário" ||
+                              occupation === "Registrado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro" ||
+                              occupation === "Não Trabalho"
+                                ? -1
+                                : occupation === "Aposentado"
+                                  ? 1
+                                  : 0
+                            }
                             disabled={
                               occupation === "Não Trabalho" ||
                               occupation === "Empresário/Proprietário" ||
@@ -1629,6 +1747,18 @@ export function WorkEducationForm({
                         <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
                         <CurrencyInput
+                          tabIndex={
+                            occupation === "Empresário/Proprietário"
+                              ? 9
+                              : occupation === "Registrado (CLT/PJ)" ||
+                                  occupation === "Autônomo" ||
+                                  occupation === "Outro"
+                                ? 10
+                                : occupation === "Não Trabalho" ||
+                                    occupation === "Aposentado"
+                                  ? -1
+                                  : 0
+                          }
                           disabled={
                             occupation === "Não Trabalho" ||
                             occupation === "Aposentado" ||
@@ -1653,9 +1783,6 @@ export function WorkEducationForm({
                 )}
               />
 
-              {/* TODO: mudar para "Descreva quais as suas funções dentro da empresa" quando for Registrado (CLT) */}
-              {/* TODO: mudar para "Descreva suas atividades" quando for Autônomo */}
-              {/* TODO: mudar para "Descreva sobre a sua atual ocupação" quando for Outro */}
               <FormField
                 control={form.control}
                 name="jobDetails"
@@ -1673,13 +1800,35 @@ export function WorkEducationForm({
                     })}
                   >
                     <FormLabel className="text-foreground">
-                      Descreva quais são suas funções dentro da sua empresa, se
-                      possui funcionários registrados e outras informações
-                      relacionadas ao seu negócio
+                      {occupation == "Registrado (CLT/PJ)" ? (
+                        <>Descreva quais as suas funções dentro da empresa</>
+                      ) : occupation === "Autônomo" ? (
+                        <>Descreva suas atividades</>
+                      ) : occupation === "Outro" ? (
+                        <>Descreva sobre a sua atual ocupação</>
+                      ) : occupation === "Empresário/Proprietário" ? (
+                        <>
+                          Descreva quais são suas funções dentro da sua empresa,
+                          se possui funcionários registrados e outras
+                          informações relacionadas ao seu negócio
+                        </>
+                      ) : null}
                     </FormLabel>
 
                     <FormControl>
                       <Textarea
+                        tabIndex={
+                          occupation === "Empresário/Proprietário"
+                            ? 10
+                            : occupation === "Registrado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 11
+                              : occupation === "Não Trabalho" ||
+                                  occupation === "Aposentado"
+                                ? -1
+                                : 0
+                        }
                         disabled={
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado" ||

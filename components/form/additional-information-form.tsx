@@ -29,7 +29,6 @@ import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z
   .object({
-    tribeParticipateConfirmation: z.enum(["Sim", "Não"]),
     languages: z.array(
       z.string().min(1, { message: "Idioma precisa ser preenchido" }),
     ),
@@ -206,9 +205,6 @@ export function AdditionalInformationForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      tribeParticipateConfirmation: currentForm.tribeParticipateConfirmation
-        ? "Sim"
-        : "Não",
       languages: currentForm.languages,
       fiveYearsOtherCountryTravelsConfirmation:
         currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não",
@@ -317,9 +313,6 @@ export function AdditionalInformationForm({
       saveAdditionalInformation({
         profileId,
         redirectStep,
-        tribeParticipateConfirmation:
-          values.tribeParticipateConfirmation ??
-          (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
         languages:
           values.languages.length > 0
             ? values.languages
@@ -492,9 +485,6 @@ export function AdditionalInformationForm({
 
     saveAdditionalInformation({
       profileId,
-      tribeParticipateConfirmation:
-        values.tribeParticipateConfirmation ??
-        (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
       languages:
         values.languages.length > 0 ? values.languages : currentForm.languages,
       fiveYearsOtherCountryTravelsConfirmation:
@@ -584,46 +574,6 @@ export function AdditionalInformationForm({
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
-              {/* TODO: pode ser removido */}
-              <FormField
-                control={form.control}
-                name="tribeParticipateConfirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">
-                      Você participa de algum clã ou tribo?
-                    </FormLabel>
-
-                    <FormControl>
-                      <RadioGroup
-                        disabled={isPending || isSavePending}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
-
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
-
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
-
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-
-                    <FormMessage className="text-sm text-destructive" />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 name="languages"
                 control={form.control}

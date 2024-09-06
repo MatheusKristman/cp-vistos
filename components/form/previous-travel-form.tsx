@@ -1,7 +1,5 @@
 "use client";
 
-//TODO: americanLicense é apenas um
-
 import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -43,15 +41,14 @@ const formSchema = z
       z.object({ arriveDate: z.date().optional(), estimatedTime: z.string() }),
     ),
     americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
-    americanLicense: z.array(
-      z.object({
-        licenseNumber: z.string(),
-        state: z.string(),
-      }),
-    ),
+    americanLicense: z.object({
+      licenseNumber: z.string(),
+      state: z.string(),
+    }),
     USAVisaConfirmation: z.enum(["Sim", "Não"]),
     visaIssuingDate: z.date({ message: "Campo obrigatório" }).optional(),
     visaNumber: z.string(),
+    hasVisaConfirmation: z.enum(["Sim", "Não"]),
     newVisaConfirmation: z.enum(["Sim", "Não"]),
     sameCountryResidenceConfirmation: z.enum(["Sim", "Não"]),
     sameVisaTypeConfirmation: z.enum(["Sim", "Não"]),
@@ -115,25 +112,23 @@ const formSchema = z
 
       if (
         americanLicenseToDriveConfirmation === "Sim" &&
-        americanLicense.length === 1 &&
-        americanLicense.filter((item) => item.licenseNumber === "").length === 1
+        americanLicense.licenseNumber === ""
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [`americanLicense.${americanLicense.length - 1}.licenseNumber`],
+          path: ["americanLicense.licenseNumber"],
         });
       }
 
       if (
         americanLicenseToDriveConfirmation === "Sim" &&
-        americanLicense.length === 1 &&
-        americanLicense.filter((item) => item.state === "").length === 1
+        americanLicense.state === ""
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [`americanLicense.${americanLicense.length - 1}.state`],
+          path: ["americanLicense.state"],
         });
       }
 
@@ -212,13 +207,6 @@ export function PreviousTravelForm({
   >([]);
   const [resetUSALastTravelFields, setResetUSALastTravelFields] =
     useState<boolean>(false);
-  const [currentAmericanLicenseIndex, setCurrentAmericanLicenseIndex] =
-    useState(currentForm.americanLicense.length ?? 0);
-  const [americanLicenseItems, setAmericanLicenseItems] = useState<
-    { licenseNumber: string; state: string }[]
-  >([]);
-  const [resetAmericanLicenseFields, setResetAmericanLicenseFields] =
-    useState<boolean>(false);
 
   const { redirectStep, setRedirectStep } = useFormStore();
 
@@ -243,14 +231,16 @@ export function PreviousTravelForm({
       americanLicenseToDriveConfirmation:
         currentForm.americanLicenseToDriveConfirmation ? "Sim" : "Não",
       americanLicense:
-        currentForm.americanLicense.length > 0
-          ? [...currentForm.americanLicense, { licenseNumber: "", state: "" }]
-          : [{ licenseNumber: "", state: "" }],
+        currentForm.americanLicense.licenseNumber !== undefined &&
+        currentForm.americanLicense.state !== undefined
+          ? currentForm.americanLicense
+          : { licenseNumber: "", state: "" },
       USAVisaConfirmation: currentForm.USAVisaConfirmation ? "Sim" : "Não",
       visaIssuingDate: currentForm.visaIssuingDate
         ? currentForm.visaIssuingDate
         : undefined,
       visaNumber: currentForm.visaNumber ? currentForm.visaNumber : "",
+      hasVisaConfirmation: currentForm.hasVisaConfirmation ? "Sim" : "Não",
       newVisaConfirmation: currentForm.newVisaConfirmation ? "Sim" : "Não",
       sameCountryResidenceConfirmation:
         currentForm.sameCountryResidenceConfirmation ? "Sim" : "Não",
@@ -295,16 +285,21 @@ export function PreviousTravelForm({
   const americanLicenseToDriveConfirmation = form.watch(
     "americanLicenseToDriveConfirmation",
   );
-  const americanLicense = form.watch("americanLicense");
   const USAVisaConfirmation = form.watch("USAVisaConfirmation");
+  const hasVisaConfirmation = form.watch("hasVisaConfirmation");
   const lostVisaConfirmation = form.watch("lostVisaConfirmation");
   const canceledVisaConfirmation = form.watch("canceledVisaConfirmation");
   const deniedVisaConfirmation = form.watch("deniedVisaConfirmation");
   const immigrationRequestByAnotherPersonConfirmation = form.watch(
     "immigrationRequestByAnotherPersonConfirmation",
   );
+  const americanLicense = form.watch("americanLicense");
   const utils = trpc.useUtils();
   const router = useRouter();
+
+  useEffect(() => {
+    console.log(americanLicense);
+  }, [americanLicense]);
 
   const { mutate: submitPreviousTravel, isPending } =
     trpc.formsRouter.submitPreviousTravel.useMutation({
@@ -352,8 +347,6 @@ export function PreviousTravelForm({
     });
 
   useEffect(() => {
-    console.log(currentForm.USALastTravel);
-
     if (currentForm.USALastTravel.length > 0) {
       setCurrentUSALastTravelIndex(currentForm.USALastTravel.length);
 
@@ -362,16 +355,6 @@ export function PreviousTravelForm({
       );
 
       setUSALastTravelItems(USALastTravelFiltered);
-    }
-
-    if (currentForm.americanLicense.length > 0) {
-      setCurrentAmericanLicenseIndex(currentForm.americanLicense.length);
-
-      const americanLicenseFiltered = currentForm.americanLicense.filter(
-        (item) => item.licenseNumber !== "" && item.state !== "",
-      );
-
-      setAmericanLicenseItems(americanLicenseFiltered);
     }
   }, [currentForm]);
 
@@ -388,17 +371,7 @@ export function PreviousTravelForm({
 
       setResetUSALastTravelFields(false);
     }
-
-    if (resetAmericanLicenseFields) {
-      form.setValue(
-        `americanLicense.${currentAmericanLicenseIndex}.licenseNumber`,
-        "",
-      );
-      form.setValue(`americanLicense.${currentAmericanLicenseIndex}.state`, "");
-
-      setResetAmericanLicenseFields(false);
-    }
-  }, [resetUSALastTravelFields, resetAmericanLicenseFields]);
+  }, [resetUSALastTravelFields]);
 
   useEffect(() => {
     if (redirectStep !== null) {
@@ -420,10 +393,9 @@ export function PreviousTravelForm({
         americanLicenseToDriveConfirmation:
           values.americanLicenseToDriveConfirmation ??
           (currentForm.americanLicenseToDriveConfirmation ? "Sim" : "Não"),
-        americanLicense:
-          americanLicenseItems.length > 0
-            ? americanLicenseItems
-            : currentForm.americanLicense,
+        americanLicense: values.americanLicense
+          ? values.americanLicense
+          : currentForm.americanLicense,
         USAVisaConfirmation:
           values.USAVisaConfirmation ??
           (currentForm.USAVisaConfirmation ? "Sim" : "Não"),
@@ -439,6 +411,9 @@ export function PreviousTravelForm({
             : !currentForm.visaNumber
               ? ""
               : currentForm.visaNumber,
+        hasVisaConfirmation:
+          values.hasVisaConfirmation ??
+          (currentForm.alreadyHaveVisa ? "Sim" : "Não"),
         newVisaConfirmation:
           values.newVisaConfirmation ??
           (currentForm.newVisaConfirmation ? "Sim" : "Não"),
@@ -513,7 +488,6 @@ export function PreviousTravelForm({
         arriveDate: Date;
         estimatedTime: string;
       }[],
-      americanLicense: americanLicenseItems,
       profileId,
       step: 6,
       isEditing,
@@ -538,10 +512,9 @@ export function PreviousTravelForm({
       americanLicenseToDriveConfirmation:
         values.americanLicenseToDriveConfirmation ??
         (currentForm.americanLicenseToDriveConfirmation ? "Sim" : "Não"),
-      americanLicense:
-        americanLicenseItems.length > 0
-          ? americanLicenseItems
-          : currentForm.americanLicense,
+      americanLicense: values.americanLicense
+        ? values.americanLicense
+        : currentForm.americanLicense,
       USAVisaConfirmation:
         values.USAVisaConfirmation ??
         (currentForm.USAVisaConfirmation ? "Sim" : "Não"),
@@ -557,6 +530,9 @@ export function PreviousTravelForm({
           : !currentForm.visaNumber
             ? ""
             : currentForm.visaNumber,
+      hasVisaConfirmation:
+        values.hasVisaConfirmation ??
+        (currentForm.alreadyHaveVisa ? "Sim" : "Não"),
       newVisaConfirmation:
         values.newVisaConfirmation ??
         (currentForm.newVisaConfirmation ? "Sim" : "Não"),
@@ -661,46 +637,6 @@ export function PreviousTravelForm({
 
     setCurrentUSALastTravelIndex((prev) => prev - 1);
     setUSALastTravelItems(USALastTravelFiltered);
-  }
-
-  function addAmericanLicense() {
-    form
-      .trigger([
-        `americanLicense.${currentAmericanLicenseIndex}.licenseNumber`,
-        `americanLicense.${currentAmericanLicenseIndex}.state`,
-      ])
-      .then(() => {
-        if (Object.keys(form.formState.errors).length === 0) {
-          form.setValue("americanLicense", [
-            ...americanLicense,
-            {
-              licenseNumber: "",
-              state: "",
-            },
-          ]);
-
-          const americanLicenseFiltered = americanLicense.filter(
-            (item) => item.licenseNumber !== "" || item.state !== "",
-          );
-
-          setCurrentAmericanLicenseIndex((prev) => prev + 1);
-          setAmericanLicenseItems(americanLicenseFiltered);
-          setResetAmericanLicenseFields(true);
-        }
-      });
-  }
-
-  function removeAmericanLicense(index: number) {
-    const newArr = americanLicense.filter((_, i) => i !== index);
-
-    form.setValue("americanLicense", newArr);
-
-    const americanLicenseFiltered = newArr.filter(
-      (item) => item.licenseNumber !== "" && item.state !== "",
-    );
-
-    setCurrentAmericanLicenseIndex((prev) => prev - 1);
-    setAmericanLicenseItems(americanLicenseFiltered);
   }
 
   return (
@@ -911,7 +847,7 @@ export function PreviousTravelForm({
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="americanLicenseToDriveConfirmation"
@@ -951,105 +887,50 @@ export function PreviousTravelForm({
                 )}
               />
 
-              <div
-                className={cn(
-                  "w-full bg-secondary p-4 flex flex-col space-y-6",
-                  americanLicenseToDriveConfirmation === "Não" && "hidden",
-                )}
-              >
-                <div className="w-full flex flex-col lg:flex-row gap-4">
-                  <FormField
-                    control={form.control}
-                    name={`americanLicense.${currentAmericanLicenseIndex}.licenseNumber`}
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel className="text-foreground">
-                          Número da licença
-                        </FormLabel>
-
-                        <FormControl>
-                          <Input
-                            disabled={isPending || isSavePending}
-                            {...field}
-                          />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
+              <FormField
+                control={form.control}
+                name="americanLicense.licenseNumber"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      americanLicenseToDriveConfirmation === "Não" && "hidden",
                     )}
-                  />
+                  >
+                    <FormLabel className="text-foreground">
+                      Número da licença
+                    </FormLabel>
 
-                  <div className="w-full flex flex-col gap-4 lg:flex-row lg:gap-2">
-                    <FormField
-                      control={form.control}
-                      name={`americanLicense.${currentAmericanLicenseIndex}.state`}
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel className="text-foreground">
-                            Estado
-                          </FormLabel>
+                    <FormControl>
+                      <Input disabled={isPending || isSavePending} {...field} />
+                    </FormControl>
 
-                          <FormControl>
-                            <Input
-                              disabled={isPending || isSavePending}
-                              {...field}
-                            />
-                          </FormControl>
-
-                          <FormMessage className="text-sm text-destructive" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button
-                      type="button"
-                      size="xl"
-                      className="px-3 shrink-0 lg:mt-[32px]"
-                      disabled={isPending || isSavePending}
-                      onClick={addAmericanLicense}
-                    >
-                      <Plus />
-                    </Button>
-                  </div>
-                </div>
-
-                {americanLicenseItems.length > 0 && (
-                  <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                    {americanLicenseItems.map((item, index) => (
-                      <div
-                        key={`otherName-${index}`}
-                        className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
-                      >
-                        <div className="w-full flex flex-col items-center gap-2">
-                          <span className="text-sm font-medium text-foreground">
-                            Nº Licença: {item.licenseNumber}
-                          </span>
-
-                          <div className="w-full h-px bg-primary" />
-
-                          <span className="text-sm font-medium text-foreground">
-                            Estado: {item.state}
-                          </span>
-                        </div>
-
-                        <Button
-                          type="button"
-                          variant="link"
-                          size="icon"
-                          className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
-                          disabled={isPending || isSavePending}
-                          onClick={() => removeAmericanLicense(index)}
-                        >
-                          <X strokeWidth={1} size={20} />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
                 )}
-              </div>
+              />
+
+              <FormField
+                control={form.control}
+                name="americanLicense.state"
+                render={({ field }) => (
+                  <FormItem
+                    className={cn(
+                      americanLicenseToDriveConfirmation === "Não" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="text-foreground">Estado</FormLabel>
+
+                    <FormControl>
+                      <Input disabled={isPending || isSavePending} {...field} />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-10">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="USAVisaConfirmation"
@@ -1191,17 +1072,55 @@ export function PreviousTravelForm({
               />
             </div>
 
-            {/* TODO: inserir um campo com sim ou não perguntando "você já teve um visto americano?", caso sim, apresentar os inputs abaixo, remover title */}
-            <span className="text-foreground text-base font-medium mb-6">
-              Responda as próximas 6 perguntas somente se você está{" "}
-              <strong>renovando</strong> o visto
-            </span>
+            <FormField
+              control={form.control}
+              name="hasVisaConfirmation"
+              render={({ field }) => (
+                <FormItem className="mb-4 sm:mb-6">
+                  <FormLabel className="text-foreground">
+                    Você já teve um visto americano?
+                  </FormLabel>
+
+                  <FormControl>
+                    <RadioGroup
+                      disabled={isPending || isSavePending}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Não" />
+                        </FormControl>
+
+                        <FormLabel className="font-normal">Não</FormLabel>
+                      </FormItem>
+
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sim" />
+                        </FormControl>
+
+                        <FormLabel className="font-normal">Sim</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-destructive" />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
               name="newVisaConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-4 sm:mb-10">
+                <FormItem
+                  className={cn(
+                    "mb-4 sm:mb-6",
+                    hasVisaConfirmation === "Não" && "hidden",
+                  )}
+                >
                   <FormLabel className="text-foreground">
                     Está solicitando o novo visto do mesmo País ou localização
                     daquele concedido previamente?
@@ -1241,7 +1160,12 @@ export function PreviousTravelForm({
               control={form.control}
               name="sameCountryResidenceConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-4 sm:mb-10">
+                <FormItem
+                  className={cn(
+                    "mb-4 sm:mb-6",
+                    hasVisaConfirmation === "Não" && "hidden",
+                  )}
+                >
                   <FormLabel className="text-foreground">
                     Este País é o mesmo onde está localizada sua residência
                     principal?
@@ -1281,7 +1205,12 @@ export function PreviousTravelForm({
               control={form.control}
               name="sameVisaTypeConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-4 sm:mb-10">
+                <FormItem
+                  className={cn(
+                    "mb-4 sm:mb-6",
+                    hasVisaConfirmation === "Não" && "hidden",
+                  )}
+                >
                   <FormLabel className="text-foreground">
                     Está solicitando o mesmo tipo de visto concedido
                     anteriormente?
@@ -1321,7 +1250,12 @@ export function PreviousTravelForm({
               control={form.control}
               name="fingerprintsProvidedConfirmation"
               render={({ field }) => (
-                <FormItem className="mb-4 sm:mb-10">
+                <FormItem
+                  className={cn(
+                    "mb-4 sm:mb-6",
+                    hasVisaConfirmation === "Não" && "hidden",
+                  )}
+                >
                   <FormLabel className="text-foreground">
                     Forneceu digitais dos 10 dedos
                   </FormLabel>
@@ -1361,7 +1295,9 @@ export function PreviousTravelForm({
                 control={form.control}
                 name="lostVisaConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem
+                    className={cn(hasVisaConfirmation === "Não" && "hidden")}
+                  >
                     <FormLabel className="text-foreground">
                       Já teve um visto perdido ou roubado?
                     </FormLabel>
@@ -1396,29 +1332,30 @@ export function PreviousTravelForm({
                 )}
               />
 
-              {lostVisaConfirmation === "Sim" && (
-                <FormField
-                  control={form.control}
-                  name="lostVisaDetails"
-                  render={({ field }) => (
-                    <FormItem className="w-full bg-secondary p-4">
-                      <FormLabel className="text-foreground text-sm">
-                        Em qual ano? Explique o ocorrido
-                      </FormLabel>
+              {hasVisaConfirmation === "Sim" &&
+                lostVisaConfirmation === "Sim" && (
+                  <FormField
+                    control={form.control}
+                    name="lostVisaDetails"
+                    render={({ field }) => (
+                      <FormItem className="w-full bg-secondary p-4">
+                        <FormLabel className="text-foreground text-sm">
+                          Em qual ano? Explique o ocorrido
+                        </FormLabel>
 
-                      <FormControl>
-                        <Textarea
-                          disabled={isPending || isSavePending}
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
+                        <FormControl>
+                          <Textarea
+                            disabled={isPending || isSavePending}
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
 
-                      <FormMessage className="text-sm text-destructive" />
-                    </FormItem>
-                  )}
-                />
-              )}
+                        <FormMessage className="text-sm text-destructive" />
+                      </FormItem>
+                    )}
+                  />
+                )}
             </div>
 
             <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
@@ -1426,7 +1363,9 @@ export function PreviousTravelForm({
                 control={form.control}
                 name="canceledVisaConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem
+                    className={cn(hasVisaConfirmation === "Não" && "hidden")}
+                  >
                     <FormLabel className="text-foreground">
                       Já teve um visto revogado ou cancelado?
                     </FormLabel>
@@ -1461,29 +1400,30 @@ export function PreviousTravelForm({
                 )}
               />
 
-              {canceledVisaConfirmation === "Sim" && (
-                <FormField
-                  control={form.control}
-                  name="canceledVisaDetails"
-                  render={({ field }) => (
-                    <FormItem className="w-full bg-secondary p-4">
-                      <FormLabel className="text-foreground text-sm">
-                        Em qual ano? Explique o ocorrido
-                      </FormLabel>
+              {hasVisaConfirmation === "Sim" &&
+                canceledVisaConfirmation === "Sim" && (
+                  <FormField
+                    control={form.control}
+                    name="canceledVisaDetails"
+                    render={({ field }) => (
+                      <FormItem className="w-full bg-secondary p-4">
+                        <FormLabel className="text-foreground text-sm">
+                          Em qual ano? Explique o ocorrido
+                        </FormLabel>
 
-                      <FormControl>
-                        <Textarea
-                          disabled={isPending || isSavePending}
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
+                        <FormControl>
+                          <Textarea
+                            disabled={isPending || isSavePending}
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
 
-                      <FormMessage className="text-sm text-destructive" />
-                    </FormItem>
-                  )}
-                />
-              )}
+                        <FormMessage className="text-sm text-destructive" />
+                      </FormItem>
+                    )}
+                  />
+                )}
             </div>
 
             <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
@@ -1491,7 +1431,9 @@ export function PreviousTravelForm({
                 control={form.control}
                 name="deniedVisaConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem
+                    className={cn(hasVisaConfirmation === "Não" && "hidden")}
+                  >
                     <FormLabel className="text-foreground">
                       Já teve um visto negado?
                     </FormLabel>
@@ -1526,77 +1468,78 @@ export function PreviousTravelForm({
                 )}
               />
 
-              {deniedVisaConfirmation === "Sim" && (
-                <div className="w-full flex flex-col gap-4 bg-secondary p-4">
-                  <div className="w-full grid grid-cols-1 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="deniedVisaDetails"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel className="text-foreground">
-                            Em qual ano? Explique o ocorrido
-                          </FormLabel>
+              {hasVisaConfirmation === "Sim" &&
+                deniedVisaConfirmation === "Sim" && (
+                  <div className="w-full flex flex-col gap-4 bg-secondary p-4">
+                    <div className="w-full grid grid-cols-1 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="deniedVisaDetails"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel className="text-foreground">
+                              Em qual ano? Explique o ocorrido
+                            </FormLabel>
 
-                          <FormControl>
-                            <Textarea
-                              disabled={isPending || isSavePending}
-                              className="resize-none"
-                              {...field}
-                            />
-                          </FormControl>
+                            <FormControl>
+                              <Textarea
+                                disabled={isPending || isSavePending}
+                                className="resize-none"
+                                {...field}
+                              />
+                            </FormControl>
 
-                          <FormMessage className="text-sm text-destructive" />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage className="text-sm text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="consularPost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-foreground">
+                              Qual posto consular do Brasil?
+                            </FormLabel>
+
+                            <FormControl>
+                              <Input
+                                disabled={isPending || isSavePending}
+                                {...field}
+                              />
+                            </FormControl>
+
+                            <FormMessage className="text-sm text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="deniedVisaType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-foreground">
+                              Categoria/tipo de visto negado
+                            </FormLabel>
+
+                            <FormControl>
+                              <Input
+                                disabled={isPending || isSavePending}
+                                {...field}
+                              />
+                            </FormControl>
+
+                            <FormMessage className="text-sm text-destructive" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
-
-                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="consularPost"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-foreground">
-                            Qual posto consular do Brasil?
-                          </FormLabel>
-
-                          <FormControl>
-                            <Input
-                              disabled={isPending || isSavePending}
-                              {...field}
-                            />
-                          </FormControl>
-
-                          <FormMessage className="text-sm text-destructive" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="deniedVisaType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-foreground">
-                            Categoria/tipo de visto negado
-                          </FormLabel>
-
-                          <FormControl>
-                            <Input
-                              disabled={isPending || isSavePending}
-                              {...field}
-                            />
-                          </FormControl>
-
-                          <FormMessage className="text-sm text-destructive" />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              )}
+                )}
             </div>
 
             <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6">
@@ -1604,7 +1547,9 @@ export function PreviousTravelForm({
                 control={form.control}
                 name="immigrationRequestByAnotherPersonConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem
+                    className={cn(hasVisaConfirmation === "Não" && "hidden")}
+                  >
                     <FormLabel className="text-foreground">
                       Alguém já solicitou alguma petição de imigração em seu
                       nome perante o Departamento de Imigração dos Estados
@@ -1641,29 +1586,30 @@ export function PreviousTravelForm({
                 )}
               />
 
-              {immigrationRequestByAnotherPersonConfirmation === "Sim" && (
-                <FormField
-                  control={form.control}
-                  name="immigrationRequestByAnotherPersonDetails"
-                  render={({ field }) => (
-                    <FormItem className="w-full bg-secondary p-4">
-                      <FormLabel className="text-foreground">
-                        Explique o motivo
-                      </FormLabel>
+              {hasVisaConfirmation === "Sim" &&
+                immigrationRequestByAnotherPersonConfirmation === "Sim" && (
+                  <FormField
+                    control={form.control}
+                    name="immigrationRequestByAnotherPersonDetails"
+                    render={({ field }) => (
+                      <FormItem className="w-full bg-secondary p-4">
+                        <FormLabel className="text-foreground">
+                          Explique o motivo
+                        </FormLabel>
 
-                      <FormControl>
-                        <Textarea
-                          disabled={isPending || isSavePending}
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
+                        <FormControl>
+                          <Textarea
+                            disabled={isPending || isSavePending}
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
 
-                      <FormMessage className="text-sm text-destructive" />
-                    </FormItem>
-                  )}
-                />
-              )}
+                        <FormMessage className="text-sm text-destructive" />
+                      </FormItem>
+                    )}
+                  />
+                )}
             </div>
           </div>
 
