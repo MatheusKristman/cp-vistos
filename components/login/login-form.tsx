@@ -28,6 +28,7 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+  const [userSubmitted, setUserSubmitted] = useState(false);
   const [passwordType, setPasswordType] = useState<"text" | "password">(
     "password",
   );
@@ -44,10 +45,14 @@ export function LoginForm() {
   });
 
   useEffect(() => {
-    if (session && session.status === "authenticated") {
-      router.push("/perfil/clientes");
+    console.log(session);
+
+    if (!userSubmitted && session && session.status === "authenticated") {
+      console.log("Usuário não enviou e está logado");
+      console.log({ userSubmitted });
+      router.push("/");
     }
-  }, []);
+  }, [session, router, setUserSubmitted, userSubmitted]);
 
   function togglePasswordType() {
     if (passwordType === "text") {
@@ -67,12 +72,17 @@ export function LoginForm() {
       if (!response?.error) {
         toast.success("Logado com sucesso!");
 
+        setUserSubmitted(true);
         router.push("/verificando-usuario");
       } else {
-        toast.error("Ocorreu um erro na autenticação");
+        if (response.error === "Configuration") {
+          toast.error("Credenciais inválidas");
+        } else {
+          toast.error("Ocorreu um erro na autenticação");
+        }
       }
     } catch (error) {
-      console.error(error);
+      console.error({ error });
 
       toast.error("Ocorreu um erro na autenticação");
     }
@@ -82,7 +92,7 @@ export function LoginForm() {
     <section className="min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-96px)] w-full grid grid-cols-2">
       <div className="w-full h-full relative col-span-2 sm:col-span-1 flex flex-col items-center justify-between sm:justify-center gap-12 p-6">
         <div className="w-full flex flex-col items-center justify-center pt-36 sm:pt-0">
-          <h1 className="text-3xl sm:text-4xl font-medium text-center mb-9">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-center mb-12">
             Entre na sua conta.
           </h1>
 

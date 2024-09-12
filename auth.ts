@@ -1,8 +1,10 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
+import { Role } from "@prisma/client";
+import bcrypt from "bcryptjs";
+
 import prisma from "./lib/prisma";
-import { getUserFromLogin } from "./app/actions";
 
 export const {
   handlers: { GET, POST },
@@ -23,19 +25,40 @@ export const {
         password: {},
       },
       authorize: async (credentials) => {
-        let user = null;
-
-        // logic to verify if user exists
-        user = await getUserFromLogin(credentials.email as string, credentials.password as string);
-
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // meaning this is also the place you could do registration
+        if (!credentials.email || !credentials.password) {
           return null;
         }
 
+        const user = await prisma.user.findFirst({
+          where: {
+            email: credentials.email as string,
+          },
+        });
+
+        if (!user) {
+          throw new Error("Dados inválidos, verifique e tente novamente");
+        }
+
+        if (user.role === "ADMIN" || user.role === "COLLABORATOR") {
+          const isAdminPasswordCorrect: boolean = await bcrypt.compare(
+            credentials.password as string,
+            user.password,
+          );
+
+          if (!isAdminPasswordCorrect) {
+            throw new Error("Dados inválidos, verifique e tente novamente");
+          }
+        } else {
+          const isPasswordCorrect =
+            (credentials.password as string) === user.password;
+
+          if (!isPasswordCorrect) {
+            throw new Error("Dados inválidos, verifique e tente novamente");
+          }
+        }
+
         // return user object with the their profile data
-        return { ...user, role: user.role };
+        return user;
       },
     }),
   ],
