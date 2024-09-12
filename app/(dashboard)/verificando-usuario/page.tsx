@@ -9,7 +9,7 @@ export default async function VerifyUserPage() {
     redirect("/");
   }
 
-  if (currentUser.role === "ADMIN") {
+  if (currentUser.role === "ADMIN" || currentUser.role === "COLLABORATOR") {
     redirect("/perfil/clientes");
   }
 
@@ -21,9 +21,7 @@ export default async function VerifyUserPage() {
     <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
       <Loader2 size={100} strokeWidth={1} className="animate-spin" />
 
-      <span className="text-center text-2xl font-semibold text-primary">
-        Um momento...
-      </span>
+      <span className="text-center text-2xl font-semibold text-primary">Um momento...</span>
     </div>
   );
 }

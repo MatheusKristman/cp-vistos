@@ -19,7 +19,7 @@ export const collaboratorRouter = router({
     .input(
       z.object({
         id: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { id } = opts.input;
@@ -48,7 +48,7 @@ export const collaboratorRouter = router({
               code: "custom",
             });
           }
-        }),
+        })
     )
     .mutation(async (opts) => {
       const { name, email, password } = opts.input;
@@ -97,12 +97,14 @@ export const collaboratorRouter = router({
               code: "custom",
             });
           }
-        }),
+        })
     )
     .mutation(async (opts) => {
       const { collaboratorId, name, email, password } = opts.input;
 
       if (password.length > 0) {
+        const pwHash = await bcrypt.hash(password, 12);
+
         await prisma.user.update({
           where: {
             id: collaboratorId,
@@ -110,7 +112,7 @@ export const collaboratorRouter = router({
           data: {
             name,
             email,
-            password,
+            password: pwHash,
           },
         });
       } else {
@@ -131,7 +133,7 @@ export const collaboratorRouter = router({
     .input(
       z.object({
         id: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { id } = opts.input;

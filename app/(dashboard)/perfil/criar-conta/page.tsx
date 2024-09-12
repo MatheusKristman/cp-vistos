@@ -264,11 +264,13 @@ export default function CreateAccountPage() {
   const currentYear = getYear(new Date());
   // const { fields } = useFieldArray({ name: "profiles", control: form.control }); NOTE: exemplos para os formulário, adiciona fields dinamicamente
 
+  // atualiza o index do profile quando é adicionar ou removido
   useEffect(() => {
     setCurrentProfile(profiles.length - 1);
     console.log(profiles);
   }, [profiles]);
 
+  // atualiza os valores dos inputs quando o valor dos radios informando se o perfil é o mesmo da conta
   useEffect(() => {
     if (JSON.parse(isProfileSameAsAccount)) {
       form.setValue(`profiles.${currentProfile}.profileName`, name);
@@ -277,11 +279,19 @@ export default function CreateAccountPage() {
     }
   }, [isProfileSameAsAccount, name, cpf, address]);
 
+  // atualiza o default value dos inputs dos perfis quando o index o perfil é atualizado
   useEffect(() => {
-    form.setValue(`profiles.${currentProfile}.profileName`, "");
-    form.setValue(`profiles.${currentProfile}.profileCpf`, "");
+    if (JSON.parse(isProfileSameAsAccount) && currentProfile === 0) {
+      form.setValue(`profiles.${currentProfile}.profileName`, name);
+      form.setValue(`profiles.${currentProfile}.profileCpf`, cpf);
+      form.setValue(`profiles.${currentProfile}.profileAddress`, address);
+    } else {
+      form.setValue(`profiles.${currentProfile}.profileName`, "");
+      form.setValue(`profiles.${currentProfile}.profileCpf`, "");
+      form.setValue(`profiles.${currentProfile}.profileAddress`, "");
+    }
+
     form.setValue(`profiles.${currentProfile}.birthDate`, undefined);
-    form.setValue(`profiles.${currentProfile}.profileAddress`, "");
     form.setValue(`profiles.${currentProfile}.passport`, "");
     form.setValue(`profiles.${currentProfile}.visaType`, "");
     form.setValue(`profiles.${currentProfile}.visaClass`, "");
