@@ -6,7 +6,7 @@ import { NotificationModal } from "@/components/dashboard/notification-modal";
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="w-full h-full relative pt-20 lg:pt-24">
-      <DashboardHeader isColab />
+      <DashboardHeader isCollab />
       <DashboardMobileMenu />
       <NotificationModal />
 

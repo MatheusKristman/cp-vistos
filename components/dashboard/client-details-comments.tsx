@@ -4,17 +4,18 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Check, Edit, Loader2, MessageCircleOff, Send, Trash, X } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
-
-import { Button } from "../ui/button";
-import { FormAnimation } from "@/constants/animations/modal";
-import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
-import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc-client";
+import { useEffect, useRef, useState } from "react";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { useState } from "react";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { FormAnimation } from "@/constants/animations/modal";
+import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
+import { trpc } from "@/lib/trpc-client";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSession } from "next-auth/react";
 
 interface Props {
   handleClose: () => void;
@@ -28,9 +29,60 @@ export function ClientDetailsComments({ handleClose }: Props) {
 
   const { unsetToComment, setToResume, client } = useClientDetailsModalStore();
   const util = trpc.useUtils();
+  const commentEndRef = useRef<HTMLDivElement | null>(null);
+  const session = useSession();
 
-  if (!client) {
-    return <div>Loading...</div>;
+  console.log(session);
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      commentEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 350);
+  }
+
+  useEffect(() => {
+    if (client) {
+      scrollToBottom();
+    }
+  }, [client]);
+
+  if (!client || !session.data) {
+    return (
+      <div>
+        <div className="w-full grid grid-cols-2 grid-rows-2 gap-4 mb-9 sm:flex sm:flex-row sm:items-center sm:justify-between">
+          <Button onClick={handleBack} variant="link" size="icon" className="row-start-1 row-end-2">
+            <Image src="/assets/icons/arrow-left-dark.svg" alt="Voltar" width={24} height={24} />
+          </Button>
+
+          <h1 className="text-2xl font-semibold text-foreground text-center sm:text-3xl row-end-3 row-start-2 col-span-2">
+            Comentários
+          </h1>
+
+          <Button onClick={handleClose} variant="link" size="icon" className="row-start-1 row-end-2 justify-self-end">
+            <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
+          </Button>
+        </div>
+
+        <div className="w-full flex flex-col gap-9">
+          <div className="w-full flex flex-col gap-4">
+            <Skeleton className="w-full h-20 rounded-none" />
+            <Skeleton className="w-full h-40 rounded-none" />
+          </div>
+
+          <div className="w-full border border-muted transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
+            <TextareaAutosize
+              className="border-none w-full resize-none px-3 py-2 h-12 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              placeholder="Envie sua anotação"
+              disabled
+            />
+
+            <Button disabled variant="link" size="icon" className="self-end mx-1">
+              <Send />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const { data } = trpc.userRouter.getComments.useQuery({ profileId: client.id });
@@ -38,6 +90,7 @@ export function ClientDetailsComments({ handleClose }: Props) {
     onSuccess: () => {
       util.userRouter.getComments.invalidate();
       setCommentState("");
+      scrollToBottom();
     },
     onError: (error) => {
       console.error(error);
@@ -89,7 +142,7 @@ export function ClientDetailsComments({ handleClose }: Props) {
       </div>
 
       <div className="w-full flex flex-col gap-9">
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-4 max-h-[500px] overflow-y-auto">
           {data?.comments !== undefined && data.comments.length > 0 ? (
             data.comments.map((comment) => (
               <div key={comment.id} className="w-full flex flex-col gap-6 border-l border-muted px-4 py-3">
@@ -104,128 +157,130 @@ export function ClientDetailsComments({ handleClose }: Props) {
                     </span>
                   </div>
 
-                  {deleteId === comment.id ? (
-                    <TooltipProvider>
+                  {session.data.user?.email === comment.author.email ? (
+                    deleteId === comment.id ? (
+                      <TooltipProvider>
+                        <div className="flex items-center gap-4">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="link"
+                                size="icon"
+                                className="w-7 h-7 text-destructive/70 hover:text-destructive"
+                                onClick={() => setDeleteId("")}
+                                disabled={isPending || isDeletePending || isEditPending}
+                              >
+                                <X size={20} strokeWidth={1.5} />
+                              </Button>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Cancelar</p>
+                            </TooltipContent>
+                          </Tooltip>
+
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="link"
+                                size="icon"
+                                className="w-7 h-7 text-confirm/70 hover:text-confirm"
+                                onClick={() => deleteComment({ commentId: deleteId })}
+                                disabled={isPending || isDeletePending || isEditPending}
+                              >
+                                {isDeletePending ? (
+                                  <Loader2 size={20} strokeWidth={1.5} className="animate-spin" />
+                                ) : (
+                                  <Check size={20} strokeWidth={1.5} />
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Deletar anotação</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </TooltipProvider>
+                    ) : editId === comment.id ? (
+                      <TooltipProvider>
+                        <div className="flex items-center gap-4">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="link"
+                                size="icon"
+                                className="w-7 h-7 text-destructive/70 hover:text-destructive"
+                                onClick={() => {
+                                  setEditId("");
+                                  setEditCommentState("");
+                                }}
+                                disabled={isPending || isDeletePending || isEditPending}
+                              >
+                                <X size={20} strokeWidth={1.5} />
+                              </Button>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Cancelar</p>
+                            </TooltipContent>
+                          </Tooltip>
+
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="link"
+                                size="icon"
+                                className="w-7 h-7 text-confirm/70 hover:text-confirm"
+                                onClick={() =>
+                                  editComment({
+                                    commentId: editId,
+                                    comment: editCommentState.split("\n").filter((text) => text !== ""),
+                                  })
+                                }
+                                disabled={isPending || isDeletePending || isEditPending}
+                              >
+                                {isDeletePending ? (
+                                  <Loader2 size={20} strokeWidth={1.5} className="animate-spin" />
+                                ) : (
+                                  <Check size={20} strokeWidth={1.5} />
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+
+                            <TooltipContent>
+                              <p>Salvar</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </TooltipProvider>
+                    ) : (
                       <div className="flex items-center gap-4">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="link"
-                              size="icon"
-                              className="w-7 h-7 text-destructive/70 hover:text-destructive"
-                              onClick={() => setDeleteId("")}
-                              disabled={isPending || isDeletePending || isEditPending}
-                            >
-                              <X size={20} strokeWidth={1.5} />
-                            </Button>
-                          </TooltipTrigger>
+                        <Button
+                          variant="link"
+                          size="icon"
+                          className="w-7 h-7 text-border hover:text-foreground"
+                          disabled={isPending || isDeletePending || isEditPending}
+                          onClick={() => {
+                            setEditId(comment.id);
+                            setEditCommentState(comment.comment.join("\n"));
+                          }}
+                        >
+                          <Edit size={20} strokeWidth={1.5} />
+                        </Button>
 
-                          <TooltipContent>
-                            <p>Cancelar</p>
-                          </TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="link"
-                              size="icon"
-                              className="w-7 h-7 text-confirm/70 hover:text-confirm"
-                              onClick={() => deleteComment({ commentId: deleteId })}
-                              disabled={isPending || isDeletePending || isEditPending}
-                            >
-                              {isDeletePending ? (
-                                <Loader2 size={20} strokeWidth={1.5} className="animate-spin" />
-                              ) : (
-                                <Check size={20} strokeWidth={1.5} />
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Deletar anotação</p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <Button
+                          variant="link"
+                          size="icon"
+                          className="w-7 h-7 text-border hover:text-foreground"
+                          onClick={() => setDeleteId(comment.id)}
+                          disabled={isPending || isDeletePending || isEditPending}
+                        >
+                          <Trash size={20} strokeWidth={1.5} />
+                        </Button>
                       </div>
-                    </TooltipProvider>
-                  ) : editId === comment.id ? (
-                    <TooltipProvider>
-                      <div className="flex items-center gap-4">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="link"
-                              size="icon"
-                              className="w-7 h-7 text-destructive/70 hover:text-destructive"
-                              onClick={() => {
-                                setEditId("");
-                                setEditCommentState("");
-                              }}
-                              disabled={isPending || isDeletePending || isEditPending}
-                            >
-                              <X size={20} strokeWidth={1.5} />
-                            </Button>
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Cancelar</p>
-                          </TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="link"
-                              size="icon"
-                              className="w-7 h-7 text-confirm/70 hover:text-confirm"
-                              onClick={() =>
-                                editComment({
-                                  commentId: editId,
-                                  comment: editCommentState.split("\n").filter((text) => text !== ""),
-                                })
-                              }
-                              disabled={isPending || isDeletePending || isEditPending}
-                            >
-                              {isDeletePending ? (
-                                <Loader2 size={20} strokeWidth={1.5} className="animate-spin" />
-                              ) : (
-                                <Check size={20} strokeWidth={1.5} />
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-
-                          <TooltipContent>
-                            <p>Salvar</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                    </TooltipProvider>
-                  ) : (
-                    <div className="flex items-center gap-4">
-                      <Button
-                        variant="link"
-                        size="icon"
-                        className="w-7 h-7 text-border hover:text-foreground"
-                        disabled={isPending || isDeletePending || isEditPending}
-                        onClick={() => {
-                          setEditId(comment.id);
-                          setEditCommentState(comment.comment.join("\n"));
-                        }}
-                      >
-                        <Edit size={20} strokeWidth={1.5} />
-                      </Button>
-
-                      <Button
-                        variant="link"
-                        size="icon"
-                        className="w-7 h-7 text-border hover:text-foreground"
-                        onClick={() => setDeleteId(comment.id)}
-                        disabled={isPending || isDeletePending || isEditPending}
-                      >
-                        <Trash size={20} strokeWidth={1.5} />
-                      </Button>
-                    </div>
-                  )}
+                    )
+                  ) : null}
                 </div>
 
                 <div className="w-full flex flex-col gap-4">
@@ -259,6 +314,7 @@ export function ClientDetailsComments({ handleClose }: Props) {
               </span>
             </div>
           )}
+          <div ref={commentEndRef} />
         </div>
 
         <div className="w-full border border-muted transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">

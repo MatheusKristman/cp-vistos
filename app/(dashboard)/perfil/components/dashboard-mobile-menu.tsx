@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { LogOut, PanelRightOpen } from "lucide-react";
 
@@ -12,6 +12,8 @@ import { trpc } from "@/lib/trpc-client";
 import useUserStore from "@/constants/stores/useUserStore";
 
 export function DashboardMobileMenu() {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
   const { role, setRole } = useUserStore();
   const pathname = usePathname();
   const { data } = trpc.userRouter.getRole.useQuery();
@@ -24,7 +26,7 @@ export function DashboardMobileMenu() {
 
   return (
     <div className="w-full px-6 sm:px-16 mt-12 lg:hidden">
-      <Sheet>
+      <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <SheetTrigger>
           <PanelRightOpen size={30} />
         </SheetTrigger>
@@ -35,6 +37,7 @@ export function DashboardMobileMenu() {
                 className={cn("text-xl", {
                   "font-semibold": pathname === "/perfil/clientes",
                 })}
+                onClick={() => setIsMenuOpen(false)}
               >
                 <Link href="/perfil/clientes">Clientes</Link>
               </li>
@@ -43,6 +46,7 @@ export function DashboardMobileMenu() {
                 className={cn("text-xl", {
                   "font-semibold": pathname === "/perfil/criar-conta",
                 })}
+                onClick={() => setIsMenuOpen(false)}
               >
                 <Link href="/perfil/criar-conta">Criar Conta</Link>
               </li>
@@ -53,13 +57,11 @@ export function DashboardMobileMenu() {
 
                   <li
                     className={cn("text-xl", {
-                      "font-semibold":
-                        pathname === "/perfil/gerenciar-colaboradores",
+                      "font-semibold": pathname.includes("/perfil/gerenciar-colaboradores"),
                     })}
+                    onClick={() => setIsMenuOpen(false)}
                   >
-                    <Link href="/perfil/gerenciar-colaboradores">
-                      Colaboradores
-                    </Link>
+                    <Link href="/perfil/gerenciar-colaboradores">Colaboradores</Link>
                   </li>
                 </>
               )}

@@ -6,15 +6,21 @@ import { formatPhoneNumber } from "react-phone-number-input";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ModalAnimation, OverlayAnimation } from "@/constants/animations/modal";
 import { useSubmitConfirmationStore } from "@/constants/stores/useSubmitConfirmationStore";
 import { trpc } from "@/lib/trpc-client";
-import { Loader2 } from "lucide-react";
 
-export function SubmitConfirmationModal() {
+interface SubmitConfirmationModalProps {
+  isCollaborator: boolean;
+}
+
+export function SubmitConfirmationModal({
+  isCollaborator,
+}: SubmitConfirmationModalProps) {
   const { formValues, closeModal, isModalOpen, setFormValues } =
     useSubmitConfirmationStore();
   const router = useRouter();
@@ -124,7 +130,12 @@ export function SubmitConfirmationModal() {
               </div>
 
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="w-full flex flex-col">
+                <div
+                  className={cn(
+                    "w-full flex flex-col",
+                    isCollaborator && "hidden",
+                  )}
+                >
                   <span className="text-xs font-medium opacity-50">Valor</span>
 
                   <span className="text-base font-medium">

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { formatDistance } from "date-fns";
 import TextareaAutosize from "react-textarea-autosize";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ptBR } from "date-fns/locale";
 import { Check, Edit, Loader2, MessageCircleOff, Send, Trash, X } from "lucide-react";
@@ -14,6 +14,7 @@ import { FormAnimation } from "@/constants/animations/modal";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 import { trpc } from "@/lib/trpc-client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   handleClose: () => void;
@@ -27,9 +28,57 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
 
   const { unsetToAnnotation, setToResume, client } = useClientDetailsModalStore();
   const util = trpc.useUtils();
+  const annotationEndRef = useRef<HTMLDivElement | null>(null);
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      annotationEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 350);
+  }
+
+  useEffect(() => {
+    if (client) {
+      scrollToBottom();
+    }
+  }, [client]);
 
   if (!client) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <div className="w-full grid grid-cols-2 grid-rows-2 gap-4 mb-9 sm:flex sm:flex-row sm:items-center sm:justify-between">
+          <Button onClick={handleBack} variant="link" size="icon" className="row-start-1 row-end-2">
+            <Image src="/assets/icons/arrow-left-dark.svg" alt="Voltar" width={24} height={24} />
+          </Button>
+
+          <h1 className="text-2xl font-semibold text-foreground text-center sm:text-3xl row-end-3 row-start-2 col-span-2">
+            Anotações
+          </h1>
+
+          <Button onClick={handleClose} variant="link" size="icon" className="row-start-1 row-end-2 justify-self-end">
+            <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
+          </Button>
+        </div>
+
+        <div className="w-full flex flex-col gap-9">
+          <div className="w-full flex flex-col gap-4">
+            <Skeleton className="w-full h-20 rounded-none" />
+            <Skeleton className="w-full h-40 rounded-none" />
+          </div>
+
+          <div className="w-full border border-muted transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
+            <TextareaAutosize
+              className="border-none w-full resize-none px-3 py-2 h-12 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              placeholder="Envie sua anotação"
+              disabled
+            />
+
+            <Button disabled variant="link" size="icon" className="self-end mx-1">
+              <Send />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const { data } = trpc.userRouter.getAnnotations.useQuery({
@@ -39,6 +88,7 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
     onSuccess: () => {
       util.userRouter.getAnnotations.invalidate();
       setAnnotationState("");
+      scrollToBottom();
     },
     onError: (error) => {
       console.error(error);
@@ -68,14 +118,10 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
     },
   });
 
-  console.log(data?.annotations);
-
   function handleBack() {
     unsetToAnnotation();
     setToResume();
   }
-
-  console.log(annotationState.split("\n").filter((text) => text !== ""));
 
   return (
     <motion.div initial="initial" animate="animate" exit="exit" variants={FormAnimation}>
@@ -106,7 +152,7 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
       </div>
 
       <div className="w-full flex flex-col gap-9">
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-4 max-h-[500px] overflow-y-auto">
           {data?.annotations !== undefined && data.annotations.length > 0 ? (
             data.annotations.map((annotation, index) => (
               <div key={annotation.id} className="w-full flex flex-col gap-6 border-l border-muted px-4 py-3">
@@ -272,6 +318,7 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
               </span>
             </div>
           )}
+          <div ref={annotationEndRef} />
         </div>
 
         <div className="w-full border border-muted transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">

@@ -22,7 +22,7 @@ export const notificationRouter = router({
   }),
   getAllNotifications: collaboratorProcedure.query(async () => {
     const notifications = await prisma.notification.findMany({
-      take: 30,
+      take: 10,
       orderBy: {
         createdAt: "desc",
       },

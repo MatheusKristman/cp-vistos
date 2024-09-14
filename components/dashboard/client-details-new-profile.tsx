@@ -125,7 +125,7 @@ const formSchema = z.object({
 });
 
 export function ClientDetailsNewProfile({ handleClose }: Props) {
-  const { unsetToEditProfile, setToResume, client, setClient } =
+  const { unsetToNewProfile, setToResume, client, setClient } =
     useClientDetailsModalStore();
 
   const utils = trpc.useUtils();
@@ -168,7 +168,7 @@ export function ClientDetailsNewProfile({ handleClose }: Props) {
   const visaType = form.watch(`visaType`);
 
   function handleBack() {
-    unsetToEditProfile();
+    unsetToNewProfile();
     setToResume();
   }
 

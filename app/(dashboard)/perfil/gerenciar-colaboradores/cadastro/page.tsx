@@ -70,7 +70,7 @@ export default function CollaboratorRegisterPage() {
       <h1 className="text-2xl lg:text-3xl xl:text-4xl font-semibold my-6 lg:my-12">Cadastro de Colaborador</h1>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-12">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-12 mb-12">
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <FormField

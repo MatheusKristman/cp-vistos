@@ -16,6 +16,7 @@ import { trpc } from "@/lib/trpc-client";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 import { useEffect, useState } from "react";
 import { FormAnimation } from "@/constants/animations/modal";
+import useUserStore from "@/constants/stores/useUserStore";
 
 interface Props {
   handleClose: () => void;
@@ -25,8 +26,6 @@ export function ClientDetailsResume({ handleClose }: Props) {
   const {
     client,
     setClient,
-    role,
-    setRole,
     unsetToResume,
     setToAnnotation,
     setToEditAccount,
@@ -35,6 +34,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
     setToForm,
     setToNewProfile,
   } = useClientDetailsModalStore();
+  const { role } = useUserStore();
 
   const [statusDS, setStatusDS] = useState("");
   const [visaStatus, setVisaStatus] = useState("");
@@ -42,8 +42,8 @@ export function ClientDetailsResume({ handleClose }: Props) {
   const utils = trpc.useUtils();
 
   useEffect(() => {
-    setRole("ADMIN");
-  }, [setRole]);
+    console.log(role);
+  }, [role]);
 
   useEffect(() => {
     if (client) {
@@ -56,7 +56,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
     trpc.userRouter.updateDSValidationDate.useMutation({
       onSuccess: (data) => {
         setClient(data.updatedClient);
-        utils.clientRouter.getProfiles.invalidate();
+        utils.userRouter.getClients.invalidate();
         toast.success("Data do Barcode atualizada");
       },
       onError: (error) => {
@@ -73,6 +73,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
     onSuccess: (data) => {
       setClient(data.updatedClient);
       setStatusDS(data.status);
+      utils.userRouter.getClients.invalidate();
     },
     onError: (error) => {
       console.error(error);
@@ -88,6 +89,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
     onSuccess: (data) => {
       setClient(data.updatedClient);
       setVisaStatus(data.status);
+      utils.userRouter.getClients.invalidate();
     },
     onError: (error) => {
       console.error(error);
@@ -133,8 +135,6 @@ export function ClientDetailsResume({ handleClose }: Props) {
   if (!client) {
     return <div>loading...</div>;
   }
-
-  console.log(role);
 
   return (
     <motion.div initial="initial" animate="animate" exit="exit" variants={FormAnimation} className="w-full">

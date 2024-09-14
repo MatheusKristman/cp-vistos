@@ -164,6 +164,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
       utils.userRouter.getClients.invalidate();
 
       setClient(data.clientUpdated);
+      handleBack();
     },
     onError: (error) => {
       console.log(error);

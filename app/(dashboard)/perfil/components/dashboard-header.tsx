@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { NotificationHeaderMenu } from "@/components/dashboard/notification-header-menu";
 
 interface Props {
-  isColab?: boolean;
+  isCollab?: boolean;
 }
 
-export function DashboardHeader({ isColab }: Props) {
+export function DashboardHeader({ isCollab }: Props) {
   const session = useSession();
 
   return (
@@ -30,7 +30,7 @@ export function DashboardHeader({ isColab }: Props) {
         </div>
 
         <div className="lg:hidden h-full flex items-center">
-          {isColab && <NotificationHeaderMenu />}
+          {isCollab && <NotificationHeaderMenu />}
 
           <Button
             variant="link"
@@ -59,7 +59,7 @@ export function DashboardHeader({ isColab }: Props) {
         </div>
 
         <div className="hidden lg:flex items-center h-full">
-          {isColab && <NotificationHeaderMenu />}
+          {isCollab && <NotificationHeaderMenu />}
 
           <Button
             variant="link"

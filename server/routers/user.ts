@@ -19,7 +19,7 @@ export const userRouter = router({
 
     return { role: collaborator.role };
   }),
-  createClient: adminProcedure
+  createClient: collaboratorProcedure
     .input(
       z.object({
         name: z
