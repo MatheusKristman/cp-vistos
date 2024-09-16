@@ -25,7 +25,9 @@ export default function ClientsPage() {
   return (
     <>
       <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 lg:ml-[250px] lg:px-40">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">Clientes</h1>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">
+          Clientes
+        </h1>
         {isFetching ? (
           <div>
             <div className="flex items-center py-4">

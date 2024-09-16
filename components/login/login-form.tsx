@@ -1,5 +1,7 @@
 "use client";
 
+// TODO: adicionar loading no botão de entrar
+
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
