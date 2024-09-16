@@ -12,7 +12,10 @@ export default function TRPCProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const baseUrl = window.location.origin;
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? process.env.BASE_URL!
+      : process.env.BASE_URL_DEV!;
 
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(
