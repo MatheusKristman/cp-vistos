@@ -12,17 +12,26 @@ export default function TRPCProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? process.env.BASE_URL!
-      : process.env.BASE_URL_DEV!;
+  function getBaseUrl() {
+    if (typeof window !== "undefined")
+      // browser should use relative path
+      return "";
+    if (process.env.VERCEL_URL)
+      // reference for vercel.com
+      return `https://${process.env.VERCEL_URL}`;
+    if (process.env.RENDER_INTERNAL_HOSTNAME)
+      // reference for render.com
+      return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+    // assume localhost
+    return `http://localhost:${process.env.PORT ?? 3000}`;
+  }
 
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: `${baseUrl}/api/trpc`,
+          url: `${getBaseUrl()}/api/trpc`,
           transformer: superjson,
         }),
       ],
