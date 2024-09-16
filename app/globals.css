@@ -83,5 +83,5 @@
 }
 
 .PhoneInputInput {
-  @apply bg-transparent outline-none;
+  @apply bg-transparent outline-none placeholder:text-muted-foreground;
 }
