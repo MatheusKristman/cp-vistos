@@ -1,12 +1,11 @@
-import { FullForm } from "@/types";
-import { User } from "@prisma/client";
+import { User, Form } from "@prisma/client";
 import { create } from "zustand";
 
 interface IUseClientsStore {
   clients: User[];
   setClients: (clients: User[]) => void;
-  formsSelected: FullForm[] | null;
-  setFormsSelected: (form: FullForm[] | null) => void;
+  formsSelected: Form[] | null;
+  setFormsSelected: (form: Form[] | null) => void;
   isFormModalOpen: boolean;
   openFormModal: () => void;
   closeFormModal: () => void;
