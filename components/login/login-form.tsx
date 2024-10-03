@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [userSubmitted, setUserSubmitted] = useState(false);
   const [passwordType, setPasswordType] = useState<"text" | "password">(
     "password",
@@ -66,6 +67,8 @@ export function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setIsSubmitting(true);
+
       const response = await signIn("credentials", {
         ...values,
         redirect: false,
@@ -87,6 +90,8 @@ export function LoginForm() {
       console.error({ error });
 
       toast.error("Ocorreu um erro na autenticação");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -115,6 +120,7 @@ export function LoginForm() {
 
                       <FormControl>
                         <Input
+                          disabled={isSubmitting}
                           className={cn({
                             "border-red-500": form.formState.errors.email,
                           })}
@@ -139,6 +145,7 @@ export function LoginForm() {
                       <FormControl>
                         <div className="relative">
                           <Input
+                            disabled={isSubmitting}
                             type={passwordType}
                             className={cn({
                               "border-red-500": form.formState.errors.password,
@@ -147,6 +154,7 @@ export function LoginForm() {
                           />
 
                           <Button
+                            disabled={isSubmitting}
                             onClick={togglePasswordType}
                             variant="link"
                             size="icon"
@@ -171,7 +179,20 @@ export function LoginForm() {
                 />
               </div>
 
-              <Button size="xl">Entrar</Button>
+              <Button
+                size="xl"
+                disabled={isSubmitting}
+                className="flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="animate-spin" />
+                    Entrando
+                  </>
+                ) : (
+                  <>Entrar</>
+                )}
+              </Button>
             </form>
           </Form>
         </div>
