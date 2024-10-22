@@ -1,5 +1,4 @@
 import { DashboardHeader } from "@/app/(dashboard)/perfil/components/dashboard-header";
-import { MobileMenu } from "@/components/global/mobile-menu";
 
 export default function ClientAreaLayout({ children }: { children: React.ReactNode }) {
   return (
