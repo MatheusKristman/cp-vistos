@@ -8,7 +8,6 @@ function WebsiteLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Header />
-      <MobileMenu />
       {children}
       <Footer />
     </>

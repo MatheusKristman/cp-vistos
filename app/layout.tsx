@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat as FontSans } from "next/font/google";
+import { Poppins as FontSans } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,8 +8,9 @@ import "./globals.css";
 import { NextAuthSessionProvider } from "@/providers/sessionProvider";
 import TRPCProvider from "@/providers/TRPCProvider";
 
-const montserrat = FontSans({
+const poppins = FontSans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
@@ -27,10 +28,7 @@ export default function RootLayout({
   return (
     <html className="min-h-screen" lang="pt-BR">
       <body
-        className={cn(
-          "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
-          montserrat.variable
-        )}
+        className={cn("relative min-h-screen overflow-x-hidden bg-background font-sans antialiased", poppins.variable)}
       >
         <NextAuthSessionProvider>
           <TRPCProvider>{children}</TRPCProvider>
