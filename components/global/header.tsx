@@ -47,31 +47,66 @@ export function Header() {
       {/* TODO: adicionar link para seções */}
       <nav className="z-20 hidden lg:flex lg:items-center lg:gap-12">
         <ul className="flex items-center gap-1">
-          <li className="text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3">
+          <li
+            className={cn(
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              { "text-white": y > 0 }
+            )}
+          >
             Início
           </li>
 
-          <li className="text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3">
+          <li
+            className={cn(
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              { "text-white": y > 0 }
+            )}
+          >
             Sobre
           </li>
 
-          <li className="text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3">
+          <li
+            className={cn(
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              { "text-white": y > 0 }
+            )}
+          >
             Como Funciona
           </li>
 
-          <li className="text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3">
+          <li
+            className={cn(
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              { "text-white": y > 0 }
+            )}
+          >
             Serviços
           </li>
 
-          <li className="text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3">
+          <li
+            className={cn(
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              { "text-white": y > 0 }
+            )}
+          >
             Depoimentos
           </li>
 
-          <li className="text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3">
+          <li
+            className={cn(
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              { "text-white": y > 0 }
+            )}
+          >
             Diferenciais
           </li>
 
-          <li className="text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3">
+          <li
+            className={cn(
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              { "text-white": y > 0 }
+            )}
+          >
             Contato
           </li>
         </ul>

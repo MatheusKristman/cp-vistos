@@ -57,6 +57,17 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      backgroundImage: {
+        "mobile-hero": "url('/assets/images/mobile-hero-bg.png')",
+        "tablet-hero": "url('/assets/images/tablet-hero-bg.png')",
+        "desktop-hero": "url('/assets/images/desktop-hero-bg.png')",
+        "mobile-about": "url('/assets/images/mobile-about-bg.png')",
+        "tablet-about": "url('/assets/images/tablet-about-bg.png')",
+        "desktop-about": "url('/assets/images/desktop-about-bg.png')",
+        "banner-1": "url('/assets/images/banner-1.jpg')",
+        "banner-2": "url('/assets/images/banner-2.jpg')",
+        "banner-3": "url('/assets/images/banner-3.jpg')",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
