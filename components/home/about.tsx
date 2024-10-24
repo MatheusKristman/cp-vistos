@@ -5,7 +5,7 @@ export function About() {
     <section className="w-full pt-24 bg-mobile-about bg-no-repeat bg-[length:100%_100%] sm:bg-tablet-about lg:bg-desktop-about lg:pt-36">
       <div className="w-full px-6 flex flex-col gap-20 sm:items-end sm:px-16 sm:gap-6 lg:flex-row lg:container lg:gap-20">
         <div className="relative w-full aspect-video sm:max-w-lg">
-          <div className="w-fit px-12 py-4 bg-secondary rounded-2xl flex flex-col gap-2 absolute z-10 -bottom-10 -right-6 sm:right-6 sm:-bottom-12">
+          <div className="w-fit px-12 py-4 bg-secondary rounded-2xl flex flex-col gap-2 absolute z-[5] -bottom-10 -right-6 sm:right-6 sm:-bottom-12">
             <span className="text-xl font-semibold text-foreground">Camila Paschoal</span>
 
             <span className="text-base text-foreground/70">Fundadora e CEO</span>

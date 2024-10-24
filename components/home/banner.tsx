@@ -54,7 +54,7 @@ export function Banner() {
       >
         <CarouselContent className="h-[550px] ml-0 sm:h-[450px]">
           {BANNER.map((banner, index) => (
-            <CarouselItem className="h-full pl-0">
+            <CarouselItem key={index} className="h-full pl-0">
               <div
                 className={cn(
                   "relative w-full h-full bg-cover bg-center flex sm:justify-end after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:w-full after:h-full after:bg-gradient-to-b after:from-transparent after:to-[#262525] sm:after:bg-gradient-to-r",
