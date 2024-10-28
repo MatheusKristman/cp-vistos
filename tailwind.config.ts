@@ -69,6 +69,9 @@ const config = {
         "banner-3": "url('/assets/images/banner-3.jpg')",
         "mobile-services": "url('/assets/images/mobile-services.png')",
         "desktop-services": "url('/assets/images/desktop-services.png')",
+        "mobile-testimonial": "url('/assets/images/mobile-testimonial-bg.png')",
+        "tablet-testimonial": "url('/assets/images/tablet-testimonial-bg.png')",
+        "desktop-testimonial": "url('/assets/images/desktop-testimonial-bg.png')",
       },
       borderRadius: {
         lg: "var(--radius)",
