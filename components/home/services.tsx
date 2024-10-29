@@ -64,8 +64,9 @@ export function Services() {
           </h2>
 
           <p className="text-xl text-foreground/70 lg:text-center">
-            Oferecemos consultoria especializada e suporte completo para a obtenção de passaportes, vistos americanos e
-            autorizações como E-TA e ESTA.
+            Oferecemos consultoria especializada e suporte completo para a
+            obtenção de passaportes, vistos americanos e autorizações como E-TA
+            e ESTA.
           </p>
         </div>
 
@@ -74,10 +75,15 @@ export function Services() {
             <div className="w-full relative before:content-[''] before:h-full before:w-12 before:bg-gradient-to-r before:from-white before:to-transparent before:absolute before:top-0 before:left-0 before:z-10 after:content-[''] after:h-full after:w-12 after:bg-gradient-to-l after:from-white after:to-transparent after:absolute after:top-0 after:right-0 after:z-10 sm:before:w-16 sm:after:w-16">
               <CarouselContent className="sm:-ml-9">
                 {SERVICES.map((service, index) => (
-                  <CarouselItem key={index} className="sm:pl-9 sm:basis-3/12">
+                  <CarouselItem
+                    key={index}
+                    className="sm:pl-9 sm:basis-1/2 lg:basis-[45%]"
+                  >
                     <Card className="w-full h-full relative">
                       <CardHeader className="w-full">
-                        <h5 className="text-2xl font-semibold text-foreground w-2/3">{service.title}</h5>
+                        <h5 className="text-2xl font-semibold text-foreground w-2/3">
+                          {service.title}
+                        </h5>
 
                         <div className="absolute top-4 right-0 p-4 pr-9 rounded-l-lg bg-destructive">
                           <div className="size-4 rounded-full bg-white" />
@@ -85,7 +91,9 @@ export function Services() {
                       </CardHeader>
 
                       <CardContent className="w-full">
-                        <p className="text-xl text-foreground/70">{service.desc}</p>
+                        <p className="text-xl text-foreground/70">
+                          {service.desc}
+                        </p>
                       </CardContent>
                     </Card>
                   </CarouselItem>
@@ -103,9 +111,12 @@ export function Services() {
                 {Array.from({ length: count }).map((_, index) => (
                   <div
                     key={index}
-                    className={cn("rounded-full size-3 bg-secondary transition-all duration-500", {
-                      "bg-foreground w-11": index === current,
-                    })}
+                    className={cn(
+                      "rounded-full size-3 bg-secondary transition-all duration-500",
+                      {
+                        "bg-foreground w-11": index === current,
+                      },
+                    )}
                   />
                 ))}
               </div>

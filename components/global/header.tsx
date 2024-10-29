@@ -14,43 +14,33 @@ export function Header() {
   const { y } = useWindowScroll();
 
   return (
-    <header className="w-full bg-transparent h-14 px-6 flex items-center justify-between sticky top-0 left-0 z-10 sm:px-16 sm:top-4 lg:container">
+    <header className="w-full bg-transparent h-14 px-6 flex items-center justify-between sticky top-0 left-0 z-30 sm:px-16 sm:top-4 lg:container">
       <div
         className={cn(
-          "w-full h-14 absolute top-0 left-0 transform -translate-y-full bg-primary rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(56px+32px)] sm:-translate-y-[calc(100%+16px)]",
+          "w-full h-14 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(56px+32px)] sm:-translate-y-[calc(100%+16px)]",
           {
             "translate-y-0 sm:-translate-y-4": y > 0,
-          }
+          },
         )}
       />
 
-      <Link href="/" className="relative w-12 h-7 z-20 sm:w-16 sm:h-9">
-        {y > 0 ? (
-          <Image
-            src="/assets/images/cp-vistos-logo.png"
-            alt="CP Vistos Logo"
-            fill
-            className="object-center object-contain"
-          />
-        ) : (
-          <Image
-            src="/assets/images/cp-vistos-logo-azul.png"
-            alt="CP Vistos Logo"
-            fill
-            className="object-center object-contain"
-          />
-        )}
+      <Link href="/" className="relative w-12 h-7 z-40 sm:w-16 sm:h-9">
+        <Image
+          src="/assets/images/cp-vistos-logo-azul.png"
+          alt="CP Vistos Logo"
+          fill
+          className="object-center object-contain"
+        />
       </Link>
 
-      <MobileMenu windowPosition={y} />
+      <MobileMenu />
 
       {/* TODO: adicionar link para seções */}
-      <nav className="z-20 hidden lg:flex lg:items-center lg:gap-12">
+      <nav className="z-40 hidden lg:flex lg:items-center lg:gap-12">
         <ul className="flex items-center gap-1">
           <li
             className={cn(
               "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
-              { "text-white": y > 0 }
             )}
           >
             Início
@@ -59,7 +49,6 @@ export function Header() {
           <li
             className={cn(
               "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
-              { "text-white": y > 0 }
             )}
           >
             Sobre
@@ -68,7 +57,6 @@ export function Header() {
           <li
             className={cn(
               "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
-              { "text-white": y > 0 }
             )}
           >
             Como Funciona
@@ -77,7 +65,6 @@ export function Header() {
           <li
             className={cn(
               "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
-              { "text-white": y > 0 }
             )}
           >
             Serviços
@@ -86,7 +73,6 @@ export function Header() {
           <li
             className={cn(
               "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
-              { "text-white": y > 0 }
             )}
           >
             Depoimentos
@@ -95,7 +81,6 @@ export function Header() {
           <li
             className={cn(
               "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
-              { "text-white": y > 0 }
             )}
           >
             Diferenciais
@@ -104,7 +89,6 @@ export function Header() {
           <li
             className={cn(
               "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
-              { "text-white": y > 0 }
             )}
           >
             Contato

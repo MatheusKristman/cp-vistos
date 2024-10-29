@@ -1,5 +1,11 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
+
+import { Button } from "@/components/ui/button";
+
+// TODO: adicionar carrossel no hero com os seguintes temas: New York (Times Square, central park e statue of liberty), Disneyland e Chicago
 
 export function Hero() {
   return (
@@ -8,27 +14,51 @@ export function Hero() {
         <div className="w-full flex flex-col gap-12 sm:max-w-xl ">
           <div className="w-full flex flex-col gap-9">
             <div className="w-full flex flex-col gap-4">
-              <h1 className="text-5xl font-bold text-foreground !leading-[110%] capitalize sm:text-6xl lg:text-7xl lg:max-w-lg">
+              <motion.h1
+                initial={{ x: -50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="text-5xl font-bold text-foreground !leading-[110%] capitalize sm:text-6xl lg:text-7xl lg:max-w-lg"
+              >
                 Conquiste seu visto sem estresse
-              </h1>
+              </motion.h1>
 
-              <p className="text-xl font-medium text-foreground/70 lg:max-w-lg">
-                Facilitamos o processo para obter ou renovar seu visto americano, com rapidez e sem complicações.
-              </p>
+              <motion.p
+                initial={{ x: -50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+                className="text-xl font-medium text-foreground/70 lg:max-w-lg"
+              >
+                Facilitamos o processo para obter ou renovar seu visto
+                americano, com rapidez e sem complicações.
+              </motion.p>
             </div>
 
-            <div className="w-full bg-secondary/50 rounded-[36px] flex flex-col gap-4 items-center p-3 sm:flex-row">
-              <Button variant="destructive" className="w-full text-xl font-medium rounded-full">
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5, ease: "circOut" }}
+              className="w-full bg-secondary/50 rounded-[36px] flex flex-col gap-4 items-center p-3 sm:flex-row"
+            >
+              <Button
+                variant="destructive"
+                className="w-full text-xl font-medium rounded-full"
+              >
                 Entre em contato
               </Button>
 
               <Button variant="link" className="w-full text-xl font-medium">
                 Conheça nossos serviços
               </Button>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="w-full p-6 bg-secondary/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)] rounded-2xl flex flex-col gap-9 items-center sm:flex-row">
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5, ease: "circOut" }}
+            className="w-full p-6 bg-secondary/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)] rounded-2xl flex flex-col gap-9 items-center sm:flex-row"
+          >
             <div className="w-fit flex items-center gap-4 sm:flex-col">
               <Image
                 src="/assets/icons/hero-clients.svg"
@@ -39,8 +69,12 @@ export function Hero() {
               />
 
               <div className="flex flex-col sm:items-center">
-                <p className="text-2xl font-semibold text-foreground sm:text-center">+ 2.000</p>
-                <p className="text-xl text-foreground font-medium sm:text-center">Clientes</p>
+                <p className="text-2xl font-semibold text-foreground sm:text-center">
+                  + 2.000
+                </p>
+                <p className="text-xl text-foreground font-medium sm:text-center">
+                  Clientes
+                </p>
               </div>
             </div>
 
@@ -56,8 +90,12 @@ export function Hero() {
               />
 
               <div className="flex flex-col sm:items-center">
-                <p className="text-2xl font-semibold text-foreground sm:text-center">98%</p>
-                <p className="text-xl text-foreground font-medium sm:text-center">De Aprovação</p>
+                <p className="text-2xl font-semibold text-foreground sm:text-center">
+                  98%
+                </p>
+                <p className="text-xl text-foreground font-medium sm:text-center">
+                  De Aprovação
+                </p>
               </div>
             </div>
 
@@ -73,27 +111,46 @@ export function Hero() {
               />
 
               <div className="flex flex-col sm:items-center">
-                <p className="text-2xl font-semibold text-foreground sm:text-center">20 Anos</p>
-                <p className="text-xl text-foreground font-medium sm:text-center">De Experiência</p>
+                <p className="text-2xl font-semibold text-foreground sm:text-center">
+                  20 Anos
+                </p>
+                <p className="text-xl text-foreground font-medium sm:text-center">
+                  De Experiência
+                </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
+      {/* TODO: adicionar fotos do hero como carrossel */}
       <div className="hidden lg:block lg:absolute lg:top-44 lg:right-0 lg:w-2/5 lg:h-[700px]">
-        <Image
-          src="/assets/images/hero-image.webp"
-          alt="Disneyland"
-          fill
-          className="object-center object-cover rounded-l-[60px]"
-        />
+        <motion.div
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 1, ease: "circOut" }}
+          className="w-full h-full"
+        >
+          <Image
+            src="/assets/images/hero-1.webp"
+            alt="Disneyland"
+            fill
+            className="object-center object-cover rounded-l-[60px]"
+          />
+        </motion.div>
 
-        <div className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0">
+        <motion.div
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.4, duration: 1, ease: "circOut" }}
+          className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
+        >
           <h3 className="text-2xl font-semibold text-foreground">Disneyland</h3>
 
-          <p className="text-base font-medium text-foreground/70">Orlando - Flórida</p>
-        </div>
+          <p className="text-base font-medium text-foreground/70">
+            Orlando - Flórida
+          </p>
+        </motion.div>
       </div>
     </main>
   );

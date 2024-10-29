@@ -18,10 +18,9 @@ interface Props {
   isFormMenu?: boolean;
   profileId?: string;
   formStep?: string | null;
-  windowPosition: number;
 }
 
-export function MobileMenu({ isFormMenu, profileId, formStep, windowPosition }: Props) {
+export function MobileMenu({ isFormMenu, profileId, formStep }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   function handleLogOut() {
@@ -193,7 +192,7 @@ export function MobileMenu({ isFormMenu, profileId, formStep, windowPosition }: 
         <Button
           size="icon"
           variant="link"
-          className={cn("z-20 lg:hidden", windowPosition > 0 ? "text-white" : "text-foreground")}
+          className="z-20 text-foreground lg:hidden"
         >
           <HambergerMenu size={36} />
         </Button>

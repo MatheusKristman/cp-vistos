@@ -4,6 +4,7 @@ import { HowItWorks } from "@/components/home/how-it-works";
 import { Banner } from "@/components/home/banner";
 import { Services } from "@/components/home/services";
 import { Testimonial } from "@/components/home/testimonial";
+import { Features } from "@/components/home/features";
 
 export default function Home() {
   return (
@@ -13,7 +14,10 @@ export default function Home() {
       <HowItWorks />
       <Banner />
       <Services />
-      <Testimonial />
+      <div className="w-full bg-mobile-testimonial bg-no-repeat bg-[length:100%_80%] bg-bottom sm:bg-tablet-testimonial lg:bg-desktop-testimonial">
+        <Testimonial />
+        <Features />
+      </div>
     </>
   );
 }
