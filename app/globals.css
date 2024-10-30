@@ -85,3 +85,21 @@
 .PhoneInputInput {
   @apply bg-transparent outline-none placeholder:text-muted-foreground;
 }
+
+.about-text-animation {
+  --y-initial: -50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 1024px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: -50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
+}

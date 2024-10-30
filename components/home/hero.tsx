@@ -1,13 +1,37 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { HeroCarouselItem } from "./hero-carousel-item";
 
 // TODO: adicionar carrossel no hero com os seguintes temas: New York (Times Square, central park e statue of liberty), Disneyland e Chicago
 
 export function Hero() {
+  const [bannerShowing, setBannerShowing] = useState<number>(0);
+
+  useEffect(() => {
+    const timeout = setInterval(() => {
+      if (bannerShowing === 2) {
+        setBannerShowing(0);
+
+        return;
+      }
+
+      setBannerShowing((prev) => prev + 1);
+    }, 10000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [bannerShowing]);
+
+  useEffect(() => {
+    console.log(bannerShowing);
+  }, [bannerShowing]);
+
   return (
     <main className="w-full relative mt-[-56px] pt-20 bg-mobile-hero bg-no-repeat bg-[length:100%_100%] sm:pt-40 sm:bg-tablet-hero lg:pt-44 lg:bg-desktop-hero">
       <div className="w-full px-6 sm:px-16 lg:container">
@@ -124,34 +148,34 @@ export function Hero() {
       </div>
 
       {/* TODO: adicionar fotos do hero como carrossel */}
-      <div className="hidden lg:block lg:absolute lg:top-44 lg:right-0 lg:w-2/5 lg:h-[700px]">
-        <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 1, ease: "circOut" }}
-          className="w-full h-full"
-        >
-          <Image
-            src="/assets/images/hero-1.webp"
-            alt="Disneyland"
-            fill
-            className="object-center object-cover rounded-l-[60px]"
+      <AnimatePresence mode="wait">
+        {bannerShowing === 0 && (
+          <HeroCarouselItem
+            key={bannerShowing}
+            imageSrc="/assets/images/hero-1.webp"
+            title="Disneyland"
+            location="Orlando-Flórida"
           />
-        </motion.div>
+        )}
 
-        <motion.div
-          initial={{ x: 50, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 1, ease: "circOut" }}
-          className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
-        >
-          <h3 className="text-2xl font-semibold text-foreground">Disneyland</h3>
+        {bannerShowing === 1 && (
+          <HeroCarouselItem
+            key={bannerShowing}
+            imageSrc="/assets/images/hero-2.jpg"
+            title="Disneyland"
+            location="Orlando-Flórida"
+          />
+        )}
 
-          <p className="text-base font-medium text-foreground/70">
-            Orlando - Flórida
-          </p>
-        </motion.div>
-      </div>
+        {bannerShowing === 2 && (
+          <HeroCarouselItem
+            key={bannerShowing}
+            imageSrc="/assets/images/hero-3.jpg"
+            title="Disneyland"
+            location="Orlando-Flórida"
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }
