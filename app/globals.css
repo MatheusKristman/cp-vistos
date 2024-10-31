@@ -72,6 +72,12 @@
   }
 }
 
+html,
+body,
+:root {
+  overflow-x: hidden;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -98,6 +104,60 @@
     --y-initial: 0px;
     --y-animate: 0px;
     --x-initial: -50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
+}
+
+.how-it-works-text-animation {
+  --y-initial: -50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 640px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: -50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
+}
+
+.services-left-buttons-animation {
+  --y-initial: 50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 640px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: -50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
+}
+
+.services-right-buttons-animation {
+  --y-initial: 50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 640px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: 50px;
     --x-animate: 0px;
     --opacity-initial: 0;
     --opacity-animate: 1;

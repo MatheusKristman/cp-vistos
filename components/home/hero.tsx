@@ -33,7 +33,7 @@ export function Hero() {
   }, [bannerShowing]);
 
   return (
-    <main className="w-full relative mt-[-56px] pt-20 bg-mobile-hero bg-no-repeat bg-[length:100%_100%] sm:pt-40 sm:bg-tablet-hero lg:pt-44 lg:bg-desktop-hero">
+    <main className="w-full relative pt-28 bg-mobile-hero bg-no-repeat bg-[length:100%_100%] sm:pt-40 sm:bg-tablet-hero lg:pt-44 lg:bg-desktop-hero">
       <div className="w-full px-6 sm:px-16 lg:container">
         <div className="w-full flex flex-col gap-12 sm:max-w-xl ">
           <div className="w-full flex flex-col gap-9">
@@ -53,8 +53,7 @@ export function Hero() {
                 transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
                 className="text-xl font-medium text-foreground/70 lg:max-w-lg"
               >
-                Facilitamos o processo para obter ou renovar seu visto
-                americano, com rapidez e sem complicações.
+                Facilitamos o processo para obter ou renovar seu visto americano, com rapidez e sem complicações.
               </motion.p>
             </div>
 
@@ -64,10 +63,7 @@ export function Hero() {
               transition={{ delay: 0.6, duration: 0.5, ease: "circOut" }}
               className="w-full bg-secondary/50 rounded-[36px] flex flex-col gap-4 items-center p-3 sm:flex-row"
             >
-              <Button
-                variant="destructive"
-                className="w-full text-xl font-medium rounded-full"
-              >
+              <Button variant="destructive" className="w-full text-xl font-medium rounded-full">
                 Entre em contato
               </Button>
 
@@ -93,12 +89,8 @@ export function Hero() {
               />
 
               <div className="flex flex-col sm:items-center">
-                <p className="text-2xl font-semibold text-foreground sm:text-center">
-                  + 2.000
-                </p>
-                <p className="text-xl text-foreground font-medium sm:text-center">
-                  Clientes
-                </p>
+                <p className="text-2xl font-semibold text-foreground sm:text-center">+ 2.000</p>
+                <p className="text-xl text-foreground font-medium sm:text-center">Clientes</p>
               </div>
             </div>
 
@@ -114,12 +106,8 @@ export function Hero() {
               />
 
               <div className="flex flex-col sm:items-center">
-                <p className="text-2xl font-semibold text-foreground sm:text-center">
-                  98%
-                </p>
-                <p className="text-xl text-foreground font-medium sm:text-center">
-                  De Aprovação
-                </p>
+                <p className="text-2xl font-semibold text-foreground sm:text-center">98%</p>
+                <p className="text-xl text-foreground font-medium sm:text-center">De Aprovação</p>
               </div>
             </div>
 
@@ -135,12 +123,8 @@ export function Hero() {
               />
 
               <div className="flex flex-col sm:items-center">
-                <p className="text-2xl font-semibold text-foreground sm:text-center">
-                  20 Anos
-                </p>
-                <p className="text-xl text-foreground font-medium sm:text-center">
-                  De Experiência
-                </p>
+                <p className="text-2xl font-semibold text-foreground sm:text-center">20 Anos</p>
+                <p className="text-xl text-foreground font-medium sm:text-center">De Experiência</p>
               </div>
             </div>
           </motion.div>

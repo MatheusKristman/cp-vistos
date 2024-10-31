@@ -14,13 +14,13 @@ export function Header() {
   const { y } = useWindowScroll();
 
   return (
-    <header className="w-full bg-transparent h-14 px-6 flex items-center justify-between sticky top-0 left-0 z-30 sm:px-16 sm:top-4 lg:container">
+    <header className="w-full bg-transparent h-14 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-30 sm:px-16 sm:top-4 lg:container">
       <div
         className={cn(
           "w-full h-14 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(56px+32px)] sm:-translate-y-[calc(100%+16px)]",
           {
             "translate-y-0 sm:-translate-y-4": y > 0,
-          },
+          }
         )}
       />
 
@@ -40,7 +40,7 @@ export function Header() {
         <ul className="flex items-center gap-1">
           <li
             className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
             )}
           >
             Início
@@ -48,7 +48,7 @@ export function Header() {
 
           <li
             className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
             )}
           >
             Sobre
@@ -56,7 +56,7 @@ export function Header() {
 
           <li
             className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
             )}
           >
             Como Funciona
@@ -64,7 +64,7 @@ export function Header() {
 
           <li
             className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
             )}
           >
             Serviços
@@ -72,7 +72,7 @@ export function Header() {
 
           <li
             className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
             )}
           >
             Depoimentos
@@ -80,7 +80,7 @@ export function Header() {
 
           <li
             className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
             )}
           >
             Diferenciais
@@ -88,7 +88,7 @@ export function Header() {
 
           <li
             className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3",
+              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
             )}
           >
             Contato
