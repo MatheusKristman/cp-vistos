@@ -88,6 +88,14 @@ body,
   }
 }
 
+.active {
+  @apply lg:bg-secondary/60;
+}
+
+.active > div {
+  @apply w-6;
+}
+
 .PhoneInputInput {
   @apply bg-transparent outline-none placeholder:text-muted-foreground;
 }

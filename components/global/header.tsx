@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useWindowScroll } from "react-use";
+import { Link as ScrollLink } from "react-scroll";
 
 import { Button } from "@/components/ui/button";
 import { MobileMenu } from "./mobile-menu";
@@ -35,67 +36,100 @@ export function Header() {
 
       <MobileMenu />
 
-      {/* TODO: adicionar link para seções */}
       <nav className="z-40 hidden lg:flex lg:items-center lg:gap-12">
         <ul className="flex items-center gap-1">
-          <li
-            className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
-            )}
-          >
-            Início
+          <li>
+            <ScrollLink
+              to="home"
+              activeClass="active"
+              spy={true}
+              smooth={true}
+              offset={-176}
+              duration={1000}
+              className="text-base font-medium text-foreground transition-colors cursor-pointer hover:bg-secondary/40 rounded-2xl px-5 py-3"
+            >
+              Início
+            </ScrollLink>
           </li>
 
-          <li
-            className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
-            )}
-          >
-            Sobre
+          <li>
+            <ScrollLink
+              to="about"
+              activeClass="active"
+              spy={true}
+              smooth={true}
+              offset={-200}
+              duration={1000}
+              className="text-base font-medium text-foreground transition-colors cursor-pointer hover:bg-secondary/40 rounded-2xl px-5 py-3"
+            >
+              Sobre
+            </ScrollLink>
           </li>
 
-          <li
-            className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
-            )}
-          >
-            Como Funciona
+          <li>
+            <ScrollLink
+              to="how-it-works"
+              activeClass="active"
+              spy={true}
+              smooth={true}
+              offset={-200}
+              duration={1000}
+              className="text-base font-medium text-foreground transition-colors cursor-pointer hover:bg-secondary/40 rounded-2xl px-5 py-3"
+            >
+              Como Funciona
+            </ScrollLink>
           </li>
 
-          <li
-            className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
-            )}
-          >
-            Serviços
+          <li>
+            <ScrollLink
+              to="services"
+              activeClass="active"
+              spy={true}
+              smooth={true}
+              offset={-200}
+              duration={1000}
+              className="text-base font-medium text-foreground transition-colors cursor-pointer hover:bg-secondary/40 rounded-2xl px-5 py-3"
+            >
+              Serviços
+            </ScrollLink>
           </li>
 
-          <li
-            className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
-            )}
-          >
-            Depoimentos
+          <li>
+            <ScrollLink
+              to="testimonials"
+              activeClass="active"
+              spy={true}
+              smooth={true}
+              offset={-200}
+              duration={1000}
+              className="text-base font-medium text-foreground transition-colors cursor-pointer hover:bg-secondary/40 rounded-2xl px-5 py-3"
+            >
+              Depoimentos
+            </ScrollLink>
           </li>
 
-          <li
-            className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
-            )}
-          >
-            Diferenciais
-          </li>
-
-          <li
-            className={cn(
-              "text-base font-medium text-foreground transition-colors hover:bg-secondary rounded-2xl px-5 py-3"
-            )}
-          >
-            Contato
+          <li>
+            <ScrollLink
+              to="features"
+              activeClass="active"
+              spy={true}
+              smooth={true}
+              offset={-200}
+              duration={1000}
+              className="text-base font-medium text-foreground transition-colors cursor-pointer hover:bg-secondary/40 rounded-2xl px-5 py-3"
+            >
+              Diferenciais
+            </ScrollLink>
           </li>
         </ul>
 
-        <Button variant="destructive">Entrar</Button>
+        <div className="flex items-center gap-4">
+          <Button variant="outline" className="hover:bg-white/40">
+            Contato
+          </Button>
+
+          <Button variant="destructive">Entrar</Button>
+        </div>
       </nav>
       {/* <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
         <div className="flex items-center gap-24">

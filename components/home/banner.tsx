@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 
+// TODO: adicionar os textos e link para botão
 const BANNER = [
   {
     title: "Já teve um visto negado e quer tentar novamente?",
