@@ -77,11 +77,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>Nome</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Insira o nome do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Insira o nome do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -93,11 +98,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>E-mail</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Insira o e-mail do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Insira o e-mail do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -111,11 +121,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>Senha</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Insira a senha do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Insira a senha do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -127,11 +142,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="passwordConfirm"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>Confirmar Senha</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Confirme a senha do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Confirme a senha do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />

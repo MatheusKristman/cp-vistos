@@ -7,7 +7,14 @@ import { ArrowRight, Verify } from "iconsax-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Element } from "react-scroll";
 
-import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 import { CardContent, CardHeader, Card } from "../ui/card";
 
 import { cn } from "@/lib/utils";
@@ -151,13 +158,21 @@ export function Testimonial() {
                 O que nossos clientes dizem
               </motion.h2>
 
-              <motion.p variants={textAnimation} className="text-xl text-foreground/70 text-center max-w-prose">
-                Conheça as experiências de quem confiou em nossos serviços e realizou seus planos com sucesso.
+              <motion.p
+                variants={textAnimation}
+                className="text-xl text-foreground/70 text-center max-w-prose"
+              >
+                Conheça as experiências de quem confiou em nossos serviços e
+                realizou seus planos com sucesso.
               </motion.p>
             </motion.div>
 
             <div className="w-full flex flex-col items-center gap-9 lg:flex-row-reverse lg:justify-between lg:gap-24">
-              <Carousel setApi={setApi} className="w-full" opts={{ loop: true }}>
+              <Carousel
+                setApi={setApi}
+                className="w-full"
+                opts={{ loop: true }}
+              >
                 <motion.div
                   initial="hidden"
                   whileInView="show"
@@ -170,7 +185,10 @@ export function Testimonial() {
 
                     <CarouselContent className="sm:-ml-9">
                       {REVIEWS.map((review, index) => (
-                        <CarouselItem key={index} className="sm:pl-9 basis-4/6 sm:basis-1/2">
+                        <CarouselItem
+                          key={index}
+                          className="sm:pl-9 basis-[75%] sm:basis-1/2"
+                        >
                           <Card className="w-full h-full relative">
                             <CardHeader className="w-full flex flex-row items-center justify-between">
                               <div className="flex items-center gap-4">
@@ -183,7 +201,9 @@ export function Testimonial() {
                                 />
 
                                 <div className="flex flex-col gap-1">
-                                  <span className="text-base font-semibold text-destructive">{review.name}</span>
+                                  <span className="text-base font-semibold text-destructive">
+                                    {review.name}
+                                  </span>
 
                                   <span className="text-[10px] font-medium text-foreground/70">
                                     {format(review.date, "dd/MM/yyyy")}
@@ -203,22 +223,29 @@ export function Testimonial() {
                             <CardContent className="w-full flex flex-col gap-4">
                               <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-[2px]">
-                                  {Array.from({ length: review.grades }).map((_, index) => (
-                                    <Image
-                                      src="/assets/icons/star.svg"
-                                      alt="Nota"
-                                      width={18}
-                                      height={18}
-                                      key={index}
-                                      className="object-contain object-center"
-                                    />
-                                  ))}
+                                  {Array.from({ length: review.grades }).map(
+                                    (_, index) => (
+                                      <Image
+                                        src="/assets/icons/star.svg"
+                                        alt="Nota"
+                                        width={18}
+                                        height={18}
+                                        key={index}
+                                        className="object-contain object-center"
+                                      />
+                                    ),
+                                  )}
                                 </div>
 
-                                <Verify variant="Bold" className="text-[#4C84F3] size-5" />
+                                <Verify
+                                  variant="Bold"
+                                  className="text-[#4C84F3] size-5"
+                                />
                               </div>
 
-                              <p className="text-base text-foreground/70">{review.desc}</p>
+                              <p className="text-base text-foreground/70">
+                                {review.desc}
+                              </p>
                             </CardContent>
                           </Card>
                         </CarouselItem>
@@ -233,9 +260,12 @@ export function Testimonial() {
                       {Array.from({ length: count }).map((_, index) => (
                         <div
                           key={index}
-                          className={cn("rounded-full size-3 bg-secondary transition-all duration-500", {
-                            "bg-foreground w-11": index === current,
-                          })}
+                          className={cn(
+                            "rounded-full size-3 bg-secondary transition-all duration-500",
+                            {
+                              "bg-foreground w-11": index === current,
+                            },
+                          )}
                         />
                       ))}
                     </div>
@@ -268,7 +298,10 @@ export function Testimonial() {
                   Excelente
                 </motion.span>
 
-                <motion.div variants={googleItemAnimation} className="flex items-center gap-[2px]">
+                <motion.div
+                  variants={googleItemAnimation}
+                  className="flex items-center gap-[2px]"
+                >
                   <Image
                     src="/assets/icons/star.svg"
                     alt="Nota"
@@ -306,8 +339,12 @@ export function Testimonial() {
                   />
                 </motion.div>
 
-                <motion.span variants={googleItemAnimation} className="text-base text-foreground text-center">
-                  Com Base Em <strong className="font-semibold">16 avaliações</strong>
+                <motion.span
+                  variants={googleItemAnimation}
+                  className="text-base text-foreground text-center"
+                >
+                  Com Base Em{" "}
+                  <strong className="font-semibold">16 avaliações</strong>
                 </motion.span>
 
                 <motion.a

@@ -30,7 +30,7 @@ export function FormView({ form, profileId }: Props) {
   }
 
   return (
-    <div className="w-full flex flex-col gap-9 bg-secondary py-6 px-8 sm:py-8 sm:px-11">
+    <div className="w-full flex flex-col gap-9 bg-secondary py-6 px-8 rounded-xl sm:py-8 sm:px-11">
       <div className="w-full flex flex-col items-center justify-between gap-4 sm:flex-row">
         <h2 className="text-2xl text-center text-foreground w-full font-semibold sm:text-left sm:w-fit sm:text-3xl">
           Resumo do formulário
@@ -51,7 +51,7 @@ export function FormView({ form, profileId }: Props) {
       <Accordion type="single" collapsible className="flex flex-col gap-6">
         <AccordionItem
           value="personal-data"
-          className="bg-white p-6 sm:p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 sm:p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Dados Pessoais
@@ -255,7 +255,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="contacts-and-address"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Endereço e Contatos
@@ -481,7 +481,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="passport"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Passaporte
@@ -628,7 +628,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="about-travel"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Sobre a Viagem
@@ -883,7 +883,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="travel-company"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Companhia de Viagem
@@ -983,7 +983,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="previous-travel"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Viagens Anteriores
@@ -1323,7 +1323,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="usa-contacts"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Contato nos Estados Unidos
@@ -1469,7 +1469,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="family"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Informações da Família
@@ -1770,7 +1770,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="work-education"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Trabalho e Educação
@@ -2257,7 +2257,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="additional-information"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Informação Adicional
@@ -2501,7 +2501,7 @@ export function FormView({ form, profileId }: Props) {
 
         <AccordionItem
           value="security"
-          className="bg-white p-6 flex flex-col gap-9 border-0"
+          className="bg-white p-6 flex flex-col gap-9 border-0 rounded-lg"
         >
           <AccordionTrigger className="text-lg text-left text-foreground font-semibold hover:no-underline">
             Segurança

@@ -573,13 +573,17 @@ export function FamilyForm({
                 control={form.control}
                 name="fatherCompleteName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Nome completo do pai
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -591,7 +595,7 @@ export function FamilyForm({
                 control={form.control}
                 name="fatherBirthdate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data de nascimento do pai
                     </FormLabel>
@@ -603,6 +607,7 @@ export function FamilyForm({
                             disabled={isPending || isSavePending}
                             variant="date"
                             className={cn(
+                              "!mt-auto",
                               !field.value && "text-muted-foreground",
                             )}
                           >
@@ -662,7 +667,7 @@ export function FamilyForm({
                 control={form.control}
                 name="fatherLiveInTheUSAConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Seu pai se encontra nos EUA?
                     </FormLabel>
@@ -703,7 +708,7 @@ export function FamilyForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "w-full bg-secondary p-4",
+                      "w-full bg-secondary rounded-xl p-4 flex flex-col gap-2",
                       fatherLiveInTheUSAConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -716,7 +721,10 @@ export function FamilyForm({
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger disabled={isPending}>
+                        <SelectTrigger
+                          className="!mt-auto"
+                          disabled={isPending}
+                        >
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -751,13 +759,17 @@ export function FamilyForm({
                 control={form.control}
                 name="motherCompleteName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Nome completo da mãe*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -769,7 +781,7 @@ export function FamilyForm({
                 control={form.control}
                 name="motherBirthdate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data de nascimento da mãe
                     </FormLabel>
@@ -781,6 +793,7 @@ export function FamilyForm({
                             disabled={isPending || isSavePending}
                             variant="date"
                             className={cn(
+                              "!mt-auto",
                               !field.value && "text-muted-foreground",
                             )}
                           >
@@ -840,7 +853,7 @@ export function FamilyForm({
                 control={form.control}
                 name="motherLiveInTheUSAConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Sua mãe se encontra nos EUA?
                     </FormLabel>
@@ -881,7 +894,7 @@ export function FamilyForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "w-full bg-secondary p-4",
+                      "w-full bg-secondary rounded-xl p-4 flex flex-col gap-2",
                       motherLiveInTheUSAConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -894,7 +907,10 @@ export function FamilyForm({
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger disabled={isPending}>
+                        <SelectTrigger
+                          className="!mt-auto"
+                          disabled={isPending}
+                        >
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -929,7 +945,7 @@ export function FamilyForm({
                 control={form.control}
                 name="familyLivingInTheUSAConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Excluindo os pais, há alguém da sua família nos EUA?
                     </FormLabel>
@@ -966,7 +982,7 @@ export function FamilyForm({
 
               <div
                 className={cn(
-                  "w-full bg-secondary p-4 space-y-6",
+                  "w-full bg-secondary rounded-xl p-4 space-y-6",
                   familyLivingInTheUSAConfirmation === "Não" && "hidden",
                 )}
               >
@@ -980,13 +996,14 @@ export function FamilyForm({
                       control={form.control}
                       name={`familyLivingInTheUSA.${currentFamilyIndex}.name`}
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex flex-col gap-2">
                           <FormLabel className="text-foreground">
                             Nome
                           </FormLabel>
 
                           <FormControl>
                             <Input
+                              className="!mt-auto"
                               disabled={isPending || isSavePending}
                               {...field}
                             />
@@ -1001,13 +1018,14 @@ export function FamilyForm({
                       control={form.control}
                       name={`familyLivingInTheUSA.${currentFamilyIndex}.relation`}
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex flex-col gap-2">
                           <FormLabel className="text-foreground">
                             Relação Parental
                           </FormLabel>
 
                           <FormControl>
                             <Input
+                              className="!mt-auto"
                               disabled={isPending || isSavePending}
                               {...field}
                             />
@@ -1023,7 +1041,7 @@ export function FamilyForm({
                     control={form.control}
                     name={`familyLivingInTheUSA.${currentFamilyIndex}.situation`}
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="flex flex-col gap-2">
                         <FormLabel className="text-foreground">
                           Situação
                         </FormLabel>
@@ -1033,7 +1051,10 @@ export function FamilyForm({
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger disabled={isPending}>
+                            <SelectTrigger
+                              className="!mt-auto"
+                              disabled={isPending}
+                            >
                               <SelectValue placeholder="Selecione a opção" />
                             </SelectTrigger>
                           </FormControl>
@@ -1081,16 +1102,16 @@ export function FamilyForm({
                     {familyLivingInTheUSAItems.map((item, index) => (
                       <div
                         key={`otherName-${index}`}
-                        className="w-full py-2 px-4 bg-border rounded-xl flex items-center gap-2 group sm:w-fit"
+                        className="w-full py-2 px-4 bg-primary/50 rounded-xl flex items-center gap-2 group sm:w-fit"
                       >
                         <div className="w-full flex flex-col items-center gap-2">
-                          <span className="text-sm font-medium text-foreground">
+                          <span className="text-sm font-medium text-white">
                             Nome: {item.name}
                           </span>
 
                           <div className="w-full h-px bg-primary" />
 
-                          <span className="text-sm font-medium text-foreground">
+                          <span className="text-sm font-medium text-white">
                             Relação: {item.relation}
                           </span>
                         </div>
@@ -1141,7 +1162,7 @@ export function FamilyForm({
                 control={form.control}
                 name="partnerCompleteName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Nome completo
                     </FormLabel>
@@ -1159,7 +1180,7 @@ export function FamilyForm({
                 control={form.control}
                 name="partnerBirthdate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data de nascimento
                     </FormLabel>
@@ -1228,7 +1249,7 @@ export function FamilyForm({
                 control={form.control}
                 name="partnerNationality"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Nacionalidade
                     </FormLabel>
@@ -1255,7 +1276,7 @@ export function FamilyForm({
                 control={form.control}
                 name="partnerCity"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Cidade de nascimento
                     </FormLabel>
@@ -1273,7 +1294,7 @@ export function FamilyForm({
                 control={form.control}
                 name="partnerState"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Estado de nascimento
                     </FormLabel>
@@ -1291,7 +1312,7 @@ export function FamilyForm({
                 control={form.control}
                 name="partnerCountry"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       País de nascimento
                     </FormLabel>
@@ -1336,7 +1357,7 @@ export function FamilyForm({
                 control={form.control}
                 name="unionDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data da união
                     </FormLabel>
@@ -1405,7 +1426,7 @@ export function FamilyForm({
                 control={form.control}
                 name="divorceDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data da separação
                     </FormLabel>

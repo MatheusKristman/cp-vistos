@@ -31,7 +31,7 @@ export function NotificationHeaderMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="link" size="icon" className="flex aspect-square w-auto h-full border-l border-secondary">
+        <Button variant="outline" className="bg-secondary/40 border-secondary/40">
           <Bell />
         </Button>
       </PopoverTrigger>
@@ -47,7 +47,7 @@ export function NotificationHeaderMenu() {
                   data.notifications.map((notification) => (
                     <div key={notification.id} className=" w-full h-fit">
                       <div className="relative w-full overflow-hidden group">
-                        <div className="bg-primary/15 p-4 w-full flex items-end justify-between gap-4">
+                        <div className="bg-primary/15 rounded-2xl p-4 w-full flex items-end justify-between gap-4">
                           <span className="text-sm text-foreground">
                             {notification.statusForm === "filling" && (
                               <>

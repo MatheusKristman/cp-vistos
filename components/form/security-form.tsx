@@ -371,7 +371,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="contagiousDiseaseConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Possui alguma doença contagiosa (cancroide, gonorreia,
                       granuloma inguinal, hanseníase infecciosa, linfogranuloma
@@ -416,7 +416,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="phisicalMentalProblemConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Possui algum problema físico ou mental que possa
                       interferir em sua segurança ou de outras pessoas?
@@ -458,7 +458,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="crimeConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já foi preso ou condenado por algum delito ou crime,
                       mesmo que tenha sido objeto de perdão, anistia ou outra
@@ -501,7 +501,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="drugsProblemConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Já teve problemas com drogas?
                     </FormLabel>
@@ -542,7 +542,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="lawViolateConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já violou ou esteve envolvido em alguma conspiração
                       para violar qualquer lei relacionada ao controle de
@@ -585,7 +585,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="prostitutionConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você está vindo para os Estados Unidos para se envolver em
                       prostituição ou vício comercializado ilegalmente ou esteve
@@ -629,7 +629,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="moneyLaundryConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já esteve envolvido ou pretende se envolver em
                       lavagem de dinheiro?
@@ -671,7 +671,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="peopleTrafficConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já cometeu ou conspirou para cometer um crime de
                       tráfico de pessoas nos Estados Unidos ou fora dos Estados
@@ -714,7 +714,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="helpPeopleTrafficConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já ajudou, encorajou, ajudou ou conspirou
                       conscientemente com um indivíduo que cometeu ou conspirou
@@ -758,7 +758,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="parentPeopleTrafficConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você é cônjuge, filho ou filha de um indivíduo que cometeu
                       ou conspirou para cometer um crime de tráfico de pessoas
@@ -802,7 +802,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="spyConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você procura se envolver em espionagem, sabotagem,
                       violações de controle de exportação ou qualquer outra
@@ -845,7 +845,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="terrorismConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você procura se envolver em atividades terroristas
                       enquanto estiver nos Estados Unidos ou já se envolveu em
@@ -888,7 +888,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="financialAssistanceConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já prestou ou pretende fornecer assistência
                       financeira ou outro tipo de apoio a terroristas ou
@@ -931,7 +931,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="terrorismMemberConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você é membro ou representante de uma organização
                       terrorista?
@@ -973,7 +973,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="parentTerrorismConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você é cônjuge, filho ou filha de um indivíduo que se
                       envolveu em atividades terroristas, inclusive fornecendo
@@ -1017,7 +1017,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="genocideConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já ordenou, incitou, cometeu, ajudou ou de alguma
                       forma participou de genocídio?
@@ -1059,7 +1059,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="tortureConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já cometeu, ordenou, incitou, ajudou ou participou de
                       alguma forma em tortura?
@@ -1101,7 +1101,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="assassinConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você cometeu, ordenou, incitou, ajudou ou de alguma forma
                       participou em assassinatos extrajudiciais, assassinatos
@@ -1144,7 +1144,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="childSoldierConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já se envolveu no recrutamento ou na utilização de
                       crianças-soldados?
@@ -1186,7 +1186,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="religionLibertyConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você, enquanto servia como funcionário do governo, foi
                       responsável ou executou diretamente, em qualquer momento,
@@ -1229,7 +1229,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="abortConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já esteve diretamente envolvido no estabelecimento ou
                       na aplicação de controles populacionais que forçaram uma
@@ -1274,7 +1274,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="coerciveTransplantConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já esteve diretamente envolvido no transplante
                       coercitivo de órgãos humanos ou tecidos corporais?
@@ -1316,7 +1316,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="visaFraudConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já tentou obter ou ajudar outras pessoas a obter um
                       visto, entrada nos Estados Unidos ou qualquer outro
@@ -1360,7 +1360,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="deportedConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já foi removido ou deportado de algum país?
                     </FormLabel>
@@ -1401,7 +1401,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="childCustodyConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já recebeu a custódia de uma criança cidadã dos EUA
                       fora dos Estados Unidos de uma pessoa que recebeu a
@@ -1444,7 +1444,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="lawViolationConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você votou nos Estados Unidos violando alguma lei ou
                       regulamento?
@@ -1486,7 +1486,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="avoidTaxConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já renunciou à cidadania dos Estados Unidos para
                       evitar impostos?

@@ -317,7 +317,7 @@ export function TravelCompanyForm({
                 control={form.control}
                 name="otherPeopleTravelingConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Há outras pessoas viajando com você?
                     </FormLabel>
@@ -354,7 +354,7 @@ export function TravelCompanyForm({
 
               <div
                 className={cn(
-                  "space-y-2 bg-secondary p-4",
+                  "flex flex-col gap-2 bg-secondary rounded-xl p-4",
                   otherPeopleTravelingConfirmation === "Não" && "hidden",
                 )}
               >
@@ -362,14 +362,15 @@ export function TravelCompanyForm({
                   Adicione as pessoas que estão viajando com você
                 </span>
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="!mt-auto w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name={`otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.name`}
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="flex flex-col gap-2">
                         <FormControl>
                           <Input
+                            className="!mt-auto"
                             disabled={isPending || isSavePending}
                             {...field}
                             placeholder="Nome completo"
@@ -389,6 +390,7 @@ export function TravelCompanyForm({
                         <FormItem className="w-full">
                           <FormControl>
                             <Input
+                              className="!mt-auto"
                               disabled={isPending || isSavePending}
                               {...field}
                               placeholder="Relação parental"
@@ -417,9 +419,9 @@ export function TravelCompanyForm({
                     {otherPeopleTravelingItems.map((item, index) => (
                       <div
                         key={`otherName-${index}`}
-                        className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
+                        className="py-2 px-4 bg-primary/50 rounded-full flex items-center gap-2 group"
                       >
-                        <span className="text-sm font-medium text-foreground">
+                        <span className="text-sm font-medium text-white">
                           {item.name}
                         </span>
 
@@ -431,7 +433,7 @@ export function TravelCompanyForm({
                           disabled={isPending || isSavePending}
                           onClick={() => removeOtherPeopleTraveling(index)}
                         >
-                          <X strokeWidth={1} size={20} />
+                          <X strokeWidth={1} size={20} color="#FFF" />
                         </Button>
                       </div>
                     ))}
@@ -445,7 +447,7 @@ export function TravelCompanyForm({
                 control={form.control}
                 name="groupMemberConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Está viajando como integrante de um grupo de viagem?
                     </FormLabel>
@@ -486,7 +488,7 @@ export function TravelCompanyForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "flex flex-col justify-between",
+                      "flex flex-col gap-2",
                       groupMemberConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -495,7 +497,11 @@ export function TravelCompanyForm({
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />

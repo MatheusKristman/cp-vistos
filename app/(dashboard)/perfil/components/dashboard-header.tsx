@@ -4,80 +4,103 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Bell, LogIn, LogOut, Users } from "lucide-react";
+import { useWindowScroll } from "react-use";
 
 import { Button } from "@/components/ui/button";
 import { NotificationHeaderMenu } from "@/components/dashboard/notification-header-menu";
+import { MobileFormMenu } from "./mobile-form-menu";
+
+import { cn } from "@/lib/utils";
 
 interface Props {
   isCollab?: boolean;
+  isEditing?: boolean;
+  currentStep?: number;
+  profileId?: string;
 }
 
-export function DashboardHeader({ isCollab }: Props) {
+export function DashboardHeader({ isCollab, isEditing, currentStep, profileId }: Props) {
   const session = useSession();
+  const { y } = useWindowScroll();
 
   return (
-    <header className="w-full bg-background h-20 lg:h-24 flex items-center fixed top-0 left-0 right-0 z-10">
-      <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
-        <div className="flex items-center gap-24">
-          <Link href="/" className="relative w-20 h-20 ml-6">
-            <Image
-              src="/assets/images/cp-vistos-logo-azul.png"
-              alt="CP Vistos"
-              fill
-              className="object-center object-contain"
-            />
-          </Link>
-        </div>
+    <header
+      className={cn(
+        "w-full bg-transparent h-20 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-30 sm:px-16 sm:top-4 lg:container",
+        {
+          "lg:left-[250px] lg:w-[calc(100%-250px)]": isCollab,
+        }
+      )}
+    >
+      <div
+        className={cn(
+          "w-full h-20 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(80px+32px)] sm:-translate-y-[calc(100%+16px)]",
+          {
+            "translate-y-0 sm:-translate-y-4": y > 0,
+          }
+        )}
+      />
 
-        <div className="lg:hidden h-full flex items-center">
-          {isCollab && <NotificationHeaderMenu />}
+      <Link href="/" className="relative w-20 h-20 z-40">
+        <Image
+          src="/assets/images/cp-vistos-logo-azul.png"
+          alt="CP Vistos Logo"
+          fill
+          className="object-center object-contain"
+        />
+      </Link>
 
-          <Button
-            variant="link"
-            size="icon"
-            asChild
-            className="flex lg:hidden aspect-square w-auto h-full border-l border-secondary"
-          >
-            {session.status === "authenticated" ? (
-              <Link href="/verificando-usuario">
-                <Users color="#2E3675" />
-              </Link>
-            ) : (
-              <Link href="/login">
-                <LogIn color="#2E3675" />
-              </Link>
-            )}
-          </Button>
+      <div className="lg:hidden h-full flex items-center gap-4 z-40">
+        <MobileFormMenu isEditing={isEditing} currentStep={currentStep} profileId={profileId} />
 
-          <Button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            variant="secondary"
-            className="flex aspect-square w-auto h-full border-l border-secondary"
-          >
-            <LogOut />
-          </Button>
-        </div>
+        {isCollab && <NotificationHeaderMenu />}
 
-        <div className="hidden lg:flex items-center h-full">
-          {isCollab && <NotificationHeaderMenu />}
+        <Button variant="outline" asChild className="flex bg-secondary/40 border-secondary/40 lg:hidden">
+          {session.status === "authenticated" ? (
+            <Link href="/verificando-usuario">
+              <Users color="#314060" />
+            </Link>
+          ) : (
+            <Link href="/login">
+              <LogIn color="#314060" />
+            </Link>
+          )}
+        </Button>
 
-          <Button
-            variant="link"
-            size="icon"
-            asChild
-            className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
-          >
-            {session ? <Link href="/verificando-usuario">Perfil</Link> : <Link href="/login">Entrar</Link>}
-          </Button>
+        <Button variant="destructive" onClick={() => signOut({ callbackUrl: "/" })}>
+          <LogOut />
+        </Button>
+      </div>
 
-          <Button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            variant="secondary"
-            className="hidden lg:flex px-6 w-auto h-full border-l border-secondary text-lg font-medium hover:no-underline transition-opacity hover:opacity-70"
-          >
-            Sair
-          </Button>
-        </div>
+      <div className="hidden lg:flex items-center gap-4 h-full z-40">
+        {isCollab && <NotificationHeaderMenu />}
+
+        <Button
+          variant="outline"
+          className="hidden bg-secondary/40 border-secondary/40 text-lg lg:flex lg:items-center lg:gap-2"
+          asChild
+        >
+          {session ? (
+            <Link href="/verificando-usuario">
+              Perfil
+              <Users color="#314060" />
+            </Link>
+          ) : (
+            <Link href="/login">
+              Entrar
+              <LogIn color="#314060" />
+            </Link>
+          )}
+        </Button>
+
+        <Button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          variant="destructive"
+          className="hidden text-lg lg:flex lg:items-center lg:gap-2"
+        >
+          Sair
+          <LogOut />
+        </Button>
       </div>
     </header>
   );

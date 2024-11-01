@@ -360,13 +360,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="address"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Endereço Residencial*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -378,13 +382,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="addressNumber"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Número do Endereço*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -396,13 +404,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="district"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Bairro*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -414,13 +426,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="complement"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Complemento
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -434,13 +450,14 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="cep"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       CEP*
                     </FormLabel>
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={isPending || isSavePending}
                         maxLength={9}
                         value={field.value}
@@ -460,13 +477,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="city"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Cidade*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -478,13 +499,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="state"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Estado*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -496,13 +521,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="country"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       País*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -516,7 +545,7 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="postalAddressConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Seu endereço de correio é diferente do endereço de sua
                       residência?*
@@ -557,16 +586,23 @@ export function ContactAndAddressForm({
                 name="otherPostalAddress"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("w-full bg-secondary p-4", {
-                      hidden: postalAddressConfirmation === "Não",
-                    })}
+                    className={cn(
+                      "w-full bg-secondary p-4 flex flex-col gap-2",
+                      {
+                        hidden: postalAddressConfirmation === "Não",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground text-sm">
                       Informe seu outro endereço
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -584,7 +620,7 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="cel"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Celular*
                     </FormLabel>
@@ -597,7 +633,7 @@ export function ContactAndAddressForm({
                         placeholder="Insira seu celular..."
                         defaultCountry="BR"
                         className={cn(
-                          "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
                           },
@@ -619,7 +655,7 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="tel"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Fixo
                     </FormLabel>
@@ -632,7 +668,7 @@ export function ContactAndAddressForm({
                         placeholder="Insira seu telefone fixo..."
                         defaultCountry="BR"
                         className={cn(
-                          "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
                           },
@@ -654,13 +690,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       E-mail*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -674,7 +714,7 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="fiveYearsOtherTelConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Nos últimos 5 anos você usou outros números de telefone?*
                     </FormLabel>
@@ -714,9 +754,12 @@ export function ContactAndAddressForm({
                 name="otherTel"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("w-full bg-secondary p-4", {
-                      hidden: fiveYearsOtherTelConfirmation === "Não",
-                    })}
+                    className={cn(
+                      "w-full bg-secondary p-4 flex flex-col gap-2",
+                      {
+                        hidden: fiveYearsOtherTelConfirmation === "Não",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground text-sm">
                       Informe seu outro telefone
@@ -730,7 +773,7 @@ export function ContactAndAddressForm({
                         placeholder="Insira seu outro telefone..."
                         defaultCountry="BR"
                         className={cn(
-                          "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
                           },
@@ -754,7 +797,7 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="fiveYearsOtherEmailConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Nos últimos 5 anos você teve outros e-mails?*
                     </FormLabel>
@@ -794,16 +837,23 @@ export function ContactAndAddressForm({
                 name="otherEmail"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("w-full bg-secondary p-4", {
-                      hidden: fiveYearsOtherEmailConfirmation === "Não",
-                    })}
+                    className={cn(
+                      "w-full bg-secondary p-4 flex flex-col gap-2",
+                      {
+                        hidden: fiveYearsOtherEmailConfirmation === "Não",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground text-sm">
                       Informe seu outro e-mail
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -821,13 +871,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="facebook"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Facebook
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -839,13 +893,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="linkedin"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Linkedin
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -857,13 +915,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="instagram"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Instagram
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -875,13 +937,17 @@ export function ContactAndAddressForm({
                 control={form.control}
                 name="othersSocialMedia"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Outras Redes
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />

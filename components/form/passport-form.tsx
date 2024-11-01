@@ -295,13 +295,17 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="passportNumber"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Número do passaporte*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -313,13 +317,17 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="passportCity"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Cidade*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -331,13 +339,17 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="passportState"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Estado*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -351,13 +363,17 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="passportIssuingCountry"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       País emissor*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -369,7 +385,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="passportIssuingDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data de emissão*
                     </FormLabel>
@@ -381,6 +397,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                             disabled={isPending || isSavePending}
                             variant="date"
                             className={cn(
+                              "!mt-auto",
                               !field.value && "text-muted-foreground",
                             )}
                           >
@@ -438,7 +455,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="passportExpireDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data de expiração (caso tenha)
                     </FormLabel>
@@ -450,6 +467,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                             disabled={isPending || isSavePending}
                             variant="date"
                             className={cn(
+                              "!mt-auto",
                               !field.value && "text-muted-foreground",
                             )}
                           >
@@ -507,7 +525,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="passportLostConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já perdeu um passaporte ou teve ele roubado?*
                     </FormLabel>
@@ -555,13 +573,17 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="lostPassportNumber"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Informe o número do passaporte
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -573,13 +595,17 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="lostPassportCountry"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Informe o país do passaporte
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -597,7 +623,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="lostPassportDetails"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Explique o ocorrido
                     </FormLabel>
@@ -605,7 +631,7 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                     <FormControl>
                       <Textarea
                         disabled={isPending || isSavePending}
-                        className="resize-none"
+                        className="!mt-auto resize-none"
                         {...field}
                       />
                     </FormControl>

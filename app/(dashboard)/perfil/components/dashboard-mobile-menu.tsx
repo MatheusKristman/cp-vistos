@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { LogOut, PanelRightOpen } from "lucide-react";
+import { Grid4 } from "iconsax-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useUserStore from "@/constants/stores/useUserStore";
@@ -27,8 +27,8 @@ export function DashboardMobileMenu() {
   return (
     <div className="w-full px-6 sm:px-16 mt-12 lg:hidden">
       <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <SheetTrigger>
-          <PanelRightOpen size={30} />
+        <SheetTrigger className="hover:bg-secondary/50 rounded-xl h-12 w-12 flex items-center justify-center transition-colors">
+          <Grid4 size={30} />
         </SheetTrigger>
         <SheetContent side="left" className="w-[250px]">
           <div className="h-full flex flex-col justify-between">

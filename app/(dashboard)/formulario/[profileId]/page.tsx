@@ -4,11 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { differenceInYears } from "date-fns";
 
-import { Header } from "@/components/global/header";
-import { MobileMenu } from "@/components/global/mobile-menu";
-import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { trpc } from "@/lib/trpc-client";
 import { PersonalDataForm } from "@/components/form/personal-data-form";
 import { ContactAndAddressForm } from "@/components/form/contact-and-address-form";
 import { PassportForm } from "@/components/form/passport-form";
@@ -20,6 +16,10 @@ import { FamilyForm } from "@/components/form/family-form";
 import { WorkEducationForm } from "@/components/form/work-education-form";
 import { AdditionalInformationForm } from "@/components/form/additional-information-form";
 import { SecurityForm } from "@/components/form/security-form";
+import { DashboardHeader } from "../../perfil/components/dashboard-header";
+
+import { trpc } from "@/lib/trpc-client";
+import { cn } from "@/lib/utils";
 import useFormStore from "@/constants/stores/useFormStore";
 
 import "react-phone-number-input/style.css";
@@ -79,11 +79,9 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
 
   return (
     <>
-      <Header />
-      {/* TODO: arrumar para o novo formato */}
-      {/* <MobileMenu isFormMenu profileId={profileId} formStep={formStep} /> */}
+      <DashboardHeader profileId={profileId} isEditing={isEditing} currentStep={currentStep} />
 
-      <div className="w-full h-full min-h-[calc(100vh-80px)] p-6 flex flex-col sm:px-16 sm:py-12 lg:container lg:mx-auto lg:min-h-[calc(100vh-96px)]">
+      <div className="w-full h-full min-h-[calc(100vh-80px)] p-6 flex flex-col pt-20 sm:pt-36 sm:px-16 sm:py-12 lg:container lg:mx-auto lg:min-h-[calc(100vh-96px)]">
         <div className={cn("w-full flex flex-col items-center gap-4 mb-6 sm:mb-12 lg:mb-24", isEditing && "hidden")}>
           <h1 className="text-2xl sm:text-3xl text-center font-semibold text-foreground">Complete seu cadastro</h1>
 

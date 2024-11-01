@@ -578,13 +578,13 @@ export function AdditionalInformationForm({
                 name="languages"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem className="bg-secondary p-4">
+                  <FormItem className="flex flex-col gap-2 bg-secondary rounded-xl p-4">
                     <FormLabel className="text-foreground">
                       Quais idiomas você fala?
                     </FormLabel>
 
                     <FormControl>
-                      <div className="w-full flex items-center justify-between gap-2">
+                      <div className="!mt-auto w-full flex items-center justify-between gap-2">
                         <Input
                           disabled={isPending || isSavePending}
                           name={field.name}
@@ -645,7 +645,7 @@ export function AdditionalInformationForm({
                 name="fiveYearsOtherCountryTravelsConfirmation"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Viajou para outros países?
                     </FormLabel>
@@ -686,7 +686,7 @@ export function AdditionalInformationForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "bg-secondary p-4",
+                      "flex flex-col gap-2 bg-secondary rounded-xl p-4",
                       fiveYearsOtherCountryTravelsConfirmation === "Não" &&
                         "hidden",
                     )}
@@ -696,7 +696,7 @@ export function AdditionalInformationForm({
                     </FormLabel>
 
                     <FormControl>
-                      <div className="w-full flex items-center justify-between gap-2">
+                      <div className="!mt-auto w-full flex items-center justify-between gap-2">
                         <Input
                           disabled={isPending || isSavePending}
                           name={field.name}
@@ -725,9 +725,9 @@ export function AdditionalInformationForm({
                         {fiveYearsOtherCountryTravels.map((country, index) => (
                           <div
                             key={`otherName-${index}`}
-                            className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
+                            className="py-2 px-4 bg-primary/50 rounded-full flex items-center gap-2 group"
                           >
-                            <span className="text-sm font-medium text-foreground">
+                            <span className="text-sm font-medium text-white">
                               {country}
                             </span>
 
@@ -739,7 +739,7 @@ export function AdditionalInformationForm({
                               className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
                               onClick={() => removeCountries(index)}
                             >
-                              <X strokeWidth={1} size={20} />
+                              <X strokeWidth={1} size={20} className="#FFF" />
                             </Button>
                           </div>
                         ))}
@@ -756,7 +756,7 @@ export function AdditionalInformationForm({
                 name="socialOrganizationConfirmation"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Contribui ou faz parte de alguma instituição de caridade
                       ou organização social?
@@ -798,7 +798,7 @@ export function AdditionalInformationForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "bg-secondary p-4",
+                      "flex flex-col gap-2 bg-secondary rounded-xl p-4",
                       socialOrganizationConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -807,7 +807,7 @@ export function AdditionalInformationForm({
                     </FormLabel>
 
                     <FormControl>
-                      <div className="w-full flex items-center justify-between gap-2">
+                      <div className="!mt-auto w-full flex items-center justify-between gap-2">
                         <Input
                           disabled={isPending || isSavePending}
                           name={field.name}
@@ -836,9 +836,9 @@ export function AdditionalInformationForm({
                         {socialOrganization.map((organization, index) => (
                           <div
                             key={`otherName-${index}`}
-                            className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
+                            className="py-2 px-4 bg-primary/50 rounded-full flex items-center gap-2 group"
                           >
-                            <span className="text-sm font-medium text-foreground">
+                            <span className="text-sm font-medium text-white">
                               {organization}
                             </span>
 
@@ -850,7 +850,7 @@ export function AdditionalInformationForm({
                               className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
                               onClick={() => removeOrganizations(index)}
                             >
-                              <X strokeWidth={1} size={20} />
+                              <X strokeWidth={1} size={20} color="#FFF" />
                             </Button>
                           </div>
                         ))}
@@ -868,7 +868,7 @@ export function AdditionalInformationForm({
                 name="weaponTrainingConfirmation"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você tem treinamento com arma de fogo?
                     </FormLabel>
@@ -910,7 +910,7 @@ export function AdditionalInformationForm({
               render={({ field }) => (
                 <FormItem
                   className={cn(
-                    "mb-6",
+                    "flex flex-col gap-2 mb-6",
                     weaponTrainingConfirmation === "Não" && "hidden",
                   )}
                 >
@@ -919,7 +919,7 @@ export function AdditionalInformationForm({
                   <FormControl>
                     <Textarea
                       disabled={isPending || isSavePending}
-                      className="resize-none"
+                      className="!mt-auto resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -934,7 +934,7 @@ export function AdditionalInformationForm({
                 name="militaryServiceConfirmation"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Já prestou serviço militar?
                     </FormLabel>
@@ -972,7 +972,7 @@ export function AdditionalInformationForm({
 
             <div
               className={cn(
-                "w-full bg-secondary p-4 flex flex-col gap-x-4 gap-y-6 mb-6",
+                "w-full bg-secondary rounded-xl p-4 flex flex-col gap-x-4 gap-y-6 mb-6",
                 militaryServiceConfirmation === "Não" && "hidden",
               )}
             >
@@ -981,13 +981,14 @@ export function AdditionalInformationForm({
                   name="militaryServiceCountry"
                   control={form.control}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-foreground">
                         País que serviu
                       </FormLabel>
 
                       <FormControl>
                         <Input
+                          className="!mt-auto"
                           disabled={isPending || isSavePending}
                           {...field}
                         />
@@ -1002,13 +1003,14 @@ export function AdditionalInformationForm({
                   name="militaryServiceLocal"
                   control={form.control}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-foreground">
                         Local que serviu
                       </FormLabel>
 
                       <FormControl>
                         <Input
+                          className="!mt-auto"
                           disabled={isPending || isSavePending}
                           {...field}
                         />
@@ -1023,11 +1025,12 @@ export function AdditionalInformationForm({
                   name="militaryServicePatent"
                   control={form.control}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-foreground">Patente</FormLabel>
 
                       <FormControl>
                         <Input
+                          className="!mt-auto"
                           disabled={isPending || isSavePending}
                           {...field}
                         />
@@ -1044,13 +1047,14 @@ export function AdditionalInformationForm({
                   name="militaryServiceSpecialty"
                   control={form.control}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-foreground">
                         Especialidade
                       </FormLabel>
 
                       <FormControl>
                         <Input
+                          className="!mt-auto"
                           disabled={isPending || isSavePending}
                           {...field}
                         />
@@ -1065,7 +1069,7 @@ export function AdditionalInformationForm({
                   name="militaryServiceStartDate"
                   control={form.control}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-foreground">
                         Data de início
                       </FormLabel>
@@ -1077,6 +1081,7 @@ export function AdditionalInformationForm({
                               disabled={isPending || isSavePending}
                               variant="date"
                               className={cn(
+                                "!mt-auto",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -1137,7 +1142,7 @@ export function AdditionalInformationForm({
                   name="militaryServiceEndDate"
                   control={form.control}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-foreground">
                         Data de término
                       </FormLabel>
@@ -1149,6 +1154,7 @@ export function AdditionalInformationForm({
                               disabled={isPending || isSavePending}
                               variant="date"
                               className={cn(
+                                "!mt-auto",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -1212,7 +1218,7 @@ export function AdditionalInformationForm({
                 name="insurgencyOrganizationConfirmation"
                 control={form.control}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você já serviu, foi membro ou esteve envolvido em uma
                       unidade paramilitar, unidade de vigilantes, grupo rebelde,
@@ -1256,6 +1262,7 @@ export function AdditionalInformationForm({
               render={({ field }) => (
                 <FormItem
                   className={cn(
+                    "flex flex-col gap-2",
                     insurgencyOrganizationConfirmation === "Não" && "hidden",
                   )}
                 >
@@ -1264,7 +1271,7 @@ export function AdditionalInformationForm({
                   <FormControl>
                     <Textarea
                       disabled={isPending || isSavePending}
-                      className="resize-none"
+                      className="!mt-auto resize-none"
                       {...field}
                     />
                   </FormControl>

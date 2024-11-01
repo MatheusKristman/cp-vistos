@@ -29,6 +29,7 @@ export function HeroCarouselItem({
           alt="Disneyland"
           fill
           className="object-center object-cover rounded-l-[60px]"
+          priority
         />
       </motion.div>
 

@@ -18,30 +18,26 @@ interface SubmitConfirmationModalProps {
   isCollaborator: boolean;
 }
 
-export function SubmitConfirmationModal({
-  isCollaborator,
-}: SubmitConfirmationModalProps) {
-  const { formValues, closeModal, isModalOpen, setFormValues } =
-    useSubmitConfirmationStore();
+export function SubmitConfirmationModal({ isCollaborator }: SubmitConfirmationModalProps) {
+  const { formValues, closeModal, isModalOpen, setFormValues } = useSubmitConfirmationStore();
   const router = useRouter();
 
-  const { mutate: createAccount, isPending } =
-    trpc.userRouter.createClient.useMutation({
-      onSuccess: () => {
-        handleClose();
-        toast.success("Conta criada com sucesso");
-        router.push("/perfil/clientes");
-      },
-      onError: (error) => {
-        console.error(error.data);
+  const { mutate: createAccount, isPending } = trpc.userRouter.createClient.useMutation({
+    onSuccess: () => {
+      handleClose();
+      toast.success("Conta criada com sucesso");
+      router.push("/perfil/clientes");
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "CONFLICT") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao criar a conta");
-        }
-      },
-    });
+      if (error.data && error.data.code === "CONFLICT") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao criar a conta");
+      }
+    },
+  });
 
   useEffect(() => {
     if (isModalOpen) {
@@ -82,7 +78,7 @@ export function SubmitConfirmationModal({
             animate="animate"
             exit="exit"
             variants={ModalAnimation}
-            className="w-full max-w-[500px] bg-white p-6 inline-block align-middle overflow-x-hidden text-left"
+            className="w-full max-w-[500px] bg-white rounded-2xl p-6 inline-block align-middle overflow-x-hidden text-left"
           >
             <h3 className="text-2xl font-semibold mb-9">Confirme os dados</h3>
 
@@ -93,35 +89,25 @@ export function SubmitConfirmationModal({
                 <div className="w-full flex flex-col">
                   <span className="text-xs font-medium opacity-50">Nome</span>
 
-                  <span className="text-base font-medium">
-                    {formValues ? formValues!.name : "---"}
-                  </span>
+                  <span className="text-base font-medium">{formValues ? formValues!.name : "---"}</span>
                 </div>
 
                 <div className="w-full flex flex-col">
                   <span className="text-xs font-medium opacity-50">CPF</span>
 
-                  <span className="text-base font-medium">
-                    {formValues ? formValues!.cpf : "---"}
-                  </span>
+                  <span className="text-base font-medium">{formValues ? formValues!.cpf : "---"}</span>
                 </div>
               </div>
 
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="w-full flex flex-col">
-                  <span className="text-xs font-medium opacity-50">
-                    Endereço
-                  </span>
+                  <span className="text-xs font-medium opacity-50">Endereço</span>
 
-                  <span className="text-base font-medium">
-                    {formValues ? formValues!.address : "---"}
-                  </span>
+                  <span className="text-base font-medium">{formValues ? formValues!.address : "---"}</span>
                 </div>
 
                 <div className="w-full flex flex-col">
-                  <span className="text-xs font-medium opacity-50">
-                    Celular
-                  </span>
+                  <span className="text-xs font-medium opacity-50">Celular</span>
 
                   <span className="text-base font-medium">
                     {formValues ? formatPhoneNumber(formValues!.cel!) : "---"}
@@ -130,27 +116,16 @@ export function SubmitConfirmationModal({
               </div>
 
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div
-                  className={cn(
-                    "w-full flex flex-col",
-                    isCollaborator && "hidden",
-                  )}
-                >
+                <div className={cn("w-full flex flex-col", isCollaborator && "hidden")}>
                   <span className="text-xs font-medium opacity-50">Valor</span>
 
-                  <span className="text-base font-medium">
-                    {formValues ? formatPrice(formValues!.budget) : "---"}
-                  </span>
+                  <span className="text-base font-medium">{formValues ? formatPrice(formValues!.budget) : "---"}</span>
                 </div>
 
                 <div className="w-full flex flex-col">
-                  <span className="text-xs font-medium opacity-50">
-                    Conta de agendamento
-                  </span>
+                  <span className="text-xs font-medium opacity-50">Conta de agendamento</span>
 
-                  <span className="text-base font-medium">
-                    {formValues ? formValues!.scheduleAccount : "---"}
-                  </span>
+                  <span className="text-base font-medium">{formValues ? formValues!.scheduleAccount : "---"}</span>
                 </div>
               </div>
             </div>
@@ -161,148 +136,97 @@ export function SubmitConfirmationModal({
               {formValues ? (
                 formValues!.profiles.length > 0 ? (
                   formValues!.profiles.map((profile, index) => (
-                    <div
-                      key={index}
-                      className="w-full border border-muted p-4 flex flex-col gap-4"
-                    >
+                    <div key={index} className="w-full border border-muted rounded-xl p-4 flex flex-col gap-4">
                       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Nome
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Nome</span>
 
-                          <span className="text-base font-medium">
-                            {profile.profileName}
-                          </span>
+                          <span className="text-base font-medium">{profile.profileName}</span>
                         </div>
 
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            CPF
-                          </span>
+                          <span className="text-xs font-medium opacity-50">CPF</span>
 
-                          <span className="text-base font-medium">
-                            {profile.profileCpf}
-                          </span>
+                          <span className="text-base font-medium">{profile.profileCpf}</span>
                         </div>
 
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Data de Nascimento
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Data de Nascimento</span>
 
                           <span className="text-base font-medium">
-                            {profile.birthDate
-                              ? format(profile.birthDate, "dd/MM/yyyy")
-                              : "--/--/----"}
+                            {profile.birthDate ? format(profile.birthDate, "dd/MM/yyyy") : "--/--/----"}
                           </span>
                         </div>
                       </div>
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Endereço
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Endereço</span>
 
                           <span className="text-base font-medium">
-                            {profile.profileAddress
-                              ? profile.profileAddress
-                              : "---"}
+                            {profile.profileAddress ? profile.profileAddress : "---"}
                           </span>
                         </div>
 
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Passaporte
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Passaporte</span>
 
-                          <span className="text-base font-medium">
-                            {profile.passport ? profile.passport : "---"}
-                          </span>
+                          <span className="text-base font-medium">{profile.passport ? profile.passport : "---"}</span>
                         </div>
                       </div>
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Classe do Visto
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Classe do Visto</span>
 
-                          <span className="text-base font-medium">
-                            {profile.visaClass}
-                          </span>
+                          <span className="text-base font-medium">{profile.visaClass}</span>
                         </div>
 
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Tipo de Visto
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Tipo de Visto</span>
 
-                          <span className="text-base font-medium">
-                            {profile.visaType}
-                          </span>
+                          <span className="text-base font-medium">{profile.visaType}</span>
                         </div>
                       </div>
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Data de Emissão
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Data de Emissão</span>
 
                           <span className="text-base font-medium">
-                            {profile.issuanceDate
-                              ? format(profile.issuanceDate, "dd/MM/yyyy")
-                              : "--/--/----"}
+                            {profile.issuanceDate ? format(profile.issuanceDate, "dd/MM/yyyy") : "--/--/----"}
                           </span>
                         </div>
 
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Data de Expiração
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Data de Expiração</span>
 
                           <span className="text-base font-medium">
-                            {profile.expireDate
-                              ? format(profile.expireDate, "dd/MM/yyyy")
-                              : "--/--/----"}
+                            {profile.expireDate ? format(profile.expireDate, "dd/MM/yyyy") : "--/--/----"}
                           </span>
                         </div>
                       </div>
 
                       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Barcode
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Barcode</span>
+
+                          <span className="text-base font-medium">{profile.DSNumber ? profile.DSNumber : "---"}</span>
+                        </div>
+
+                        <div className="w-full flex flex-col">
+                          <span className="text-xs font-medium opacity-50">CASV</span>
 
                           <span className="text-base font-medium">
-                            {profile.DSNumber ? profile.DSNumber : "---"}
+                            {profile.CASVDate ? format(profile.CASVDate, "dd/MM/yyyy") : "--/--/----"}
                           </span>
                         </div>
 
                         <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            CASV
-                          </span>
+                          <span className="text-xs font-medium opacity-50">Entrevista</span>
 
                           <span className="text-base font-medium">
-                            {profile.CASVDate
-                              ? format(profile.CASVDate, "dd/MM/yyyy")
-                              : "--/--/----"}
-                          </span>
-                        </div>
-
-                        <div className="w-full flex flex-col">
-                          <span className="text-xs font-medium opacity-50">
-                            Entrevista
-                          </span>
-
-                          <span className="text-base font-medium">
-                            {profile.interviewDate
-                              ? format(profile.interviewDate, "dd/MM/yyyy")
-                              : "--/--/----"}
+                            {profile.interviewDate ? format(profile.interviewDate, "dd/MM/yyyy") : "--/--/----"}
                           </span>
                         </div>
                       </div>
@@ -310,16 +234,12 @@ export function SubmitConfirmationModal({
                   ))
                 ) : (
                   <div className="w-full flex items-center">
-                    <span className="text-base font-medium text-muted-foreground">
-                      Nenhum perfil cadastrado
-                    </span>
+                    <span className="text-base font-medium text-muted-foreground">Nenhum perfil cadastrado</span>
                   </div>
                 )
               ) : (
                 <div className="w-full flex items-center">
-                  <span className="text-base font-medium text-muted-foreground">
-                    Nenhum perfil cadastrado
-                  </span>
+                  <span className="text-base font-medium text-muted-foreground">Nenhum perfil cadastrado</span>
                 </div>
               )}
             </div>

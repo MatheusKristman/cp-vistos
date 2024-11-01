@@ -14,27 +14,21 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { trpc } from "@/lib/trpc-client";
+import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -48,6 +42,9 @@ export function DataTable<TData, TValue>({
     tax: true,
     statusDS: true,
   });
+  const { openModal, setClient, setToResume } =
+    //eslint-disable-next-line
+    useClientDetailsModalStore();
 
   const table = useReactTable({
     data,
@@ -65,41 +62,48 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const { mutate: handleOpenDetailsModal, isPending } = trpc.userRouter.getClientDetails.useMutation({
+    onSuccess({ client }) {
+      setClient(client);
+      openModal();
+      setToResume();
+    },
+    onError(error) {
+      console.error(error.data);
+
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
+      }
+    },
+  });
+
   return (
     <div>
       <div className="flex items-center py-4">
-        <div className="h-12 flex items-center gap-2 border border-muted transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border w-full sm:max-w-xs">
-          <Search
-            className="w-5 h-5 text-border flex-shrink-0"
-            strokeWidth={1.5}
-          />
+        <div className="h-12 flex items-center gap-2 border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border w-full sm:max-w-xs">
+          <Search className="w-5 h-5 text-border flex-shrink-0" strokeWidth={1.5} />
 
           <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
           <Input
             placeholder="Pesquise pelo nome..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="flex h-full w-full transition border-0 duration-300 bg-background text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0  disabled:cursor-not-allowed disabled:opacity-50"
+            onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+            className="flex h-full w-full transition border-0 duration-300 bg-background text-sm placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0  disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
       </div>
 
-      <div className="border">
+      <div className="border rounded-xl overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -111,27 +115,24 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  onClick={() =>
+                    handleOpenDetailsModal({
+                      profileId: row.getValue("id"),
+                    })
+                  }
+                  className={cn("cursor-pointer", { "cursor-not-allowed pointer-events-none opacity-70": isPending })}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="text-center text-foreground font-medium"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                    <TableCell key={cell.id} className="text-center text-foreground font-medium">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -142,8 +143,7 @@ export function DataTable<TData, TValue>({
 
       <div className="w-full flex items-center justify-between">
         <div className="hidden sm:flex w-[100px] items-center justify-center text-sm font-medium">
-          Pagina {table.getState().pagination.pageIndex + 1} de{" "}
-          {table.getPageCount()}
+          Pagina {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
         </div>
         <div className="w-full flex items-center justify-between space-x-2 py-4 sm:justify-end sm:w-fit">
           <Button
@@ -154,12 +154,7 @@ export function DataTable<TData, TValue>({
           >
             Anterior
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             Próximo
           </Button>
         </div>

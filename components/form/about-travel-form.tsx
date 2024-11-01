@@ -481,7 +481,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="travelItineraryConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Possui itinerário de viagem?*
                     </FormLabel>
@@ -522,7 +522,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="USAPreviewArriveDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data prevista da viagem aos EUA*
                     </FormLabel>
@@ -534,6 +534,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                             disabled={isPending || isSavePending}
                             variant="date"
                             className={cn(
+                              "!mt-auto",
                               !field.value && "text-muted-foreground",
                             )}
                           >
@@ -591,6 +592,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       travelItineraryConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -600,6 +602,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={
                           travelItineraryConfirmation === "Não" ||
                           isPending ||
@@ -620,6 +623,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       travelItineraryConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -629,6 +633,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={
                           travelItineraryConfirmation === "Não" ||
                           isPending ||
@@ -656,6 +661,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       travelItineraryConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -674,6 +680,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                             }
                             variant="date"
                             className={cn(
+                              "!mt-auto",
                               !field.value && "text-muted-foreground",
                             )}
                           >
@@ -731,6 +738,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       travelItineraryConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -740,6 +748,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={
                           travelItineraryConfirmation === "Não" ||
                           isPending ||
@@ -760,6 +769,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       travelItineraryConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -769,6 +779,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={
                           travelItineraryConfirmation === "Não" ||
                           isPending ||
@@ -789,13 +800,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="estimatedTimeOnUSA"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Tempo de permanência nos EUA*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -807,7 +822,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="visitLocations"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Qual estado pretende visitar?
                     </FormLabel>
@@ -820,6 +835,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                       <FormControl>
                         <SelectTrigger
                           className={cn(
+                            "!mt-auto",
                             field.value === "" &&
                               "[&>span]:text-muted-foreground",
                           )}
@@ -851,7 +867,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="hasAddressInUSA"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você tem o endereço onde ficará nos EUA?
                     </FormLabel>
@@ -899,13 +915,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="USACompleteAddress"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Endereço completo de onde ficará nos EUA*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -917,13 +937,14 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="USAZipCode"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Zip Code (caso souber)*
                     </FormLabel>
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={isPending || isSavePending}
                         maxLength={5}
                         {...field}
@@ -948,13 +969,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="USACity"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Cidade nos EUA*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -966,13 +991,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="USAState"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Estado nos EUA*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -986,7 +1015,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="hasPayer"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você pagará pela viagem?
                     </FormLabel>
@@ -1034,13 +1063,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="payerNameOrCompany"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Nome ou Empresa que pagará a viagem*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1052,7 +1085,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="payerTel"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Telefone Residencial*
                     </FormLabel>
@@ -1065,7 +1098,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                         placeholder="Insira o telefone residencial..."
                         defaultCountry="BR"
                         className={cn(
-                          "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
                           },
@@ -1087,13 +1120,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="payerRelation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Relação com o Solicitante*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1114,13 +1151,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="payerAddress"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Endereço completo*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1132,11 +1173,15 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="payerEmail"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">E-mail*</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />

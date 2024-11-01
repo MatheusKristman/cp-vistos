@@ -441,13 +441,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Primeiro nome (Conforme passaporte)*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -459,13 +463,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="lastName"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Sobrenome (Conforme passaporte)*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -477,7 +485,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="cpf"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">CPF*</FormLabel>
 
                     <FormControl>
@@ -489,6 +497,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                         name={field.name}
                         onBlur={field.onBlur}
                         onChange={handleCPFPersonalDataChange}
+                        className="!mt-auto"
                       />
                     </FormControl>
 
@@ -503,7 +512,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="otherNamesConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Possui outros nomes? (Solteira/Nome
                       Profissional/Religioso/etc...)
@@ -545,7 +554,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "w-full bg-secondary p-4 flex flex-col space-y-3",
+                      "w-full bg-secondary rounded-xl p-4 flex flex-col gap-2",
                       {
                         hidden: otherNamesConfirmationValue === "Não",
                       },
@@ -559,6 +568,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                       <div className="flex flex-col gap-2">
                         <div className="flex gap-2 justify-between">
                           <Input
+                            className="!mt-auto"
                             disabled={isPending || isSavePending}
                             name={field.name}
                             ref={field.ref}
@@ -585,9 +595,9 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                             {otherNames.map((name, index) => (
                               <div
                                 key={`otherName-${index}`}
-                                className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
+                                className="py-2 px-4 bg-primary/40 rounded-full flex items-center gap-2 group"
                               >
-                                <span className="text-sm font-medium text-foreground">
+                                <span className="text-sm font-medium text-white">
                                   {name}
                                 </span>
 
@@ -599,7 +609,11 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                                   disabled={isPending || isSavePending}
                                   onClick={() => handleRemoveOtherNames(index)}
                                 >
-                                  <X strokeWidth={1} size={20} />
+                                  <X
+                                    strokeWidth={1}
+                                    size={20}
+                                    color="#FFFFFF"
+                                  />
                                 </Button>
                               </div>
                             ))}
@@ -619,7 +633,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="sex"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">Sexo*</FormLabel>
 
                     <Select
@@ -627,7 +641,10 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger disabled={isPending || isSavePending}>
+                        <SelectTrigger
+                          className="!mt-auto"
+                          disabled={isPending || isSavePending}
+                        >
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -648,7 +665,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="maritalStatus"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Estado civil*
                     </FormLabel>
@@ -658,7 +675,10 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger disabled={isPending || isSavePending}>
+                        <SelectTrigger
+                          className="!mt-auto"
+                          disabled={isPending || isSavePending}
+                        >
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -695,7 +715,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="birthDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Data de nascimento*
                     </FormLabel>
@@ -706,6 +726,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                           <Button
                             variant="date"
                             className={cn(
+                              "!mt-auto",
                               !field.value && "text-muted-foreground",
                             )}
                             disabled={isPending || isSavePending}
@@ -745,8 +766,8 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                           classNames={{
                             day_hidden: "invisible",
                             dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                            caption_dropdowns: "flex gap-3",
+                              "px-2 py-1.5 bg-background border border-border rounded-lg text-foreground text-sm focus-visible:outline-none",
+                            caption_dropdowns: "flex rounded-lg gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
                           }}
@@ -766,13 +787,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="birthCity"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Cidade de Nascimento*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -784,13 +809,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="birthState"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Estado de Nascimento*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -802,13 +831,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="birthCountry"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       País de Nascimento*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -822,13 +855,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="originCountry"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       País de origem (nacionalidade)*
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -842,7 +879,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="otherNationalityConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Possui outra nacionalidade?
                     </FormLabel>
@@ -883,6 +920,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       otherNationalityConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -892,6 +930,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={
                           otherNationalityConfirmation === "Não" ||
                           isPending ||
@@ -912,6 +951,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       otherNationalityConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -921,6 +961,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={
                           otherNationalityConfirmation === "Não" ||
                           isPending ||
@@ -941,7 +982,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="otherCountryResidentConfirmation"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       É residente de um país diferente da sua nacionalidade?
                     </FormLabel>
@@ -982,6 +1023,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
+                      "flex flex-col gap-2",
                       otherCountryResidentConfirmation === "Não" && "hidden",
                     )}
                   >
@@ -990,7 +1032,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                     </FormLabel>
 
                     <FormControl>
-                      <Input {...field} />
+                      <Input className="!mt-auto" {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1004,14 +1046,18 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="USSocialSecurityNumber"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       U.S. Social Security Number (aplicável somente para quem
                       já trabalhou nos EUA)
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1023,14 +1069,18 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="USTaxpayerIDNumber"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       U.S. Taxpayer ID Number (aplicável somente para quem já
                       trabalhou nos EUA)
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />

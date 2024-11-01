@@ -409,7 +409,7 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
               control={form.control}
               name="hasUSAOrganizationOrResident"
               render={({ field }) => (
-                <FormItem className="mb-6">
+                <FormItem className="flex flex-col gap-2 mb-6">
                   <FormLabel className="text-foreground">
                     Você possui contato com alguém dos EUA?
                   </FormLabel>
@@ -454,13 +454,17 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentName"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Nome completo da pessoa ou Organização
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -472,13 +476,17 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentRelation"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Qual é a relação do contato com você?
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -497,13 +505,17 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentAddress"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Endereço do contato nos EUA
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -515,13 +527,14 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentZipCode"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Zip code
                     </FormLabel>
 
                     <FormControl>
                       <Input
+                        className="!mt-auto"
                         disabled={isPending || isSavePending}
                         maxLength={5}
                         {...field}
@@ -544,13 +557,17 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentCity"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Cidade
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -562,13 +579,17 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentState"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Estado
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -580,13 +601,17 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentCountry"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       País
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -605,7 +630,7 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentTel"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       Telefone
                     </FormLabel>
@@ -617,7 +642,7 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                         placeholder="Insira seu telefone..."
                         defaultCountry="BR"
                         className={cn(
-                          "flex h-12 w-full border border-secondary transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/50 focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
                           },
@@ -640,13 +665,17 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="organizationOrUSAResidentEmail"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col justify-between">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground text-sm">
                       E-mail
                     </FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />

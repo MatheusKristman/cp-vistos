@@ -15,17 +15,17 @@ export function Header() {
   const { y } = useWindowScroll();
 
   return (
-    <header className="w-full bg-transparent h-14 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-30 sm:px-16 sm:top-4 lg:container">
+    <header className="w-full bg-transparent h-20 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-30 sm:px-16 sm:top-4 lg:container">
       <div
         className={cn(
-          "w-full h-14 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(56px+32px)] sm:-translate-y-[calc(100%+16px)]",
+          "w-full h-20 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(80px+32px)] sm:-translate-y-[calc(100%+16px)]",
           {
             "translate-y-0 sm:-translate-y-4": y > 0,
-          }
+          },
         )}
       />
 
-      <Link href="/" className="relative w-12 h-7 z-40 sm:w-16 sm:h-9">
+      <Link href="/" className="relative w-20 h-20 z-40">
         <Image
           src="/assets/images/cp-vistos-logo-azul.png"
           alt="CP Vistos Logo"
@@ -128,7 +128,9 @@ export function Header() {
             Contato
           </Button>
 
-          <Button variant="destructive">Entrar</Button>
+          <Button variant="destructive" asChild>
+            <Link href="/login">Entrar</Link>
+          </Button>
         </div>
       </nav>
       {/* <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
