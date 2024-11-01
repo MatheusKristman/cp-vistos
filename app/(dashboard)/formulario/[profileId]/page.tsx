@@ -79,7 +79,13 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
 
   return (
     <>
-      <DashboardHeader profileId={profileId} isEditing={isEditing} currentStep={currentStep} />
+      <DashboardHeader
+        profileId={profileId}
+        isEditing={isEditing}
+        currentStep={currentStep}
+        formStep={formStep}
+        isForm
+      />
 
       <div className="w-full h-full min-h-[calc(100vh-80px)] p-6 flex flex-col pt-20 sm:pt-36 sm:px-16 sm:py-12 lg:container lg:mx-auto lg:min-h-[calc(100vh-96px)]">
         <div className={cn("w-full flex flex-col items-center gap-4 mb-6 sm:mb-12 lg:mb-24", isEditing && "hidden")}>

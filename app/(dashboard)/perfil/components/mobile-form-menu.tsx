@@ -18,15 +18,13 @@ interface Props {
   profileId?: string;
   currentStep?: number;
   isEditing?: boolean;
+  formStep?: string | null;
 }
 
-export function MobileFormMenu({ isFormMenu, profileId, currentStep, isEditing }: Props) {
+export function MobileFormMenu({ isFormMenu, profileId, currentStep, isEditing, formStep }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const formStep = searchParams.get("formStep");
 
   function close() {
     setIsOpen(false);

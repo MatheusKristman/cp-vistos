@@ -14,12 +14,14 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   isCollab?: boolean;
+  isForm?: boolean;
   isEditing?: boolean;
   currentStep?: number;
   profileId?: string;
+  formStep?: string | null;
 }
 
-export function DashboardHeader({ isCollab, isEditing, currentStep, profileId }: Props) {
+export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, profileId, formStep }: Props) {
   const session = useSession();
   const { y } = useWindowScroll();
 
@@ -51,7 +53,9 @@ export function DashboardHeader({ isCollab, isEditing, currentStep, profileId }:
       </Link>
 
       <div className="lg:hidden h-full flex items-center gap-4 z-40">
-        <MobileFormMenu isEditing={isEditing} currentStep={currentStep} profileId={profileId} />
+        {isForm && (
+          <MobileFormMenu isEditing={isEditing} currentStep={currentStep} profileId={profileId} formStep={formStep} />
+        )}
 
         {isCollab && <NotificationHeaderMenu />}
 
