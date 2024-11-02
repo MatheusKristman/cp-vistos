@@ -1090,7 +1090,7 @@ export default function CreateAccountPage() {
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2 sm:order-1 xl:order-2">
                       <FormLabel>CASV</FormLabel>
-                      {/* TODO: arrumar tamanho do texto saindo para fora do input */}
+
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>

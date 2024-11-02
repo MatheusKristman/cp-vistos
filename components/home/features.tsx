@@ -138,7 +138,6 @@ export function Features() {
               </motion.p>
             </div>
 
-            {/* TODO: redirecionar para whatsapp */}
             <Button variant="secondary" className="py-4 h-[60px] text-xl lg:w-1/2" asChild>
               <motion.a
                 variants={itemAnimation}

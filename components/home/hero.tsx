@@ -8,8 +8,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { HeroCarouselItem } from "./hero-carousel-item";
 
-// TODO: adicionar carrossel no hero com os seguintes temas: New York (Times Square, central park e statue of liberty), Disneyland e Chicago
-
 export function Hero() {
   const [bannerShowing, setBannerShowing] = useState<number>(0);
 
@@ -65,14 +63,12 @@ export function Hero() {
                 transition={{ delay: 0.6, duration: 0.5, ease: "circOut" }}
                 className="w-full bg-secondary/50 rounded-[36px] flex flex-col gap-4 items-center p-3 sm:flex-row"
               >
-                {/* TODO: redirecionar para whatsapp */}
                 <Button variant="destructive" className="w-full text-xl font-medium rounded-full" asChild>
                   <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
                     Entre em contato
                   </a>
                 </Button>
 
-                {/* TODO: redirecionar para seção abaixo */}
                 <Button variant="link" className="w-full text-xl font-medium">
                   <ScrollLink to="services" activeClass="active" spy={true} smooth={true} offset={-200} duration={1000}>
                     Conheça nossos serviços
@@ -139,7 +135,6 @@ export function Hero() {
           </div>
         </div>
 
-        {/* TODO: adicionar fotos do hero como carrossel */}
         <AnimatePresence mode="wait">
           {bannerShowing === 0 && (
             <HeroCarouselItem
