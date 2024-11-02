@@ -15,10 +15,9 @@ export function Footer() {
             />
           </Link>
 
-          {/* TODO: links para redirecionar para as redes sociais */}
           <ul className="flex items-center gap-6">
             <li>
-              <a href="#" target="_blank" rel="noreferrer noopener">
+              <a href="https://www.instagram.com/cpvistos/" target="_blank" rel="noreferrer noopener">
                 <Image
                   src="/assets/icons/Instagram.svg"
                   alt="Instagram"
@@ -30,7 +29,7 @@ export function Footer() {
             </li>
 
             <li>
-              <a href="#" target="_blank" rel="noreferrer noopener">
+              <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
                 <Image
                   src="/assets/icons/Whatsapp.svg"
                   alt="Whatsapp"
@@ -42,7 +41,7 @@ export function Footer() {
             </li>
 
             <li>
-              <a href="#" target="_blank" rel="noreferrer noopener">
+              <a href="mailto:cpassessoriavistos@gmail.com" target="_blank" rel="noreferrer noopener">
                 <Image
                   src="/assets/icons/Gmail.svg"
                   alt="Gmail"

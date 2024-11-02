@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Element } from "react-scroll";
+import { Element, Link as ScrollLink } from "react-scroll";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -55,8 +55,7 @@ export function Hero() {
                   transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
                   className="text-xl font-medium text-foreground/70 lg:max-w-lg"
                 >
-                  Facilitamos o processo para obter ou renovar seu visto
-                  americano, com rapidez e sem complicações.
+                  Facilitamos o processo para obter ou renovar seu visto americano, com rapidez e sem complicações.
                 </motion.p>
               </div>
 
@@ -67,16 +66,17 @@ export function Hero() {
                 className="w-full bg-secondary/50 rounded-[36px] flex flex-col gap-4 items-center p-3 sm:flex-row"
               >
                 {/* TODO: redirecionar para whatsapp */}
-                <Button
-                  variant="destructive"
-                  className="w-full text-xl font-medium rounded-full"
-                >
-                  Entre em contato
+                <Button variant="destructive" className="w-full text-xl font-medium rounded-full" asChild>
+                  <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                    Entre em contato
+                  </a>
                 </Button>
 
                 {/* TODO: redirecionar para seção abaixo */}
                 <Button variant="link" className="w-full text-xl font-medium">
-                  Conheça nossos serviços
+                  <ScrollLink to="services" activeClass="active" spy={true} smooth={true} offset={-200} duration={1000}>
+                    Conheça nossos serviços
+                  </ScrollLink>
                 </Button>
               </motion.div>
             </div>
@@ -97,12 +97,8 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">
-                    + 2.000
-                  </p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">
-                    Clientes
-                  </p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">+ 2.000</p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">Clientes</p>
                 </div>
               </div>
 
@@ -118,12 +114,8 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">
-                    98%
-                  </p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">
-                    De Aprovação
-                  </p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">98%</p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">De Aprovação</p>
                 </div>
               </div>
 
@@ -139,12 +131,8 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">
-                    20 Anos
-                  </p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">
-                    De Experiência
-                  </p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">20 Anos</p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">De Experiência</p>
                 </div>
               </div>
             </motion.div>

@@ -142,7 +142,7 @@ export function Features() {
             <Button variant="secondary" className="py-4 h-[60px] text-xl lg:w-1/2" asChild>
               <motion.a
                 variants={itemAnimation}
-                href="#"
+                href="https://wa.link/2i5gt9"
                 target="_blank"
                 rel="noreferrer noopener"
                 className="!text-destructive font-semibold flex items-center gap-4"
