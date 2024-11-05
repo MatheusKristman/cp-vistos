@@ -21,7 +21,14 @@ interface Props {
   formStep?: string | null;
 }
 
-export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, profileId, formStep }: Props) {
+export function DashboardHeader({
+  isCollab,
+  isForm,
+  isEditing,
+  currentStep,
+  profileId,
+  formStep,
+}: Props) {
   const session = useSession();
   const { y } = useWindowScroll();
 
@@ -31,7 +38,7 @@ export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, prof
         "w-full bg-transparent h-20 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-30 sm:px-16 sm:top-4 lg:container",
         {
           "lg:left-[250px] lg:w-[calc(100%-250px)]": isCollab,
-        }
+        },
       )}
     >
       <div
@@ -39,7 +46,7 @@ export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, prof
           "w-full h-20 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(80px+32px)] sm:-translate-y-[calc(100%+16px)]",
           {
             "translate-y-0 sm:-translate-y-4": y > 0,
-          }
+          },
         )}
       />
 
@@ -54,12 +61,21 @@ export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, prof
 
       <div className="lg:hidden h-full flex items-center gap-4 z-40">
         {isForm && (
-          <MobileFormMenu isEditing={isEditing} currentStep={currentStep} profileId={profileId} formStep={formStep} />
+          <MobileFormMenu
+            isEditing={isEditing}
+            currentStep={currentStep}
+            profileId={profileId}
+            formStep={formStep}
+          />
         )}
 
         {isCollab && <NotificationHeaderMenu />}
 
-        <Button variant="outline" asChild className="flex bg-secondary/40 border-secondary/40 lg:hidden">
+        <Button
+          variant="outline"
+          asChild
+          className="flex bg-secondary/40 border-secondary/40 text-base lg:hidden"
+        >
           {session.status === "authenticated" ? (
             <Link href="/verificando-usuario">
               <Users color="#314060" />
@@ -71,7 +87,10 @@ export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, prof
           )}
         </Button>
 
-        <Button variant="destructive" onClick={() => signOut({ callbackUrl: "/" })}>
+        <Button
+          variant="destructive"
+          onClick={() => signOut({ callbackUrl: "/" })}
+        >
           <LogOut />
         </Button>
       </div>
@@ -81,7 +100,7 @@ export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, prof
 
         <Button
           variant="outline"
-          className="hidden bg-secondary/40 border-secondary/40 text-lg lg:flex lg:items-center lg:gap-2"
+          className="hidden bg-secondary/40 border-secondary/40 lg:flex lg:items-center lg:gap-2"
           asChild
         >
           {session ? (
@@ -100,7 +119,7 @@ export function DashboardHeader({ isCollab, isForm, isEditing, currentStep, prof
         <Button
           onClick={() => signOut({ callbackUrl: "/" })}
           variant="destructive"
-          className="hidden text-lg lg:flex lg:items-center lg:gap-2"
+          className="hidden lg:flex lg:items-center lg:gap-2"
         >
           Sair
           <LogOut />

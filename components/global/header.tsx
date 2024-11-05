@@ -9,10 +9,13 @@ import { Link as ScrollLink } from "react-scroll";
 import { Button } from "@/components/ui/button";
 import { MobileMenu } from "./mobile-menu";
 import { cn } from "@/lib/utils";
+import { LogOut, Users } from "lucide-react";
 
 export function Header() {
   const session = useSession();
   const { y } = useWindowScroll();
+
+  console.log({ session });
 
   return (
     <header className="w-full bg-transparent h-20 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-30 sm:px-16 sm:top-4 lg:container">
@@ -21,7 +24,7 @@ export function Header() {
           "w-full h-20 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(80px+32px)] sm:-translate-y-[calc(100%+16px)]",
           {
             "translate-y-0 sm:-translate-y-4": y > 0,
-          }
+          },
         )}
       />
 
@@ -123,17 +126,44 @@ export function Header() {
           </li>
         </ul>
 
-        <div className="flex items-center gap-4">
-          <Button variant="outline" className="hover:bg-white/40" asChild>
-            <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
-              Contato
-            </a>
-          </Button>
+        {session.status === "authenticated" ? (
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              className="bg-secondary/40 flex items-center gap-2"
+              asChild
+            >
+              <Link href="/verificando-usuario">
+                Perfil <Users color="#314060" />
+              </Link>
+            </Button>
 
-          <Button variant="destructive" asChild>
-            <Link href="/login">Entrar</Link>
-          </Button>
-        </div>
+            <Button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              variant="destructive"
+              className="flex items-center gap-2"
+            >
+              Sair
+              <LogOut />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <Button variant="outline" className="hover:bg-white/40" asChild>
+              <a
+                href="https://wa.link/2i5gt9"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                Contato
+              </a>
+            </Button>
+
+            <Button variant="destructive" asChild>
+              <Link href="/login">Entrar</Link>
+            </Button>
+          </div>
+        )}
       </nav>
       {/* <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
         <div className="flex items-center gap-24">
