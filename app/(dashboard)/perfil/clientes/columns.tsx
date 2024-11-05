@@ -3,11 +3,21 @@
 import { ScheduleAccount, StatusDS, VisaType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { differenceInDays, format } from "date-fns";
-import { AlertTriangle, ArrowUpDown, Loader2, MoreHorizontal } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowUpDown,
+  Loader2,
+  MoreHorizontal,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 import { trpc } from "@/lib/trpc-client";
 
@@ -33,7 +43,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Nome
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -44,8 +57,11 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "DSValid",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Data do barcode
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Data Venc. do barcode
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -91,7 +107,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "CASVDate",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Data do CASV
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -111,7 +130,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "interviewDate",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Data da entrevista
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -131,7 +153,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "meetingDate",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Data da reunião
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -152,7 +177,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "visaType",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Status do visto
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -179,7 +207,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "scheduleAccount",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Conta de agendamento
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -206,7 +237,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "tax",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Taxa
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -230,7 +264,10 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "statusDS",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           DS-160
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
