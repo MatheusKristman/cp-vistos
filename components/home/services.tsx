@@ -18,10 +18,6 @@ import { cn } from "@/lib/utils";
 
 const SERVICES = [
   {
-    title: "Vistos Americanos",
-    desc: "Assessoria completa na aquisição de vistos para não imigrantes com segurança.",
-  },
-  {
     title: "Autorização ESTA",
     desc: "Emissão de autorização para viagens aos EUA.",
   },
@@ -30,12 +26,16 @@ const SERVICES = [
     desc: "Emissão de autorização para quem já possui visto americano.",
   },
   {
-    title: "Passaporte brasileiro",
+    title: "Passaporte Brasileiro",
     desc: "Auxílio na emissão de passaporte para brasileiros.",
   },
   {
     title: "Passaporte Português",
     desc: "Monitoramento de vagas para passaporte português.",
+  },
+  {
+    title: "Visto Americano",
+    desc: "Solicitação de primeiro visto e renovação com assessoria completa.",
   },
 ];
 

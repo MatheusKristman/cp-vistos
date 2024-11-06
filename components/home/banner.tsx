@@ -13,18 +13,18 @@ import { cn } from "@/lib/utils";
 const BANNER = [
   {
     title: "Já teve um visto negado e quer tentar novamente?",
-    desc: "Entre em contato para fazer uma análise gratuita do seu perfil! Temos mais % de Reversão!",
+    desc: "Entre em contato e faça uma análise gratuita do seu perfil. Temos mais 99% de Casos Revertidos!",
     buttonText: "Entrar em contato",
   },
   {
-    title: "Renove o seu visto em até 15 dias!",
-    desc: "Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, acaliquet odio mattis.",
-    buttonText: "Lorem ipsum",
+    title: "Monitoramento de Vagas para Entrevista!",
+    desc: "Nós cuidamos do seu processo de visto com nosso serviço de monitoramento contínuo de vagas. Não perca a chance de garantir sua entrevista na hora certa.",
+    buttonText: "Saiba mais",
   },
   {
     title: "Renove o seu visto em até 15 dias!",
-    desc: "Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, acaliquet odio mattis.",
-    buttonText: "Lorem ipsum",
+    desc: "Com nossa assessoria especializada, você renova seu visto de forma rápida e descomplicada em até 15 dias! Providenciamos todo o trâmite e se você quiser, sem sair de casa!!",
+    buttonText: "Fale conosco",
   },
 ];
 
@@ -94,13 +94,15 @@ export function Banner() {
                   >
                     <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10 sm:max-w-sm lg:max-w-2xl">
                       <div className="flex flex-col gap-2">
-                        <h5 className="text-white font-bold text-2xl lg:text-4xl">{banner.title}</h5>
+                        <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">{banner.title}</h5>
 
                         <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">{banner.desc}</p>
                       </div>
 
-                      <Button variant="secondary" className="sm:w-fit lg:text-xl">
-                        {banner.buttonText}
+                      <Button variant="secondary" className="sm:w-fit lg:text-xl" asChild>
+                        <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                          {banner.buttonText}
+                        </a>
                       </Button>
                     </div>
                   </div>

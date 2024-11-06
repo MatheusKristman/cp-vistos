@@ -3,12 +3,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 
 const config = {
   darkMode: ["class"],
-  content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-  ],
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
     container: {
@@ -69,15 +64,14 @@ const config = {
         "mobile-about": "url('/assets/images/mobile-about-bg.png')",
         "tablet-about": "url('/assets/images/tablet-about-bg.png')",
         "desktop-about": "url('/assets/images/desktop-about-bg.png')",
-        "banner-1": "url('/assets/images/banner-1.jpg')",
+        "banner-1": "url('/assets/images/banner-1.png')",
         "banner-2": "url('/assets/images/banner-2.jpg')",
         "banner-3": "url('/assets/images/banner-3.jpg')",
         "mobile-services": "url('/assets/images/mobile-services.png')",
         "desktop-services": "url('/assets/images/desktop-services.png')",
         "mobile-testimonial": "url('/assets/images/mobile-testimonial-bg.png')",
         "tablet-testimonial": "url('/assets/images/tablet-testimonial-bg.png')",
-        "desktop-testimonial":
-          "url('/assets/images/desktop-testimonial-bg.png')",
+        "desktop-testimonial": "url('/assets/images/desktop-testimonial-bg.png')",
         "login-1": "url('/assets/images/login-1.png')",
         "login-2": "url('/assets/images/login-2.png')",
         "login-3": "url('/assets/images/login-3.png')",
