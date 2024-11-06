@@ -53,7 +53,8 @@ export function Hero() {
                   transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
                   className="text-xl font-medium text-foreground/70 lg:max-w-lg"
                 >
-                  Facilitamos o processo para obter ou renovar seu visto americano, com rapidez e sem complicações.
+                  Facilitamos o processo para obter ou renovar seu visto
+                  americano, com rapidez e sem complicações.
                 </motion.p>
               </div>
 
@@ -63,14 +64,29 @@ export function Hero() {
                 transition={{ delay: 0.6, duration: 0.5, ease: "circOut" }}
                 className="w-full bg-secondary/50 rounded-[36px] flex flex-col gap-4 items-center p-3 sm:flex-row"
               >
-                <Button variant="destructive" className="w-full text-xl font-medium rounded-full" asChild>
-                  <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                <Button
+                  variant="destructive"
+                  className="w-full text-xl font-medium rounded-full"
+                  asChild
+                >
+                  <a
+                    href="https://wa.link/2i5gt9"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
                     Entre em contato
                   </a>
                 </Button>
 
                 <Button variant="link" className="w-full text-xl font-medium">
-                  <ScrollLink to="services" activeClass="active" spy={true} smooth={true} offset={-200} duration={1000}>
+                  <ScrollLink
+                    to="services"
+                    activeClass="active"
+                    spy={true}
+                    smooth={true}
+                    offset={-200}
+                    duration={1000}
+                  >
                     Conheça nossos serviços
                   </ScrollLink>
                 </Button>
@@ -93,8 +109,12 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">+ 2.000</p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">Clientes</p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">
+                    + 2.000
+                  </p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">
+                    Clientes
+                  </p>
                 </div>
               </div>
 
@@ -110,8 +130,12 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">98%</p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">De Aprovação</p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">
+                    98%
+                  </p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">
+                    De Aprovação
+                  </p>
                 </div>
               </div>
 
@@ -127,41 +151,138 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">20 Anos</p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">De Experiência</p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">
+                    20 Anos
+                  </p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">
+                    De Experiência
+                  </p>
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
 
-        <AnimatePresence mode="wait">
-          {bannerShowing === 0 && (
-            <HeroCarouselItem
-              key={bannerShowing}
-              imageSrc="/assets/images/hero-1.webp"
-              title="Disneyland"
-              location="Orlando"
-            />
-          )}
+        <AnimatePresence>
+          <motion.div className="hidden lg:block lg:absolute lg:top-44 lg:right-0 lg:w-2/5 lg:h-[700px]">
+            <AnimatePresence mode="popLayout">
+              {bannerShowing === 0 && (
+                <motion.div
+                  key="hero-image-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1, ease: "easeInOut" }}
+                  className="w-full h-full"
+                >
+                  <Image
+                    src="/assets/images/hero-1.webp"
+                    alt="Disneyland"
+                    fill
+                    className="object-center object-cover rounded-l-[60px]"
+                    priority
+                  />
+                </motion.div>
+              )}
 
-          {bannerShowing === 1 && (
-            <HeroCarouselItem
-              key={bannerShowing}
-              imageSrc="/assets/images/hero-2.jpg"
-              title="Estátua da Liberdade"
-              location="Nova Iorque"
-            />
-          )}
+              {bannerShowing === 1 && (
+                <motion.div
+                  key="hero-image-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1, ease: "easeInOut" }}
+                  className="w-full h-full"
+                >
+                  <Image
+                    src="/assets/images/hero-2.jpg"
+                    alt="Estátua da Liberdade"
+                    fill
+                    className="object-center object-cover rounded-l-[60px]"
+                    priority
+                  />
+                </motion.div>
+              )}
 
-          {bannerShowing === 2 && (
-            <HeroCarouselItem
-              key={bannerShowing}
-              imageSrc="/assets/images/hero-3.jpg"
-              title="Bellagio"
-              location="Las Vegas"
-            />
-          )}
+              {bannerShowing === 2 && (
+                <motion.div
+                  key="hero-image-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1, ease: "easeInOut" }}
+                  className="w-full h-full"
+                >
+                  <Image
+                    src="/assets/images/hero-3.jpg"
+                    alt="Bellagio"
+                    fill
+                    className="object-center object-cover rounded-l-[60px]"
+                    priority
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              {bannerShowing === 0 && (
+                <motion.div
+                  key="hero-desc-1"
+                  initial={{ x: 50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 50, opacity: 0 }}
+                  transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
+                  className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
+                >
+                  <h3 className="text-2xl font-semibold text-foreground">
+                    Disneyland
+                  </h3>
+
+                  <p className="text-base font-medium text-foreground/70">
+                    Orlando
+                  </p>
+                </motion.div>
+              )}
+
+              {bannerShowing === 1 && (
+                <motion.div
+                  key="hero-desc-2"
+                  initial={{ x: 50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 50, opacity: 0 }}
+                  transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
+                  className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
+                >
+                  <h3 className="text-2xl font-semibold text-foreground">
+                    Estátua da Liberdade
+                  </h3>
+
+                  <p className="text-base font-medium text-foreground/70">
+                    Nova Iorque
+                  </p>
+                </motion.div>
+              )}
+
+              {bannerShowing === 2 && (
+                <motion.div
+                  key="hero-desc-3"
+                  initial={{ x: 50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 50, opacity: 0 }}
+                  transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
+                  className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
+                >
+                  <h3 className="text-2xl font-semibold text-foreground">
+                    Bellagio
+                  </h3>
+
+                  <p className="text-base font-medium text-foreground/70">
+                    Las Vegas
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </AnimatePresence>
       </Element>
     </main>
