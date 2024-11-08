@@ -8,6 +8,8 @@ import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/componen
 import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc-client";
+import Image from "next/image";
 
 // TODO: adicionar os textos e link para botão
 const BANNER = [
@@ -15,16 +17,19 @@ const BANNER = [
     title: "Já teve um visto negado e quer tentar novamente?",
     desc: "Entre em contato e faça uma análise gratuita do seu perfil. Temos mais 99% de Casos Revertidos!",
     buttonText: "Entrar em contato",
+    imageUrl: "/assets/images/banner-1.png",
   },
   {
     title: "Monitoramento de vagas para entrevista!",
     desc: "Nós cuidamos do seu processo de visto com nosso serviço de monitoramento contínuo de vagas. Não perca a chance de garantir sua entrevista na hora certa.",
     buttonText: "Saiba mais",
+    imageUrl: "/assets/images/banner-2.jpg",
   },
   {
     title: "Renove o seu visto em até 15 dias!",
     desc: "Com nossa assessoria especializada, você renova seu visto de forma rápida e descomplicada em até 15 dias! Providenciamos todo o trâmite e se você quiser, sem sair de casa!!",
     buttonText: "Fale conosco",
+    imageUrl: "/assets/images/banner-3.jpg",
   },
 ];
 
@@ -49,6 +54,8 @@ export function Banner() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+
+  const { data } = trpc.websiteRouter.getBanners.useQuery();
 
   useEffect(() => {
     if (!api) {
@@ -80,34 +87,59 @@ export function Banner() {
             plugins={[Autoplay({ delay: 10000 })]}
           >
             <CarouselContent className="h-[550px] ml-0 sm:h-[450px]">
-              {BANNER.map((banner, index) => (
-                <CarouselItem key={index} className="h-full pl-0">
-                  <div
-                    className={cn(
-                      "relative w-full h-full bg-cover bg-center flex sm:justify-end after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:w-full after:h-full after:bg-gradient-to-b after:from-transparent after:to-[#262525] sm:after:bg-gradient-to-r",
-                      {
-                        "bg-banner-1": index === 0,
-                        "bg-banner-2": index === 1,
-                        "bg-banner-3 bg-bottom": index === 2,
-                      }
-                    )}
-                  >
-                    <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10 sm:max-w-sm lg:max-w-2xl">
-                      <div className="flex flex-col gap-2">
-                        <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">{banner.title}</h5>
+              {data && data.banners.length > 0
+                ? data.banners.map((banner, index) => (
+                    <CarouselItem key={banner.id} className="h-full pl-0">
+                      <div className="relative w-full h-full bg-cover bg-center flex sm:justify-end">
+                        <Image
+                          src={banner.imageUrl}
+                          alt="Banner 1"
+                          fill
+                          className="object-cover object-center absolute top-0 left-0 right-0 bottom-0"
+                        />
 
-                        <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">{banner.desc}</p>
+                        <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10 bg-gradient-to-b from-transparent to-[#262525] sm:bg-gradient-to-r sm:max-w-sm lg:max-w-2xl">
+                          <div className="flex flex-col gap-2">
+                            <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">{banner.title}</h5>
+
+                            <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">{banner.desc}</p>
+                          </div>
+
+                          <Button variant="secondary" className="sm:w-fit lg:text-xl" asChild>
+                            <a href={banner.btnLink} target="_blank" rel="noreferrer noopener">
+                              {banner.btnText}
+                            </a>
+                          </Button>
+                        </div>
                       </div>
+                    </CarouselItem>
+                  ))
+                : BANNER.map((banner, index) => (
+                    <CarouselItem key={index} className="h-full pl-0">
+                      <div className="relative w-full h-full bg-cover bg-center flex sm:justify-end">
+                        <Image
+                          src={banner.imageUrl}
+                          alt="Banner 1"
+                          fill
+                          className="object-cover object-center absolute top-0 left-0 right-0 bottom-0"
+                        />
 
-                      <Button variant="secondary" className="sm:w-fit lg:text-xl" asChild>
-                        <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
-                          {banner.buttonText}
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
+                        <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10 bg-gradient-to-b from-transparent to-[#262525] sm:bg-gradient-to-r sm:max-w-sm lg:max-w-2xl">
+                          <div className="flex flex-col gap-2">
+                            <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">{banner.title}</h5>
+
+                            <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">{banner.desc}</p>
+                          </div>
+
+                          <Button variant="secondary" className="sm:w-fit lg:text-xl" asChild>
+                            <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                              {banner.buttonText}
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
             </CarouselContent>
 
             <div className="w-full flex items-center justify-center gap-6 absolute bottom-6 left-1/2 -translate-x-1/2 transition-opacity duration-500 opacity-0 group-hover:opacity-100">

@@ -423,4 +423,5 @@ model Banner {
   btnText  String
   btnLink  String
   imageUrl String
+  imageKey String
 }

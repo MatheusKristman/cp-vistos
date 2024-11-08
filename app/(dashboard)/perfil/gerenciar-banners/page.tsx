@@ -2,13 +2,32 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Edit, FileX, Loader2, Trash2 } from "lucide-react";
 import { trpc } from "@/lib/trpc-client";
 
 export default function ManageBannersPage() {
+  const utils = trpc.useUtils();
   const { data, isPending } = trpc.websiteRouter.getBanners.useQuery();
+  const { mutate: deleteBanner, isPending: isDeleting } = trpc.websiteRouter.deleteBanner.useMutation({
+    onSuccess: (res) => {
+      if (res.error) {
+        toast.error(res.message);
+
+        return;
+      }
+
+      toast.success(res.message);
+      utils.websiteRouter.getBanners.invalidate();
+    },
+    onError: (error) => {
+      console.error(error);
+
+      toast.error("Ocorreu um erro ao deletar o banner");
+    },
+  });
 
   console.log(data);
 
@@ -17,12 +36,12 @@ export default function ManageBannersPage() {
       <div className="w-full flex flex-col gap-4 items-center my-6 sm:flex-row sm:items-end sm:justify-between lg:my-12">
         <h1 className="text-2xl lg:text-3xl xl:text-4xl font-semibold">Banners</h1>
 
-        <Button size="xl" className="w-full sm:w-fit" asChild>
+        <Button size="xl" className="w-full sm:w-fit" disabled={isPending || isDeleting} asChild>
           <Link href="/perfil/gerenciar-banners/adicionar">Adicionar Banner</Link>
         </Button>
       </div>
 
-      <div className="w-full flex flex-col gap-6 my-12">
+      <div className="w-full flex flex-col gap-20 my-12">
         {isPending ? (
           <div className="w-full flex flex-col gap-2 items-center justify-center">
             <Loader2 className="animate-spin size-12" />
@@ -55,14 +74,28 @@ export default function ManageBannersPage() {
               </div>
 
               <div className="w-full flex flex-col items-center gap-4 sm:flex-row">
-                <Button variant="outline" size="xl" className="w-full flex items-center gap-2">
-                  Editar
-                  <Edit />
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="w-full flex items-center gap-2"
+                  disabled={isPending || isDeleting}
+                  asChild
+                >
+                  <Link href={`/perfil/gerenciar-banners/editar/${banner.id}`}>
+                    Editar
+                    <Edit />
+                  </Link>
                 </Button>
 
-                <Button variant="destructive" size="xl" className="w-full flex items-enter gap-2">
+                <Button
+                  variant="destructive"
+                  size="xl"
+                  className="w-full flex items-enter gap-2"
+                  onClick={() => deleteBanner({ bannerId: banner.id })}
+                  disabled={isPending || isDeleting}
+                >
                   Excluir
-                  <Trash2 />
+                  {isDeleting ? <Loader2 className="animate-spin" /> : <Trash2 />}
                 </Button>
               </div>
             </div>

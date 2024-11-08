@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDropzone } from "@uploadthing/react";
 import Image from "next/image";
 import { Export } from "iconsax-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import axios from "axios";
 
@@ -28,10 +28,11 @@ const formSchema = z.object({
   desc: z.string().min(1, "Este campo é obrigatório"),
   btnText: z.string().min(1, "Este campo é obrigatório"),
   btnLink: z.string().min(1, "Este campo é obrigatório").url("Url inválida"),
-  imageUrl: z.string().url("A URL da imagem é inválida"),
+  imageUrl: z.string().url("A URL da imagem é inválida").optional(),
 });
 
-export default function AddBannerPage() {
+export default function EditBanner({ params }: { params: { bannerId: string } }) {
+  const { bannerId } = params;
   const [image, setImage] = useState<null | File[]>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [imageKey, setImageKey] = useState<string>("");
@@ -39,19 +40,27 @@ export default function AddBannerPage() {
   const inputRef = useRef(null);
   const route = useRouter();
 
+  const { data, isPending: isBannerDataPending } = trpc.websiteRouter.getSelectedBanner.useQuery({ bannerId });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      desc: "",
-      btnText: "",
-      btnLink: "",
-      imageUrl: "",
+      title: data?.banner.title ?? "",
+      desc: data?.banner.desc ?? "",
+      btnText: data?.banner.btnText ?? "",
+      btnLink: data?.banner.btnLink ?? "",
+      imageUrl: data?.banner.imageUrl ?? "",
     },
   });
 
-  const { mutate: createBanner, isPending } = trpc.websiteRouter.createBanner.useMutation({
+  const { mutate: editBanner, isPending } = trpc.websiteRouter.editBanner.useMutation({
     onSuccess: (res) => {
+      if (res.error) {
+        toast.error(res.message);
+
+        return;
+      }
+
       toast.success(res.message);
 
       route.replace("/perfil/gerenciar-banners");
@@ -71,7 +80,7 @@ export default function AddBannerPage() {
       const values = form.getValues();
 
       console.log(values);
-      createBanner({ ...values, imageKey: res[0].key });
+      editBanner({ ...values, imageKey: res[0].key, bannerId });
     },
     onUploadError: (error) => {
       console.error(error.data);
@@ -90,6 +99,17 @@ export default function AddBannerPage() {
     accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
   });
 
+  useEffect(() => {
+    if (data && data.banner) {
+      form.setValue("btnLink", data.banner.btnLink);
+      form.setValue("title", data.banner.title);
+      form.setValue("desc", data.banner.desc);
+      form.setValue("btnText", data.banner.btnText);
+      form.setValue("imageUrl", data.banner.imageUrl);
+      setImageUrl(data.banner.imageUrl);
+    }
+  }, [data]);
+
   function handleCancelImage() {
     setImage(null);
     setImageUrl("");
@@ -101,15 +121,21 @@ export default function AddBannerPage() {
         shouldFocus: true,
       })
       .then(() => {
-        if (Object.keys(form.formState.errors).length === 0 && image) {
-          startUpload(image!);
+        if (Object.keys(form.formState.errors).length === 0) {
+          if (image) {
+            startUpload(image!);
+          } else {
+            const values = form.getValues();
+
+            editBanner({ ...values, bannerId });
+          }
         }
       });
   }
 
   return (
     <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 lg:ml-[250px] lg:px-40">
-      <h1 className="text-2xl lg:text-3xl xl:text-4xl font-semibold my-6 lg:my-12">Cadastro de Banner</h1>
+      <h1 className="text-2xl lg:text-3xl xl:text-4xl font-semibold my-6 lg:my-12">Edite o banner</h1>
 
       <Form {...form}>
         <form className="w-full flex flex-col gap-12">
@@ -157,7 +183,11 @@ export default function AddBannerPage() {
                     <FormLabel>Título</FormLabel>
 
                     <FormControl>
-                      <Input placeholder="Insira o título do banner" disabled={isPending || isUploading} {...field} />
+                      <Input
+                        placeholder="Insira o título do banner"
+                        disabled={isPending || isUploading || isBannerDataPending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -175,7 +205,7 @@ export default function AddBannerPage() {
                     <FormControl>
                       <Input
                         placeholder="Insira o texto do botão do banner"
-                        disabled={isPending || isUploading}
+                        disabled={isPending || isUploading || isBannerDataPending}
                         {...field}
                       />
                     </FormControl>
@@ -195,7 +225,7 @@ export default function AddBannerPage() {
                     <FormControl>
                       <Input
                         placeholder="Insira o link que o botão irá redirecionar"
-                        disabled={isPending || isUploading}
+                        disabled={isPending || isUploading || isBannerDataPending}
                         {...field}
                       />
                     </FormControl>
@@ -216,7 +246,7 @@ export default function AddBannerPage() {
                   <FormControl>
                     <Textarea
                       placeholder="Insira a descrição do banner"
-                      disabled={isPending || isUploading}
+                      disabled={isPending || isUploading || isBannerDataPending}
                       className="resize-none"
                       {...field}
                     />
@@ -229,19 +259,19 @@ export default function AddBannerPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-6 mb-12">
-            <Button variant="outline" size="xl" className="w-full order-1 sm:order-2 sm:w-fit">
+            <Button variant="outline" size="xl" className="w-full order-1 sm:order-2 sm:w-fit" asChild>
               <Link href="/perfil/gerenciar-banners">Cancelar</Link>
             </Button>
 
             <Button
               onClick={onSubmit}
-              disabled={isPending || isUploading}
+              disabled={isPending || isUploading || isBannerDataPending}
               type="button"
               variant="confirm"
               size="xl"
               className="w-full flex items-center gap-2 order-1 sm:order-2 sm:w-fit"
             >
-              Criar
+              Salvar
               {(isPending || isUploading) && <Loader2 className="animate-spin" />}
             </Button>
           </div>
