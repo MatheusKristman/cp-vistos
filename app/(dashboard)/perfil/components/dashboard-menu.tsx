@@ -52,6 +52,14 @@ export function DashboardMenu() {
             >
               <Link href="/perfil/gerenciar-colaboradores">Colaboradores</Link>
             </li>
+
+            <li
+              className={cn("text-xl", {
+                "font-semibold": pathname === "/perfil/gerenciar-banners",
+              })}
+            >
+              <Link href="/perfil/gerenciar-banners">Gerenciar Banners</Link>
+            </li>
           </>
         )}
       </ul>

@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { Poppins as FontSans } from "next/font/google";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
 
-import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
-
-import "./globals.css";
 import { NextAuthSessionProvider } from "@/providers/sessionProvider";
 import TRPCProvider from "@/providers/TRPCProvider";
+
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { cn } from "@/lib/utils";
+
+import "./globals.css";
 
 const poppins = FontSans({
   subsets: ["latin"],
@@ -31,7 +35,18 @@ export default function RootLayout({
         className={cn("relative min-h-screen overflow-x-hidden bg-background font-sans antialiased", poppins.variable)}
       >
         <NextAuthSessionProvider>
-          <TRPCProvider>{children}</TRPCProvider>
+          <TRPCProvider>
+            <NextSSRPlugin
+              /**
+               * The `extractRouterConfig` will extract **only** the route configs
+               * from the router to prevent additional information from being
+               * leaked to the client. The data passed to the client is the same
+               * as if you were to fetch `/api/uploadthing` directly.
+               */
+              routerConfig={extractRouterConfig(ourFileRouter)}
+            />
+            {children}
+          </TRPCProvider>
         </NextAuthSessionProvider>
         <Toaster />
       </body>

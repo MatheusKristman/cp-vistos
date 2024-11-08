@@ -67,18 +67,15 @@ export function Features() {
             className="w-full bg-white border border-secondary rounded-[36px] p-9 flex flex-col gap-6 relative z-[11]"
           >
             <div className="w-full flex flex-col gap-1">
-              <motion.p
-                variants={itemAnimation}
-                className="text-xl text-foreground/70 font-medium capitalize sm:text-2xl"
-              >
+              <motion.p variants={itemAnimation} className="text-xl text-foreground/70 font-medium sm:text-2xl">
                 O que nos torna únicos
               </motion.p>
 
               <motion.h2
                 variants={itemAnimation}
-                className="text-3xl text-foreground font-bold !leading-[110%] capitalize sm:text-4xl"
+                className="text-3xl text-foreground font-bold !leading-[110%] sm:text-4xl"
               >
-                Uma Experiência Que Você Só Encontra Aqui
+                Uma experiência que você só encontra aqui
               </motion.h2>
             </div>
 

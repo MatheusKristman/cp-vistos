@@ -131,7 +131,7 @@ export function Services() {
           >
             <motion.h2
               variants={textAnimation}
-              className="text-3xl font-bold text-foreground !leading-[110%] capitalize sm:text-4xl lg:text-center lg:text-5xl"
+              className="text-3xl font-bold text-foreground !leading-[110%] sm:text-4xl lg:text-center lg:text-5xl"
             >
               Estamos preparados para o que você precisa
             </motion.h2>

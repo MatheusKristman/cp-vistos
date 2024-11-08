@@ -17,7 +17,7 @@ const BANNER = [
     buttonText: "Entrar em contato",
   },
   {
-    title: "Monitoramento de Vagas para Entrevista!",
+    title: "Monitoramento de vagas para entrevista!",
     desc: "Nós cuidamos do seu processo de visto com nosso serviço de monitoramento contínuo de vagas. Não perca a chance de garantir sua entrevista na hora certa.",
     buttonText: "Saiba mais",
   },
@@ -75,7 +75,7 @@ export function Banner() {
         >
           <Carousel
             setApi={setApi}
-            className="h-full rounded-[45px] overflow-hidden"
+            className="h-full rounded-[45px] overflow-hidden group"
             opts={{ loop: true }}
             plugins={[Autoplay({ delay: 10000 })]}
           >
@@ -110,11 +110,12 @@ export function Banner() {
               ))}
             </CarouselContent>
 
-            <div className="w-full flex items-center justify-center gap-6 absolute bottom-6 left-1/2 -translate-x-1/2">
+            <div className="w-full flex items-center justify-center gap-6 absolute bottom-6 left-1/2 -translate-x-1/2 transition-opacity duration-500 opacity-0 group-hover:opacity-100">
               {Array.from({ length: count }).map((_, index) => (
                 <div
                   key={index}
-                  className={cn("rounded-full size-3 bg-white/70 transition-all duration-500", {
+                  onClick={() => api?.scrollTo(index)}
+                  className={cn("rounded-full size-3 bg-white/70 transition-all duration-500 cursor-pointer", {
                     "bg-white w-11": index === current,
                   })}
                 />

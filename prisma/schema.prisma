@@ -415,3 +415,12 @@ model Notification {
   profileId String  @db.ObjectId
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
+
+model Banner {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  desc     String
+  btnText  String
+  btnLink  String
+  imageUrl String
+}

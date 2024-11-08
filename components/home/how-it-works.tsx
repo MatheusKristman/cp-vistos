@@ -128,7 +128,7 @@ export function HowItWorks() {
                 whileInView="show"
                 viewport={{ once: true }}
                 variants={titleAnimation}
-                className="how-it-works-text-animation w-full text-3xl font-bold text-foreground text-center !leading-[110%] capitalize sm:text-4xl sm:text-left sm:w-2/3 lg:text-5xl lg:w-1/2"
+                className="how-it-works-text-animation w-full text-3xl font-bold text-foreground text-center !leading-[110%] sm:text-4xl sm:text-left sm:w-2/3 lg:text-5xl lg:w-1/2"
               >
                 Como será o seu processo conosco
               </motion.h2>

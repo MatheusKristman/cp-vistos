@@ -146,7 +146,7 @@ export function Testimonial() {
             >
               <motion.h2
                 variants={textAnimation}
-                className="text-3xl font-bold text-foreground text-center !leading-[110%] max-w-prose capitalize sm:text-4xl lg:text-5xl"
+                className="text-3xl font-bold text-foreground text-center !leading-[110%] max-w-prose sm:text-4xl lg:text-5xl"
               >
                 O que nossos clientes dizem
               </motion.h2>

@@ -84,7 +84,7 @@ export function About() {
             >
               <motion.h2
                 variants={itemAnimation}
-                className="about-text-animation text-3xl font-bold text-foreground !leading-[110%] capitalize sm:text-4xl sm:max-w-xs lg:text-5xl lg:max-w-md"
+                className="about-text-animation text-3xl font-bold text-foreground !leading-[110%] sm:text-4xl sm:max-w-xs lg:text-5xl lg:max-w-md"
               >
                 A história por trás da assessoria
               </motion.h2>

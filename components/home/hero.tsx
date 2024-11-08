@@ -42,7 +42,7 @@ export function Hero() {
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="text-5xl font-bold text-foreground !leading-[110%] capitalize sm:text-6xl lg:text-7xl lg:max-w-lg"
+                  className="text-5xl font-bold text-foreground !leading-[110%] sm:text-6xl lg:text-7xl lg:max-w-lg"
                 >
                   Conquiste seu visto sem estresse
                 </motion.h1>
