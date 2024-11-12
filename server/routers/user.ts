@@ -572,7 +572,19 @@ export const userRouter = router({
           DSValid: addDays(new Date(), 30),
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              profiles: {
+                where: {
+                  NOT: {
+                    id: {
+                      equals: profileId,
+                    },
+                  },
+                },
+              },
+            },
+          },
           comments: true,
           form: true,
         },
@@ -605,7 +617,19 @@ export const userRouter = router({
           statusDS: status,
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              profiles: {
+                where: {
+                  NOT: {
+                    id: {
+                      equals: profileId,
+                    },
+                  },
+                },
+              },
+            },
+          },
           comments: true,
           form: true,
         },
@@ -638,7 +662,19 @@ export const userRouter = router({
           visaStatus: status,
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              profiles: {
+                where: {
+                  NOT: {
+                    id: {
+                      equals: profileId,
+                    },
+                  },
+                },
+              },
+            },
+          },
           comments: true,
           form: true,
         },
@@ -864,7 +900,19 @@ export const userRouter = router({
           id: profileId,
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              profiles: {
+                where: {
+                  NOT: {
+                    id: {
+                      equals: profileId,
+                    },
+                  },
+                },
+              },
+            },
+          },
           comments: true,
           form: true,
         },
@@ -1040,7 +1088,19 @@ export const userRouter = router({
           interviewDate: interviewDate,
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              profiles: {
+                where: {
+                  NOT: {
+                    id: {
+                      equals: profileId,
+                    },
+                  },
+                },
+              },
+            },
+          },
           comments: true,
           form: true,
         },
