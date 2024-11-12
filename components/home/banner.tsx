@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
@@ -100,13 +105,25 @@ export function Banner() {
 
                         <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10 bg-gradient-to-b from-transparent to-[#262525] sm:bg-gradient-to-r sm:max-w-sm lg:max-w-2xl">
                           <div className="flex flex-col gap-2">
-                            <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">{banner.title}</h5>
+                            <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">
+                              {banner.title}
+                            </h5>
 
-                            <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">{banner.desc}</p>
+                            <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">
+                              {banner.desc}
+                            </p>
                           </div>
 
-                          <Button variant="secondary" className="sm:w-fit lg:text-xl" asChild>
-                            <a href={banner.btnLink} target="_blank" rel="noreferrer noopener">
+                          <Button
+                            variant="secondary"
+                            className="sm:w-fit lg:text-xl"
+                            asChild
+                          >
+                            <a
+                              href={banner.btnLink}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
                               {banner.btnText}
                             </a>
                           </Button>
@@ -126,13 +143,25 @@ export function Banner() {
 
                         <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10 bg-gradient-to-b from-transparent to-[#262525] sm:bg-gradient-to-r sm:max-w-sm lg:max-w-2xl">
                           <div className="flex flex-col gap-2">
-                            <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">{banner.title}</h5>
+                            <h5 className="text-white font-bold text-2xl max-w-md lg:text-4xl">
+                              {banner.title}
+                            </h5>
 
-                            <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">{banner.desc}</p>
+                            <p className="text-white font-medium text-base lg:text-xl lg:max-w-md">
+                              {banner.desc}
+                            </p>
                           </div>
 
-                          <Button variant="secondary" className="sm:w-fit lg:text-xl" asChild>
-                            <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                          <Button
+                            variant="secondary"
+                            className="sm:w-fit lg:text-xl"
+                            asChild
+                          >
+                            <a
+                              href="https://wa.link/2i5gt9"
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
                               {banner.buttonText}
                             </a>
                           </Button>
@@ -147,9 +176,12 @@ export function Banner() {
                 <div
                   key={index}
                   onClick={() => api?.scrollTo(index)}
-                  className={cn("rounded-full size-3 bg-white/70 transition-all duration-500 cursor-pointer", {
-                    "bg-white w-11": index === current,
-                  })}
+                  className={cn(
+                    "rounded-full size-3 bg-white/70 transition-all duration-500 cursor-pointer",
+                    {
+                      "bg-white w-11": index === current,
+                    },
+                  )}
                 />
               ))}
             </div>
