@@ -56,6 +56,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
   const [statusDS, setStatusDS] = useState("");
   const [visaStatus, setVisaStatus] = useState("");
+  const [profileSelected, setProfileSelected] = useState("");
 
   const utils = trpc.useUtils();
 
@@ -70,6 +71,22 @@ export function ClientDetailsResume({ handleClose }: Props) {
     }
   }, [client, statusDS, visaStatus]);
 
+  const { mutate: changeProfile, isPending } =
+    trpc.userRouter.getClientDetails.useMutation({
+      onSuccess({ client }) {
+        console.log({ client });
+        setClient(client);
+      },
+      onError(error) {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
+        }
+      },
+    });
   const { mutate: updateDSValidationDate, isPending: isDSValidPending } =
     trpc.userRouter.updateDSValidationDate.useMutation({
       onSuccess: (data) => {
@@ -336,9 +353,33 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
         <div className="w-full flex flex-col gap-6">
           <div className="w-full flex flex-col gap-6">
-            <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-              Perfil: {client.name}
-            </h2>
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
+                Perfil: {client.name}
+              </h2>
+
+              {client.user.profiles.length > 0 && (
+                <Select
+                  value={profileSelected}
+                  onValueChange={(value) => {
+                    setProfileSelected("");
+                    changeProfile({ profileId: value });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione outro perfil" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    {client.user.profiles.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">

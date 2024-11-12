@@ -528,7 +528,19 @@ export const userRouter = router({
           id: profileId,
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              profiles: {
+                where: {
+                  NOT: {
+                    id: {
+                      equals: profileId,
+                    },
+                  },
+                },
+              },
+            },
+          },
           comments: true,
           form: true,
         },
