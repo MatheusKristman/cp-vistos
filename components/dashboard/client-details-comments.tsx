@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { useEffect, useRef, useState } from "react";
-import { formatDistance } from "date-fns";
+import { format, formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 
@@ -225,9 +225,7 @@ export function ClientDetailsComments({ handleClose }: Props) {
                     </span>
 
                     <span className="text-sm font-medium text-foreground/50">
-                      {formatDistance(comment.createdAt, new Date(), {
-                        locale: ptBR,
-                      })}
+                      {format(comment.createdAt, "dd/MM/yyyy - HH:mm")}
                     </span>
                   </div>
 

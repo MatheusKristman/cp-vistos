@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { formatDistance } from "date-fns";
+import { format } from "date-fns";
 import TextareaAutosize from "react-textarea-autosize";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -218,9 +218,7 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
               >
                 <div className="w-full flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground/50">
-                    {formatDistance(annotation.createdAt, new Date(), {
-                      locale: ptBR,
-                    })}
+                    {format(annotation.createdAt, "dd/MM/yyyy - HH:mm")}
                   </span>
 
                   {deleteId === annotation.id ? (
