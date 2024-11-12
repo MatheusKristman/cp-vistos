@@ -437,7 +437,11 @@ export const userRouter = router({
           },
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              profiles: true,
+            },
+          },
           comments: true,
           form: true,
         },
@@ -447,7 +451,7 @@ export const userRouter = router({
         data: {
           profile: {
             connect: {
-              id: profileUpdated.id,
+              id: profileUpdated!.id,
             },
           },
         },
@@ -461,7 +465,11 @@ export const userRouter = router({
   getClients: collaboratorProcedure.query(async () => {
     const profiles = await prisma.profile.findMany({
       include: {
-        user: true,
+        user: {
+          include: {
+            profiles: true,
+          },
+        },
         form: true,
       },
     });
@@ -530,15 +538,7 @@ export const userRouter = router({
         include: {
           user: {
             include: {
-              profiles: {
-                where: {
-                  NOT: {
-                    id: {
-                      equals: profileId,
-                    },
-                  },
-                },
-              },
+              profiles: true,
             },
           },
           comments: true,
@@ -574,15 +574,7 @@ export const userRouter = router({
         include: {
           user: {
             include: {
-              profiles: {
-                where: {
-                  NOT: {
-                    id: {
-                      equals: profileId,
-                    },
-                  },
-                },
-              },
+              profiles: true,
             },
           },
           comments: true,
@@ -619,15 +611,7 @@ export const userRouter = router({
         include: {
           user: {
             include: {
-              profiles: {
-                where: {
-                  NOT: {
-                    id: {
-                      equals: profileId,
-                    },
-                  },
-                },
-              },
+              profiles: true,
             },
           },
           comments: true,
@@ -664,15 +648,7 @@ export const userRouter = router({
         include: {
           user: {
             include: {
-              profiles: {
-                where: {
-                  NOT: {
-                    id: {
-                      equals: profileId,
-                    },
-                  },
-                },
-              },
+              profiles: true,
             },
           },
           comments: true,
@@ -902,15 +878,7 @@ export const userRouter = router({
         include: {
           user: {
             include: {
-              profiles: {
-                where: {
-                  NOT: {
-                    id: {
-                      equals: profileId,
-                    },
-                  },
-                },
-              },
+              profiles: true,
             },
           },
           comments: true,
@@ -1090,15 +1058,7 @@ export const userRouter = router({
         include: {
           user: {
             include: {
-              profiles: {
-                where: {
-                  NOT: {
-                    id: {
-                      equals: profileId,
-                    },
-                  },
-                },
-              },
+              profiles: true,
             },
           },
           comments: true,

@@ -6,7 +6,11 @@ import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import useNotificationStore from "@/constants/stores/useNotificationStore";
 import { trpc } from "@/lib/trpc-client";
 import { cn } from "@/lib/utils";
@@ -18,26 +22,38 @@ export function NotificationHeaderMenu() {
   const utils = trpc.useUtils();
 
   const { data } = trpc.notificationRouter.getNotifications.useQuery();
-  const { mutate: viewNotification, isPending } = trpc.notificationRouter.updateViewNotification.useMutation({
-    onSuccess: () => {
-      utils.notificationRouter.getNotifications.invalidate();
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("ocorreu um erro ao alterar o status da notificação");
-    },
-  });
+  const { mutate: viewNotification, isPending } =
+    trpc.notificationRouter.updateViewNotification.useMutation({
+      onSuccess: () => {
+        utils.notificationRouter.getNotifications.invalidate();
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("ocorreu um erro ao alterar o status da notificação");
+      },
+    });
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="bg-secondary/40 border-secondary/40">
+        <Button
+          variant="outline"
+          className="relative bg-secondary/40 border-secondary/40"
+        >
           <Bell />
+
+          {data !== undefined && data.notifications.length > 0 && (
+            <div className="size-6 flex items-center justify-center bg-primary rounded-full absolute top-0.5 right-1 text-white font-medium text-sm !leading-none">
+              {data.notifications.length}
+            </div>
+          )}
         </Button>
       </PopoverTrigger>
 
       <PopoverContent className="flex flex-col gap-9 bg-white border-muted shadow-lg">
-        <h4 className="text-base text-foreground font-semibold">Notificações</h4>
+        <h4 className="text-base text-foreground font-semibold">
+          Notificações
+        </h4>
 
         <div className="w-full flex flex-col gap-6">
           <ScrollArea className="w-full h-[300px]">
@@ -54,8 +70,11 @@ export function NotificationHeaderMenu() {
                                 <strong className="text-sm text-foreground font-semibold">
                                   {notification.profile.name}
                                 </strong>{" "}
-                                começou a <strong className="text-sm text-foreground font-semibold">preencher</strong> o
-                                formulário
+                                começou a{" "}
+                                <strong className="text-sm text-foreground font-semibold">
+                                  preencher
+                                </strong>{" "}
+                                o formulário
                               </>
                             )}
                             {notification.statusForm === "filled" && (
@@ -73,20 +92,26 @@ export function NotificationHeaderMenu() {
                           </span>
 
                           <span className="text-[12px] text-right text-foreground/50 font-medium">
-                            {formatDistance(notification.createdAt, new Date(), {
-                              locale: ptBR,
-                            })}
+                            {formatDistance(
+                              notification.createdAt,
+                              new Date(),
+                              {
+                                locale: ptBR,
+                              },
+                            )}
                           </span>
                         </div>
 
                         <Button
-                          onClick={() => viewNotification({ id: notification.id })}
+                          onClick={() =>
+                            viewNotification({ id: notification.id })
+                          }
                           variant="secondary"
                           className={cn(
                             "absolute top-0 -right-16 h-full transition-all hover:bg-white group-hover:right-0 group-hover:left-auto",
                             {
                               "right-0 left-auto bg-white": isPending,
-                            }
+                            },
                           )}
                         >
                           {isPending ? (
@@ -99,7 +124,9 @@ export function NotificationHeaderMenu() {
                     </div>
                   ))
                 ) : (
-                  <span className="text-sm text-foreground/50 text-center">Sem notificações no momento</span>
+                  <span className="text-sm text-foreground/50 text-center">
+                    Sem notificações no momento
+                  </span>
                 )
               ) : (
                 <div>
@@ -109,7 +136,12 @@ export function NotificationHeaderMenu() {
             </div>
           </ScrollArea>
 
-          <Button onClick={openModal} variant="link" size="icon" className="w-fit text-foreground/60 underline">
+          <Button
+            onClick={openModal}
+            variant="link"
+            size="icon"
+            className="w-fit text-foreground/60 underline"
+          >
             Ver histórico
           </Button>
         </div>
