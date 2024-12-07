@@ -29,10 +29,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+
+import { trpc } from "@/lib/trpc-client";
 import { cn } from "@/lib/utils";
 import useFormStore from "@/constants/stores/useFormStore";
-import { Textarea } from "@/components/ui/textarea";
-import { trpc } from "@/lib/trpc-client";
 
 const formSchema = z
   .object({
@@ -48,7 +49,6 @@ const formSchema = z
     USAVisaConfirmation: z.enum(["Sim", "Não"]),
     visaIssuingDate: z.date({ message: "Campo obrigatório" }).optional(),
     visaNumber: z.string(),
-    hasVisaConfirmation: z.enum(["Sim", "Não"]),
     newVisaConfirmation: z.enum(["Sim", "Não"]),
     sameCountryResidenceConfirmation: z.enum(["Sim", "Não"]),
     sameVisaTypeConfirmation: z.enum(["Sim", "Não"]),
@@ -238,7 +238,6 @@ export function PreviousTravelForm({
         ? currentForm.visaIssuingDate
         : undefined,
       visaNumber: currentForm.visaNumber ? currentForm.visaNumber : "",
-      hasVisaConfirmation: currentForm.hasVisaConfirmation ? "Sim" : "Não",
       newVisaConfirmation: currentForm.newVisaConfirmation ? "Sim" : "Não",
       sameCountryResidenceConfirmation:
         currentForm.sameCountryResidenceConfirmation ? "Sim" : "Não",
@@ -284,7 +283,6 @@ export function PreviousTravelForm({
     "americanLicenseToDriveConfirmation",
   );
   const USAVisaConfirmation = form.watch("USAVisaConfirmation");
-  const hasVisaConfirmation = form.watch("hasVisaConfirmation");
   const lostVisaConfirmation = form.watch("lostVisaConfirmation");
   const canceledVisaConfirmation = form.watch("canceledVisaConfirmation");
   const deniedVisaConfirmation = form.watch("deniedVisaConfirmation");
@@ -411,9 +409,6 @@ export function PreviousTravelForm({
             : !currentForm.visaNumber
               ? ""
               : currentForm.visaNumber,
-        hasVisaConfirmation:
-          values.hasVisaConfirmation ??
-          (currentForm.alreadyHaveVisa ? "Sim" : "Não"),
         newVisaConfirmation:
           values.newVisaConfirmation ??
           (currentForm.newVisaConfirmation ? "Sim" : "Não"),
@@ -532,9 +527,6 @@ export function PreviousTravelForm({
           : !currentForm.visaNumber
             ? ""
             : currentForm.visaNumber,
-      hasVisaConfirmation:
-        values.hasVisaConfirmation ??
-        (currentForm.alreadyHaveVisa ? "Sim" : "Não"),
       newVisaConfirmation:
         values.newVisaConfirmation ??
         (currentForm.newVisaConfirmation ? "Sim" : "Não"),
@@ -951,7 +943,7 @@ export function PreviousTravelForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Já obteve visto(s) para os EUA?
+                      Você já teve um visto americano?
                     </FormLabel>
 
                     <FormControl>
@@ -1093,51 +1085,12 @@ export function PreviousTravelForm({
 
             <FormField
               control={form.control}
-              name="hasVisaConfirmation"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-2 mb-4 sm:mb-6">
-                  <FormLabel className="text-foreground">
-                    Você já teve um visto americano?
-                  </FormLabel>
-
-                  <FormControl>
-                    <RadioGroup
-                      disabled={isPending || isSavePending}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex space-x-4"
-                    >
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Não" />
-                        </FormControl>
-
-                        <FormLabel className="font-normal">Não</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Sim" />
-                        </FormControl>
-
-                        <FormLabel className="font-normal">Sim</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-
-                  <FormMessage className="text-sm text-destructive" />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="newVisaConfirmation"
               render={({ field }) => (
                 <FormItem
                   className={cn(
                     "mb-4 sm:mb-6 flex flex-col gap-2",
-                    hasVisaConfirmation === "Não" && "hidden",
+                    USAVisaConfirmation === "Não" && "hidden",
                   )}
                 >
                   <FormLabel className="text-foreground">
@@ -1182,7 +1135,7 @@ export function PreviousTravelForm({
                 <FormItem
                   className={cn(
                     "mb-4 sm:mb-6 flex flex-col gap-2",
-                    hasVisaConfirmation === "Não" && "hidden",
+                    USAVisaConfirmation === "Não" && "hidden",
                   )}
                 >
                   <FormLabel className="text-foreground">
@@ -1227,7 +1180,7 @@ export function PreviousTravelForm({
                 <FormItem
                   className={cn(
                     "mb-4 sm:mb-6 flex flex-col gap-2",
-                    hasVisaConfirmation === "Não" && "hidden",
+                    USAVisaConfirmation === "Não" && "hidden",
                   )}
                 >
                   <FormLabel className="text-foreground">
@@ -1272,7 +1225,7 @@ export function PreviousTravelForm({
                 <FormItem
                   className={cn(
                     "mb-4 sm:mb-6 flex flex-col gap-2",
-                    hasVisaConfirmation === "Não" && "hidden",
+                    USAVisaConfirmation === "Não" && "hidden",
                   )}
                 >
                   <FormLabel className="text-foreground">
@@ -1309,7 +1262,12 @@ export function PreviousTravelForm({
               )}
             />
 
-            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                USAVisaConfirmation === "Não" && "hidden",
+              )}
+            >
               <FormField
                 control={form.control}
                 name="lostVisaConfirmation"
@@ -1317,7 +1275,7 @@ export function PreviousTravelForm({
                   <FormItem
                     className={cn(
                       "flex flex-col gap-2",
-                      hasVisaConfirmation === "Não" && "hidden",
+                      USAVisaConfirmation === "Não" && "hidden",
                     )}
                   >
                     <FormLabel className="text-foreground">
@@ -1354,7 +1312,7 @@ export function PreviousTravelForm({
                 )}
               />
 
-              {hasVisaConfirmation === "Sim" &&
+              {USAVisaConfirmation === "Sim" &&
                 lostVisaConfirmation === "Sim" && (
                   <FormField
                     control={form.control}
@@ -1380,7 +1338,12 @@ export function PreviousTravelForm({
                 )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                USAVisaConfirmation === "Não" && "hidden",
+              )}
+            >
               <FormField
                 control={form.control}
                 name="canceledVisaConfirmation"
@@ -1388,7 +1351,7 @@ export function PreviousTravelForm({
                   <FormItem
                     className={cn(
                       "flex flex-col gap-2",
-                      hasVisaConfirmation === "Não" && "hidden",
+                      USAVisaConfirmation === "Não" && "hidden",
                     )}
                   >
                     <FormLabel className="text-foreground">
@@ -1425,7 +1388,7 @@ export function PreviousTravelForm({
                 )}
               />
 
-              {hasVisaConfirmation === "Sim" &&
+              {USAVisaConfirmation === "Sim" &&
                 canceledVisaConfirmation === "Sim" && (
                   <FormField
                     control={form.control}
@@ -1451,138 +1414,12 @@ export function PreviousTravelForm({
                 )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
-              <FormField
-                control={form.control}
-                name="deniedVisaConfirmation"
-                render={({ field }) => (
-                  <FormItem
-                    className={cn(
-                      "flex flex-col gap-2",
-                      hasVisaConfirmation === "Não" && "hidden",
-                    )}
-                  >
-                    <FormLabel className="text-foreground">
-                      Já teve um visto negado?
-                    </FormLabel>
-
-                    <FormControl>
-                      <RadioGroup
-                        disabled={isPending || isSavePending}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
-
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
-
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
-
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-
-                    <FormMessage className="text-sm text-destructive" />
-                  </FormItem>
-                )}
-              />
-
-              {hasVisaConfirmation === "Sim" &&
-                deniedVisaConfirmation === "Sim" && (
-                  <div className="w-full flex flex-col gap-4 bg-secondary rounded-xl p-4">
-                    <div className="w-full grid grid-cols-1 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="deniedVisaDetails"
-                        render={({ field }) => (
-                          <FormItem className="w-full flex flex-col gap-2">
-                            <FormLabel className="text-foreground">
-                              Em qual ano? Explique o ocorrido
-                            </FormLabel>
-
-                            <FormControl>
-                              <Textarea
-                                disabled={isPending || isSavePending}
-                                className="!mt-auto resize-none"
-                                {...field}
-                              />
-                            </FormControl>
-
-                            <FormMessage className="text-sm text-destructive" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="consularPost"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col gap-2">
-                            <FormLabel className="text-foreground">
-                              Qual posto consular do Brasil?
-                            </FormLabel>
-
-                            <FormControl>
-                              <Input
-                                className="!mt-auto"
-                                disabled={isPending || isSavePending}
-                                {...field}
-                              />
-                            </FormControl>
-
-                            <FormMessage className="text-sm text-destructive" />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="deniedVisaType"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col gap-2">
-                            <FormLabel className="text-foreground">
-                              Categoria/tipo de visto negado
-                            </FormLabel>
-
-                            <FormControl>
-                              <Input
-                                className="!mt-auto"
-                                disabled={isPending || isSavePending}
-                                {...field}
-                              />
-                            </FormControl>
-
-                            <FormMessage className="text-sm text-destructive" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                )}
-            </div>
-
             <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6">
               <FormField
                 control={form.control}
                 name="immigrationRequestByAnotherPersonConfirmation"
                 render={({ field }) => (
-                  <FormItem
-                    className={cn(
-                      "flex flex-col gap-2",
-                      hasVisaConfirmation === "Não" && "hidden",
-                    )}
-                  >
+                  <FormItem className={cn("flex flex-col gap-2")}>
                     <FormLabel className="text-foreground">
                       Alguém já solicitou alguma petição de imigração em seu
                       nome perante o Departamento de Imigração dos Estados
@@ -1619,30 +1456,144 @@ export function PreviousTravelForm({
                 )}
               />
 
-              {hasVisaConfirmation === "Sim" &&
-                immigrationRequestByAnotherPersonConfirmation === "Sim" && (
-                  <FormField
-                    control={form.control}
-                    name="immigrationRequestByAnotherPersonDetails"
-                    render={({ field }) => (
-                      <FormItem className="w-full flex flex-col gap-2 bg-secondary rounded-xl p-4">
-                        <FormLabel className="text-foreground">
-                          Explique o motivo
-                        </FormLabel>
+              {immigrationRequestByAnotherPersonConfirmation === "Sim" && (
+                <FormField
+                  control={form.control}
+                  name="immigrationRequestByAnotherPersonDetails"
+                  render={({ field }) => (
+                    <FormItem className="w-full flex flex-col gap-2 bg-secondary rounded-xl p-4">
+                      <FormLabel className="text-foreground">
+                        Explique o motivo
+                      </FormLabel>
 
-                        <FormControl>
-                          <Textarea
-                            disabled={isPending || isSavePending}
-                            className="!mt-auto resize-none"
-                            {...field}
-                          />
-                        </FormControl>
+                      <FormControl>
+                        <Textarea
+                          disabled={isPending || isSavePending}
+                          className="!mt-auto resize-none"
+                          {...field}
+                        />
+                      </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                      <FormMessage className="text-sm text-destructive" />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
+              <FormField
+                control={form.control}
+                name="deniedVisaConfirmation"
+                render={({ field }) => (
+                  <FormItem className={cn("flex flex-col gap-2")}>
+                    <FormLabel className="text-foreground">
+                      Já teve um visto negado?
+                    </FormLabel>
+
+                    <FormControl>
+                      <RadioGroup
+                        disabled={isPending || isSavePending}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Não" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Não</FormLabel>
+                        </FormItem>
+
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Sim" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Sim</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
                 )}
+              />
+
+              {deniedVisaConfirmation === "Sim" && (
+                <div className="w-full flex flex-col gap-4 bg-secondary rounded-xl p-4">
+                  <div className="w-full grid grid-cols-1 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="deniedVisaDetails"
+                      render={({ field }) => (
+                        <FormItem className="w-full flex flex-col gap-2">
+                          <FormLabel className="text-foreground">
+                            Em qual ano? Explique o ocorrido
+                          </FormLabel>
+
+                          <FormControl>
+                            <Textarea
+                              disabled={isPending || isSavePending}
+                              className="!mt-auto resize-none"
+                              {...field}
+                            />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="consularPost"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">
+                            Qual posto consular do Brasil?
+                          </FormLabel>
+
+                          <FormControl>
+                            <Input
+                              className="!mt-auto"
+                              disabled={isPending || isSavePending}
+                              {...field}
+                            />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="deniedVisaType"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">
+                            Categoria/tipo de visto negado
+                          </FormLabel>
+
+                          <FormControl>
+                            <Input
+                              className="!mt-auto"
+                              disabled={isPending || isSavePending}
+                              {...field}
+                            />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

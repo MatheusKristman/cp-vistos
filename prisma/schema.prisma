@@ -234,7 +234,7 @@ model Form {
   USAZipCode                       String?
   USACity                          String?
   USAState                         String?
-  hasPayer                         Boolean?
+  payer                            String?
   payerNameOrCompany               String?
   payerTel                         String?
   payerAddress                     String?
@@ -261,7 +261,6 @@ model Form {
   visaIssuingDate                               DateTime?
   visaNumber                                    String?
   alreadyHaveVisa                               Boolean?
-  hasVisaConfirmation                           Boolean?
   newVisaConfirmation                           Boolean?
   sameCountryResidenceConfirmation              Boolean?
   sameVisaTypeConfirmation                      Boolean?
@@ -346,32 +345,59 @@ model Form {
   insurgencyOrganizationConfirmation       Boolean?
   insurgencyOrganizationDetails            String?
   contagiousDiseaseConfirmation            Boolean?
+  contagiousDiseaseConfirmationDetails     String?
   phisicalMentalProblemConfirmation        Boolean?
+  phisicalMentalProblemConfirmationDetails String?
   crimeConfirmation                        Boolean?
+  crimeConfirmationDetails                 String?
   drugsProblemConfirmation                 Boolean?
+  drugsProblemConfirmationDetails          String?
   lawViolateConfirmation                   Boolean?
+  lawViolateConfirmationDetails            String?
   prostitutionConfirmation                 Boolean?
+  prostitutionConfirmationDetails          String?
   moneyLaundryConfirmation                 Boolean?
+  moneyLaundryConfirmationDetails          String?
   peopleTrafficConfirmation                Boolean?
+  peopleTrafficConfirmationDetails         String?
   helpPeopleTrafficConfirmation            Boolean?
+  helpPeopleTrafficConfirmationDetails     String?
   parentPeopleTrafficConfirmation          Boolean?
+  parentPeopleTrafficConfirmationDetails   String?
   spyConfirmation                          Boolean?
+  spyConfirmationDetails                   String?
   terrorismConfirmation                    Boolean?
+  terrorismConfirmationDetails             String?
   financialAssistanceConfirmation          Boolean?
+  financialAssistanceConfirmationDetails   String?
   terrorismMemberConfirmation              Boolean?
+  terrorismMemberConfirmationDetails       String?
   parentTerrorismConfirmation              Boolean?
+  parentTerrorismConfirmationDetails       String?
   genocideConfirmation                     Boolean?
+  genocideConfirmationDetails              String?
   tortureConfirmation                      Boolean?
+  tortureConfirmationDetails               String?
   assassinConfirmation                     Boolean?
+  assassinConfirmationDetails              String?
   childSoldierConfirmation                 Boolean?
+  childSoldierConfirmationDetails          String?
   religionLibertyConfirmation              Boolean?
+  religionLibertyConfirmationDetails       String?
   abortConfirmation                        Boolean?
+  abortConfirmationDetails                 String?
   coerciveTransplantConfirmation           Boolean?
+  coerciveTransplantConfirmationDetails    String?
   visaFraudConfirmation                    Boolean?
+  visaFraudConfirmationDetails             String?
   deportedConfirmation                     Boolean?
+  deportedConfirmationDetails              String?
   childCustodyConfirmation                 Boolean?
+  childCustodyConfirmationDetails          String?
   lawViolationConfirmation                 Boolean?
+  lawViolationConfirmationDetails          String?
   avoidTaxConfirmation                     Boolean?
+  avoidTaxConfirmationDetails              String?
   createdAt                                DateTime  @default(now())
   updatedAt                                DateTime  @updatedAt
 

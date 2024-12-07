@@ -559,7 +559,7 @@ export function FamilyForm({
         className="w-full flex flex-col flex-grow gap-6"
       >
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
-          Informações da Família
+          Informações Familiares
         </h2>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
@@ -1023,13 +1023,29 @@ export function FamilyForm({
                             Relação Parental
                           </FormLabel>
 
-                          <FormControl>
-                            <Input
-                              className="!mt-auto"
-                              disabled={isPending || isSavePending}
-                              {...field}
-                            />
-                          </FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger
+                                className="!mt-auto"
+                                disabled={isPending || isSavePending}
+                              >
+                                <SelectValue placeholder="Selecione a relação parental" />
+                              </SelectTrigger>
+                            </FormControl>
+
+                            <SelectContent>
+                              <SelectItem value="Pai/Mãe">Pai/Mãe</SelectItem>
+
+                              <SelectItem value="Filho(a)">Filho(a)</SelectItem>
+
+                              <SelectItem value="Amigo(a)">Amigo(a)</SelectItem>
+
+                              <SelectItem value="Parente">Parente</SelectItem>
+                            </SelectContent>
+                          </Select>
 
                           <FormMessage className="text-sm text-destructive" />
                         </FormItem>
@@ -1135,7 +1151,9 @@ export function FamilyForm({
 
             <span
               className={cn("text-foreground text-base font-medium mb-6", {
-                hidden: maritalStatus === "Solteiro(a)",
+                hidden:
+                  maritalStatus === "Solteiro(a)" ||
+                  maritalStatus === "Divorciado(a)",
               })}
             >
               {maritalStatus === "Divorciado(a)" ||

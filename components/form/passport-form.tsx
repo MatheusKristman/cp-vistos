@@ -9,9 +9,8 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, CalendarIcon, Loader2, Save } from "lucide-react";
 import { Form as FormType } from "@prisma/client";
+import { useEffect } from "react";
 
-import { cn } from "@/lib/utils";
-import { trpc } from "@/lib/trpc-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -30,8 +29,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import useFormStore from "@/constants/stores/useFormStore";
+import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc-client";
 
 const formSchema = z
   .object({
@@ -90,6 +98,201 @@ const formSchema = z
       }
     },
   );
+
+const countries = [
+  "Afeganistão",
+  "Albânia",
+  "Argélia",
+  "Andorra",
+  "Angola",
+  "Argentina",
+  "Armênia",
+  "Austrália",
+  "Áustria",
+  "Azerbaijão",
+  "Bahamas",
+  "Bahrein",
+  "Bangladesh",
+  "Barbados",
+  "Bielorrússia",
+  "Bélgica",
+  "Belize",
+  "Benin",
+  "Butão",
+  "Bolívia",
+  "Bósnia e Herzegovina",
+  "Botswana",
+  "Brasil",
+  "Brunei",
+  "Bulgária",
+  "Burkina Faso",
+  "Burundi",
+  "Cabo Verde",
+  "Camboja",
+  "Camarões",
+  "Canadá",
+  "Chade",
+  "Chile",
+  "China",
+  "Colômbia",
+  "Comores",
+  "Congo",
+  "Costa Rica",
+  "Croácia",
+  "Cuba",
+  "Chipre",
+  "República Tcheca",
+  "Dinamarca",
+  "Djibuti",
+  "Dominica",
+  "República Dominicana",
+  "Equador",
+  "Egito",
+  "El Salvador",
+  "Guiné Equatorial",
+  "Eritreia",
+  "Estônia",
+  "Essuatíni",
+  "Etiópia",
+  "Fiji",
+  "Finlândia",
+  "França",
+  "Gabão",
+  "Gâmbia",
+  "Geórgia",
+  "Alemanha",
+  "Gana",
+  "Grécia",
+  "Granada",
+  "Guatemala",
+  "Guiné",
+  "Guiné-Bissau",
+  "Guiana",
+  "Haiti",
+  "Honduras",
+  "Hungria",
+  "Islândia",
+  "Índia",
+  "Indonésia",
+  "Irã",
+  "Iraque",
+  "Irlanda",
+  "Israel",
+  "Itália",
+  "Jamaica",
+  "Japão",
+  "Jordânia",
+  "Cazaquistão",
+  "Quênia",
+  "Kiribati",
+  "Coreia do Norte",
+  "Coreia do Sul",
+  "Kosovo",
+  "Kuwait",
+  "Quirguistão",
+  "Laos",
+  "Letônia",
+  "Líbano",
+  "Lesoto",
+  "Libéria",
+  "Líbia",
+  "Liechtenstein",
+  "Lituânia",
+  "Luxemburgo",
+  "Madagascar",
+  "Malawi",
+  "Malásia",
+  "Maldivas",
+  "Mali",
+  "Malta",
+  "Ilhas Marshall",
+  "Mauritânia",
+  "Maurício",
+  "México",
+  "Micronésia",
+  "Moldávia",
+  "Mônaco",
+  "Mongólia",
+  "Montenegro",
+  "Marrocos",
+  "Moçambique",
+  "Mianmar (Birmânia)",
+  "Namíbia",
+  "Nauru",
+  "Nepal",
+  "Países Baixos",
+  "Nova Zelândia",
+  "Nicarágua",
+  "Níger",
+  "Nigéria",
+  "Macedônia do Norte",
+  "Noruega",
+  "Omã",
+  "Paquistão",
+  "Palau",
+  "Palestina",
+  "Panamá",
+  "Papua-Nova Guiné",
+  "Paraguai",
+  "Peru",
+  "Filipinas",
+  "Polônia",
+  "Portugal",
+  "Catar",
+  "Romênia",
+  "Rússia",
+  "Ruanda",
+  "São Cristóvão e Nevis",
+  "Santa Lúcia",
+  "São Vicente e Granadinas",
+  "Samoa",
+  "San Marino",
+  "São Tomé e Príncipe",
+  "Arábia Saudita",
+  "Senegal",
+  "Sérvia",
+  "Seychelles",
+  "Serra Leoa",
+  "Cingapura",
+  "Eslováquia",
+  "Eslovênia",
+  "Ilhas Salomão",
+  "Somália",
+  "África do Sul",
+  "Espanha",
+  "Sri Lanka",
+  "Sudão",
+  "Suriname",
+  "Suécia",
+  "Suíça",
+  "Síria",
+  "Taiwan",
+  "Tajiquistão",
+  "Tanzânia",
+  "Tailândia",
+  "Timor-Leste",
+  "Togo",
+  "Tonga",
+  "Trinidad e Tobago",
+  "Tunísia",
+  "Turquia",
+  "Turcomenistão",
+  "Tuvalu",
+  "Uganda",
+  "Ucrânia",
+  "Emirados Árabes Unidos",
+  "Reino Unido",
+  "Estados Unidos",
+  "Uruguai",
+  "Uzbequistão",
+  "Vanuatu",
+  "Vaticano",
+  "Venezuela",
+  "Vietnã",
+  "Iêmen",
+  "Zâmbia",
+  "Zimbábue",
+];
 
 interface Props {
   profileId: string;
@@ -368,13 +571,27 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                       País emissor*
                     </FormLabel>
 
-                    <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          className="!mt-auto"
+                          disabled={isPending || isSavePending}
+                        >
+                          <SelectValue placeholder="Selecione o país" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        {countries.map((country) => (
+                          <SelectItem value={country} key={country}>
+                            {country}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
                     <FormMessage className="text-sm text-destructive" />
                   </FormItem>
@@ -600,13 +817,27 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
                       Informe o país do passaporte
                     </FormLabel>
 
-                    <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          className="!mt-auto"
+                          disabled={isPending || isSavePending}
+                        >
+                          <SelectValue placeholder="Selecione o país" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        {countries.map((country) => (
+                          <SelectItem value={country} key={country}>
+                            {country}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
                     <FormMessage className="text-sm text-destructive" />
                   </FormItem>

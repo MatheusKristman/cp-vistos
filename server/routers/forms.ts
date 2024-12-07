@@ -849,7 +849,10 @@ export const formsRouter = router({
             .optional(),
           returnFlyNumber: z.string(),
           returnCity: z.string(),
-          estimatedTimeOnUSA: z
+          estimatedTimeNumber: z.coerce
+            .number()
+            .gt(1, "Campo precisa ter valor maior que zero"),
+          estimatedTimeType: z
             .string()
             .min(1, { message: "Campo obrigatório" }),
           visitLocations: z.string().min(1),
@@ -858,7 +861,7 @@ export const formsRouter = router({
           USAZipCode: z.string(),
           USACity: z.string(),
           USAState: z.string(),
-          hasPayer: z.enum(["Sim", "Não"]),
+          payer: z.string(),
           payerNameOrCompany: z.string(),
           payerTel: z.string(),
           payerAddress: z.string(),
@@ -873,7 +876,7 @@ export const formsRouter = router({
               USAZipCode,
               USACity,
               USAState,
-              hasPayer,
+              payer,
               payerNameOrCompany,
               payerTel,
               payerAddress,
@@ -914,7 +917,10 @@ export const formsRouter = router({
               });
             }
 
-            if (hasPayer === "Sim" && payerNameOrCompany.length === 0) {
+            if (
+              (payer === "Outra pessoa" || payer === "Empresa") &&
+              payerNameOrCompany.length === 0
+            ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -922,7 +928,10 @@ export const formsRouter = router({
               });
             }
 
-            if (hasPayer === "Sim" && payerTel.length === 0) {
+            if (
+              (payer === "Outra pessoa" || payer === "Empresa") &&
+              payerTel.length === 0
+            ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -930,7 +939,10 @@ export const formsRouter = router({
               });
             }
 
-            if (hasPayer === "Sim" && payerAddress.length === 0) {
+            if (
+              (payer === "Outra pessoa" || payer === "Empresa") &&
+              payerAddress.length === 0
+            ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -938,7 +950,7 @@ export const formsRouter = router({
               });
             }
 
-            if (hasPayer === "Sim" && payerRelation.length === 0) {
+            if (payer === "Outra pessoa" && payerRelation.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -946,7 +958,10 @@ export const formsRouter = router({
               });
             }
 
-            if (hasPayer === "Sim" && !isEmail(payerEmail)) {
+            if (
+              (payer === "Outra pessoa" || payer === "Empresa") &&
+              !isEmail(payerEmail)
+            ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "E-mail inválido",
@@ -954,7 +969,10 @@ export const formsRouter = router({
               });
             }
 
-            if (hasPayer === "Sim" && payerEmail.length === 0) {
+            if (
+              (payer === "Outra pessoa" || payer === "Empresa") &&
+              payerEmail.length === 0
+            ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -976,14 +994,15 @@ export const formsRouter = router({
         USAPreviewReturnDate,
         returnFlyNumber,
         returnCity,
-        estimatedTimeOnUSA,
+        estimatedTimeNumber,
+        estimatedTimeType,
         visitLocations,
         hasAddressInUSA,
         USACompleteAddress,
         USAZipCode,
         USACity,
         USAState,
-        hasPayer,
+        payer,
         payerNameOrCompany,
         payerTel,
         payerAddress,
@@ -1059,14 +1078,14 @@ export const formsRouter = router({
           USAPreviewReturnDate,
           returnFlyNumber,
           returnCity,
-          estimatedTimeOnUSA,
+          estimatedTimeOnUSA: estimatedTimeNumber + " " + estimatedTimeType,
           visitLocations,
           hasAddressInUSA: hasAddressInUSA === "Sim",
           USACompleteAddress,
           USAZipCode,
           USACity,
           USAState,
-          hasPayer: hasPayer === "Sim",
+          payer,
           payerNameOrCompany,
           payerTel,
           payerAddress,
@@ -1089,14 +1108,17 @@ export const formsRouter = router({
         USAPreviewReturnDate: z.date().optional().nullable(),
         returnFlyNumber: z.string().nullable(),
         returnCity: z.string().nullable(),
-        estimatedTimeOnUSA: z.string().nullable(),
+        estimatedTimeNumber: z.coerce
+          .number()
+          .gt(1, "Campo precisa ter valor maior que zero"),
+        estimatedTimeType: z.string().min(1, { message: "Campo obrigatório" }),
         visitLocations: z.string().nullable(),
         hasAddressInUSA: z.enum(["Sim", "Não"]).nullable(),
         USACompleteAddress: z.string().nullable(),
         USAZipCode: z.string().nullable(),
         USACity: z.string().nullable(),
         USAState: z.string().nullable(),
-        hasPayer: z.enum(["Sim", "Não"]).nullable(),
+        payer: z.string().nullable(),
         payerNameOrCompany: z.string().nullable(),
         payerTel: z.string().nullable(),
         payerAddress: z.string().nullable(),
@@ -1115,14 +1137,15 @@ export const formsRouter = router({
         USAPreviewReturnDate,
         returnFlyNumber,
         returnCity,
-        estimatedTimeOnUSA,
+        estimatedTimeNumber,
+        estimatedTimeType,
         visitLocations,
         hasAddressInUSA,
         USACompleteAddress,
         USAZipCode,
         USACity,
         USAState,
-        hasPayer,
+        payer,
         payerNameOrCompany,
         payerTel,
         payerAddress,
@@ -1165,14 +1188,14 @@ export const formsRouter = router({
           USAPreviewReturnDate,
           returnFlyNumber,
           returnCity,
-          estimatedTimeOnUSA,
+          estimatedTimeOnUSA: estimatedTimeNumber + " " + estimatedTimeType,
           visitLocations,
           hasAddressInUSA: hasAddressInUSA === "Sim",
           USACompleteAddress,
           USAZipCode,
           USACity,
           USAState,
-          hasPayer: hasPayer === "Sim",
+          payer,
           payerNameOrCompany,
           payerTel,
           payerAddress,
@@ -1418,7 +1441,6 @@ export const formsRouter = router({
           USAVisaConfirmation: z.enum(["Sim", "Não"]),
           visaIssuingDate: z.date().optional(),
           visaNumber: z.string(),
-          hasVisaConfirmation: z.enum(["Sim", "Não"]),
           newVisaConfirmation: z.enum(["Sim", "Não"]),
           sameCountryResidenceConfirmation: z.enum(["Sim", "Não"]),
           sameVisaTypeConfirmation: z.enum(["Sim", "Não"]),
@@ -1582,7 +1604,6 @@ export const formsRouter = router({
         USAVisaConfirmation,
         visaIssuingDate,
         visaNumber,
-        hasVisaConfirmation,
         newVisaConfirmation,
         sameCountryResidenceConfirmation,
         sameVisaTypeConfirmation,
@@ -1668,7 +1689,6 @@ export const formsRouter = router({
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
           visaNumber,
-          hasVisaConfirmation: hasVisaConfirmation === "Sim",
           newVisaConfirmation: newVisaConfirmation === "Sim",
           sameCountryResidenceConfirmation:
             sameCountryResidenceConfirmation === "Sim",
@@ -1711,7 +1731,6 @@ export const formsRouter = router({
         USAVisaConfirmation: z.enum(["Sim", "Não"]),
         visaIssuingDate: z.date().optional(),
         visaNumber: z.string(),
-        hasVisaConfirmation: z.enum(["Sim", "Não"]),
         newVisaConfirmation: z.enum(["Sim", "Não"]),
         sameCountryResidenceConfirmation: z.enum(["Sim", "Não"]),
         sameVisaTypeConfirmation: z.enum(["Sim", "Não"]),
@@ -1739,7 +1758,6 @@ export const formsRouter = router({
         USAVisaConfirmation,
         visaIssuingDate,
         visaNumber,
-        hasVisaConfirmation,
         newVisaConfirmation,
         sameCountryResidenceConfirmation,
         sameVisaTypeConfirmation,
@@ -1792,7 +1810,6 @@ export const formsRouter = router({
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
           visaNumber,
-          hasVisaConfirmation: hasVisaConfirmation === "Sim",
           newVisaConfirmation: newVisaConfirmation === "Sim",
           sameCountryResidenceConfirmation:
             sameCountryResidenceConfirmation === "Sim",
@@ -2910,38 +2927,424 @@ export const formsRouter = router({
     }),
   submitSecurity: isUserAuthedProcedure
     .input(
-      z.object({
-        profileId: z.string().min(1),
-        step: z.number(),
-        isEditing: z.boolean(),
-        contagiousDiseaseConfirmation: z.enum(["Sim", "Não"]),
-        phisicalMentalProblemConfirmation: z.enum(["Sim", "Não"]),
-        crimeConfirmation: z.enum(["Sim", "Não"]),
-        drugsProblemConfirmation: z.enum(["Sim", "Não"]),
-        lawViolateConfirmation: z.enum(["Sim", "Não"]),
-        prostitutionConfirmation: z.enum(["Sim", "Não"]),
-        moneyLaundryConfirmation: z.enum(["Sim", "Não"]),
-        peopleTrafficConfirmation: z.enum(["Sim", "Não"]),
-        helpPeopleTrafficConfirmation: z.enum(["Sim", "Não"]),
-        parentPeopleTrafficConfirmation: z.enum(["Sim", "Não"]),
-        spyConfirmation: z.enum(["Sim", "Não"]),
-        terrorismConfirmation: z.enum(["Sim", "Não"]),
-        financialAssistanceConfirmation: z.enum(["Sim", "Não"]),
-        terrorismMemberConfirmation: z.enum(["Sim", "Não"]),
-        parentTerrorismConfirmation: z.enum(["Sim", "Não"]),
-        genocideConfirmation: z.enum(["Sim", "Não"]),
-        tortureConfirmation: z.enum(["Sim", "Não"]),
-        assassinConfirmation: z.enum(["Sim", "Não"]),
-        childSoldierConfirmation: z.enum(["Sim", "Não"]),
-        religionLibertyConfirmation: z.enum(["Sim", "Não"]),
-        abortConfirmation: z.enum(["Sim", "Não"]),
-        coerciveTransplantConfirmation: z.enum(["Sim", "Não"]),
-        visaFraudConfirmation: z.enum(["Sim", "Não"]),
-        deportedConfirmation: z.enum(["Sim", "Não"]),
-        childCustodyConfirmation: z.enum(["Sim", "Não"]),
-        lawViolationConfirmation: z.enum(["Sim", "Não"]),
-        avoidTaxConfirmation: z.enum(["Sim", "Não"]),
-      }),
+      z
+        .object({
+          profileId: z.string().min(1),
+          step: z.number(),
+          isEditing: z.boolean(),
+          contagiousDiseaseConfirmation: z.enum(["", "Sim", "Não"]),
+          contagiousDiseaseConfirmationDetails: z.string(),
+          phisicalMentalProblemConfirmation: z.enum(["", "Sim", "Não"]),
+          phisicalMentalProblemConfirmationDetails: z.string(),
+          crimeConfirmation: z.enum(["", "Sim", "Não"]),
+          crimeConfirmationDetails: z.string(),
+          drugsProblemConfirmation: z.enum(["", "Sim", "Não"]),
+          drugsProblemConfirmationDetails: z.string(),
+          lawViolateConfirmation: z.enum(["", "Sim", "Não"]),
+          lawViolateConfirmationDetails: z.string(),
+          prostitutionConfirmation: z.enum(["", "Sim", "Não"]),
+          prostitutionConfirmationDetails: z.string(),
+          moneyLaundryConfirmation: z.enum(["", "Sim", "Não"]),
+          moneyLaundryConfirmationDetails: z.string(),
+          peopleTrafficConfirmation: z.enum(["", "Sim", "Não"]),
+          peopleTrafficConfirmationDetails: z.string(),
+          helpPeopleTrafficConfirmation: z.enum(["", "Sim", "Não"]),
+          helpPeopleTrafficConfirmationDetails: z.string(),
+          parentPeopleTrafficConfirmation: z.enum(["", "Sim", "Não"]),
+          parentPeopleTrafficConfirmationDetails: z.string(),
+          spyConfirmation: z.enum(["", "Sim", "Não"]),
+          spyConfirmationDetails: z.string(),
+          terrorismConfirmation: z.enum(["", "Sim", "Não"]),
+          terrorismConfirmationDetails: z.string(),
+          financialAssistanceConfirmation: z.enum(["", "Sim", "Não"]),
+          financialAssistanceConfirmationDetails: z.string(),
+          terrorismMemberConfirmation: z.enum(["", "Sim", "Não"]),
+          terrorismMemberConfirmationDetails: z.string(),
+          parentTerrorismConfirmation: z.enum(["", "Sim", "Não"]),
+          parentTerrorismConfirmationDetails: z.string(),
+          genocideConfirmation: z.enum(["", "Sim", "Não"]),
+          genocideConfirmationDetails: z.string(),
+          tortureConfirmation: z.enum(["", "Sim", "Não"]),
+          tortureConfirmationDetails: z.string(),
+          assassinConfirmation: z.enum(["", "Sim", "Não"]),
+          assassinConfirmationDetails: z.string(),
+          childSoldierConfirmation: z.enum(["", "Sim", "Não"]),
+          childSoldierConfirmationDetails: z.string(),
+          religionLibertyConfirmation: z.enum(["", "Sim", "Não"]),
+          religionLibertyConfirmationDetails: z.string(),
+          abortConfirmation: z.enum(["", "Sim", "Não"]),
+          abortConfirmationDetails: z.string(),
+          coerciveTransplantConfirmation: z.enum(["", "Sim", "Não"]),
+          coerciveTransplantConfirmationDetails: z.string(),
+          visaFraudConfirmation: z.enum(["", "Sim", "Não"]),
+          visaFraudConfirmationDetails: z.string(),
+          deportedConfirmation: z.enum(["", "Sim", "Não"]),
+          deportedConfirmationDetails: z.string(),
+          childCustodyConfirmation: z.enum(["", "Sim", "Não"]),
+          childCustodyConfirmationDetails: z.string(),
+          lawViolationConfirmation: z.enum(["", "Sim", "Não"]),
+          lawViolationConfirmationDetails: z.string(),
+          avoidTaxConfirmation: z.enum(["", "Sim", "Não"]),
+          avoidTaxConfirmationDetails: z.string(),
+        })
+        .superRefine(
+          (
+            {
+              contagiousDiseaseConfirmation,
+              contagiousDiseaseConfirmationDetails,
+              phisicalMentalProblemConfirmation,
+              phisicalMentalProblemConfirmationDetails,
+              crimeConfirmation,
+              crimeConfirmationDetails,
+              drugsProblemConfirmation,
+              drugsProblemConfirmationDetails,
+              lawViolateConfirmation,
+              lawViolateConfirmationDetails,
+              prostitutionConfirmation,
+              prostitutionConfirmationDetails,
+              moneyLaundryConfirmation,
+              moneyLaundryConfirmationDetails,
+              peopleTrafficConfirmation,
+              peopleTrafficConfirmationDetails,
+              helpPeopleTrafficConfirmation,
+              helpPeopleTrafficConfirmationDetails,
+              parentPeopleTrafficConfirmation,
+              parentPeopleTrafficConfirmationDetails,
+              spyConfirmation,
+              spyConfirmationDetails,
+              terrorismConfirmation,
+              terrorismConfirmationDetails,
+              financialAssistanceConfirmation,
+              financialAssistanceConfirmationDetails,
+              terrorismMemberConfirmation,
+              terrorismMemberConfirmationDetails,
+              parentTerrorismConfirmation,
+              parentTerrorismConfirmationDetails,
+              genocideConfirmation,
+              genocideConfirmationDetails,
+              tortureConfirmation,
+              tortureConfirmationDetails,
+              assassinConfirmation,
+              assassinConfirmationDetails,
+              childSoldierConfirmation,
+              childSoldierConfirmationDetails,
+              religionLibertyConfirmation,
+              religionLibertyConfirmationDetails,
+              abortConfirmation,
+              abortConfirmationDetails,
+              coerciveTransplantConfirmation,
+              coerciveTransplantConfirmationDetails,
+              visaFraudConfirmation,
+              visaFraudConfirmationDetails,
+              deportedConfirmation,
+              deportedConfirmationDetails,
+              childCustodyConfirmation,
+              childCustodyConfirmationDetails,
+              lawViolationConfirmation,
+              lawViolationConfirmationDetails,
+              avoidTaxConfirmation,
+              avoidTaxConfirmationDetails,
+            },
+            ctx,
+          ) => {
+            if (
+              contagiousDiseaseConfirmation === "Sim" &&
+              contagiousDiseaseConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["contagiousDiseaseConfirmationDetails"],
+              });
+            }
+
+            if (
+              phisicalMentalProblemConfirmation === "Sim" &&
+              phisicalMentalProblemConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["phisicalMentalProblemConfirmationDetails"],
+              });
+            }
+
+            if (
+              crimeConfirmation === "Sim" &&
+              crimeConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["crimeConfirmationDetails"],
+              });
+            }
+
+            if (
+              drugsProblemConfirmation === "Sim" &&
+              drugsProblemConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["drugsProblemConfirmationDetails"],
+              });
+            }
+
+            if (
+              lawViolateConfirmation === "Sim" &&
+              lawViolateConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["lawViolateConfirmationDetails"],
+              });
+            }
+
+            if (
+              prostitutionConfirmation === "Sim" &&
+              prostitutionConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["prostitutionConfirmationDetails"],
+              });
+            }
+
+            if (
+              moneyLaundryConfirmation === "Sim" &&
+              moneyLaundryConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["moneyLaundryConfirmationDetails"],
+              });
+            }
+
+            if (
+              peopleTrafficConfirmation === "Sim" &&
+              peopleTrafficConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["peopleTrafficConfirmationDetails"],
+              });
+            }
+
+            if (
+              helpPeopleTrafficConfirmation === "Sim" &&
+              helpPeopleTrafficConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["helpPeopleTrafficConfirmationDetails"],
+              });
+            }
+
+            if (
+              parentPeopleTrafficConfirmation === "Sim" &&
+              parentPeopleTrafficConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["parentPeopleTrafficConfirmationDetails"],
+              });
+            }
+
+            if (
+              spyConfirmation === "Sim" &&
+              spyConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["spyConfirmationDetails"],
+              });
+            }
+
+            if (
+              terrorismConfirmation === "Sim" &&
+              terrorismConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["terrorismConfirmationDetails"],
+              });
+            }
+
+            if (
+              financialAssistanceConfirmation === "Sim" &&
+              financialAssistanceConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["financialAssistanceConfirmationDetails"],
+              });
+            }
+
+            if (
+              terrorismMemberConfirmation === "Sim" &&
+              terrorismMemberConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["terrorismMemberConfirmationDetails"],
+              });
+            }
+
+            if (
+              parentTerrorismConfirmation === "Sim" &&
+              parentTerrorismConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["parentTerrorismConfirmationDetails"],
+              });
+            }
+
+            if (
+              genocideConfirmation === "Sim" &&
+              genocideConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["genocideConfirmationDetails"],
+              });
+            }
+
+            if (
+              tortureConfirmation === "Sim" &&
+              tortureConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["tortureConfirmationDetails"],
+              });
+            }
+
+            if (
+              assassinConfirmation === "Sim" &&
+              assassinConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["assassinConfirmationDetails"],
+              });
+            }
+
+            if (
+              childSoldierConfirmation === "Sim" &&
+              childSoldierConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["childSoldierConfirmationDetails"],
+              });
+            }
+
+            if (
+              religionLibertyConfirmation === "Sim" &&
+              religionLibertyConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["religionLibertyConfirmationDetails"],
+              });
+            }
+
+            if (
+              abortConfirmation === "Sim" &&
+              abortConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["abortConfirmationDetails"],
+              });
+            }
+
+            if (
+              coerciveTransplantConfirmation === "Sim" &&
+              coerciveTransplantConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["coerciveTransplantConfirmationDetails"],
+              });
+            }
+
+            if (
+              visaFraudConfirmation === "Sim" &&
+              visaFraudConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["visaFraudConfirmationDetails"],
+              });
+            }
+
+            if (
+              deportedConfirmation === "Sim" &&
+              deportedConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["deportedConfirmationDetails"],
+              });
+            }
+
+            if (
+              childCustodyConfirmation === "Sim" &&
+              childCustodyConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["childCustodyConfirmationDetails"],
+              });
+            }
+
+            if (
+              lawViolationConfirmation === "Sim" &&
+              lawViolationConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["lawViolationConfirmationDetails"],
+              });
+            }
+
+            if (
+              avoidTaxConfirmation === "Sim" &&
+              avoidTaxConfirmationDetails.length === 0
+            ) {
+              ctx.addIssue({
+                code: "custom",
+                message: "Campo obrigatório caso a opção seja sim",
+                path: ["avoidTaxConfirmationDetails"],
+              });
+            }
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -2949,34 +3352,96 @@ export const formsRouter = router({
         step,
         isEditing,
         contagiousDiseaseConfirmation,
+        contagiousDiseaseConfirmationDetails,
         phisicalMentalProblemConfirmation,
+        phisicalMentalProblemConfirmationDetails,
         crimeConfirmation,
+        crimeConfirmationDetails,
         drugsProblemConfirmation,
+        drugsProblemConfirmationDetails,
         lawViolateConfirmation,
+        lawViolateConfirmationDetails,
         prostitutionConfirmation,
+        prostitutionConfirmationDetails,
         moneyLaundryConfirmation,
+        moneyLaundryConfirmationDetails,
         peopleTrafficConfirmation,
+        peopleTrafficConfirmationDetails,
         helpPeopleTrafficConfirmation,
+        helpPeopleTrafficConfirmationDetails,
         parentPeopleTrafficConfirmation,
+        parentPeopleTrafficConfirmationDetails,
         spyConfirmation,
+        spyConfirmationDetails,
         terrorismConfirmation,
+        terrorismConfirmationDetails,
         financialAssistanceConfirmation,
+        financialAssistanceConfirmationDetails,
         terrorismMemberConfirmation,
+        terrorismMemberConfirmationDetails,
         parentTerrorismConfirmation,
+        parentTerrorismConfirmationDetails,
         genocideConfirmation,
+        genocideConfirmationDetails,
         tortureConfirmation,
+        tortureConfirmationDetails,
         assassinConfirmation,
+        assassinConfirmationDetails,
         childSoldierConfirmation,
+        childSoldierConfirmationDetails,
         religionLibertyConfirmation,
+        religionLibertyConfirmationDetails,
         abortConfirmation,
+        abortConfirmationDetails,
         coerciveTransplantConfirmation,
+        coerciveTransplantConfirmationDetails,
         visaFraudConfirmation,
+        visaFraudConfirmationDetails,
         deportedConfirmation,
+        deportedConfirmationDetails,
         childCustodyConfirmation,
+        childCustodyConfirmationDetails,
         lawViolationConfirmation,
+        lawViolationConfirmationDetails,
         avoidTaxConfirmation,
+        avoidTaxConfirmationDetails,
       } = opts.input;
       let profileUpdated;
+
+      if (
+        !contagiousDiseaseConfirmation ||
+        !phisicalMentalProblemConfirmation ||
+        !crimeConfirmation ||
+        !drugsProblemConfirmation ||
+        !lawViolateConfirmation ||
+        !prostitutionConfirmation ||
+        !moneyLaundryConfirmation ||
+        !peopleTrafficConfirmation ||
+        !helpPeopleTrafficConfirmation ||
+        !parentPeopleTrafficConfirmation ||
+        !spyConfirmation ||
+        !terrorismConfirmation ||
+        !financialAssistanceConfirmation ||
+        !terrorismMemberConfirmation ||
+        !parentTerrorismConfirmation ||
+        !genocideConfirmation ||
+        !tortureConfirmation ||
+        !assassinConfirmation ||
+        !childSoldierConfirmation ||
+        !religionLibertyConfirmation ||
+        !abortConfirmation ||
+        !coerciveTransplantConfirmation ||
+        !visaFraudConfirmation ||
+        !deportedConfirmation ||
+        !childCustodyConfirmation ||
+        !lawViolationConfirmation ||
+        !avoidTaxConfirmation
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Preencha todas as opções da etapa",
+        });
+      }
 
       if (isEditing) {
         profileUpdated = await prisma.profile.findUnique({
@@ -3059,37 +3524,72 @@ export const formsRouter = router({
         data: {
           contagiousDiseaseConfirmation:
             contagiousDiseaseConfirmation === "Sim",
+          contagiousDiseaseConfirmationDetails,
           phisicalMentalProblemConfirmation:
             phisicalMentalProblemConfirmation === "Sim",
+          phisicalMentalProblemConfirmationDetails,
           crimeConfirmation: crimeConfirmation === "Sim",
+          crimeConfirmationDetails,
           drugsProblemConfirmation: drugsProblemConfirmation === "Sim",
+          drugsProblemConfirmationDetails,
           lawViolateConfirmation: lawViolateConfirmation === "Sim",
+          lawViolateConfirmationDetails,
           prostitutionConfirmation: prostitutionConfirmation === "Sim",
+          prostitutionConfirmationDetails,
           moneyLaundryConfirmation: moneyLaundryConfirmation === "Sim",
+          moneyLaundryConfirmationDetails,
           peopleTrafficConfirmation: peopleTrafficConfirmation === "Sim",
+          peopleTrafficConfirmationDetails,
           helpPeopleTrafficConfirmation:
             helpPeopleTrafficConfirmation === "Sim",
+          helpPeopleTrafficConfirmationDetails,
           parentPeopleTrafficConfirmation:
             parentPeopleTrafficConfirmation === "Sim",
+          parentPeopleTrafficConfirmationDetails,
           spyConfirmation: spyConfirmation === "Sim",
+          spyConfirmationDetails,
           terrorismConfirmation: terrorismConfirmation === "Sim",
+          terrorismConfirmationDetails,
           financialAssistanceConfirmation:
             financialAssistanceConfirmation === "Sim",
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: profileUpdated.form.id,
+        },
+        data: {
+          financialAssistanceConfirmationDetails,
           terrorismMemberConfirmation: terrorismMemberConfirmation === "Sim",
+          terrorismMemberConfirmationDetails,
           parentTerrorismConfirmation: parentTerrorismConfirmation === "Sim",
+          parentTerrorismConfirmationDetails,
           genocideConfirmation: genocideConfirmation === "Sim",
+          genocideConfirmationDetails,
           tortureConfirmation: tortureConfirmation === "Sim",
+          tortureConfirmationDetails,
           assassinConfirmation: assassinConfirmation === "Sim",
+          assassinConfirmationDetails,
           childSoldierConfirmation: childSoldierConfirmation === "Sim",
+          childSoldierConfirmationDetails,
           religionLibertyConfirmation: religionLibertyConfirmation === "Sim",
+          religionLibertyConfirmationDetails,
           abortConfirmation: abortConfirmation === "Sim",
+          abortConfirmationDetails,
           coerciveTransplantConfirmation:
             coerciveTransplantConfirmation === "Sim",
+          coerciveTransplantConfirmationDetails,
           visaFraudConfirmation: visaFraudConfirmation === "Sim",
+          visaFraudConfirmationDetails,
           deportedConfirmation: deportedConfirmation === "Sim",
+          deportedConfirmationDetails,
           childCustodyConfirmation: childCustodyConfirmation === "Sim",
+          childCustodyConfirmationDetails,
           lawViolationConfirmation: lawViolationConfirmation === "Sim",
+          lawViolationConfirmationDetails,
           avoidTaxConfirmation: avoidTaxConfirmation === "Sim",
+          avoidTaxConfirmationDetails,
         },
       });
 
@@ -3100,33 +3600,60 @@ export const formsRouter = router({
       z.object({
         profileId: z.string().min(1),
         redirectStep: z.number().optional(),
-        contagiousDiseaseConfirmation: z.enum(["Sim", "Não"]),
-        phisicalMentalProblemConfirmation: z.enum(["Sim", "Não"]),
-        crimeConfirmation: z.enum(["Sim", "Não"]),
-        drugsProblemConfirmation: z.enum(["Sim", "Não"]),
-        lawViolateConfirmation: z.enum(["Sim", "Não"]),
-        prostitutionConfirmation: z.enum(["Sim", "Não"]),
-        moneyLaundryConfirmation: z.enum(["Sim", "Não"]),
-        peopleTrafficConfirmation: z.enum(["Sim", "Não"]),
-        helpPeopleTrafficConfirmation: z.enum(["Sim", "Não"]),
-        parentPeopleTrafficConfirmation: z.enum(["Sim", "Não"]),
-        spyConfirmation: z.enum(["Sim", "Não"]),
-        terrorismConfirmation: z.enum(["Sim", "Não"]),
-        financialAssistanceConfirmation: z.enum(["Sim", "Não"]),
-        terrorismMemberConfirmation: z.enum(["Sim", "Não"]),
-        parentTerrorismConfirmation: z.enum(["Sim", "Não"]),
-        genocideConfirmation: z.enum(["Sim", "Não"]),
-        tortureConfirmation: z.enum(["Sim", "Não"]),
-        assassinConfirmation: z.enum(["Sim", "Não"]),
-        childSoldierConfirmation: z.enum(["Sim", "Não"]),
-        religionLibertyConfirmation: z.enum(["Sim", "Não"]),
-        abortConfirmation: z.enum(["Sim", "Não"]),
-        coerciveTransplantConfirmation: z.enum(["Sim", "Não"]),
-        visaFraudConfirmation: z.enum(["Sim", "Não"]),
-        deportedConfirmation: z.enum(["Sim", "Não"]),
-        childCustodyConfirmation: z.enum(["Sim", "Não"]),
-        lawViolationConfirmation: z.enum(["Sim", "Não"]),
-        avoidTaxConfirmation: z.enum(["Sim", "Não"]),
+        contagiousDiseaseConfirmation: z.enum(["", "Sim", "Não"]),
+        contagiousDiseaseConfirmationDetails: z.string().nullable(),
+        phisicalMentalProblemConfirmation: z.enum(["", "Sim", "Não"]),
+        phisicalMentalProblemConfirmationDetails: z.string().nullable(),
+        crimeConfirmation: z.enum(["", "Sim", "Não"]),
+        crimeConfirmationDetails: z.string().nullable(),
+        drugsProblemConfirmation: z.enum(["", "Sim", "Não"]),
+        drugsProblemConfirmationDetails: z.string().nullable(),
+        lawViolateConfirmation: z.enum(["", "Sim", "Não"]),
+        lawViolateConfirmationDetails: z.string().nullable(),
+        prostitutionConfirmation: z.enum(["", "Sim", "Não"]),
+        prostitutionConfirmationDetails: z.string().nullable(),
+        moneyLaundryConfirmation: z.enum(["", "Sim", "Não"]),
+        moneyLaundryConfirmationDetails: z.string().nullable(),
+        peopleTrafficConfirmation: z.enum(["", "Sim", "Não"]),
+        peopleTrafficConfirmationDetails: z.string().nullable(),
+        helpPeopleTrafficConfirmation: z.enum(["", "Sim", "Não"]),
+        helpPeopleTrafficConfirmationDetails: z.string().nullable(),
+        parentPeopleTrafficConfirmation: z.enum(["", "Sim", "Não"]),
+        parentPeopleTrafficConfirmationDetails: z.string().nullable(),
+        spyConfirmation: z.enum(["", "Sim", "Não"]),
+        spyConfirmationDetails: z.string().nullable(),
+        terrorismConfirmation: z.enum(["", "Sim", "Não"]),
+        terrorismConfirmationDetails: z.string().nullable(),
+        financialAssistanceConfirmation: z.enum(["", "Sim", "Não"]),
+        financialAssistanceConfirmationDetails: z.string().nullable(),
+        terrorismMemberConfirmation: z.enum(["", "Sim", "Não"]),
+        terrorismMemberConfirmationDetails: z.string().nullable(),
+        parentTerrorismConfirmation: z.enum(["", "Sim", "Não"]),
+        parentTerrorismConfirmationDetails: z.string().nullable(),
+        genocideConfirmation: z.enum(["", "Sim", "Não"]),
+        genocideConfirmationDetails: z.string().nullable(),
+        tortureConfirmation: z.enum(["", "Sim", "Não"]),
+        tortureConfirmationDetails: z.string().nullable(),
+        assassinConfirmation: z.enum(["", "Sim", "Não"]),
+        assassinConfirmationDetails: z.string().nullable(),
+        childSoldierConfirmation: z.enum(["", "Sim", "Não"]),
+        childSoldierConfirmationDetails: z.string().nullable(),
+        religionLibertyConfirmation: z.enum(["", "Sim", "Não"]),
+        religionLibertyConfirmationDetails: z.string().nullable(),
+        abortConfirmation: z.enum(["", "Sim", "Não"]),
+        abortConfirmationDetails: z.string().nullable(),
+        coerciveTransplantConfirmation: z.enum(["", "Sim", "Não"]),
+        coerciveTransplantConfirmationDetails: z.string().nullable(),
+        visaFraudConfirmation: z.enum(["", "Sim", "Não"]),
+        visaFraudConfirmationDetails: z.string().nullable(),
+        deportedConfirmation: z.enum(["", "Sim", "Não"]),
+        deportedConfirmationDetails: z.string().nullable(),
+        childCustodyConfirmation: z.enum(["", "Sim", "Não"]),
+        childCustodyConfirmationDetails: z.string().nullable(),
+        lawViolationConfirmation: z.enum(["", "Sim", "Não"]),
+        lawViolationConfirmationDetails: z.string().nullable(),
+        avoidTaxConfirmation: z.enum(["", "Sim", "Não"]),
+        avoidTaxConfirmationDetails: z.string().nullable(),
       }),
     )
     .mutation(async (opts) => {
@@ -3134,32 +3661,59 @@ export const formsRouter = router({
         profileId,
         redirectStep,
         contagiousDiseaseConfirmation,
+        contagiousDiseaseConfirmationDetails,
         phisicalMentalProblemConfirmation,
+        phisicalMentalProblemConfirmationDetails,
         crimeConfirmation,
+        crimeConfirmationDetails,
         drugsProblemConfirmation,
+        drugsProblemConfirmationDetails,
         lawViolateConfirmation,
+        lawViolateConfirmationDetails,
         prostitutionConfirmation,
+        prostitutionConfirmationDetails,
         moneyLaundryConfirmation,
+        moneyLaundryConfirmationDetails,
         peopleTrafficConfirmation,
+        peopleTrafficConfirmationDetails,
         helpPeopleTrafficConfirmation,
+        helpPeopleTrafficConfirmationDetails,
         parentPeopleTrafficConfirmation,
+        parentPeopleTrafficConfirmationDetails,
         spyConfirmation,
+        spyConfirmationDetails,
         terrorismConfirmation,
+        terrorismConfirmationDetails,
         financialAssistanceConfirmation,
+        financialAssistanceConfirmationDetails,
         terrorismMemberConfirmation,
+        terrorismMemberConfirmationDetails,
         parentTerrorismConfirmation,
+        parentTerrorismConfirmationDetails,
         genocideConfirmation,
+        genocideConfirmationDetails,
         tortureConfirmation,
+        tortureConfirmationDetails,
         assassinConfirmation,
+        assassinConfirmationDetails,
         childSoldierConfirmation,
+        childSoldierConfirmationDetails,
         religionLibertyConfirmation,
+        religionLibertyConfirmationDetails,
         abortConfirmation,
+        abortConfirmationDetails,
         coerciveTransplantConfirmation,
+        coerciveTransplantConfirmationDetails,
         visaFraudConfirmation,
+        visaFraudConfirmationDetails,
         deportedConfirmation,
+        deportedConfirmationDetails,
         childCustodyConfirmation,
+        childCustodyConfirmationDetails,
         lawViolationConfirmation,
+        lawViolationConfirmationDetails,
         avoidTaxConfirmation,
+        avoidTaxConfirmationDetails,
       } = opts.input;
 
       const profile = await prisma.profile.findUnique({
@@ -3192,37 +3746,72 @@ export const formsRouter = router({
         data: {
           contagiousDiseaseConfirmation:
             contagiousDiseaseConfirmation === "Sim",
+          contagiousDiseaseConfirmationDetails,
           phisicalMentalProblemConfirmation:
             phisicalMentalProblemConfirmation === "Sim",
+          phisicalMentalProblemConfirmationDetails,
           crimeConfirmation: crimeConfirmation === "Sim",
+          crimeConfirmationDetails,
           drugsProblemConfirmation: drugsProblemConfirmation === "Sim",
+          drugsProblemConfirmationDetails,
           lawViolateConfirmation: lawViolateConfirmation === "Sim",
+          lawViolateConfirmationDetails,
           prostitutionConfirmation: prostitutionConfirmation === "Sim",
+          prostitutionConfirmationDetails,
           moneyLaundryConfirmation: moneyLaundryConfirmation === "Sim",
+          moneyLaundryConfirmationDetails,
           peopleTrafficConfirmation: peopleTrafficConfirmation === "Sim",
+          peopleTrafficConfirmationDetails,
           helpPeopleTrafficConfirmation:
             helpPeopleTrafficConfirmation === "Sim",
+          helpPeopleTrafficConfirmationDetails,
           parentPeopleTrafficConfirmation:
             parentPeopleTrafficConfirmation === "Sim",
+          parentPeopleTrafficConfirmationDetails,
           spyConfirmation: spyConfirmation === "Sim",
+          spyConfirmationDetails,
           terrorismConfirmation: terrorismConfirmation === "Sim",
+          terrorismConfirmationDetails,
           financialAssistanceConfirmation:
             financialAssistanceConfirmation === "Sim",
+        },
+      });
+
+      await prisma.form.update({
+        where: {
+          id: profile.form.id,
+        },
+        data: {
+          financialAssistanceConfirmationDetails,
           terrorismMemberConfirmation: terrorismMemberConfirmation === "Sim",
+          terrorismMemberConfirmationDetails,
           parentTerrorismConfirmation: parentTerrorismConfirmation === "Sim",
+          parentTerrorismConfirmationDetails,
           genocideConfirmation: genocideConfirmation === "Sim",
+          genocideConfirmationDetails,
           tortureConfirmation: tortureConfirmation === "Sim",
+          tortureConfirmationDetails,
           assassinConfirmation: assassinConfirmation === "Sim",
+          assassinConfirmationDetails,
           childSoldierConfirmation: childSoldierConfirmation === "Sim",
+          childSoldierConfirmationDetails,
           religionLibertyConfirmation: religionLibertyConfirmation === "Sim",
+          religionLibertyConfirmationDetails,
           abortConfirmation: abortConfirmation === "Sim",
+          abortConfirmationDetails,
           coerciveTransplantConfirmation:
             coerciveTransplantConfirmation === "Sim",
+          coerciveTransplantConfirmationDetails,
           visaFraudConfirmation: visaFraudConfirmation === "Sim",
+          visaFraudConfirmationDetails,
           deportedConfirmation: deportedConfirmation === "Sim",
+          deportedConfirmationDetails,
           childCustodyConfirmation: childCustodyConfirmation === "Sim",
+          childCustodyConfirmationDetails,
           lawViolationConfirmation: lawViolationConfirmation === "Sim",
+          lawViolationConfirmationDetails,
           avoidTaxConfirmation: avoidTaxConfirmation === "Sim",
+          avoidTaxConfirmationDetails,
         },
       });
 

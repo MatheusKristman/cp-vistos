@@ -2508,7 +2508,7 @@ export function FormView({ form, profileId }: Props) {
           </AccordionTrigger>
 
           <AccordionContent className="w-full flex flex-col gap-9">
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Possui alguma doença contagiosa (cancroide, gonorreia,
@@ -2522,9 +2522,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.contagiousDiseaseConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.contagiousDiseaseConfirmationDetails
+                    ? form.contagiousDiseaseConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Possui algum problema físico ou mental que possa interferir em
@@ -2535,9 +2547,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.phisicalMentalProblemConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.phisicalMentalProblemConfirmationDetails
+                    ? form.phisicalMentalProblemConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já foi preso ou condenado por algum delito ou crime,
@@ -2549,9 +2573,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.crimeConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.crimeConfirmationDetails
+                    ? form.crimeConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Já teve problemas com drogas?
@@ -2561,9 +2597,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.drugsProblemConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.drugsProblemConfirmationDetails
+                    ? form.drugsProblemConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já violou ou esteve envolvido em alguma conspiração para
@@ -2574,9 +2622,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.lawViolateConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.lawViolateConfirmationDetails
+                    ? form.lawViolateConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você está vindo para os Estados Unidos para se envolver em
@@ -2589,9 +2649,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.prostitutionConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.prostitutionConfirmationDetails
+                    ? form.prostitutionConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já esteve envolvido ou pretende se envolver em lavagem de
@@ -2602,9 +2674,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.moneyLaundryConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.moneyLaundryConfirmationDetails
+                    ? form.moneyLaundryConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já cometeu ou conspirou para cometer um crime de tráfico
@@ -2615,9 +2699,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.peopleTrafficConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.peopleTrafficConfirmationDetails
+                    ? form.peopleTrafficConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já ajudou, encorajou, ajudou ou conspirou conscientemente
@@ -2629,9 +2725,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.helpPeopleTrafficConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.helpPeopleTrafficConfirmationDetails
+                    ? form.helpPeopleTrafficConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você é cônjuge, filho ou filha de um indivíduo que cometeu ou
@@ -2644,9 +2752,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.parentPeopleTrafficConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.parentPeopleTrafficConfirmationDetails
+                    ? form.parentPeopleTrafficConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você procura se envolver em espionagem, sabotagem, violações
@@ -2658,9 +2778,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.spyConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.spyConfirmationDetails
+                    ? form.spyConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você procura se envolver em atividades terroristas enquanto
@@ -2672,9 +2804,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.terrorismConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.terrorismConfirmationDetails
+                    ? form.terrorismConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já prestou ou pretende fornecer assistência financeira ou
@@ -2685,9 +2829,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.financialAssistanceConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.financialAssistanceConfirmationDetails
+                    ? form.financialAssistanceConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você é membro ou representante de uma organização terrorista?
@@ -2697,9 +2853,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.terrorismMemberConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.terrorismMemberConfirmationDetails
+                    ? form.terrorismMemberConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você é cônjuge, filho ou filha de um indivíduo que se envolveu
@@ -2712,9 +2880,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.parentTerrorismConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.parentTerrorismConfirmationDetails
+                    ? form.parentTerrorismConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já ordenou, incitou, cometeu, ajudou ou de alguma forma
@@ -2725,9 +2905,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.genocideConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.genocideConfirmationDetails
+                    ? form.genocideConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já cometeu, ordenou, incitou, ajudou ou participou de
@@ -2738,9 +2930,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.tortureConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.tortureConfirmationDetails
+                    ? form.tortureConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você cometeu, ordenou, incitou, ajudou ou de alguma forma
@@ -2752,9 +2956,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.assassinConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.assassinConfirmationDetails
+                    ? form.assassinConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já se envolveu no recrutamento ou na utilização de
@@ -2765,9 +2981,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.childSoldierConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.childSoldierConfirmationDetails
+                    ? form.childSoldierConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você, enquanto servia como funcionário do governo, foi
@@ -2779,9 +3007,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.religionLibertyConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.religionLibertyConfirmationDetails
+                    ? form.religionLibertyConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já esteve diretamente envolvido no estabelecimento ou na
@@ -2795,9 +3035,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.abortConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.abortConfirmationDetails
+                    ? form.abortConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já esteve diretamente envolvido no transplante coercitivo
@@ -2808,9 +3060,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.coerciveTransplantConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.coerciveTransplantConfirmationDetails
+                    ? form.coerciveTransplantConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já tentou obter ou ajudar outras pessoas a obter um
@@ -2823,9 +3087,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.visaFraudConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.visaFraudConfirmationDetails
+                    ? form.visaFraudConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já foi removido ou deportado de algum país?
@@ -2835,9 +3111,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.deportedConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.deportedConfirmationDetails
+                    ? form.deportedConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já recebeu a custódia de uma criança cidadã dos EUA fora
@@ -2849,9 +3137,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.childCustodyConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.childCustodyConfirmationDetails
+                    ? form.childCustodyConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você votou nos Estados Unidos violando alguma lei ou
@@ -2862,9 +3162,21 @@ export function FormView({ form, profileId }: Props) {
                   {form.lawViolationConfirmation ? "Sim" : "Não"}
                 </span>
               </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.lawViolationConfirmationDetails
+                    ? form.lawViolationConfirmationDetails
+                    : "Sem detalhes"}
+                </span>
+              </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="w-full flex flex-col gap-1">
                 <span className="text-sm text-foreground/60 font-medium">
                   Você já renunciou à cidadania dos Estados Unidos para evitar
@@ -2873,6 +3185,18 @@ export function FormView({ form, profileId }: Props) {
 
                 <span className="text-lg font-medium text-foreground">
                   {form.avoidTaxConfirmation ? "Sim" : "Não"}
+                </span>
+              </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <span className="text-sm text-foreground/60 font-medium">
+                  Detalhes
+                </span>
+
+                <span className="text-lg font-medium text-foreground">
+                  {form.avoidTaxConfirmationDetails
+                    ? form.avoidTaxConfirmationDetails
+                    : "Sem detalhes"}
                 </span>
               </div>
             </div>

@@ -74,7 +74,7 @@ const formSchema = z
       },
       ctx,
     ) => {
-      if (tel.length > 0 && tel.length < 14) {
+      if (tel.length > 0 && tel.length !== 13) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",

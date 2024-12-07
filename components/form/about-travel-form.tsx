@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
+import { useEffect } from "react";
+import { ArrowRight, Loader2, Save } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -110,14 +110,17 @@ const formSchema = z
     USAPreviewReturnDate: z.date({ message: "Campo obrigatório" }).optional(),
     returnFlyNumber: z.string(),
     returnCity: z.string(),
-    estimatedTimeOnUSA: z.string().min(1, { message: "Campo obrigatório" }),
+    estimatedTimeNumber: z.coerce
+      .number()
+      .gt(1, "Campo precisa ter valor maior que zero"),
+    estimatedTimeType: z.string().min(1, { message: "Campo obrigatório" }),
     visitLocations: z.string().min(1, { message: "Campo obrigatório" }),
     hasAddressInUSA: z.enum(["Sim", "Não"]),
     USACompleteAddress: z.string(),
     USAZipCode: z.string(),
     USACity: z.string(),
     USAState: z.string(),
-    hasPayer: z.enum(["Sim", "Não"]),
+    payer: z.string(),
     payerNameOrCompany: z.string(),
     payerTel: z.string(),
     payerAddress: z.string(),
@@ -132,7 +135,7 @@ const formSchema = z
         USAZipCode,
         USACity,
         USAState,
-        hasPayer,
+        payer,
         payerNameOrCompany,
         payerTel,
         payerAddress,
@@ -173,7 +176,10 @@ const formSchema = z
         });
       }
 
-      if (hasPayer === "Sim" && payerNameOrCompany.length === 0) {
+      if (
+        (payer === "Outra pessoa" || payer === "Empresa") &&
+        payerNameOrCompany.length === 0
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -181,7 +187,10 @@ const formSchema = z
         });
       }
 
-      if (hasPayer === "Sim" && payerTel.length === 0) {
+      if (
+        (payer === "Outra pessoa" || payer === "Empresa") &&
+        payerTel.length === 0
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -189,7 +198,10 @@ const formSchema = z
         });
       }
 
-      if (hasPayer === "Sim" && payerAddress.length === 0) {
+      if (
+        (payer === "Outra pessoa" || payer === "Empresa") &&
+        payerAddress.length === 0
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -197,7 +209,7 @@ const formSchema = z
         });
       }
 
-      if (hasPayer === "Sim" && payerRelation.length === 0) {
+      if (payer === "Outra pessoa" && payerRelation.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -205,7 +217,10 @@ const formSchema = z
         });
       }
 
-      if (hasPayer === "Sim" && !isEmail(payerEmail)) {
+      if (
+        (payer === "Outra pessoa" || payer === "Empresa") &&
+        !isEmail(payerEmail)
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "E-mail inválido",
@@ -213,7 +228,10 @@ const formSchema = z
         });
       }
 
-      if (hasPayer === "Sim" && payerEmail.length === 0) {
+      if (
+        (payer === "Outra pessoa" || payer === "Empresa") &&
+        payerEmail.length === 0
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -252,8 +270,11 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
         ? currentForm.returnFlyNumber
         : "",
       returnCity: currentForm.returnCity ? currentForm.returnCity : "",
-      estimatedTimeOnUSA: currentForm.estimatedTimeOnUSA
-        ? currentForm.estimatedTimeOnUSA
+      estimatedTimeNumber: currentForm.estimatedTimeOnUSA
+        ? Number(currentForm.estimatedTimeOnUSA.split(" ")[0])
+        : 0,
+      estimatedTimeType: currentForm.estimatedTimeOnUSA
+        ? currentForm.estimatedTimeOnUSA.split(" ")[1]
         : "",
       visitLocations: currentForm.visitLocations
         ? currentForm.visitLocations
@@ -265,7 +286,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
       USAZipCode: currentForm.USAZipCode ? currentForm.USAZipCode : "",
       USACity: currentForm.USACity ? currentForm.USACity : "",
       USAState: currentForm.USAState ? currentForm.USAState : "",
-      hasPayer: currentForm.hasPayer ? "Sim" : "Não",
+      payer: currentForm.payer ? currentForm.payer : "",
       payerNameOrCompany: currentForm.payerNameOrCompany
         ? currentForm.payerNameOrCompany
         : "",
@@ -278,7 +299,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
 
   const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
   const hasAddressInUSA = form.watch("hasAddressInUSA");
-  const hasPayer = form.watch("hasPayer");
+  const payer = form.watch("payer");
   const utils = trpc.useUtils();
   const router = useRouter();
 
@@ -353,10 +374,12 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
             : currentForm.returnFlyNumber,
         returnCity:
           values.returnCity !== "" ? values.returnCity : currentForm.returnCity,
-        estimatedTimeOnUSA:
-          values.estimatedTimeOnUSA !== ""
-            ? values.estimatedTimeOnUSA
-            : currentForm.estimatedTimeOnUSA,
+        estimatedTimeNumber: values.estimatedTimeNumber
+          ? values.estimatedTimeNumber
+          : Number(currentForm.estimatedTimeOnUSA?.split(" ")[0]),
+        estimatedTimeType: values.estimatedTimeType
+          ? values.estimatedTimeType
+          : currentForm.estimatedTimeOnUSA!.split(" ")[1],
         visitLocations:
           values.visitLocations !== ""
             ? values.visitLocations
@@ -375,7 +398,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
         USACity: values.USACity !== "" ? values.USACity : currentForm.USACity,
         USAState:
           values.USAState !== "" ? values.USAState : currentForm.USAState,
-        hasPayer: values.hasPayer ?? (currentForm.hasPayer ? "Sim" : "Não"),
+        payer: values.payer !== "" ? values.payer : currentForm.payer,
         payerNameOrCompany:
           values.payerNameOrCompany !== ""
             ? values.payerNameOrCompany
@@ -425,10 +448,12 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
           : currentForm.returnFlyNumber,
       returnCity:
         values.returnCity !== "" ? values.returnCity : currentForm.returnCity,
-      estimatedTimeOnUSA:
-        values.estimatedTimeOnUSA !== ""
-          ? values.estimatedTimeOnUSA
-          : currentForm.estimatedTimeOnUSA,
+      estimatedTimeNumber: values.estimatedTimeNumber
+        ? values.estimatedTimeNumber
+        : Number(currentForm.estimatedTimeOnUSA?.split(" ")[0]),
+      estimatedTimeType: values.estimatedTimeType
+        ? values.estimatedTimeType
+        : currentForm.estimatedTimeOnUSA!.split(" ")[1],
       visitLocations:
         values.visitLocations !== ""
           ? values.visitLocations
@@ -445,7 +470,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
         values.USAZipCode !== "" ? values.USAZipCode : currentForm.USAZipCode,
       USACity: values.USACity !== "" ? values.USACity : currentForm.USACity,
       USAState: values.USAState !== "" ? values.USAState : currentForm.USAState,
-      hasPayer: values.hasPayer ?? (currentForm.hasPayer ? "Sim" : "Não"),
+      payer: values.payer !== "" ? values.payer : currentForm.payer,
       payerNameOrCompany:
         values.payerNameOrCompany !== ""
           ? values.payerNameOrCompany
@@ -796,27 +821,74 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
             </div>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-10">
-              <FormField
-                control={form.control}
-                name="estimatedTimeOnUSA"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Tempo de permanência nos EUA*
-                    </FormLabel>
+              <div className="w-full grid grid-cols-1 sm:grid-cols-[calc(60%-8px)_calc(40%-8px)] gap-x-4 gap-y-6">
+                <FormField
+                  control={form.control}
+                  name="estimatedTimeNumber"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="text-foreground">
+                        Tempo de permanência estimado nos EUA
+                      </FormLabel>
 
-                    <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
-                    </FormControl>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          className="!mt-auto"
+                          disabled={isPending || isSavePending}
+                          onKeyDown={(evt) =>
+                            ["e", "E", "+", "-"].includes(evt.key) &&
+                            evt.preventDefault()
+                          }
+                          {...field}
+                        />
+                      </FormControl>
 
-                    <FormMessage className="text-sm text-destructive" />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage className="text-sm text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="estimatedTimeType"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="text-foreground">
+                        Periodo do tempo de permanência
+                      </FormLabel>
+
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger
+                            className={cn(
+                              "!mt-auto",
+                              field.value === "" &&
+                                "[&>span]:text-muted-foreground",
+                            )}
+                          >
+                            <SelectValue placeholder="Selecione se vai ser dia/mês/ano" />
+                          </SelectTrigger>
+                        </FormControl>
+
+                        <SelectContent>
+                          <SelectItem value="Dia(s)">Dia(s)</SelectItem>
+
+                          <SelectItem value="Mês(es)">Mês(es)</SelectItem>
+
+                          <SelectItem value="Ano(s)">Ano(s)</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <FormMessage className="text-sm text-destructive" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -1013,37 +1085,34 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
-                name="hasPayer"
+                name="payer"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
                       Você pagará pela viagem?
                     </FormLabel>
 
-                    <FormControl>
-                      <RadioGroup
-                        disabled={isPending || isSavePending}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="!mt-auto">
+                          <SelectValue placeholder="Selecione quem irá pagar a viagem" />
+                        </SelectTrigger>
+                      </FormControl>
 
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
+                      <SelectContent>
+                        <SelectItem value="Eu mesmo">Eu mesmo</SelectItem>
 
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
+                        <SelectItem value="Outra pessoa">
+                          Outra pessoa
+                        </SelectItem>
 
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
+                        <SelectItem value="Empresa">Empresa</SelectItem>
+                      </SelectContent>
+                    </Select>
 
                     <FormMessage className="text-sm text-destructive" />
                   </FormItem>
@@ -1055,7 +1124,8 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
                 {
-                  hidden: hasPayer === "Não",
+                  hidden: payer === "Eu mesmo" || payer === "",
+                  "sm:grid-cols-2": payer !== "Outra pessoa",
                 },
               )}
             >
@@ -1065,7 +1135,11 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Nome ou Empresa que pagará a viagem*
+                      {payer === "Outra pessoa"
+                        ? "Nome de quem pagará a viagem*"
+                        : payer === "Empresa"
+                          ? "Empresa que pagará a viagem*"
+                          : "Nome ou Empresa que pagará a viagem*"}
                     </FormLabel>
 
                     <FormControl>
@@ -1120,7 +1194,12 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="payerRelation"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem
+                    className={cn(
+                      "flex flex-col gap-2",
+                      payer !== "Outra pessoa" && "hidden",
+                    )}
+                  >
                     <FormLabel className="text-foreground">
                       Relação com o Solicitante*
                     </FormLabel>
@@ -1143,7 +1222,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6",
                 {
-                  hidden: hasPayer === "Não",
+                  hidden: payer === "Eu mesmo" || payer === "",
                 },
               )}
             >
