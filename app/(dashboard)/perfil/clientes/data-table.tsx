@@ -44,6 +44,7 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: false,
     name: true,
+    group: true,
     CASVDate: true,
     interviewDate: true,
     meetingDate: true,

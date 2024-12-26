@@ -37,6 +37,12 @@ export const userRouter = router({
           .refine((val) => val.length > 0 && val.length === 14, {
             message: "CPF inválido",
           }),
+        group: z
+          .string({
+            required_error: "Grupo é obrigatório",
+            invalid_type_error: "Grupo inválido",
+          })
+          .min(1, "Grupo é obrigatório"),
         cel: z
           .string({
             required_error: "Celular é obrigatório",
@@ -248,6 +254,7 @@ export const userRouter = router({
           password: input.password,
           emailScheduleAccount: input.emailScheduleAccount,
           passwordScheduleAccount: input.passwordScheduleAccount,
+          group: input.group,
           role: Role.CLIENT,
           address: input.address,
           budget: parseFloat(input.budget),
@@ -480,6 +487,7 @@ export const userRouter = router({
 
     const clients = profiles.map((profile) => ({
       id: profile.id,
+      group: profile.user.group!,
       CASVDate: profile.CASVDate,
       interviewDate: profile.interviewDate,
       meetingDate: profile.meetingDate,

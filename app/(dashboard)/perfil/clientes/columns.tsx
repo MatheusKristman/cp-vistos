@@ -54,6 +54,27 @@ export const columns: ColumnDef<UserTable>[] = [
     },
   },
   {
+    accessorKey: "group",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Grupo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("group")) {
+        return <span>----</span>;
+      }
+
+      return <span>{row.getValue("group")}</span>;
+    },
+  },
+  {
     accessorKey: "DSValid",
     header: ({ column }) => {
       return (
