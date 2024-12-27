@@ -1,6 +1,6 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { BudgetPaid, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
+import { BudgetPaid, Category, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays } from "date-fns";
 
@@ -166,6 +166,9 @@ export const userRouter = router({
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
                 }),
+              category: z
+                .enum(["Visto Americano", "Passaporte", "E-TA", ""])
+                .refine((val) => val.length !== 0, { message: "Categoria é obrigatória" }),
               issuanceDate: z
                 .date({
                   required_error: "Data de Emissão é obrigatória",
@@ -271,6 +274,7 @@ export const userRouter = router({
       const profilesPromises = input.profiles.map(async (profile) => {
         let visaClass;
         let visaType;
+        let category;
 
         switch (profile.visaClass) {
           case "B1 Babá":
@@ -305,13 +309,26 @@ export const userRouter = router({
             break;
         }
 
+        switch (profile.category) {
+          case "Visto Americano":
+            category = Category.american_visa;
+            break;
+          case "Passaporte":
+            category = Category.passport;
+            break;
+          case "E-TA":
+            category = Category.e_ta;
+            break;
+          default:
+            category = Category.american_visa;
+            break;
+        }
+
         const newProfile = await prisma.profile.create({
           data: {
-            DSNumber: profile.DSNumber,
             DSValid: addDays(new Date(), 30),
+            DSNumber: profile.DSNumber,
             name: profile.profileName,
-            visaClass,
-            visaType,
             address: profile.profileAddress,
             cpf: profile.profileCpf,
             birthDate: profile.birthDate,
@@ -320,6 +337,9 @@ export const userRouter = router({
             expireDate: profile.expireDate,
             CASVDate: profile.CASVDate,
             interviewDate: profile.interviewDate,
+            visaClass,
+            visaType,
+            category,
             user: {
               connect: {
                 id: account.id,
@@ -365,6 +385,9 @@ export const userRouter = router({
             "",
           ])
           .refine((val) => val.length !== 0),
+        category: z
+          .enum(["Visto Americano", "Passaporte", "E-TA", ""])
+          .refine((val) => val.length !== 0, { message: "Categoria é obrigatória" }),
         issuanceDate: z.date().optional(),
         expireDate: z.date().optional(),
         DSNumber: z.string(),
@@ -388,6 +411,7 @@ export const userRouter = router({
       } = opts.input;
       let visaClass;
       let visaType;
+      let category;
 
       switch (opts.input.visaClass) {
         case "B1 Babá":
@@ -422,13 +446,26 @@ export const userRouter = router({
           break;
       }
 
+      switch (opts.input.category) {
+        case "Visto Americano":
+          category = Category.american_visa;
+          break;
+        case "Passaporte":
+          category = Category.passport;
+          break;
+        case "E-TA":
+          category = Category.e_ta;
+          break;
+        default:
+          category = Category.american_visa;
+          break;
+      }
+
       const profileUpdated = await prisma.profile.create({
         data: {
-          DSNumber: DSNumber,
           DSValid: addDays(new Date(), 30),
+          DSNumber: DSNumber,
           name: profileName,
-          visaClass,
-          visaType,
           address: profileAddress,
           cpf: profileCpf,
           birthDate: birthDate,
@@ -437,6 +474,9 @@ export const userRouter = router({
           expireDate: expireDate,
           CASVDate: CASVDate,
           interviewDate: interviewDate,
+          visaClass,
+          visaType,
+          category,
           user: {
             connect: {
               id: userId,
@@ -469,38 +509,49 @@ export const userRouter = router({
         message: "Perfil criado com sucesso",
       };
     }),
-  getClients: collaboratorProcedure.query(async () => {
-    const profiles = await prisma.profile.findMany({
-      include: {
-        user: {
-          include: {
-            profiles: true,
-          },
+  getClients: collaboratorProcedure
+    .input(
+      z.object({
+        category: z.enum(["american_visa", "passport", "e_ta"]),
+      })
+    )
+    .query(async (opts) => {
+      const { category } = opts.input;
+
+      const profiles = await prisma.profile.findMany({
+        where: {
+          category,
         },
-        form: true,
-      },
-    });
+        include: {
+          user: {
+            include: {
+              profiles: true,
+            },
+          },
+          form: true,
+        },
+      });
 
-    if (profiles.length === 0) {
-      return { clients: [] };
-    }
+      if (profiles.length === 0) {
+        return { clients: [] };
+      }
 
-    const clients = profiles.map((profile) => ({
-      id: profile.id,
-      group: profile.user.group!,
-      CASVDate: profile.CASVDate,
-      interviewDate: profile.interviewDate,
-      meetingDate: profile.meetingDate,
-      DSValid: profile.DSValid,
-      name: profile.name,
-      scheduleAccount: profile.user.scheduleAccount!,
-      statusDS: profile.statusDS,
-      tax: !!profile.taxDate,
-      visaType: profile.visaType,
-    }));
+      const clients = profiles.map((profile) => ({
+        id: profile.id,
+        group: profile.user.group!,
+        CASVDate: profile.CASVDate,
+        interviewDate: profile.interviewDate,
+        meetingDate: profile.meetingDate,
+        DSValid: profile.DSValid,
+        name: profile.name,
+        scheduleAccount: profile.user.scheduleAccount!,
+        statusDS: profile.statusDS,
+        tax: !!profile.taxDate,
+        visaType: profile.visaType,
+      }));
 
-    return { clients };
-  }),
+      return { clients };
+    }),
   getAnnotations: adminProcedure.input(z.object({ accountId: z.string().min(1) })).query(async (opts) => {
     const accountId = opts.input.accountId;
 
