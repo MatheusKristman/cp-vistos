@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect, usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { E_TA } from "./components/e-ta";
-import { Passport } from "./components/passport";
-import { AmericanVisa } from "./components/american-visa";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ClientDetailsModal } from "@/components/dashboard/client-details-modal";
+import { AmericanVisaArchived } from "./components/american-visa-archived";
+import { PassportArchived } from "./components/passport-archived";
+import { E_TA_Archived } from "./components/e-ta-archived";
 
-export default function ClientsPage() {
+export default function ArchivedPage() {
   const [category, setCategory] = useState("");
 
   const searchParams = useSearchParams();
@@ -51,7 +51,7 @@ export default function ClientsPage() {
   return (
     <>
       <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 lg:ml-[250px] lg:px-40">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">Clientes Ativos</h1>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">Clientes Arquivados</h1>
 
         <Tabs value={category} onValueChange={handleCategory}>
           <TabsList className="w-full flex-col h-fit sm:flex-row rounded-xl">
@@ -67,15 +67,15 @@ export default function ClientsPage() {
           </TabsList>
 
           <TabsContent value="american_visa">
-            <AmericanVisa />
+            <AmericanVisaArchived />
           </TabsContent>
 
           <TabsContent value="passport">
-            <Passport />
+            <PassportArchived />
           </TabsContent>
 
           <TabsContent value="e_ta">
-            <E_TA />
+            <E_TA_Archived />
           </TabsContent>
         </Tabs>
       </div>

@@ -7,7 +7,7 @@ import { DataTable } from "../data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function AmericanVisa() {
-  const { data, isFetching } = trpc.userRouter.getClients.useQuery({
+  const { data, isFetching } = trpc.userRouter.getActiveClients.useQuery({
     category: "american_visa",
   });
 

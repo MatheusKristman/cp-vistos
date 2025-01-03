@@ -1,6 +1,6 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { BudgetPaid, Category, Role, ScheduleAccount, VisaClass, VisaType } from "@prisma/client";
+import { BudgetPaid, Category, Role, ScheduleAccount, Status, VisaClass, VisaType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays } from "date-fns";
 
@@ -523,7 +523,7 @@ export const userRouter = router({
         message: "Perfil criado com sucesso",
       };
     }),
-  getClients: collaboratorProcedure
+  getActiveClients: collaboratorProcedure
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
@@ -535,6 +535,97 @@ export const userRouter = router({
       const profiles = await prisma.profile.findMany({
         where: {
           category,
+          status: Status.active,
+        },
+        include: {
+          user: {
+            include: {
+              profiles: true,
+            },
+          },
+          form: true,
+        },
+      });
+
+      console.log({ profiles });
+
+      if (profiles.length === 0) {
+        return { clients: [] };
+      }
+
+      const clients = profiles.map((profile) => ({
+        id: profile.id,
+        group: profile.user.group!,
+        CASVDate: profile.CASVDate,
+        interviewDate: profile.interviewDate,
+        meetingDate: profile.meetingDate,
+        DSValid: profile.DSValid,
+        name: profile.name,
+        scheduleAccount: profile.user.scheduleAccount!,
+        statusDS: profile.statusDS,
+        tax: !!profile.taxDate,
+        visaType: profile.visaType,
+      }));
+
+      return { clients };
+    }),
+  getProspectsClients: collaboratorProcedure
+    .input(
+      z.object({
+        category: z.enum(["american_visa", "passport", "e_ta"]),
+      })
+    )
+    .query(async (opts) => {
+      const { category } = opts.input;
+
+      const profiles = await prisma.profile.findMany({
+        where: {
+          category,
+          status: Status.prospect,
+        },
+        include: {
+          user: {
+            include: {
+              profiles: true,
+            },
+          },
+          form: true,
+        },
+      });
+
+      if (profiles.length === 0) {
+        return { clients: [] };
+      }
+
+      const clients = profiles.map((profile) => ({
+        id: profile.id,
+        group: profile.user.group!,
+        CASVDate: profile.CASVDate,
+        interviewDate: profile.interviewDate,
+        meetingDate: profile.meetingDate,
+        DSValid: profile.DSValid,
+        name: profile.name,
+        scheduleAccount: profile.user.scheduleAccount!,
+        statusDS: profile.statusDS,
+        tax: !!profile.taxDate,
+        visaType: profile.visaType,
+      }));
+
+      return { clients };
+    }),
+  getArchivedClients: collaboratorProcedure
+    .input(
+      z.object({
+        category: z.enum(["american_visa", "passport", "e_ta"]),
+      })
+    )
+    .query(async (opts) => {
+      const { category } = opts.input;
+
+      const profiles = await prisma.profile.findMany({
+        where: {
+          category,
+          status: Status.archived,
         },
         include: {
           user: {
@@ -1120,5 +1211,65 @@ export const userRouter = router({
       });
 
       return { clientUpdated, message: "Perfil editado com sucesso" };
+    }),
+  archiveProfile: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1, "ID do perfil é obrigatório"),
+      })
+    )
+    .mutation(async (opts) => {
+      const { profileId } = opts.input;
+
+      await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          status: Status.archived,
+        },
+      });
+
+      return { message: "Perfil movido para arquivos com sucesso" };
+    }),
+  prospectProfile: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1, "ID do perfil é obrigatório"),
+      })
+    )
+    .mutation(async (opts) => {
+      const { profileId } = opts.input;
+
+      await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          status: Status.prospect,
+        },
+      });
+
+      return { message: "Perfil movido para prospect com sucesso" };
+    }),
+  activateProfile: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1, "ID do perfil é obrigatório"),
+      })
+    )
+    .mutation(async (opts) => {
+      const { profileId } = opts.input;
+
+      await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          status: Status.active,
+        },
+      });
+
+      return { message: "Perfil movido para clientes ativos com sucesso" };
     }),
 });

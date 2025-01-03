@@ -161,7 +161,9 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
     onSuccess: (data) => {
       toast.success(data.message);
 
-      utils.userRouter.getClients.invalidate();
+      utils.userRouter.getActiveClients.invalidate();
+      utils.userRouter.getProspectsClients.invalidate();
+      utils.userRouter.getArchivedClients.invalidate();
 
       setClient(data.clientUpdated);
       handleBack();

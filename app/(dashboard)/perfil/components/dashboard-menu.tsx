@@ -35,6 +35,22 @@ export function DashboardMenu() {
 
         <li
           className={cn("text-xl", {
+            "font-semibold": pathname === "/perfil/prospects",
+          })}
+        >
+          <Link href="/perfil/prospects">Prospects</Link>
+        </li>
+
+        <li
+          className={cn("text-xl", {
+            "font-semibold": pathname === "/perfil/arquivados",
+          })}
+        >
+          <Link href="/perfil/arquivados">Arquivados</Link>
+        </li>
+
+        <li
+          className={cn("text-xl", {
             "font-semibold": pathname === "/perfil/criar-conta",
           })}
         >

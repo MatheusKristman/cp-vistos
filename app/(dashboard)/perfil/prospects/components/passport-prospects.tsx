@@ -1,14 +1,13 @@
 import { UserRoundX } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
+import { prospectsColumns } from "../prospects-columns";
+import { DataTableProspects } from "../data-table-prospects";
+
 import { trpc } from "@/lib/trpc-client";
 
-import { columns } from "../columns";
-import { DataTable } from "../data-table";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// TODO: verificar com a gih os campos que terão no passport
-export function Passport() {
-  const { data, isFetching } = trpc.userRouter.getActiveClients.useQuery({
+export function PassportProspects() {
+  const { data, isFetching } = trpc.userRouter.getProspectsClients.useQuery({
     category: "passport",
   });
 
@@ -41,5 +40,5 @@ export function Passport() {
     );
   }
 
-  return <DataTable columns={columns} data={data?.clients ?? []} />;
+  return <DataTableProspects columns={prospectsColumns} data={data?.clients ?? []} />;
 }

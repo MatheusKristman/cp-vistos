@@ -44,6 +44,24 @@ export function DashboardMobileMenu() {
 
               <li
                 className={cn("text-xl", {
+                  "font-semibold": pathname === "/perfil/prospects",
+                })}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link href="/perfil/prospects">Prospects</Link>
+              </li>
+
+              <li
+                className={cn("text-xl", {
+                  "font-semibold": pathname === "/perfil/arquivados",
+                })}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link href="/perfil/arquivados">Arquivados</Link>
+              </li>
+
+              <li
+                className={cn("text-xl", {
                   "font-semibold": pathname === "/perfil/criar-conta",
                 })}
                 onClick={() => setIsMenuOpen(false)}

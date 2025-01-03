@@ -1,15 +1,14 @@
 import { UserRoundX } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
+import { archivedColumns } from "../archived-columns";
+import { DataTableArchived } from "../data-table-archived";
+
 import { trpc } from "@/lib/trpc-client";
 
-import { columns } from "../columns";
-import { DataTable } from "../data-table";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// TODO: verificar com a gih os campos que terão no passport
-export function Passport() {
-  const { data, isFetching } = trpc.userRouter.getActiveClients.useQuery({
-    category: "passport",
+export function E_TA_Archived() {
+  const { data, isFetching } = trpc.userRouter.getArchivedClients.useQuery({
+    category: "e_ta",
   });
 
   if (isFetching) {
@@ -41,5 +40,5 @@ export function Passport() {
     );
   }
 
-  return <DataTable columns={columns} data={data?.clients ?? []} />;
+  return <DataTableArchived columns={archivedColumns} data={data?.clients ?? []} />;
 }

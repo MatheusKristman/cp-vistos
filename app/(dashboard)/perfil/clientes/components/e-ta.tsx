@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 // TODO: verificar com a gih os campos que terão no e_ta
 export function E_TA() {
-  const { data, isFetching } = trpc.userRouter.getClients.useQuery({
+  const { data, isFetching } = trpc.userRouter.getActiveClients.useQuery({
     category: "passport",
   });
 

@@ -16,21 +16,21 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 
-interface DataTableProps<TData, TValue> {
+interface DataTableArchivedProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTableArchived<TData, TValue>({ columns, data }: DataTableArchivedProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -139,7 +139,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  Nenhum resultado
                 </TableCell>
               </TableRow>
             )}
@@ -151,6 +151,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div className="hidden sm:flex w-[100px] items-center justify-center text-sm font-medium">
           Pagina {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
         </div>
+
         <div className="w-full flex items-center justify-between space-x-2 py-4 sm:justify-end sm:w-fit">
           <Button
             variant="outline"
@@ -160,6 +161,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           >
             Anterior
           </Button>
+
           <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             Próximo
           </Button>
