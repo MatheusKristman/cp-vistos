@@ -7,14 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as FormType } from "@prisma/client";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
@@ -33,29 +26,17 @@ const formSchema = z
     district: z.string().min(1, { message: "Campo obrigatório" }),
     city: z.string().min(1, { message: "Campo obrigatório" }),
     state: z.string().min(1, { message: "Campo obrigatório" }),
-    cep: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .min(9, { message: "CEP inválido" }),
+    cep: z.string().min(1, { message: "Campo obrigatório" }).min(9, { message: "CEP inválido" }),
     country: z.string().min(1, { message: "Campo obrigatório" }),
     postalAddressConfirmation: z.enum(["Sim", "Não"]),
     otherPostalAddress: z.string(),
-    cel: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .min(14, { message: "Celular inválido" }),
+    cel: z.string().min(1, { message: "Campo obrigatório" }).min(14, { message: "Celular inválido" }),
     tel: z.string(),
     fiveYearsOtherTelConfirmation: z.enum(["Sim", "Não"]),
     otherTel: z.string(),
-    email: z
-      .string()
-      .min(1, { message: "Campo obrigatório" })
-      .email({ message: "E-mail inválido" }),
+    email: z.string().min(1, { message: "Campo obrigatório" }).email({ message: "E-mail inválido" }),
     fiveYearsOtherEmailConfirmation: z.enum(["Sim", "Não"]),
-    otherEmail: z.union([
-      z.literal(""),
-      z.string().email({ message: "E-mail inválido" }),
-    ]),
+    otherEmail: z.union([z.literal(""), z.string().email({ message: "E-mail inválido" })]),
     facebook: z.string(),
     linkedin: z.string(),
     instagram: z.string(),
@@ -72,7 +53,7 @@ const formSchema = z
         fiveYearsOtherEmailConfirmation,
         otherEmail,
       },
-      ctx,
+      ctx
     ) => {
       if (tel.length > 0 && tel.length !== 13) {
         ctx.addIssue({
@@ -82,10 +63,7 @@ const formSchema = z
         });
       }
 
-      if (
-        postalAddressConfirmation === "Sim" &&
-        otherPostalAddress.length === 0
-      ) {
+      if (postalAddressConfirmation === "Sim" && otherPostalAddress.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -93,10 +71,7 @@ const formSchema = z
         });
       }
 
-      if (
-        fiveYearsOtherTelConfirmation === "Sim" &&
-        (otherTel === undefined || otherTel.length === 0)
-      ) {
+      if (fiveYearsOtherTelConfirmation === "Sim" && (otherTel === undefined || otherTel.length === 0)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -104,17 +79,14 @@ const formSchema = z
         });
       }
 
-      if (
-        fiveYearsOtherEmailConfirmation === "Sim" &&
-        (otherEmail === undefined || otherEmail.length === 0)
-      ) {
+      if (fiveYearsOtherEmailConfirmation === "Sim" && (otherEmail === undefined || otherEmail.length === 0)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
           path: ["otherEmail"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -123,11 +95,7 @@ interface Props {
   isEditing: boolean;
 }
 
-export function ContactAndAddressForm({
-  currentForm,
-  profileId,
-  isEditing,
-}: Props) {
+export function ContactAndAddressForm({ currentForm, profileId, isEditing }: Props) {
   const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -141,67 +109,49 @@ export function ContactAndAddressForm({
       state: currentForm.state ? currentForm.state : "",
       cep: currentForm.cep ? currentForm.cep : "",
       country: currentForm.country ? currentForm.country : "",
-      postalAddressConfirmation: currentForm.postalAddressConfirmation
-        ? "Sim"
-        : "Não",
-      otherPostalAddress: currentForm.otherPostalAddress
-        ? currentForm.otherPostalAddress
-        : "",
+      postalAddressConfirmation: currentForm.postalAddressConfirmation ? "Sim" : "Não",
+      otherPostalAddress: currentForm.otherPostalAddress ? currentForm.otherPostalAddress : "",
       cel: currentForm.cel ? currentForm.cel : "",
       tel: currentForm.tel ? currentForm.tel : "",
-      fiveYearsOtherTelConfirmation: currentForm.fiveYearsOtherTelConfirmation
-        ? "Sim"
-        : "Não",
+      fiveYearsOtherTelConfirmation: currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não",
       otherTel: currentForm.otherTel ? currentForm.otherTel : "",
       email: currentForm.email ? currentForm.email : "",
-      fiveYearsOtherEmailConfirmation:
-        currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não",
+      fiveYearsOtherEmailConfirmation: currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não",
       otherEmail: currentForm.otherEmail ? currentForm.otherEmail : "",
       facebook: currentForm.facebook ? currentForm.facebook : "",
       linkedin: currentForm.linkedin ? currentForm.linkedin : "",
       instagram: currentForm.instagram ? currentForm.instagram : "",
-      othersSocialMedia: currentForm.othersSocialMedia
-        ? currentForm.othersSocialMedia
-        : "",
+      othersSocialMedia: currentForm.othersSocialMedia ? currentForm.othersSocialMedia : "",
     },
   });
 
-  const postalAddressConfirmation: "Sim" | "Não" = form.watch(
-    "postalAddressConfirmation",
-  );
-  const fiveYearsOtherTelConfirmation: "Sim" | "Não" = form.watch(
-    "fiveYearsOtherTelConfirmation",
-  );
-  const fiveYearsOtherEmailConfirmation: "Sim" | "Não" = form.watch(
-    "fiveYearsOtherEmailConfirmation",
-  );
+  const postalAddressConfirmation: "Sim" | "Não" = form.watch("postalAddressConfirmation");
+  const fiveYearsOtherTelConfirmation: "Sim" | "Não" = form.watch("fiveYearsOtherTelConfirmation");
+  const fiveYearsOtherEmailConfirmation: "Sim" | "Não" = form.watch("fiveYearsOtherEmailConfirmation");
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitContactAndAddress, isPending } =
-    trpc.formsRouter.submitContactAndAddress.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+  const { mutate: submitContactAndAddress, isPending } = trpc.formsRouter.submitContactAndAddress.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.isEditing) {
-          router.push(`/resumo-formulario/${profileId}`);
-        } else {
-          router.push(`/formulario/${profileId}?formStep=2`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.isEditing) {
+        router.push(`/resumo-formulario/${profileId}`);
+      } else {
+        router.push(`/formulario/${profileId}?formStep=2`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
   const { mutate: saveContactAndAddress, isPending: isSavePending } =
     trpc.formsRouter.saveContactAndAddress.useMutation({
       onSuccess: (data) => {
@@ -231,56 +181,36 @@ export function ContactAndAddressForm({
         profileId,
         redirectStep,
         address: values.address !== "" ? values.address : currentForm.address,
-        addressNumber:
-          values.addressNumber !== ""
-            ? values.addressNumber
-            : currentForm.addressNumber,
-        complement:
-          values.complement !== "" ? values.complement : currentForm.complement,
-        district:
-          values.district !== "" ? values.district : currentForm.district,
+        addressNumber: values.addressNumber !== "" ? values.addressNumber : currentForm.addressNumber,
+        complement: values.complement !== "" ? values.complement : currentForm.complement,
+        district: values.district !== "" ? values.district : currentForm.district,
         city: values.city !== "" ? values.city : currentForm.city,
         state: values.state !== "" ? values.state : currentForm.state,
         cep: values.cep !== "" ? values.cep : currentForm.cep,
         country: values.country !== "" ? values.country : currentForm.country,
         postalAddressConfirmation:
-          values.postalAddressConfirmation ??
-          (currentForm.postalAddressConfirmation ? "Sim" : "Não"),
+          values.postalAddressConfirmation ?? (currentForm.postalAddressConfirmation ? "Sim" : "Não"),
         otherPostalAddress:
-          values.otherPostalAddress !== ""
-            ? values.otherPostalAddress
-            : currentForm.otherPostalAddress,
+          values.otherPostalAddress !== "" ? values.otherPostalAddress : currentForm.otherPostalAddress,
         cel: values.cel !== "" ? values.cel : currentForm.cel,
         tel: values.tel !== "" ? values.tel : currentForm.tel,
         fiveYearsOtherTelConfirmation:
-          values.fiveYearsOtherTelConfirmation ??
-          (currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não"),
-        otherTel:
-          values.otherTel !== "" ? values.otherTel : currentForm.otherTel,
+          values.fiveYearsOtherTelConfirmation ?? (currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não"),
+        otherTel: values.otherTel !== "" ? values.otherTel : currentForm.otherTel,
         email: values.email !== "" ? values.email : currentForm.email,
         fiveYearsOtherEmailConfirmation:
-          values.fiveYearsOtherEmailConfirmation ??
-          (currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não"),
-        otherEmail:
-          values.otherEmail !== "" ? values.otherEmail : currentForm.otherEmail,
-        facebook:
-          values.facebook !== "" ? values.facebook : currentForm.facebook,
-        linkedin:
-          values.linkedin !== "" ? values.linkedin : currentForm.linkedin,
-        instagram:
-          values.instagram !== "" ? values.instagram : currentForm.instagram,
-        othersSocialMedia:
-          values.othersSocialMedia !== ""
-            ? values.othersSocialMedia
-            : currentForm.othersSocialMedia,
+          values.fiveYearsOtherEmailConfirmation ?? (currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não"),
+        otherEmail: values.otherEmail !== "" ? values.otherEmail : currentForm.otherEmail,
+        facebook: values.facebook !== "" ? values.facebook : currentForm.facebook,
+        linkedin: values.linkedin !== "" ? values.linkedin : currentForm.linkedin,
+        instagram: values.instagram !== "" ? values.instagram : currentForm.instagram,
+        othersSocialMedia: values.othersSocialMedia !== "" ? values.othersSocialMedia : currentForm.othersSocialMedia,
       });
       setRedirectStep(null);
     }
   }, [redirectStep, setRedirectStep, saveContactAndAddress, profileId]);
 
-  function handleCEPContactAndAddressChange(
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
+  function handleCEPContactAndAddressChange(event: ChangeEvent<HTMLInputElement>) {
     let value = event.target.value.replace(/[^\d]/g, "");
 
     value = value.replace(/(\d{5})(\d{3})/, "$1-$2");
@@ -298,60 +228,40 @@ export function ContactAndAddressForm({
     saveContactAndAddress({
       profileId,
       address: values.address !== "" ? values.address : currentForm.address,
-      addressNumber:
-        values.addressNumber !== ""
-          ? values.addressNumber
-          : currentForm.addressNumber,
-      complement:
-        values.complement !== "" ? values.complement : currentForm.complement,
+      addressNumber: values.addressNumber !== "" ? values.addressNumber : currentForm.addressNumber,
+      complement: values.complement !== "" ? values.complement : currentForm.complement,
       district: values.district !== "" ? values.district : currentForm.district,
       city: values.city !== "" ? values.city : currentForm.city,
       state: values.state !== "" ? values.state : currentForm.state,
       cep: values.cep !== "" ? values.cep : currentForm.cep,
       country: values.country !== "" ? values.country : currentForm.country,
       postalAddressConfirmation:
-        values.postalAddressConfirmation ??
-        (currentForm.postalAddressConfirmation ? "Sim" : "Não"),
-      otherPostalAddress:
-        values.otherPostalAddress !== ""
-          ? values.otherPostalAddress
-          : currentForm.otherPostalAddress,
+        values.postalAddressConfirmation ?? (currentForm.postalAddressConfirmation ? "Sim" : "Não"),
+      otherPostalAddress: values.otherPostalAddress !== "" ? values.otherPostalAddress : currentForm.otherPostalAddress,
       cel: values.cel !== "" ? values.cel : currentForm.cel,
       tel: values.tel !== "" ? values.tel : currentForm.tel,
       fiveYearsOtherTelConfirmation:
-        values.fiveYearsOtherTelConfirmation ??
-        (currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não"),
+        values.fiveYearsOtherTelConfirmation ?? (currentForm.fiveYearsOtherTelConfirmation ? "Sim" : "Não"),
       otherTel: values.otherTel !== "" ? values.otherTel : currentForm.otherTel,
       email: values.email !== "" ? values.email : currentForm.email,
       fiveYearsOtherEmailConfirmation:
-        values.fiveYearsOtherEmailConfirmation ??
-        (currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não"),
-      otherEmail:
-        values.otherEmail !== "" ? values.otherEmail : currentForm.otherEmail,
+        values.fiveYearsOtherEmailConfirmation ?? (currentForm.fiveYearsOtherEmailConfirmation ? "Sim" : "Não"),
+      otherEmail: values.otherEmail !== "" ? values.otherEmail : currentForm.otherEmail,
       facebook: values.facebook !== "" ? values.facebook : currentForm.facebook,
       linkedin: values.linkedin !== "" ? values.linkedin : currentForm.linkedin,
-      instagram:
-        values.instagram !== "" ? values.instagram : currentForm.instagram,
-      othersSocialMedia:
-        values.othersSocialMedia !== ""
-          ? values.othersSocialMedia
-          : currentForm.othersSocialMedia,
+      instagram: values.instagram !== "" ? values.instagram : currentForm.instagram,
+      othersSocialMedia: values.othersSocialMedia !== "" ? values.othersSocialMedia : currentForm.othersSocialMedia,
     });
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Endereço e Contatos
         </h2>
 
-        <span className="text-foreground text-base font-medium">
-          Endereço de sua residencia
-        </span>
+        <span className="text-foreground text-base font-medium">Endereço de sua residencia</span>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
@@ -361,16 +271,10 @@ export function ContactAndAddressForm({
                 name="address"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Endereço Residencial*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Endereço Residencial*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -383,16 +287,10 @@ export function ContactAndAddressForm({
                 name="addressNumber"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Número do Endereço*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Número do Endereço*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -405,16 +303,10 @@ export function ContactAndAddressForm({
                 name="district"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Bairro*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Bairro*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -427,16 +319,10 @@ export function ContactAndAddressForm({
                 name="complement"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Complemento
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Complemento</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -451,9 +337,7 @@ export function ContactAndAddressForm({
                 name="cep"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      CEP*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">CEP*</FormLabel>
 
                     <FormControl>
                       <Input
@@ -478,16 +362,10 @@ export function ContactAndAddressForm({
                 name="city"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Cidade*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Cidade*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -500,16 +378,10 @@ export function ContactAndAddressForm({
                 name="state"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Estado*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Estado*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -522,16 +394,10 @@ export function ContactAndAddressForm({
                 name="country"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      País*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">País*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -547,8 +413,7 @@ export function ContactAndAddressForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Seu endereço de correio é diferente do endereço de sua
-                      residência?*
+                      Seu endereço de correio é diferente do endereço de sua residência?*
                     </FormLabel>
 
                     <FormControl>
@@ -586,23 +451,14 @@ export function ContactAndAddressForm({
                 name="otherPostalAddress"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "w-full bg-secondary p-4 flex flex-col gap-2",
-                      {
-                        hidden: postalAddressConfirmation === "Não",
-                      },
-                    )}
+                    className={cn("w-full bg-secondary p-4 flex flex-col gap-2", {
+                      hidden: postalAddressConfirmation === "Não",
+                    })}
                   >
-                    <FormLabel className="text-foreground text-sm">
-                      Informe seu outro endereço
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Informe seu outro endereço</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -611,9 +467,7 @@ export function ContactAndAddressForm({
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mb-6">
-              Telefone
-            </span>
+            <span className="text-foreground text-base font-medium mb-6">Telefone</span>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
@@ -621,9 +475,7 @@ export function ContactAndAddressForm({
                 name="cel"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Celular*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Celular*</FormLabel>
 
                     <FormControl>
                       <PhoneInput
@@ -636,7 +488,7 @@ export function ContactAndAddressForm({
                           "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -656,9 +508,7 @@ export function ContactAndAddressForm({
                 name="tel"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Fixo
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Fixo</FormLabel>
 
                     <FormControl>
                       <PhoneInput
@@ -671,7 +521,7 @@ export function ContactAndAddressForm({
                           "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -691,16 +541,10 @@ export function ContactAndAddressForm({
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      E-mail*
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">E-mail*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -754,16 +598,11 @@ export function ContactAndAddressForm({
                 name="otherTel"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "w-full bg-secondary p-4 flex flex-col gap-2",
-                      {
-                        hidden: fiveYearsOtherTelConfirmation === "Não",
-                      },
-                    )}
+                    className={cn("w-full bg-secondary p-4 flex flex-col gap-2", {
+                      hidden: fiveYearsOtherTelConfirmation === "Não",
+                    })}
                   >
-                    <FormLabel className="text-foreground text-sm">
-                      Informe seu outro telefone
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Informe seu outro telefone</FormLabel>
 
                     <FormControl>
                       <PhoneInput
@@ -776,7 +615,7 @@ export function ContactAndAddressForm({
                           "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -798,9 +637,7 @@ export function ContactAndAddressForm({
                 name="fiveYearsOtherEmailConfirmation"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Nos últimos 5 anos você teve outros e-mails?*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Nos últimos 5 anos você teve outros e-mails?*</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -837,23 +674,14 @@ export function ContactAndAddressForm({
                 name="otherEmail"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "w-full bg-secondary p-4 flex flex-col gap-2",
-                      {
-                        hidden: fiveYearsOtherEmailConfirmation === "Não",
-                      },
-                    )}
+                    className={cn("w-full bg-secondary p-4 flex flex-col gap-2", {
+                      hidden: fiveYearsOtherEmailConfirmation === "Não",
+                    })}
                   >
-                    <FormLabel className="text-foreground text-sm">
-                      Informe seu outro e-mail
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Informe seu outro e-mail</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -862,9 +690,7 @@ export function ContactAndAddressForm({
               />
             </div>
 
-            <span className="text-foreground text-base font-medium mb-6">
-              Redes sociais (Somente @ ou nome)
-            </span>
+            <span className="text-foreground text-base font-medium mb-6">Redes sociais (Somente @ ou nome)</span>
 
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
               <FormField
@@ -872,16 +698,10 @@ export function ContactAndAddressForm({
                 name="facebook"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Facebook
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Facebook</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -894,16 +714,10 @@ export function ContactAndAddressForm({
                 name="linkedin"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Linkedin
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Linkedin</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -916,16 +730,10 @@ export function ContactAndAddressForm({
                 name="instagram"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Instagram
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Instagram</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -938,16 +746,10 @@ export function ContactAndAddressForm({
                 name="othersSocialMedia"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground text-sm">
-                      Outras Redes
-                    </FormLabel>
+                    <FormLabel className="text-foreground text-sm">Outras Redes</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -969,10 +771,7 @@ export function ContactAndAddressForm({
                   {isPending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -995,10 +794,7 @@ export function ContactAndAddressForm({
                   {isSavePending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -1017,14 +813,11 @@ export function ContactAndAddressForm({
                   {isPending ? (
                     <>
                       Enviando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
-                      Enviar
+                      Proximo
                       <ArrowRight className="size-5" strokeWidth={1.5} />
                     </>
                   )}

@@ -14,14 +14,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { trpc } from "@/lib/trpc-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -29,17 +22,11 @@ import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z
   .object({
-    languages: z.array(
-      z.string().min(1, { message: "Idioma precisa ser preenchido" }),
-    ),
+    languages: z.array(z.string().min(1, { message: "Idioma precisa ser preenchido" })),
     fiveYearsOtherCountryTravelsConfirmation: z.enum(["Sim", "Não"]),
-    fiveYearsOtherCountryTravels: z.array(
-      z.string().min(1, { message: "Países precisam ser preenchidos" }),
-    ),
+    fiveYearsOtherCountryTravels: z.array(z.string().min(1, { message: "Países precisam ser preenchidos" })),
     socialOrganizationConfirmation: z.enum(["Sim", "Não"]),
-    socialOrganization: z.array(
-      z.string().min(1, { message: "Os campos precisam ser preenchidos" }),
-    ),
+    socialOrganization: z.array(z.string().min(1, { message: "Os campos precisam ser preenchidos" })),
     weaponTrainingConfirmation: z.enum(["Sim", "Não"]),
     weaponTrainingDetails: z.string(),
     militaryServiceConfirmation: z.enum(["Sim", "Não"]),
@@ -71,12 +58,9 @@ const formSchema = z
         insurgencyOrganizationConfirmation,
         insurgencyOrganizationDetails,
       },
-      ctx,
+      ctx
     ) => {
-      if (
-        fiveYearsOtherCountryTravelsConfirmation === "Sim" &&
-        fiveYearsOtherCountryTravels.length === 0
-      ) {
+      if (fiveYearsOtherCountryTravelsConfirmation === "Sim" && fiveYearsOtherCountryTravels.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -84,10 +68,7 @@ const formSchema = z
         });
       }
 
-      if (
-        socialOrganizationConfirmation === "Sim" &&
-        socialOrganization.length === 0
-      ) {
+      if (socialOrganizationConfirmation === "Sim" && socialOrganization.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -95,10 +76,7 @@ const formSchema = z
         });
       }
 
-      if (
-        weaponTrainingConfirmation === "Sim" &&
-        weaponTrainingDetails.length === 0
-      ) {
+      if (weaponTrainingConfirmation === "Sim" && weaponTrainingDetails.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -106,10 +84,7 @@ const formSchema = z
         });
       }
 
-      if (
-        militaryServiceConfirmation === "Sim" &&
-        militaryServiceSpecialty.length === 0
-      ) {
+      if (militaryServiceConfirmation === "Sim" && militaryServiceSpecialty.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -117,10 +92,7 @@ const formSchema = z
         });
       }
 
-      if (
-        militaryServiceConfirmation === "Sim" &&
-        militaryServiceCountry.length === 0
-      ) {
+      if (militaryServiceConfirmation === "Sim" && militaryServiceCountry.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -128,10 +100,7 @@ const formSchema = z
         });
       }
 
-      if (
-        militaryServiceConfirmation === "Sim" &&
-        militaryServiceLocal.length === 0
-      ) {
+      if (militaryServiceConfirmation === "Sim" && militaryServiceLocal.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -139,10 +108,7 @@ const formSchema = z
         });
       }
 
-      if (
-        militaryServiceConfirmation === "Sim" &&
-        militaryServicePatent.length === 0
-      ) {
+      if (militaryServiceConfirmation === "Sim" && militaryServicePatent.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -150,10 +116,7 @@ const formSchema = z
         });
       }
 
-      if (
-        militaryServiceConfirmation === "Sim" &&
-        militaryServiceStartDate === undefined
-      ) {
+      if (militaryServiceConfirmation === "Sim" && militaryServiceStartDate === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -161,10 +124,7 @@ const formSchema = z
         });
       }
 
-      if (
-        militaryServiceConfirmation === "Sim" &&
-        militaryServiceEndDate === undefined
-      ) {
+      if (militaryServiceConfirmation === "Sim" && militaryServiceEndDate === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -172,17 +132,14 @@ const formSchema = z
         });
       }
 
-      if (
-        insurgencyOrganizationConfirmation === "Sim" &&
-        insurgencyOrganizationDetails.length === 0
-      ) {
+      if (insurgencyOrganizationConfirmation === "Sim" && insurgencyOrganizationDetails.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
           path: ["insurgencyOrganizationDetails"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -191,11 +148,7 @@ interface Props {
   isEditing: boolean;
 }
 
-export function AdditionalInformationForm({
-  currentForm,
-  profileId,
-  isEditing,
-}: Props) {
+export function AdditionalInformationForm({ currentForm, profileId, isEditing }: Props) {
   const [languageValue, setLanguageValue] = useState<string>("");
   const [countryValue, setCountryValue] = useState<string>("");
   const [organizationValue, setOrganizationValue] = useState<string>("");
@@ -206,20 +159,13 @@ export function AdditionalInformationForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       languages: currentForm.languages,
-      fiveYearsOtherCountryTravelsConfirmation:
-        currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não",
+      fiveYearsOtherCountryTravelsConfirmation: currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não",
       fiveYearsOtherCountryTravels: currentForm.fiveYearsOtherCountryTravels,
-      socialOrganizationConfirmation: currentForm.socialOrganizationConfirmation
-        ? "Sim"
-        : "Não",
+      socialOrganizationConfirmation: currentForm.socialOrganizationConfirmation ? "Sim" : "Não",
       socialOrganization: currentForm.socialOrganization,
-      weaponTrainingConfirmation: currentForm.weaponTrainingConfirmation
-        ? "Sim"
-        : "Não",
+      weaponTrainingConfirmation: currentForm.weaponTrainingConfirmation ? "Sim" : "Não",
       weaponTrainingDetails: currentForm.weaponTrainingDetails ?? "",
-      militaryServiceConfirmation: currentForm.militaryServiceConfirmation
-        ? "Sim"
-        : "Não",
+      militaryServiceConfirmation: currentForm.militaryServiceConfirmation ? "Sim" : "Não",
       militaryServiceCountry: currentForm.militaryServiceCountry ?? "",
       militaryServiceLocal: currentForm.militaryServiceLocal ?? "",
       militaryServicePatent: currentForm.militaryServicePatent ?? "",
@@ -230,30 +176,20 @@ export function AdditionalInformationForm({
       militaryServiceEndDate: currentForm.militaryServiceEndDate
         ? new Date(currentForm.militaryServiceEndDate)
         : undefined,
-      insurgencyOrganizationConfirmation:
-        currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não",
-      insurgencyOrganizationDetails:
-        currentForm.insurgencyOrganizationDetails ?? "",
+      insurgencyOrganizationConfirmation: currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não",
+      insurgencyOrganizationDetails: currentForm.insurgencyOrganizationDetails ?? "",
     },
   });
 
   const currentYear = getYear(new Date());
   const languages = form.watch("languages");
-  const fiveYearsOtherCountryTravelsConfirmation = form.watch(
-    "fiveYearsOtherCountryTravelsConfirmation",
-  );
-  const fiveYearsOtherCountryTravels = form.watch(
-    "fiveYearsOtherCountryTravels",
-  );
-  const socialOrganizationConfirmation = form.watch(
-    "socialOrganizationConfirmation",
-  );
+  const fiveYearsOtherCountryTravelsConfirmation = form.watch("fiveYearsOtherCountryTravelsConfirmation");
+  const fiveYearsOtherCountryTravels = form.watch("fiveYearsOtherCountryTravels");
+  const socialOrganizationConfirmation = form.watch("socialOrganizationConfirmation");
   const socialOrganization = form.watch("socialOrganization");
   const weaponTrainingConfirmation = form.watch("weaponTrainingConfirmation");
   const militaryServiceConfirmation = form.watch("militaryServiceConfirmation");
-  const insurgencyOrganizationConfirmation = form.watch(
-    "insurgencyOrganizationConfirmation",
-  );
+  const insurgencyOrganizationConfirmation = form.watch("insurgencyOrganizationConfirmation");
   const utils = trpc.useUtils();
   const router = useRouter();
 
@@ -261,30 +197,27 @@ export function AdditionalInformationForm({
   console.log("fiveYearsOtherCountryTravels", fiveYearsOtherCountryTravels);
   console.log("socialOrganization", socialOrganization);
 
-  const { mutate: submitAdditionalInformation, isPending } =
-    trpc.formsRouter.submitAdditionalInformation.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+  const { mutate: submitAdditionalInformation, isPending } = trpc.formsRouter.submitAdditionalInformation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.isEditing) {
-          router.push(`/resumo-formulario/${profileId}`);
-        } else {
-          router.push(`/formulario/${profileId}?formStep=10`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.isEditing) {
+        router.push(`/resumo-formulario/${profileId}`);
+      } else {
+        router.push(`/formulario/${profileId}?formStep=10`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
   const { mutate: saveAdditionalInformation, isPending: isSavePending } =
     trpc.formsRouter.saveAdditionalInformation.useMutation({
       onSuccess: (data) => {
@@ -313,83 +246,72 @@ export function AdditionalInformationForm({
       saveAdditionalInformation({
         profileId,
         redirectStep,
-        languages:
-          values.languages.length > 0
-            ? values.languages
-            : currentForm.languages,
+        languages: values.languages.length > 0 ? values.languages : currentForm.languages,
         fiveYearsOtherCountryTravelsConfirmation:
           values.fiveYearsOtherCountryTravelsConfirmation ??
-          (currentForm.fiveYearsOtherCountryTravelsConfirmation
-            ? "Sim"
-            : "Não"),
+          (currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
         fiveYearsOtherCountryTravels:
           values.fiveYearsOtherCountryTravels.length > 0
             ? values.fiveYearsOtherCountryTravels
             : currentForm.fiveYearsOtherCountryTravels,
         socialOrganizationConfirmation:
-          values.socialOrganizationConfirmation ??
-          (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
+          values.socialOrganizationConfirmation ?? (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
         socialOrganization:
-          values.socialOrganization.length > 0
-            ? values.socialOrganization
-            : currentForm.socialOrganization,
+          values.socialOrganization.length > 0 ? values.socialOrganization : currentForm.socialOrganization,
         weaponTrainingConfirmation:
-          values.weaponTrainingConfirmation ??
-          (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
+          values.weaponTrainingConfirmation ?? (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
         weaponTrainingDetails:
           values.weaponTrainingDetails !== ""
             ? values.weaponTrainingDetails
             : !currentForm.weaponTrainingDetails
-              ? ""
-              : currentForm.weaponTrainingDetails,
+            ? ""
+            : currentForm.weaponTrainingDetails,
         militaryServiceConfirmation:
-          values.militaryServiceConfirmation ??
-          (currentForm.militaryServiceConfirmation ? "Sim" : "Não"),
+          values.militaryServiceConfirmation ?? (currentForm.militaryServiceConfirmation ? "Sim" : "Não"),
         militaryServiceCountry:
           values.militaryServiceCountry !== ""
             ? values.militaryServiceCountry
             : !currentForm.militaryServiceCountry
-              ? ""
-              : currentForm.militaryServiceCountry,
+            ? ""
+            : currentForm.militaryServiceCountry,
         militaryServiceLocal:
           values.militaryServiceLocal !== ""
             ? values.militaryServiceLocal
             : !currentForm.militaryServiceLocal
-              ? ""
-              : currentForm.militaryServiceLocal,
+            ? ""
+            : currentForm.militaryServiceLocal,
         militaryServicePatent:
           values.militaryServicePatent !== ""
             ? values.militaryServicePatent
             : !currentForm.militaryServicePatent
-              ? ""
-              : currentForm.militaryServicePatent,
+            ? ""
+            : currentForm.militaryServicePatent,
         militaryServiceSpecialty:
           values.militaryServiceSpecialty !== ""
             ? values.militaryServiceSpecialty
             : !currentForm.militaryServiceSpecialty
-              ? ""
-              : currentForm.militaryServiceSpecialty,
+            ? ""
+            : currentForm.militaryServiceSpecialty,
         militaryServiceStartDate:
           values.militaryServiceStartDate !== undefined
             ? values.militaryServiceStartDate
             : !currentForm.militaryServiceStartDate
-              ? undefined
-              : currentForm.militaryServiceStartDate,
+            ? undefined
+            : currentForm.militaryServiceStartDate,
         militaryServiceEndDate:
           values.militaryServiceEndDate !== undefined
             ? values.militaryServiceEndDate
             : !currentForm.militaryServiceEndDate
-              ? undefined
-              : currentForm.militaryServiceEndDate,
+            ? undefined
+            : currentForm.militaryServiceEndDate,
         insurgencyOrganizationConfirmation:
-          values.insurgencyOrganizationConfirmation ??
-          (currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
+          values.insurgencyOrganizationConfirmation ?? (currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
         insurgencyOrganizationDetails:
           values.insurgencyOrganizationDetails !== ""
             ? values.insurgencyOrganizationDetails
             : !currentForm.insurgencyOrganizationDetails
-              ? ""
-              : currentForm.insurgencyOrganizationDetails,
+            ? ""
+            : currentForm.insurgencyOrganizationDetails,
       });
       setRedirectStep(null);
     }
@@ -441,9 +363,7 @@ export function AdditionalInformationForm({
       return;
     }
 
-    const languagesUpdated = currentLanguages.filter(
-      (_, languageIndex) => languageIndex !== index,
-    );
+    const languagesUpdated = currentLanguages.filter((_, languageIndex) => languageIndex !== index);
 
     form.setValue("languages", languagesUpdated);
   }
@@ -455,9 +375,7 @@ export function AdditionalInformationForm({
       return;
     }
 
-    const countriesUpdated = currentCountry.filter(
-      (_, countryIndex) => countryIndex !== index,
-    );
+    const countriesUpdated = currentCountry.filter((_, countryIndex) => countryIndex !== index);
 
     form.setValue("fiveYearsOtherCountryTravels", countriesUpdated);
   }
@@ -469,9 +387,7 @@ export function AdditionalInformationForm({
       return;
     }
 
-    const organizationsUpdated = currentOrganizations.filter(
-      (_, organizationIndex) => organizationIndex !== index,
-    );
+    const organizationsUpdated = currentOrganizations.filter((_, organizationIndex) => organizationIndex !== index);
 
     form.setValue("socialOrganization", organizationsUpdated);
   }
@@ -485,8 +401,7 @@ export function AdditionalInformationForm({
 
     saveAdditionalInformation({
       profileId,
-      languages:
-        values.languages.length > 0 ? values.languages : currentForm.languages,
+      languages: values.languages.length > 0 ? values.languages : currentForm.languages,
       fiveYearsOtherCountryTravelsConfirmation:
         values.fiveYearsOtherCountryTravelsConfirmation ??
         (currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
@@ -495,78 +410,69 @@ export function AdditionalInformationForm({
           ? values.fiveYearsOtherCountryTravels
           : currentForm.fiveYearsOtherCountryTravels,
       socialOrganizationConfirmation:
-        values.socialOrganizationConfirmation ??
-        (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
+        values.socialOrganizationConfirmation ?? (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
       socialOrganization:
-        values.socialOrganization.length > 0
-          ? values.socialOrganization
-          : currentForm.socialOrganization,
+        values.socialOrganization.length > 0 ? values.socialOrganization : currentForm.socialOrganization,
       weaponTrainingConfirmation:
-        values.weaponTrainingConfirmation ??
-        (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
+        values.weaponTrainingConfirmation ?? (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
       weaponTrainingDetails:
         values.weaponTrainingDetails !== ""
           ? values.weaponTrainingDetails
           : !currentForm.weaponTrainingDetails
-            ? ""
-            : currentForm.weaponTrainingDetails,
+          ? ""
+          : currentForm.weaponTrainingDetails,
       militaryServiceConfirmation:
-        values.militaryServiceConfirmation ??
-        (currentForm.militaryServiceConfirmation ? "Sim" : "Não"),
+        values.militaryServiceConfirmation ?? (currentForm.militaryServiceConfirmation ? "Sim" : "Não"),
       militaryServiceCountry:
         values.militaryServiceCountry !== ""
           ? values.militaryServiceCountry
           : !currentForm.militaryServiceCountry
-            ? ""
-            : currentForm.militaryServiceCountry,
+          ? ""
+          : currentForm.militaryServiceCountry,
       militaryServiceLocal:
         values.militaryServiceLocal !== ""
           ? values.militaryServiceLocal
           : !currentForm.militaryServiceLocal
-            ? ""
-            : currentForm.militaryServiceLocal,
+          ? ""
+          : currentForm.militaryServiceLocal,
       militaryServicePatent:
         values.militaryServicePatent !== ""
           ? values.militaryServicePatent
           : !currentForm.militaryServicePatent
-            ? ""
-            : currentForm.militaryServicePatent,
+          ? ""
+          : currentForm.militaryServicePatent,
       militaryServiceSpecialty:
         values.militaryServiceSpecialty !== ""
           ? values.militaryServiceSpecialty
           : !currentForm.militaryServiceSpecialty
-            ? ""
-            : currentForm.militaryServiceSpecialty,
+          ? ""
+          : currentForm.militaryServiceSpecialty,
       militaryServiceStartDate:
         values.militaryServiceStartDate !== undefined
           ? values.militaryServiceStartDate
           : !currentForm.militaryServiceStartDate
-            ? undefined
-            : currentForm.militaryServiceStartDate,
+          ? undefined
+          : currentForm.militaryServiceStartDate,
       militaryServiceEndDate:
         values.militaryServiceEndDate !== undefined
           ? values.militaryServiceEndDate
           : !currentForm.militaryServiceEndDate
-            ? undefined
-            : currentForm.militaryServiceEndDate,
+          ? undefined
+          : currentForm.militaryServiceEndDate,
       insurgencyOrganizationConfirmation:
-        values.insurgencyOrganizationConfirmation ??
-        (currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
+        values.insurgencyOrganizationConfirmation ?? (currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
       insurgencyOrganizationDetails:
         values.insurgencyOrganizationDetails !== ""
           ? values.insurgencyOrganizationDetails
           : !currentForm.insurgencyOrganizationDetails
-            ? ""
-            : currentForm.insurgencyOrganizationDetails,
+          ? ""
+          : currentForm.insurgencyOrganizationDetails,
     });
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Informações Adicionais
         </h2>
@@ -579,9 +485,7 @@ export function AdditionalInformationForm({
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2 bg-secondary rounded-xl p-4">
-                    <FormLabel className="text-foreground">
-                      Quais idiomas você fala?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Quais idiomas você fala?</FormLabel>
 
                     <FormControl>
                       <div className="!mt-auto w-full flex items-center justify-between gap-2">
@@ -591,9 +495,7 @@ export function AdditionalInformationForm({
                           ref={field.ref}
                           onBlur={field.onBlur}
                           value={languageValue}
-                          onChange={(event) =>
-                            setLanguageValue(event.target.value)
-                          }
+                          onChange={(event) => setLanguageValue(event.target.value)}
                         />
 
                         <Button
@@ -615,9 +517,7 @@ export function AdditionalInformationForm({
                             key={`otherName-${index}`}
                             className="py-2 px-4 bg-border rounded-full flex items-center gap-2 group"
                           >
-                            <span className="text-sm font-medium text-foreground">
-                              {language}
-                            </span>
+                            <span className="text-sm font-medium text-foreground">{language}</span>
 
                             <Button
                               disabled={isPending || isSavePending}
@@ -646,9 +546,7 @@ export function AdditionalInformationForm({
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Viajou para outros países?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Viajou para outros países?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -687,13 +585,10 @@ export function AdditionalInformationForm({
                   <FormItem
                     className={cn(
                       "flex flex-col gap-2 bg-secondary rounded-xl p-4",
-                      fiveYearsOtherCountryTravelsConfirmation === "Não" &&
-                        "hidden",
+                      fiveYearsOtherCountryTravelsConfirmation === "Não" && "hidden"
                     )}
                   >
-                    <FormLabel className="text-foreground">
-                      Informe os países que viajou
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Informe os países que viajou</FormLabel>
 
                     <FormControl>
                       <div className="!mt-auto w-full flex items-center justify-between gap-2">
@@ -703,9 +598,7 @@ export function AdditionalInformationForm({
                           ref={field.ref}
                           onBlur={field.onBlur}
                           value={countryValue}
-                          onChange={(event) =>
-                            setCountryValue(event.target.value)
-                          }
+                          onChange={(event) => setCountryValue(event.target.value)}
                         />
 
                         <Button
@@ -727,9 +620,7 @@ export function AdditionalInformationForm({
                             key={`otherName-${index}`}
                             className="py-2 px-4 bg-primary/50 rounded-full flex items-center gap-2 group"
                           >
-                            <span className="text-sm font-medium text-white">
-                              {country}
-                            </span>
+                            <span className="text-sm font-medium text-white">{country}</span>
 
                             <Button
                               disabled={isPending || isSavePending}
@@ -758,8 +649,7 @@ export function AdditionalInformationForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Contribui ou faz parte de alguma instituição de caridade
-                      ou organização social?
+                      Contribui ou faz parte de alguma instituição de caridade ou organização social?
                     </FormLabel>
 
                     <FormControl>
@@ -799,12 +689,10 @@ export function AdditionalInformationForm({
                   <FormItem
                     className={cn(
                       "flex flex-col gap-2 bg-secondary rounded-xl p-4",
-                      socialOrganizationConfirmation === "Não" && "hidden",
+                      socialOrganizationConfirmation === "Não" && "hidden"
                     )}
                   >
-                    <FormLabel className="text-foreground">
-                      Quais organizações você faz parte?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Quais organizações você faz parte?</FormLabel>
 
                     <FormControl>
                       <div className="!mt-auto w-full flex items-center justify-between gap-2">
@@ -814,9 +702,7 @@ export function AdditionalInformationForm({
                           ref={field.ref}
                           onBlur={field.onBlur}
                           value={organizationValue}
-                          onChange={(event) =>
-                            setOrganizationValue(event.target.value)
-                          }
+                          onChange={(event) => setOrganizationValue(event.target.value)}
                         />
 
                         <Button
@@ -838,9 +724,7 @@ export function AdditionalInformationForm({
                             key={`otherName-${index}`}
                             className="py-2 px-4 bg-primary/50 rounded-full flex items-center gap-2 group"
                           >
-                            <span className="text-sm font-medium text-white">
-                              {organization}
-                            </span>
+                            <span className="text-sm font-medium text-white">{organization}</span>
 
                             <Button
                               disabled={isPending || isSavePending}
@@ -869,9 +753,7 @@ export function AdditionalInformationForm({
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Você tem treinamento com arma de fogo?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Você tem treinamento com arma de fogo?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -908,20 +790,11 @@ export function AdditionalInformationForm({
               name="weaponTrainingDetails"
               control={form.control}
               render={({ field }) => (
-                <FormItem
-                  className={cn(
-                    "flex flex-col gap-2 mb-6",
-                    weaponTrainingConfirmation === "Não" && "hidden",
-                  )}
-                >
+                <FormItem className={cn("flex flex-col gap-2 mb-6", weaponTrainingConfirmation === "Não" && "hidden")}>
                   <FormLabel className="text-foreground">Explique</FormLabel>
 
                   <FormControl>
-                    <Textarea
-                      disabled={isPending || isSavePending}
-                      className="!mt-auto resize-none"
-                      {...field}
-                    />
+                    <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
                   </FormControl>
 
                   <FormMessage className="text-sm text-destructive" />
@@ -935,9 +808,7 @@ export function AdditionalInformationForm({
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Já prestou serviço militar?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Já prestou serviço militar?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -973,7 +844,7 @@ export function AdditionalInformationForm({
             <div
               className={cn(
                 "w-full bg-secondary rounded-xl p-4 flex flex-col gap-x-4 gap-y-6 mb-6",
-                militaryServiceConfirmation === "Não" && "hidden",
+                militaryServiceConfirmation === "Não" && "hidden"
               )}
             >
               <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6">
@@ -982,16 +853,10 @@ export function AdditionalInformationForm({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel className="text-foreground">
-                        País que serviu
-                      </FormLabel>
+                      <FormLabel className="text-foreground">País que serviu</FormLabel>
 
                       <FormControl>
-                        <Input
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                          {...field}
-                        />
+                        <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                       </FormControl>
 
                       <FormMessage className="text-sm text-destructive" />
@@ -1004,16 +869,10 @@ export function AdditionalInformationForm({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel className="text-foreground">
-                        Local que serviu
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Local que serviu</FormLabel>
 
                       <FormControl>
-                        <Input
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                          {...field}
-                        />
+                        <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                       </FormControl>
 
                       <FormMessage className="text-sm text-destructive" />
@@ -1029,11 +888,7 @@ export function AdditionalInformationForm({
                       <FormLabel className="text-foreground">Patente</FormLabel>
 
                       <FormControl>
-                        <Input
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                          {...field}
-                        />
+                        <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                       </FormControl>
 
                       <FormMessage className="text-sm text-destructive" />
@@ -1048,16 +903,10 @@ export function AdditionalInformationForm({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel className="text-foreground">
-                        Especialidade
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Especialidade</FormLabel>
 
                       <FormControl>
-                        <Input
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                          {...field}
-                        />
+                        <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
                       </FormControl>
 
                       <FormMessage className="text-sm text-destructive" />
@@ -1070,9 +919,7 @@ export function AdditionalInformationForm({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel className="text-foreground">
-                        Data de início
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Data de início</FormLabel>
 
                       <Popover>
                         <PopoverTrigger asChild>
@@ -1080,15 +927,9 @@ export function AdditionalInformationForm({
                             <Button
                               disabled={isPending || isSavePending}
                               variant="date"
-                              className={cn(
-                                "!mt-auto",
-                                !field.value && "text-muted-foreground",
-                              )}
+                              className={cn("!mt-auto", !field.value && "text-muted-foreground")}
                             >
-                              <CalendarIcon
-                                strokeWidth={1.5}
-                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                              />
+                              <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                               <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1097,33 +938,25 @@ export function AdditionalInformationForm({
                                   locale: ptBR,
                                 })
                               ) : (
-                                <span className="text-muted-foreground">
-                                  Selecione a data
-                                </span>
+                                <span className="text-muted-foreground">Selecione a data</span>
                               )}
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
 
-                        <PopoverContent
-                          className="w-auto p-0 bg-background"
-                          align="start"
-                        >
+                        <PopoverContent className="w-auto p-0 bg-background" align="start">
                           <Calendar
                             mode="single"
                             locale={ptBR}
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
+                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                             captionLayout="dropdown"
                             fromYear={1900}
                             toYear={currentYear}
                             classNames={{
                               day_hidden: "invisible",
-                              dropdown:
-                                "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                              dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                               caption_dropdowns: "flex gap-3",
                               vhidden: "hidden",
                               caption_label: "hidden",
@@ -1143,9 +976,7 @@ export function AdditionalInformationForm({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel className="text-foreground">
-                        Data de término
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Data de término</FormLabel>
 
                       <Popover>
                         <PopoverTrigger asChild>
@@ -1153,15 +984,9 @@ export function AdditionalInformationForm({
                             <Button
                               disabled={isPending || isSavePending}
                               variant="date"
-                              className={cn(
-                                "!mt-auto",
-                                !field.value && "text-muted-foreground",
-                              )}
+                              className={cn("!mt-auto", !field.value && "text-muted-foreground")}
                             >
-                              <CalendarIcon
-                                strokeWidth={1.5}
-                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                              />
+                              <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                               <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1170,33 +995,25 @@ export function AdditionalInformationForm({
                                   locale: ptBR,
                                 })
                               ) : (
-                                <span className="text-muted-foreground">
-                                  Selecione a data
-                                </span>
+                                <span className="text-muted-foreground">Selecione a data</span>
                               )}
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
 
-                        <PopoverContent
-                          className="w-auto p-0 bg-background"
-                          align="start"
-                        >
+                        <PopoverContent className="w-auto p-0 bg-background" align="start">
                           <Calendar
                             mode="single"
                             locale={ptBR}
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
+                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                             captionLayout="dropdown"
                             fromYear={1900}
                             toYear={currentYear}
                             classNames={{
                               day_hidden: "invisible",
-                              dropdown:
-                                "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                              dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                               caption_dropdowns: "flex gap-3",
                               vhidden: "hidden",
                               caption_label: "hidden",
@@ -1220,9 +1037,8 @@ export function AdditionalInformationForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já serviu, foi membro ou esteve envolvido em uma
-                      unidade paramilitar, unidade de vigilantes, grupo rebelde,
-                      grupo guerrilheiro ou organização insurgente?
+                      Você já serviu, foi membro ou esteve envolvido em uma unidade paramilitar, unidade de vigilantes,
+                      grupo rebelde, grupo guerrilheiro ou organização insurgente?
                     </FormLabel>
 
                     <FormControl>
@@ -1261,19 +1077,12 @@ export function AdditionalInformationForm({
               control={form.control}
               render={({ field }) => (
                 <FormItem
-                  className={cn(
-                    "flex flex-col gap-2",
-                    insurgencyOrganizationConfirmation === "Não" && "hidden",
-                  )}
+                  className={cn("flex flex-col gap-2", insurgencyOrganizationConfirmation === "Não" && "hidden")}
                 >
                   <FormLabel className="text-foreground">Explique</FormLabel>
 
                   <FormControl>
-                    <Textarea
-                      disabled={isPending || isSavePending}
-                      className="!mt-auto resize-none"
-                      {...field}
-                    />
+                    <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
                   </FormControl>
 
                   <FormMessage className="text-sm text-destructive" />
@@ -1294,10 +1103,7 @@ export function AdditionalInformationForm({
                   {isPending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -1320,10 +1126,7 @@ export function AdditionalInformationForm({
                   {isSavePending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -1342,14 +1145,11 @@ export function AdditionalInformationForm({
                   {isPending ? (
                     <>
                       Enviando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
-                      Enviar
+                      Proximo
                       <ArrowRight className="size-5" strokeWidth={1.5} />
                     </>
                   )}

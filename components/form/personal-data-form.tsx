@@ -11,29 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as FormType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import { toast } from "sonner";
@@ -46,15 +29,9 @@ const formSchema = z
     lastName: z.string().min(1, "Campo obrigatório"),
     cpf: z.string().min(1, "Campo obrigatório").min(14, "CPF Inválido"),
     otherNamesConfirmation: z.enum(["Sim", "Não"]),
-    otherNames: z
-      .array(z.string().min(1, { message: "Valor não pode ser vazio" }))
-      .optional(),
-    sex: z
-      .string({ message: "Selecione uma opção" })
-      .min(1, { message: "Selecione uma opção" }),
-    maritalStatus: z
-      .string({ message: "Selecione uma opção" })
-      .min(1, { message: "Selecione uma opção" }),
+    otherNames: z.array(z.string().min(1, { message: "Valor não pode ser vazio" })).optional(),
+    sex: z.string({ message: "Selecione uma opção" }).min(1, { message: "Selecione uma opção" }),
+    maritalStatus: z.string({ message: "Selecione uma opção" }).min(1, { message: "Selecione uma opção" }),
     birthDate: z.date({ message: "Selecione uma data" }),
     birthCity: z.string().min(1, "Campo obrigatório"),
     birthState: z.string().min(1, "Campo obrigatório"),
@@ -79,12 +56,11 @@ const formSchema = z
         otherCountryResidentConfirmation,
         otherCountryResident,
       },
-      ctx,
+      ctx
     ) => {
       if (
         otherNationalityConfirmation === "Sim" &&
-        (otherNationalityPassport === undefined ||
-          otherNationalityPassport?.length === 0)
+        (otherNationalityPassport === undefined || otherNationalityPassport?.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -95,8 +71,7 @@ const formSchema = z
 
       if (
         otherNationalityConfirmation === "Sim" &&
-        (otherNationalityCountry === undefined ||
-          otherNationalityCountry?.length === 0)
+        (otherNationalityCountry === undefined || otherNationalityCountry?.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -105,11 +80,7 @@ const formSchema = z
         });
       }
 
-      if (
-        otherNamesConfirmation === "Sim" &&
-        otherNames &&
-        otherNames.length === 0
-      ) {
+      if (otherNamesConfirmation === "Sim" && otherNames && otherNames.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -119,8 +90,7 @@ const formSchema = z
 
       if (
         otherCountryResidentConfirmation === "Sim" &&
-        (otherCountryResident === undefined ||
-          otherCountryResident?.length === 0)
+        (otherCountryResident === undefined || otherCountryResident?.length === 0)
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -128,7 +98,7 @@ const formSchema = z
           path: ["otherCountryResident"],
         });
       }
-    },
+    }
   );
 
 const countries = [
@@ -337,175 +307,129 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
   const { redirectStep, setRedirectStep } = useFormStore();
 
+  const { data, isLoading: isBirthLoading } = trpc.clientRouter.getProfileBirthDate.useQuery({ profileId });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: currentForm.firstName ? currentForm.firstName : "",
       lastName: currentForm.lastName ? currentForm.lastName : "",
       cpf: currentForm.cpf ? currentForm.cpf : "",
-      otherNamesConfirmation: currentForm.otherNamesConfirmation
-        ? "Sim"
-        : "Não",
-      otherNames:
-        currentForm.otherNames.length > 0 ? currentForm.otherNames : [],
+      otherNamesConfirmation: currentForm.otherNamesConfirmation ? "Sim" : "Não",
+      otherNames: currentForm.otherNames.length > 0 ? currentForm.otherNames : [],
       sex: currentForm.sex ? currentForm.sex : undefined,
-      maritalStatus: currentForm.maritalStatus
-        ? currentForm.maritalStatus
-        : undefined,
+      maritalStatus: currentForm.maritalStatus ? currentForm.maritalStatus : undefined,
       birthDate: currentForm.birthDate ? currentForm.birthDate : undefined,
       birthCity: currentForm.birthCity ? currentForm.birthCity : "",
       birthState: currentForm.birthState ? currentForm.birthState : "",
       birthCountry: currentForm.birthCountry ? currentForm.birthCountry : "",
       originCountry: currentForm.originCountry ? currentForm.originCountry : "",
-      otherNationalityConfirmation: currentForm.otherNationalityConfirmation
-        ? "Sim"
-        : "Não",
-      otherNationalityPassport: currentForm.otherNationalityPassport
-        ? currentForm.otherNationalityPassport
-        : "",
-      otherNationalityCountry: currentForm.otherNationalityCountry
-        ? currentForm.otherNationalityCountry
-        : "",
-      otherCountryResidentConfirmation:
-        currentForm.otherCountryResidentConfirmation ? "Sim" : "Não",
-      otherCountryResident: currentForm.otherCountryResident
-        ? currentForm.otherCountryResident
-        : "",
-      USSocialSecurityNumber: currentForm.USSocialSecurityNumber
-        ? currentForm.USSocialSecurityNumber
-        : "",
-      USTaxpayerIDNumber: currentForm.USTaxpayerIDNumber
-        ? currentForm.USTaxpayerIDNumber
-        : "",
+      otherNationalityConfirmation: currentForm.otherNationalityConfirmation ? "Sim" : "Não",
+      otherNationalityPassport: currentForm.otherNationalityPassport ? currentForm.otherNationalityPassport : "",
+      otherNationalityCountry: currentForm.otherNationalityCountry ? currentForm.otherNationalityCountry : "",
+      otherCountryResidentConfirmation: currentForm.otherCountryResidentConfirmation ? "Sim" : "Não",
+      otherCountryResident: currentForm.otherCountryResident ? currentForm.otherCountryResident : "",
+      USSocialSecurityNumber: currentForm.USSocialSecurityNumber ? currentForm.USSocialSecurityNumber : "",
+      USTaxpayerIDNumber: currentForm.USTaxpayerIDNumber ? currentForm.USTaxpayerIDNumber : "",
     },
   });
 
   const currentYear = getYear(new Date());
-  const otherNamesConfirmationValue: "Sim" | "Não" = form.watch(
-    "otherNamesConfirmation",
-  );
-  const otherNationalityConfirmation: "Sim" | "Não" = form.watch(
-    "otherNationalityConfirmation",
-  );
-  const otherCountryResidentConfirmation: "Sim" | "Não" = form.watch(
-    "otherCountryResidentConfirmation",
-  );
+  const birthDate = form.watch("birthDate");
+  const otherNamesConfirmationValue: "Sim" | "Não" = form.watch("otherNamesConfirmation");
+  const otherNationalityConfirmation: "Sim" | "Não" = form.watch("otherNationalityConfirmation");
+  const otherCountryResidentConfirmation: "Sim" | "Não" = form.watch("otherCountryResidentConfirmation");
   const otherNames = form.watch("otherNames");
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitPersonalData, isPending } =
-    trpc.formsRouter.submitPersonalData.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+  const { mutate: submitPersonalData, isPending } = trpc.formsRouter.submitPersonalData.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.isEditing) {
-          router.push(`/resumo-formulario/${profileId}`);
-        } else {
-          router.push(`/formulario/${profileId}?formStep=1`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.isEditing) {
+        router.push(`/resumo-formulario/${profileId}`);
+      } else {
+        router.push(`/formulario/${profileId}?formStep=1`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
-  const { mutate: savePersonalData, isPending: isSavePending } =
-    trpc.formsRouter.savePersonalData.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
+  const { mutate: savePersonalData, isPending: isSavePending } = trpc.formsRouter.savePersonalData.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.redirectStep !== undefined) {
-          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.redirectStep !== undefined) {
+        router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao salvar os dados");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao salvar os dados");
+      }
+    },
+  });
 
   useEffect(() => {
     if (redirectStep !== null) {
       const values = form.getValues();
 
+      if (data && data.birthDate && format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")) {
+        toast.error("Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente");
+
+        return;
+      }
+
       savePersonalData({
         profileId,
         redirectStep,
-        firstName:
-          values.firstName !== "" ? values.firstName : currentForm.firstName,
-        lastName:
-          values.lastName !== "" ? values.lastName : currentForm.lastName,
+        firstName: values.firstName !== "" ? values.firstName : currentForm.firstName,
+        lastName: values.lastName !== "" ? values.lastName : currentForm.lastName,
         cpf: values.cpf !== "" ? values.cpf : currentForm.cpf,
-        otherNamesConfirmation:
-          values.otherNamesConfirmation ??
-          (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
+        otherNamesConfirmation: values.otherNamesConfirmation ?? (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
         otherNames: values.otherNames ?? currentForm.otherNames,
-        sex:
-          values.sex !== ""
-            ? values.sex
-            : !currentForm.sex
-              ? undefined
-              : currentForm.sex,
+        sex: values.sex !== "" ? values.sex : !currentForm.sex ? undefined : currentForm.sex,
         maritalStatus:
           values.maritalStatus !== ""
             ? values.maritalStatus
             : !currentForm.maritalStatus
-              ? undefined
-              : currentForm.maritalStatus,
+            ? undefined
+            : currentForm.maritalStatus,
         birthDate: values.birthDate ?? currentForm.birthDate,
-        birthCity:
-          values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
-        birthState:
-          values.birthState !== "" ? values.birthState : currentForm.birthState,
-        birthCountry:
-          values.birthCountry !== ""
-            ? values.birthCountry
-            : currentForm.birthCountry,
-        originCountry:
-          values.originCountry !== ""
-            ? values.originCountry
-            : currentForm.originCountry,
+        birthCity: values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
+        birthState: values.birthState !== "" ? values.birthState : currentForm.birthState,
+        birthCountry: values.birthCountry !== "" ? values.birthCountry : currentForm.birthCountry,
+        originCountry: values.originCountry !== "" ? values.originCountry : currentForm.originCountry,
         otherNationalityConfirmation:
-          values.otherNationalityConfirmation ??
-          (currentForm.otherNationalityConfirmation ? "Sim" : "Não"),
+          values.otherNationalityConfirmation ?? (currentForm.otherNationalityConfirmation ? "Sim" : "Não"),
         otherNationalityPassport:
           values.otherNationalityPassport !== ""
             ? values.otherNationalityPassport
             : currentForm.otherNationalityPassport,
         otherNationalityCountry:
-          values.otherNationalityCountry !== ""
-            ? values.otherNationalityCountry
-            : currentForm.otherNationalityCountry,
+          values.otherNationalityCountry !== "" ? values.otherNationalityCountry : currentForm.otherNationalityCountry,
         otherCountryResidentConfirmation:
-          values.otherCountryResidentConfirmation ??
-          (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
+          values.otherCountryResidentConfirmation ?? (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
         otherCountryResident:
-          values.otherCountryResident !== ""
-            ? values.otherCountryResident
-            : currentForm.otherCountryResident,
+          values.otherCountryResident !== "" ? values.otherCountryResident : currentForm.otherCountryResident,
         USSocialSecurityNumber:
-          values.USSocialSecurityNumber !== ""
-            ? values.USSocialSecurityNumber
-            : currentForm.USSocialSecurityNumber,
+          values.USSocialSecurityNumber !== "" ? values.USSocialSecurityNumber : currentForm.USSocialSecurityNumber,
         USTaxpayerIDNumber:
-          values.USTaxpayerIDNumber !== ""
-            ? values.USTaxpayerIDNumber
-            : currentForm.USTaxpayerIDNumber,
+          values.USTaxpayerIDNumber !== "" ? values.USTaxpayerIDNumber : currentForm.USTaxpayerIDNumber,
       });
       setRedirectStep(null);
     }
@@ -514,71 +438,54 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
   function onSave() {
     const values = form.getValues();
 
+    if (data && data.birthDate && format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")) {
+      toast.error("Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente");
+
+      return;
+    }
+
     savePersonalData({
       profileId,
-      firstName:
-        values.firstName !== "" ? values.firstName : currentForm.firstName,
+      firstName: values.firstName !== "" ? values.firstName : currentForm.firstName,
       lastName: values.lastName !== "" ? values.lastName : currentForm.lastName,
       cpf: values.cpf !== "" ? values.cpf : currentForm.cpf,
-      otherNamesConfirmation:
-        values.otherNamesConfirmation ??
-        (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
+      otherNamesConfirmation: values.otherNamesConfirmation ?? (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
       otherNames: values.otherNames ?? currentForm.otherNames,
-      sex:
-        values.sex !== ""
-          ? values.sex
-          : !currentForm.sex
-            ? undefined
-            : currentForm.sex,
+      sex: values.sex !== "" ? values.sex : !currentForm.sex ? undefined : currentForm.sex,
       maritalStatus:
         values.maritalStatus !== ""
           ? values.maritalStatus
           : !currentForm.maritalStatus
-            ? undefined
-            : currentForm.maritalStatus,
+          ? undefined
+          : currentForm.maritalStatus,
       birthDate: values.birthDate ?? currentForm.birthDate,
-      birthCity:
-        values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
-      birthState:
-        values.birthState !== "" ? values.birthState : currentForm.birthState,
-      birthCountry:
-        values.birthCountry !== ""
-          ? values.birthCountry
-          : currentForm.birthCountry,
-      originCountry:
-        values.originCountry !== ""
-          ? values.originCountry
-          : currentForm.originCountry,
+      birthCity: values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
+      birthState: values.birthState !== "" ? values.birthState : currentForm.birthState,
+      birthCountry: values.birthCountry !== "" ? values.birthCountry : currentForm.birthCountry,
+      originCountry: values.originCountry !== "" ? values.originCountry : currentForm.originCountry,
       otherNationalityConfirmation:
-        values.otherNationalityConfirmation ??
-        (currentForm.otherNationalityConfirmation ? "Sim" : "Não"),
+        values.otherNationalityConfirmation ?? (currentForm.otherNationalityConfirmation ? "Sim" : "Não"),
       otherNationalityPassport:
-        values.otherNationalityPassport !== ""
-          ? values.otherNationalityPassport
-          : currentForm.otherNationalityPassport,
+        values.otherNationalityPassport !== "" ? values.otherNationalityPassport : currentForm.otherNationalityPassport,
       otherNationalityCountry:
-        values.otherNationalityCountry !== ""
-          ? values.otherNationalityCountry
-          : currentForm.otherNationalityCountry,
+        values.otherNationalityCountry !== "" ? values.otherNationalityCountry : currentForm.otherNationalityCountry,
       otherCountryResidentConfirmation:
-        values.otherCountryResidentConfirmation ??
-        (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
+        values.otherCountryResidentConfirmation ?? (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
       otherCountryResident:
-        values.otherCountryResident !== ""
-          ? values.otherCountryResident
-          : currentForm.otherCountryResident,
+        values.otherCountryResident !== "" ? values.otherCountryResident : currentForm.otherCountryResident,
       USSocialSecurityNumber:
-        values.USSocialSecurityNumber !== ""
-          ? values.USSocialSecurityNumber
-          : currentForm.USSocialSecurityNumber,
-      USTaxpayerIDNumber:
-        values.USTaxpayerIDNumber !== ""
-          ? values.USTaxpayerIDNumber
-          : currentForm.USTaxpayerIDNumber,
+        values.USSocialSecurityNumber !== "" ? values.USSocialSecurityNumber : currentForm.USSocialSecurityNumber,
+      USTaxpayerIDNumber: values.USTaxpayerIDNumber !== "" ? values.USTaxpayerIDNumber : currentForm.USTaxpayerIDNumber,
     });
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (data && data.birthDate && format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")) {
+      toast.error("Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente");
+
+      return;
+    }
+
     submitPersonalData({ ...values, profileId, step: 1, isEditing });
   }
 
@@ -604,9 +511,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
       return;
     }
 
-    const namesUpdated = currentNames.filter(
-      (_, nameIndex) => nameIndex !== index,
-    );
+    const namesUpdated = currentNames.filter((_, nameIndex) => nameIndex !== index);
 
     form.setValue("otherNames", namesUpdated);
   }
@@ -621,13 +526,8 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-12"
-      >
-        <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold">
-          Dados Pessoais
-        </h2>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-12">
+        <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold">Dados Pessoais</h2>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
@@ -637,16 +537,10 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Primeiro nome (Conforme passaporte)*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Primeiro nome (Conforme passaporte)*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        disabled={isPending || isSavePending}
-                        className="!mt-auto"
-                        {...field}
-                      />
+                      <Input disabled={isPending || isSavePending || isBirthLoading} className="!mt-auto" {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -659,16 +553,10 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Sobrenome (Conforme passaporte)*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Sobrenome (Conforme passaporte)*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        disabled={isPending || isSavePending}
-                        className="!mt-auto"
-                        {...field}
-                      />
+                      <Input disabled={isPending || isSavePending || isBirthLoading} className="!mt-auto" {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -685,7 +573,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <Input
-                        disabled={isPending || isSavePending}
+                        disabled={isPending || isSavePending || isBirthLoading}
                         maxLength={14}
                         value={field.value}
                         ref={field.ref}
@@ -709,13 +597,12 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Possui outros nomes? (Solteira/Nome
-                      Profissional/Religioso/etc...)
+                      Possui outros nomes? (Solteira/Nome Profissional/Religioso/etc...)
                     </FormLabel>
 
                     <FormControl>
                       <RadioGroup
-                        disabled={isPending || isSavePending}
+                        disabled={isPending || isSavePending || isBirthLoading}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -748,30 +635,23 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "w-full bg-secondary rounded-xl p-4 flex flex-col gap-2",
-                      {
-                        hidden: otherNamesConfirmationValue === "Não",
-                      },
-                    )}
+                    className={cn("w-full bg-secondary rounded-xl p-4 flex flex-col gap-2", {
+                      hidden: otherNamesConfirmationValue === "Não",
+                    })}
                   >
-                    <FormLabel className="text-foreground">
-                      Outro nome
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Outro nome</FormLabel>
 
                     <FormControl>
                       <div className="flex flex-col gap-2">
                         <div className="flex gap-2 justify-between">
                           <Input
                             className="!mt-auto"
-                            disabled={isPending || isSavePending}
+                            disabled={isPending || isSavePending || isBirthLoading}
                             name={field.name}
                             ref={field.ref}
                             onBlur={field.onBlur}
                             value={otherNamesValue}
-                            onChange={(event) =>
-                              setOtherNamesValue(event.target.value)
-                            }
+                            onChange={(event) => setOtherNamesValue(event.target.value)}
                           />
 
                           <Button
@@ -792,23 +672,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                                 key={`otherName-${index}`}
                                 className="py-2 px-4 bg-primary/40 rounded-full flex items-center gap-2 group"
                               >
-                                <span className="text-sm font-medium text-white">
-                                  {name}
-                                </span>
+                                <span className="text-sm font-medium text-white">{name}</span>
 
                                 <Button
                                   type="button"
                                   variant="link"
                                   size="icon"
                                   className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
-                                  disabled={isPending || isSavePending}
+                                  disabled={isPending || isSavePending || isBirthLoading}
                                   onClick={() => handleRemoveOtherNames(index)}
                                 >
-                                  <X
-                                    strokeWidth={1}
-                                    size={20}
-                                    color="#FFFFFF"
-                                  />
+                                  <X strokeWidth={1} size={20} color="#FFFFFF" />
                                 </Button>
                               </div>
                             ))}
@@ -831,15 +705,9 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">Sexo*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                        >
+                        <SelectTrigger className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading}>
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -861,19 +729,11 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="maritalStatus"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Estado civil*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Estado civil*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                        >
+                        <SelectTrigger className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading}>
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
@@ -881,21 +741,15 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                       <SelectContent>
                         <SelectItem value="Casado(a)">Casado(a)</SelectItem>
 
-                        <SelectItem value="União Estável">
-                          União Estável
-                        </SelectItem>
+                        <SelectItem value="União Estável">União Estável</SelectItem>
 
-                        <SelectItem value="Parceiro(a) Doméstico(a)">
-                          Parceiro(a) Doméstico(a)
-                        </SelectItem>
+                        <SelectItem value="Parceiro(a) Doméstico(a)">Parceiro(a) Doméstico(a)</SelectItem>
 
                         <SelectItem value="Solteiro(a)">Solteiro(a)</SelectItem>
 
                         <SelectItem value="Viúvo(a)">Viúvo(a)</SelectItem>
 
-                        <SelectItem value="Divorciado(a)">
-                          Divorciado(a)
-                        </SelectItem>
+                        <SelectItem value="Divorciado(a)">Divorciado(a)</SelectItem>
 
                         <SelectItem value="Separado(a)">Separado(a)</SelectItem>
                       </SelectContent>
@@ -911,25 +765,17 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="birthDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Data de nascimento*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data de nascimento*</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant="date"
-                            className={cn(
-                              "!mt-auto",
-                              !field.value && "text-muted-foreground",
-                            )}
-                            disabled={isPending || isSavePending}
+                            className={cn("!mt-auto", !field.value && "text-muted-foreground")}
+                            disabled={isPending || isSavePending || isBirthLoading}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -938,9 +784,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
@@ -952,9 +796,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
@@ -983,16 +825,10 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="birthCity"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Cidade de Nascimento*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Cidade de Nascimento*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1005,16 +841,10 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="birthState"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Estado de Nascimento*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Estado de Nascimento*</FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1027,19 +857,11 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="birthCountry"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      País de Nascimento*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">País de Nascimento*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                        >
+                        <SelectTrigger className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading}>
                           <SelectValue placeholder="Selecione o país de nascimento" />
                         </SelectTrigger>
                       </FormControl>
@@ -1065,19 +887,11 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="originCountry"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      País de origem (nacionalidade)*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">País de origem (nacionalidade)*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                        >
+                        <SelectTrigger className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading}>
                           <SelectValue placeholder="Selecione o país" />
                         </SelectTrigger>
                       </FormControl>
@@ -1103,13 +917,11 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="otherNationalityConfirmation"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Possui outra nacionalidade?
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Possui outra nacionalidade?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
-                        disabled={isPending || isSavePending}
+                        disabled={isPending || isSavePending || isBirthLoading}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -1141,25 +953,12 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="otherNationalityCountry"
                 render={({ field }) => (
-                  <FormItem
-                    className={cn(
-                      "flex flex-col gap-2",
-                      otherNationalityConfirmation === "Não" && "hidden",
-                    )}
-                  >
-                    <FormLabel className="text-foreground">
-                      País da outra nacionalidade
-                    </FormLabel>
+                  <FormItem className={cn("flex flex-col gap-2", otherNationalityConfirmation === "Não" && "hidden")}>
+                    <FormLabel className="text-foreground">País da outra nacionalidade</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                        >
+                        <SelectTrigger className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading}>
                           <SelectValue placeholder="Selecione o país de outra nacionalidade" />
                         </SelectTrigger>
                       </FormControl>
@@ -1182,24 +981,13 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 control={form.control}
                 name="otherNationalityPassport"
                 render={({ field }) => (
-                  <FormItem
-                    className={cn(
-                      "flex flex-col gap-2",
-                      otherNationalityConfirmation === "Não" && "hidden",
-                    )}
-                  >
-                    <FormLabel className="text-foreground">
-                      Número do passaporte da outra nacionalidade
-                    </FormLabel>
+                  <FormItem className={cn("flex flex-col gap-2", otherNationalityConfirmation === "Não" && "hidden")}>
+                    <FormLabel className="text-foreground">Número do passaporte da outra nacionalidade</FormLabel>
 
                     <FormControl>
                       <Input
                         className="!mt-auto"
-                        disabled={
-                          otherNationalityConfirmation === "Não" ||
-                          isPending ||
-                          isSavePending
-                        }
+                        disabled={otherNationalityConfirmation === "Não" || isPending || isSavePending}
                         {...field}
                       />
                     </FormControl>
@@ -1222,7 +1010,7 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
                     <FormControl>
                       <RadioGroup
-                        disabled={isPending || isSavePending}
+                        disabled={isPending || isSavePending || isBirthLoading}
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
@@ -1255,24 +1043,13 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 name="otherCountryResident"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2",
-                      otherCountryResidentConfirmation === "Não" && "hidden",
-                    )}
+                    className={cn("flex flex-col gap-2", otherCountryResidentConfirmation === "Não" && "hidden")}
                   >
-                    <FormLabel className="text-foreground">
-                      País diferente da nacionalidade
-                    </FormLabel>
+                    <FormLabel className="text-foreground">País diferente da nacionalidade</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className="!mt-auto"
-                          disabled={isPending || isSavePending}
-                        >
+                        <SelectTrigger className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading}>
                           <SelectValue placeholder="Selecione o país" />
                         </SelectTrigger>
                       </FormControl>
@@ -1299,16 +1076,11 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      U.S. Social Security Number (aplicável somente para quem
-                      já trabalhou nos EUA)
+                      U.S. Social Security Number (aplicável somente para quem já trabalhou nos EUA)
                     </FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1322,16 +1094,11 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      U.S. Taxpayer ID Number (aplicável somente para quem já
-                      trabalhou nos EUA)
+                      U.S. Taxpayer ID Number (aplicável somente para quem já trabalhou nos EUA)
                     </FormLabel>
 
                     <FormControl>
-                      <Input
-                        className="!mt-auto"
-                        disabled={isPending || isSavePending}
-                        {...field}
-                      />
+                      <Input className="!mt-auto" disabled={isPending || isSavePending || isBirthLoading} {...field} />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1348,15 +1115,12 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                   size="xl"
                   type="submit"
                   className="w-full flex items-center gap-2 sm:w-fit"
-                  disabled={isPending || isSavePending}
+                  disabled={isPending || isSavePending || isBirthLoading}
                 >
                   {isPending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -1373,16 +1137,13 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                   variant="outline"
                   type="button"
                   className="w-full flex items-center gap-2 sm:w-fit"
-                  disabled={isPending || isSavePending}
+                  disabled={isPending || isSavePending || isBirthLoading}
                   onClick={onSave}
                 >
                   {isSavePending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -1396,19 +1157,16 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
                   size="xl"
                   type="submit"
                   className="w-full flex items-center gap-2 sm:w-fit"
-                  disabled={isPending || isSavePending}
+                  disabled={isPending || isSavePending || isBirthLoading}
                 >
                   {isPending ? (
                     <>
                       Enviando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
-                      Enviar
+                      Proximo
                       <ArrowRight className="size-5" strokeWidth={1.5} />
                     </>
                   )}

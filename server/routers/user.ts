@@ -166,9 +166,9 @@ export const userRouter = router({
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
                 }),
-              category: z
-                .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-                .refine((val) => val.length !== 0, { message: "Categoria é obrigatória" }),
+              category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
+                message: "Categoria é obrigatória",
+              }),
               issuanceDate: z
                 .date({
                   required_error: "Data de Emissão é obrigatória",
@@ -196,6 +196,13 @@ export const userRouter = router({
                   required_error: "Data da entrevista é obrigatória",
                   invalid_type_error: "Data da entrevista inválida",
                 })
+                .optional(),
+              interviewTime: z
+                .string({
+                  required_error: "Horário da entrevista é obrigatório",
+                  invalid_type_error: "Horário da entrevista inválido",
+                })
+                .regex(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/, "Horário da entrevista inválido")
                 .optional(),
             })
           )
@@ -337,6 +344,7 @@ export const userRouter = router({
             expireDate: profile.expireDate,
             CASVDate: profile.CASVDate,
             interviewDate: profile.interviewDate,
+            interviewTime: profile.interviewTime,
             visaClass,
             visaType,
             category,
@@ -385,14 +393,18 @@ export const userRouter = router({
             "",
           ])
           .refine((val) => val.length !== 0),
-        category: z
-          .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-          .refine((val) => val.length !== 0, { message: "Categoria é obrigatória" }),
+        category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
+          message: "Categoria é obrigatória",
+        }),
         issuanceDate: z.date().optional(),
         expireDate: z.date().optional(),
         DSNumber: z.string(),
         CASVDate: z.date().optional(),
         interviewDate: z.date().optional(),
+        interviewTime: z
+          .string()
+          .regex(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/, "Horário da entrevista inválido")
+          .optional(),
       })
     )
     .mutation(async (opts) => {
@@ -408,6 +420,7 @@ export const userRouter = router({
         DSNumber,
         CASVDate,
         interviewDate,
+        interviewTime,
       } = opts.input;
       let visaClass;
       let visaType;
@@ -464,16 +477,17 @@ export const userRouter = router({
       const profileUpdated = await prisma.profile.create({
         data: {
           DSValid: addDays(new Date(), 30),
-          DSNumber: DSNumber,
+          DSNumber,
           name: profileName,
           address: profileAddress,
           cpf: profileCpf,
-          birthDate: birthDate,
-          passport: passport,
-          issuanceDate: issuanceDate,
-          expireDate: expireDate,
-          CASVDate: CASVDate,
-          interviewDate: interviewDate,
+          birthDate,
+          passport,
+          issuanceDate,
+          expireDate,
+          CASVDate,
+          interviewDate,
+          interviewTime,
           visaClass,
           visaType,
           category,
@@ -1017,6 +1031,10 @@ export const userRouter = router({
         DSNumber: z.string(),
         CASVDate: z.date().optional(),
         interviewDate: z.date().optional(),
+        interviewTime: z
+          .string()
+          .regex(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/, "Horário da entrevista inválido")
+          .optional(),
       })
     )
     .mutation(async (opts) => {
@@ -1032,6 +1050,7 @@ export const userRouter = router({
         DSNumber,
         CASVDate,
         interviewDate,
+        interviewTime,
       } = opts.input;
 
       let visaClass;
@@ -1075,18 +1094,19 @@ export const userRouter = router({
           id: profileId,
         },
         data: {
-          DSNumber: DSNumber,
+          DSNumber,
           name: profileName,
           visaClass,
           visaType,
           address: profileAddress,
           cpf: profileCpf,
-          birthDate: birthDate,
-          passport: passport,
-          issuanceDate: issuanceDate,
-          expireDate: expireDate,
-          CASVDate: CASVDate,
-          interviewDate: interviewDate,
+          birthDate,
+          passport,
+          issuanceDate,
+          expireDate,
+          CASVDate,
+          interviewDate,
+          interviewTime,
         },
         include: {
           user: {

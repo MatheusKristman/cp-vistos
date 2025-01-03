@@ -116,6 +116,7 @@ model Profile {
   address       String?
   CASVDate      DateTime?
   interviewDate DateTime?
+  interviewTime String?
   visaType      VisaType
   visaClass     VisaClass
   visaStatus    VisaStatus @default(awaiting)
