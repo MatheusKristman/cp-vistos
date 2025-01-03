@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDropzone } from "@uploadthing/react";
 import NextImage from "next/image";
 import { Export } from "iconsax-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import axios from "axios";
 import Link from "next/link";
@@ -96,13 +96,9 @@ export default function AddBannerPage() {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: async (acceptedFiles) => {
-      console.log({ acceptedFiles });
-
       const img = new Image();
 
       img.onload = () => {
-        console.log("Image Width:", img.width);
-
         if (img.width < 1000) {
           toast.error("Resolução da imagem não é recomendado");
 
