@@ -101,7 +101,7 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
 
           <div className="w-full border border-muted/70 rounded-xl overflow-hidden transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
             <TextareaAutosize
-              className="border-none w-full resize-none px-3 py-2 h-12 text-sm placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="border-none w-full resize-none px-3 py-2 h-12 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="Envie sua anotação"
               disabled
             />
@@ -409,7 +409,7 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
 
         <div className="w-full border border-muted/70 rounded-xl overflow-hidden transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
           <TextareaAutosize
-            className="border-none w-full resize-none px-4 py-3 h-12 text-sm placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="border-none w-full resize-none px-4 py-3 h-12 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
             placeholder="Envie sua anotação"
             maxRows={5}
             value={annotationState}

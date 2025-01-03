@@ -1,3 +1,5 @@
+import { UserRoundX } from "lucide-react";
+
 import { trpc } from "@/lib/trpc-client";
 
 import { columns } from "../columns";
@@ -6,7 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 // TODO: verificar com a gih os campos que terão no e_ta
 export function E_TA() {
-  const { data, isFetching } = trpc.userRouter.getClients.useQuery({ category: "passport" });
+  const { data, isFetching } = trpc.userRouter.getClients.useQuery({
+    category: "passport",
+  });
 
   if (isFetching) {
     return (
@@ -23,6 +27,16 @@ export function E_TA() {
             <Skeleton className="h-9 w-20" />
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (data?.clients.length === 0) {
+    return (
+      <div className="mt-10 w-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
+        <UserRoundX className="size-8" />
+
+        <span className="text-base font-medium">Nenhum cliente encontrado</span>
       </div>
     );
   }

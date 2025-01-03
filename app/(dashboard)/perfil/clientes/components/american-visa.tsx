@@ -1,3 +1,5 @@
+import { UserRoundX } from "lucide-react";
+
 import { trpc } from "@/lib/trpc-client";
 
 import { columns } from "../columns";
@@ -5,7 +7,9 @@ import { DataTable } from "../data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function AmericanVisa() {
-  const { data, isFetching } = trpc.userRouter.getClients.useQuery({ category: "american_visa" });
+  const { data, isFetching } = trpc.userRouter.getClients.useQuery({
+    category: "american_visa",
+  });
 
   if (isFetching) {
     return (
@@ -22,6 +26,16 @@ export function AmericanVisa() {
             <Skeleton className="h-9 w-20" />
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (data?.clients.length === 0) {
+    return (
+      <div className="mt-10 w-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
+        <UserRoundX className="size-8" />
+
+        <span className="text-base font-medium">Nenhum cliente encontrado</span>
       </div>
     );
   }
