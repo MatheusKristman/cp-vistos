@@ -1,21 +1,30 @@
 "use client";
 
 import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Loader2, Save } from "lucide-react";
-import { Form as FormType } from "@prisma/client";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Loader2, Save } from "lucide-react";
+import { Form as FormType } from "@prisma/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import useFormStore from "@/constants/stores/useFormStore";
-import { trpc } from "@/lib/trpc-client";
 import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { FinishFormConfirmation } from "./security-form/finish-form-confirmation";
+
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc-client";
+import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z
   .object({
@@ -132,9 +141,12 @@ const formSchema = z
         avoidTaxConfirmation,
         avoidTaxConfirmationDetails,
       },
-      ctx
+      ctx,
     ) => {
-      if (contagiousDiseaseConfirmation === "Sim" && contagiousDiseaseConfirmationDetails.length === 0) {
+      if (
+        contagiousDiseaseConfirmation === "Sim" &&
+        contagiousDiseaseConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -142,7 +154,10 @@ const formSchema = z
         });
       }
 
-      if (phisicalMentalProblemConfirmation === "Sim" && phisicalMentalProblemConfirmationDetails.length === 0) {
+      if (
+        phisicalMentalProblemConfirmation === "Sim" &&
+        phisicalMentalProblemConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -150,7 +165,10 @@ const formSchema = z
         });
       }
 
-      if (crimeConfirmation === "Sim" && crimeConfirmationDetails.length === 0) {
+      if (
+        crimeConfirmation === "Sim" &&
+        crimeConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -158,7 +176,10 @@ const formSchema = z
         });
       }
 
-      if (drugsProblemConfirmation === "Sim" && drugsProblemConfirmationDetails.length === 0) {
+      if (
+        drugsProblemConfirmation === "Sim" &&
+        drugsProblemConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -166,7 +187,10 @@ const formSchema = z
         });
       }
 
-      if (lawViolateConfirmation === "Sim" && lawViolateConfirmationDetails.length === 0) {
+      if (
+        lawViolateConfirmation === "Sim" &&
+        lawViolateConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -174,7 +198,10 @@ const formSchema = z
         });
       }
 
-      if (prostitutionConfirmation === "Sim" && prostitutionConfirmationDetails.length === 0) {
+      if (
+        prostitutionConfirmation === "Sim" &&
+        prostitutionConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -182,7 +209,10 @@ const formSchema = z
         });
       }
 
-      if (moneyLaundryConfirmation === "Sim" && moneyLaundryConfirmationDetails.length === 0) {
+      if (
+        moneyLaundryConfirmation === "Sim" &&
+        moneyLaundryConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -190,7 +220,10 @@ const formSchema = z
         });
       }
 
-      if (peopleTrafficConfirmation === "Sim" && peopleTrafficConfirmationDetails.length === 0) {
+      if (
+        peopleTrafficConfirmation === "Sim" &&
+        peopleTrafficConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -198,7 +231,10 @@ const formSchema = z
         });
       }
 
-      if (helpPeopleTrafficConfirmation === "Sim" && helpPeopleTrafficConfirmationDetails.length === 0) {
+      if (
+        helpPeopleTrafficConfirmation === "Sim" &&
+        helpPeopleTrafficConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -206,7 +242,10 @@ const formSchema = z
         });
       }
 
-      if (parentPeopleTrafficConfirmation === "Sim" && parentPeopleTrafficConfirmationDetails.length === 0) {
+      if (
+        parentPeopleTrafficConfirmation === "Sim" &&
+        parentPeopleTrafficConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -222,7 +261,10 @@ const formSchema = z
         });
       }
 
-      if (terrorismConfirmation === "Sim" && terrorismConfirmationDetails.length === 0) {
+      if (
+        terrorismConfirmation === "Sim" &&
+        terrorismConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -230,7 +272,10 @@ const formSchema = z
         });
       }
 
-      if (financialAssistanceConfirmation === "Sim" && financialAssistanceConfirmationDetails.length === 0) {
+      if (
+        financialAssistanceConfirmation === "Sim" &&
+        financialAssistanceConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -238,7 +283,10 @@ const formSchema = z
         });
       }
 
-      if (terrorismMemberConfirmation === "Sim" && terrorismMemberConfirmationDetails.length === 0) {
+      if (
+        terrorismMemberConfirmation === "Sim" &&
+        terrorismMemberConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -246,7 +294,10 @@ const formSchema = z
         });
       }
 
-      if (parentTerrorismConfirmation === "Sim" && parentTerrorismConfirmationDetails.length === 0) {
+      if (
+        parentTerrorismConfirmation === "Sim" &&
+        parentTerrorismConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -254,7 +305,10 @@ const formSchema = z
         });
       }
 
-      if (genocideConfirmation === "Sim" && genocideConfirmationDetails.length === 0) {
+      if (
+        genocideConfirmation === "Sim" &&
+        genocideConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -262,7 +316,10 @@ const formSchema = z
         });
       }
 
-      if (tortureConfirmation === "Sim" && tortureConfirmationDetails.length === 0) {
+      if (
+        tortureConfirmation === "Sim" &&
+        tortureConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -270,7 +327,10 @@ const formSchema = z
         });
       }
 
-      if (assassinConfirmation === "Sim" && assassinConfirmationDetails.length === 0) {
+      if (
+        assassinConfirmation === "Sim" &&
+        assassinConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -278,7 +338,10 @@ const formSchema = z
         });
       }
 
-      if (childSoldierConfirmation === "Sim" && childSoldierConfirmationDetails.length === 0) {
+      if (
+        childSoldierConfirmation === "Sim" &&
+        childSoldierConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -286,7 +349,10 @@ const formSchema = z
         });
       }
 
-      if (religionLibertyConfirmation === "Sim" && religionLibertyConfirmationDetails.length === 0) {
+      if (
+        religionLibertyConfirmation === "Sim" &&
+        religionLibertyConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -294,7 +360,10 @@ const formSchema = z
         });
       }
 
-      if (abortConfirmation === "Sim" && abortConfirmationDetails.length === 0) {
+      if (
+        abortConfirmation === "Sim" &&
+        abortConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -302,7 +371,10 @@ const formSchema = z
         });
       }
 
-      if (coerciveTransplantConfirmation === "Sim" && coerciveTransplantConfirmationDetails.length === 0) {
+      if (
+        coerciveTransplantConfirmation === "Sim" &&
+        coerciveTransplantConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -310,7 +382,10 @@ const formSchema = z
         });
       }
 
-      if (visaFraudConfirmation === "Sim" && visaFraudConfirmationDetails.length === 0) {
+      if (
+        visaFraudConfirmation === "Sim" &&
+        visaFraudConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -318,7 +393,10 @@ const formSchema = z
         });
       }
 
-      if (deportedConfirmation === "Sim" && deportedConfirmationDetails.length === 0) {
+      if (
+        deportedConfirmation === "Sim" &&
+        deportedConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -326,7 +404,10 @@ const formSchema = z
         });
       }
 
-      if (childCustodyConfirmation === "Sim" && childCustodyConfirmationDetails.length === 0) {
+      if (
+        childCustodyConfirmation === "Sim" &&
+        childCustodyConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -334,7 +415,10 @@ const formSchema = z
         });
       }
 
-      if (lawViolationConfirmation === "Sim" && lawViolationConfirmationDetails.length === 0) {
+      if (
+        lawViolationConfirmation === "Sim" &&
+        lawViolationConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
@@ -342,14 +426,17 @@ const formSchema = z
         });
       }
 
-      if (avoidTaxConfirmation === "Sim" && avoidTaxConfirmationDetails.length === 0) {
+      if (
+        avoidTaxConfirmation === "Sim" &&
+        avoidTaxConfirmationDetails.length === 0
+      ) {
         ctx.addIssue({
           code: "custom",
           message: "Campo obrigatório caso a opção seja sim",
           path: ["avoidTaxConfirmationDetails"],
         });
       }
-    }
+    },
   );
 
 interface Props {
@@ -384,29 +471,66 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
         currentForm.phisicalMentalProblemConfirmationDetails !== null
           ? currentForm.phisicalMentalProblemConfirmationDetails
           : "",
-      crimeConfirmation: currentForm.crimeConfirmation !== null ? (currentForm.crimeConfirmation ? "Sim" : "Não") : "",
+      crimeConfirmation:
+        currentForm.crimeConfirmation !== null
+          ? currentForm.crimeConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       crimeConfirmationDetails:
-        currentForm.crimeConfirmationDetails !== null ? currentForm.crimeConfirmationDetails : "",
+        currentForm.crimeConfirmationDetails !== null
+          ? currentForm.crimeConfirmationDetails
+          : "",
       drugsProblemConfirmation:
-        currentForm.drugsProblemConfirmation !== null ? (currentForm.drugsProblemConfirmation ? "Sim" : "Não") : "",
+        currentForm.drugsProblemConfirmation !== null
+          ? currentForm.drugsProblemConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       drugsProblemConfirmationDetails:
-        currentForm.drugsProblemConfirmationDetails !== null ? currentForm.drugsProblemConfirmationDetails : "",
+        currentForm.drugsProblemConfirmationDetails !== null
+          ? currentForm.drugsProblemConfirmationDetails
+          : "",
       lawViolateConfirmation:
-        currentForm.lawViolateConfirmation !== null ? (currentForm.lawViolateConfirmation ? "Sim" : "Não") : "",
+        currentForm.lawViolateConfirmation !== null
+          ? currentForm.lawViolateConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       lawViolateConfirmationDetails:
-        currentForm.lawViolateConfirmationDetails !== null ? currentForm.lawViolateConfirmationDetails : "",
+        currentForm.lawViolateConfirmationDetails !== null
+          ? currentForm.lawViolateConfirmationDetails
+          : "",
       prostitutionConfirmation:
-        currentForm.prostitutionConfirmation !== null ? (currentForm.prostitutionConfirmation ? "Sim" : "Não") : "",
+        currentForm.prostitutionConfirmation !== null
+          ? currentForm.prostitutionConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       prostitutionConfirmationDetails:
-        currentForm.prostitutionConfirmationDetails !== null ? currentForm.prostitutionConfirmationDetails : "",
+        currentForm.prostitutionConfirmationDetails !== null
+          ? currentForm.prostitutionConfirmationDetails
+          : "",
       moneyLaundryConfirmation:
-        currentForm.moneyLaundryConfirmation !== null ? (currentForm.moneyLaundryConfirmation ? "Sim" : "Não") : "",
+        currentForm.moneyLaundryConfirmation !== null
+          ? currentForm.moneyLaundryConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       moneyLaundryConfirmationDetails:
-        currentForm.moneyLaundryConfirmationDetails !== null ? currentForm.moneyLaundryConfirmationDetails : "",
+        currentForm.moneyLaundryConfirmationDetails !== null
+          ? currentForm.moneyLaundryConfirmationDetails
+          : "",
       peopleTrafficConfirmation:
-        currentForm.peopleTrafficConfirmation !== null ? (currentForm.peopleTrafficConfirmation ? "Sim" : "Não") : "",
+        currentForm.peopleTrafficConfirmation !== null
+          ? currentForm.peopleTrafficConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       peopleTrafficConfirmationDetails:
-        currentForm.peopleTrafficConfirmationDetails !== null ? currentForm.peopleTrafficConfirmationDetails : "",
+        currentForm.peopleTrafficConfirmationDetails !== null
+          ? currentForm.peopleTrafficConfirmationDetails
+          : "",
       helpPeopleTrafficConfirmation:
         currentForm.helpPeopleTrafficConfirmation !== null
           ? currentForm.helpPeopleTrafficConfirmation
@@ -427,12 +551,26 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
         currentForm.parentPeopleTrafficConfirmationDetails !== null
           ? currentForm.parentPeopleTrafficConfirmationDetails
           : "",
-      spyConfirmation: currentForm.spyConfirmation !== null ? (currentForm.spyConfirmation ? "Sim" : "Não") : "",
-      spyConfirmationDetails: currentForm.spyConfirmationDetails !== null ? currentForm.spyConfirmationDetails : "",
+      spyConfirmation:
+        currentForm.spyConfirmation !== null
+          ? currentForm.spyConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
+      spyConfirmationDetails:
+        currentForm.spyConfirmationDetails !== null
+          ? currentForm.spyConfirmationDetails
+          : "",
       terrorismConfirmation:
-        currentForm.terrorismConfirmation !== null ? (currentForm.terrorismConfirmation ? "Sim" : "Não") : "",
+        currentForm.terrorismConfirmation !== null
+          ? currentForm.terrorismConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       terrorismConfirmationDetails:
-        currentForm.terrorismConfirmationDetails !== null ? currentForm.terrorismConfirmationDetails : "",
+        currentForm.terrorismConfirmationDetails !== null
+          ? currentForm.terrorismConfirmationDetails
+          : "",
       financialAssistanceConfirmation:
         currentForm.financialAssistanceConfirmation !== null
           ? currentForm.financialAssistanceConfirmation
@@ -450,7 +588,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             : "Não"
           : "",
       terrorismMemberConfirmationDetails:
-        currentForm.terrorismMemberConfirmationDetails !== null ? currentForm.terrorismMemberConfirmationDetails : "",
+        currentForm.terrorismMemberConfirmationDetails !== null
+          ? currentForm.terrorismMemberConfirmationDetails
+          : "",
       parentTerrorismConfirmation:
         currentForm.parentTerrorismConfirmation !== null
           ? currentForm.parentTerrorismConfirmation
@@ -458,23 +598,49 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             : "Não"
           : "",
       parentTerrorismConfirmationDetails:
-        currentForm.parentTerrorismConfirmationDetails !== null ? currentForm.parentTerrorismConfirmationDetails : "",
+        currentForm.parentTerrorismConfirmationDetails !== null
+          ? currentForm.parentTerrorismConfirmationDetails
+          : "",
       genocideConfirmation:
-        currentForm.genocideConfirmation !== null ? (currentForm.genocideConfirmation ? "Sim" : "Não") : "",
+        currentForm.genocideConfirmation !== null
+          ? currentForm.genocideConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       genocideConfirmationDetails:
-        currentForm.genocideConfirmationDetails !== null ? currentForm.genocideConfirmationDetails : "",
+        currentForm.genocideConfirmationDetails !== null
+          ? currentForm.genocideConfirmationDetails
+          : "",
       tortureConfirmation:
-        currentForm.tortureConfirmation !== null ? (currentForm.tortureConfirmation ? "Sim" : "Não") : "",
+        currentForm.tortureConfirmation !== null
+          ? currentForm.tortureConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       tortureConfirmationDetails:
-        currentForm.tortureConfirmationDetails !== null ? currentForm.tortureConfirmationDetails : "",
+        currentForm.tortureConfirmationDetails !== null
+          ? currentForm.tortureConfirmationDetails
+          : "",
       assassinConfirmation:
-        currentForm.assassinConfirmation !== null ? (currentForm.assassinConfirmation ? "Sim" : "Não") : "",
+        currentForm.assassinConfirmation !== null
+          ? currentForm.assassinConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       assassinConfirmationDetails:
-        currentForm.assassinConfirmationDetails !== null ? currentForm.assassinConfirmationDetails : "",
+        currentForm.assassinConfirmationDetails !== null
+          ? currentForm.assassinConfirmationDetails
+          : "",
       childSoldierConfirmation:
-        currentForm.childSoldierConfirmation !== null ? (currentForm.childSoldierConfirmation ? "Sim" : "Não") : "",
+        currentForm.childSoldierConfirmation !== null
+          ? currentForm.childSoldierConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       childSoldierConfirmationDetails:
-        currentForm.childSoldierConfirmationDetails !== null ? currentForm.childSoldierConfirmationDetails : "",
+        currentForm.childSoldierConfirmationDetails !== null
+          ? currentForm.childSoldierConfirmationDetails
+          : "",
       religionLibertyConfirmation:
         currentForm.religionLibertyConfirmation !== null
           ? currentForm.religionLibertyConfirmation
@@ -482,10 +648,19 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             : "Não"
           : "",
       religionLibertyConfirmationDetails:
-        currentForm.religionLibertyConfirmationDetails !== null ? currentForm.religionLibertyConfirmationDetails : "",
-      abortConfirmation: currentForm.abortConfirmation !== null ? (currentForm.abortConfirmation ? "Sim" : "Não") : "",
+        currentForm.religionLibertyConfirmationDetails !== null
+          ? currentForm.religionLibertyConfirmationDetails
+          : "",
+      abortConfirmation:
+        currentForm.abortConfirmation !== null
+          ? currentForm.abortConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       abortConfirmationDetails:
-        currentForm.abortConfirmationDetails !== null ? currentForm.abortConfirmationDetails : "",
+        currentForm.abortConfirmationDetails !== null
+          ? currentForm.abortConfirmationDetails
+          : "",
       coerciveTransplantConfirmation:
         currentForm.coerciveTransplantConfirmation !== null
           ? currentForm.coerciveTransplantConfirmation
@@ -497,44 +672,84 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
           ? currentForm.coerciveTransplantConfirmationDetails
           : "",
       visaFraudConfirmation:
-        currentForm.visaFraudConfirmation !== null ? (currentForm.visaFraudConfirmation ? "Sim" : "Não") : "",
+        currentForm.visaFraudConfirmation !== null
+          ? currentForm.visaFraudConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       visaFraudConfirmationDetails:
-        currentForm.visaFraudConfirmationDetails !== null ? currentForm.visaFraudConfirmationDetails : "",
+        currentForm.visaFraudConfirmationDetails !== null
+          ? currentForm.visaFraudConfirmationDetails
+          : "",
       deportedConfirmation:
-        currentForm.deportedConfirmation !== null ? (currentForm.deportedConfirmation ? "Sim" : "Não") : "",
+        currentForm.deportedConfirmation !== null
+          ? currentForm.deportedConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       deportedConfirmationDetails:
-        currentForm.deportedConfirmationDetails !== null ? currentForm.deportedConfirmationDetails : "",
+        currentForm.deportedConfirmationDetails !== null
+          ? currentForm.deportedConfirmationDetails
+          : "",
       childCustodyConfirmation:
-        currentForm.childCustodyConfirmation !== null ? (currentForm.childCustodyConfirmation ? "Sim" : "Não") : "",
+        currentForm.childCustodyConfirmation !== null
+          ? currentForm.childCustodyConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       childCustodyConfirmationDetails:
-        currentForm.childCustodyConfirmationDetails !== null ? currentForm.childCustodyConfirmationDetails : "",
+        currentForm.childCustodyConfirmationDetails !== null
+          ? currentForm.childCustodyConfirmationDetails
+          : "",
       lawViolationConfirmation:
-        currentForm.lawViolationConfirmation !== null ? (currentForm.lawViolationConfirmation ? "Sim" : "Não") : "",
+        currentForm.lawViolationConfirmation !== null
+          ? currentForm.lawViolationConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       lawViolationConfirmationDetails:
-        currentForm.lawViolationConfirmationDetails !== null ? currentForm.lawViolationConfirmationDetails : "",
+        currentForm.lawViolationConfirmationDetails !== null
+          ? currentForm.lawViolationConfirmationDetails
+          : "",
       avoidTaxConfirmation:
-        currentForm.avoidTaxConfirmation !== null ? (currentForm.avoidTaxConfirmation ? "Sim" : "Não") : "",
+        currentForm.avoidTaxConfirmation !== null
+          ? currentForm.avoidTaxConfirmation
+            ? "Sim"
+            : "Não"
+          : "",
       avoidTaxConfirmationDetails:
-        currentForm.avoidTaxConfirmationDetails !== null ? currentForm.avoidTaxConfirmationDetails : "",
+        currentForm.avoidTaxConfirmationDetails !== null
+          ? currentForm.avoidTaxConfirmationDetails
+          : "",
     },
   });
 
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const contagiousDiseaseConfirmation = form.watch("contagiousDiseaseConfirmation");
-  const phisicalMentalProblemConfirmation = form.watch("phisicalMentalProblemConfirmation");
+  const contagiousDiseaseConfirmation = form.watch(
+    "contagiousDiseaseConfirmation",
+  );
+  const phisicalMentalProblemConfirmation = form.watch(
+    "phisicalMentalProblemConfirmation",
+  );
   const crimeConfirmation = form.watch("crimeConfirmation");
   const drugsProblemConfirmation = form.watch("drugsProblemConfirmation");
   const lawViolateConfirmation = form.watch("lawViolateConfirmation");
   const prostitutionConfirmation = form.watch("prostitutionConfirmation");
   const moneyLaundryConfirmation = form.watch("moneyLaundryConfirmation");
   const peopleTrafficConfirmation = form.watch("peopleTrafficConfirmation");
-  const helpPeopleTrafficConfirmation = form.watch("helpPeopleTrafficConfirmation");
-  const parentPeopleTrafficConfirmation = form.watch("parentPeopleTrafficConfirmation");
+  const helpPeopleTrafficConfirmation = form.watch(
+    "helpPeopleTrafficConfirmation",
+  );
+  const parentPeopleTrafficConfirmation = form.watch(
+    "parentPeopleTrafficConfirmation",
+  );
   const spyConfirmation = form.watch("spyConfirmation");
   const terrorismConfirmation = form.watch("terrorismConfirmation");
-  const financialAssistanceConfirmation = form.watch("financialAssistanceConfirmation");
+  const financialAssistanceConfirmation = form.watch(
+    "financialAssistanceConfirmation",
+  );
   const terrorismMemberConfirmation = form.watch("terrorismMemberConfirmation");
   const parentTerrorismConfirmation = form.watch("parentTerrorismConfirmation");
   const genocideConfirmation = form.watch("genocideConfirmation");
@@ -543,49 +758,55 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
   const childSoldierConfirmation = form.watch("childSoldierConfirmation");
   const religionLibertyConfirmation = form.watch("religionLibertyConfirmation");
   const abortConfirmation = form.watch("abortConfirmation");
-  const coerciveTransplantConfirmation = form.watch("coerciveTransplantConfirmation");
+  const coerciveTransplantConfirmation = form.watch(
+    "coerciveTransplantConfirmation",
+  );
   const visaFraudConfirmation = form.watch("visaFraudConfirmation");
   const deportedConfirmation = form.watch("deportedConfirmation");
   const childCustodyConfirmation = form.watch("childCustodyConfirmation");
   const lawViolationConfirmation = form.watch("lawViolationConfirmation");
   const avoidTaxConfirmation = form.watch("avoidTaxConfirmation");
 
-  const { mutate: submitSecurity, isPending } = trpc.formsRouter.submitSecurity.useMutation({
-    onSuccess: (data) => {
-      toast.success(data.message);
-      utils.formsRouter.getForm.invalidate();
+  const { mutate: submitSecurity, isPending } =
+    trpc.formsRouter.submitSecurity.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
 
-      router.push(`/resumo-formulario/${profileId}`);
-    },
-    onError: (error) => {
-      console.error(error.data);
+        router.push(`/resumo-formulario/${profileId}`);
+      },
+      onError: (error) => {
+        console.error(error.data);
 
-      if (error.data && error.data.code === "NOT_FOUND") {
-        toast.error(error.message);
-      } else {
-        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
-      }
-    },
-  });
-  const { mutate: saveSecurity, isPending: isSavePending } = trpc.formsRouter.saveSecurity.useMutation({
-    onSuccess: (data) => {
-      toast.success(data.message);
-      utils.formsRouter.getForm.invalidate();
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: saveSecurity, isPending: isSavePending } =
+    trpc.formsRouter.saveSecurity.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
 
-      if (data.redirectStep !== undefined) {
-        router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
-      }
-    },
-    onError: (error) => {
-      console.error(error.data);
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
 
-      if (error.data && error.data.code === "NOT_FOUND") {
-        toast.error(error.message);
-      } else {
-        toast.error("Ocorreu um erro ao salvar os dados");
-      }
-    },
-  });
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
 
   useEffect(() => {
     if (redirectStep !== null) {
@@ -595,190 +816,320 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
         profileId,
         redirectStep,
         contagiousDiseaseConfirmation:
-          values.contagiousDiseaseConfirmation ?? (currentForm.contagiousDiseaseConfirmation ? "Sim" : "Não"),
-        contagiousDiseaseConfirmationDetails: values.contagiousDiseaseConfirmationDetails
-          ? values.contagiousDiseaseConfirmationDetails
-          : !currentForm.contagiousDiseaseConfirmationDetails
-          ? ""
-          : currentForm.contagiousDiseaseConfirmationDetails,
+          values.contagiousDiseaseConfirmation ??
+          (currentForm.contagiousDiseaseConfirmation ? "Sim" : "Não"),
+        contagiousDiseaseConfirmationDetails:
+          values.contagiousDiseaseConfirmationDetails
+            ? values.contagiousDiseaseConfirmationDetails
+            : !currentForm.contagiousDiseaseConfirmationDetails
+              ? ""
+              : currentForm.contagiousDiseaseConfirmationDetails,
         phisicalMentalProblemConfirmation:
-          values.phisicalMentalProblemConfirmation ?? (currentForm.phisicalMentalProblemConfirmation ? "Sim" : "Não"),
-        phisicalMentalProblemConfirmationDetails: values.phisicalMentalProblemConfirmationDetails
-          ? values.phisicalMentalProblemConfirmationDetails
-          : !currentForm.phisicalMentalProblemConfirmationDetails
-          ? ""
-          : currentForm.phisicalMentalProblemConfirmationDetails,
-        crimeConfirmation: values.crimeConfirmation ?? (currentForm.crimeConfirmation ? "Sim" : "Não"),
+          values.phisicalMentalProblemConfirmation ??
+          (currentForm.phisicalMentalProblemConfirmation ? "Sim" : "Não"),
+        phisicalMentalProblemConfirmationDetails:
+          values.phisicalMentalProblemConfirmationDetails
+            ? values.phisicalMentalProblemConfirmationDetails
+            : !currentForm.phisicalMentalProblemConfirmationDetails
+              ? ""
+              : currentForm.phisicalMentalProblemConfirmationDetails,
+        crimeConfirmation:
+          values.crimeConfirmation ??
+          (currentForm.crimeConfirmation ? "Sim" : "Não"),
         crimeConfirmationDetails: values.crimeConfirmationDetails
           ? values.crimeConfirmationDetails
           : !currentForm.crimeConfirmationDetails
-          ? ""
-          : currentForm.crimeConfirmationDetails,
+            ? ""
+            : currentForm.crimeConfirmationDetails,
         drugsProblemConfirmation:
-          values.drugsProblemConfirmation ?? (currentForm.drugsProblemConfirmation ? "Sim" : "Não"),
+          values.drugsProblemConfirmation ??
+          (currentForm.drugsProblemConfirmation ? "Sim" : "Não"),
         drugsProblemConfirmationDetails: values.drugsProblemConfirmationDetails
           ? values.drugsProblemConfirmationDetails
           : !currentForm.drugsProblemConfirmationDetails
-          ? ""
-          : currentForm.drugsProblemConfirmationDetails,
-        lawViolateConfirmation: values.lawViolateConfirmation ?? (currentForm.lawViolateConfirmation ? "Sim" : "Não"),
+            ? ""
+            : currentForm.drugsProblemConfirmationDetails,
+        lawViolateConfirmation:
+          values.lawViolateConfirmation ??
+          (currentForm.lawViolateConfirmation ? "Sim" : "Não"),
         lawViolateConfirmationDetails: values.lawViolateConfirmationDetails
           ? values.lawViolateConfirmationDetails
           : !currentForm.lawViolateConfirmationDetails
-          ? ""
-          : currentForm.lawViolateConfirmationDetails,
+            ? ""
+            : currentForm.lawViolateConfirmationDetails,
         prostitutionConfirmation:
-          values.prostitutionConfirmation ?? (currentForm.prostitutionConfirmation ? "Sim" : "Não"),
+          values.prostitutionConfirmation ??
+          (currentForm.prostitutionConfirmation ? "Sim" : "Não"),
         prostitutionConfirmationDetails: values.prostitutionConfirmationDetails
           ? values.prostitutionConfirmationDetails
           : !currentForm.prostitutionConfirmationDetails
-          ? ""
-          : currentForm.prostitutionConfirmationDetails,
+            ? ""
+            : currentForm.prostitutionConfirmationDetails,
         moneyLaundryConfirmation:
-          values.moneyLaundryConfirmation ?? (currentForm.moneyLaundryConfirmation ? "Sim" : "Não"),
+          values.moneyLaundryConfirmation ??
+          (currentForm.moneyLaundryConfirmation ? "Sim" : "Não"),
         moneyLaundryConfirmationDetails: values.moneyLaundryConfirmationDetails
           ? values.moneyLaundryConfirmationDetails
           : !currentForm.moneyLaundryConfirmationDetails
-          ? ""
-          : currentForm.moneyLaundryConfirmationDetails,
+            ? ""
+            : currentForm.moneyLaundryConfirmationDetails,
         peopleTrafficConfirmation:
-          values.peopleTrafficConfirmation ?? (currentForm.peopleTrafficConfirmation ? "Sim" : "Não"),
-        peopleTrafficConfirmationDetails: values.peopleTrafficConfirmationDetails
-          ? values.peopleTrafficConfirmationDetails
-          : !currentForm.peopleTrafficConfirmationDetails
-          ? ""
-          : currentForm.peopleTrafficConfirmationDetails,
+          values.peopleTrafficConfirmation ??
+          (currentForm.peopleTrafficConfirmation ? "Sim" : "Não"),
+        peopleTrafficConfirmationDetails:
+          values.peopleTrafficConfirmationDetails
+            ? values.peopleTrafficConfirmationDetails
+            : !currentForm.peopleTrafficConfirmationDetails
+              ? ""
+              : currentForm.peopleTrafficConfirmationDetails,
         helpPeopleTrafficConfirmation:
-          values.helpPeopleTrafficConfirmation ?? (currentForm.helpPeopleTrafficConfirmation ? "Sim" : "Não"),
-        helpPeopleTrafficConfirmationDetails: values.helpPeopleTrafficConfirmationDetails
-          ? values.helpPeopleTrafficConfirmationDetails
-          : !currentForm.helpPeopleTrafficConfirmationDetails
-          ? ""
-          : currentForm.helpPeopleTrafficConfirmationDetails,
+          values.helpPeopleTrafficConfirmation ??
+          (currentForm.helpPeopleTrafficConfirmation ? "Sim" : "Não"),
+        helpPeopleTrafficConfirmationDetails:
+          values.helpPeopleTrafficConfirmationDetails
+            ? values.helpPeopleTrafficConfirmationDetails
+            : !currentForm.helpPeopleTrafficConfirmationDetails
+              ? ""
+              : currentForm.helpPeopleTrafficConfirmationDetails,
         parentPeopleTrafficConfirmation:
-          values.parentPeopleTrafficConfirmation ?? (currentForm.parentPeopleTrafficConfirmation ? "Sim" : "Não"),
-        parentPeopleTrafficConfirmationDetails: values.parentPeopleTrafficConfirmationDetails
-          ? values.parentPeopleTrafficConfirmationDetails
-          : !currentForm.parentPeopleTrafficConfirmationDetails
-          ? ""
-          : currentForm.parentPeopleTrafficConfirmationDetails,
-        spyConfirmation: values.spyConfirmation ?? (currentForm.spyConfirmation ? "Sim" : "Não"),
+          values.parentPeopleTrafficConfirmation ??
+          (currentForm.parentPeopleTrafficConfirmation ? "Sim" : "Não"),
+        parentPeopleTrafficConfirmationDetails:
+          values.parentPeopleTrafficConfirmationDetails
+            ? values.parentPeopleTrafficConfirmationDetails
+            : !currentForm.parentPeopleTrafficConfirmationDetails
+              ? ""
+              : currentForm.parentPeopleTrafficConfirmationDetails,
+        spyConfirmation:
+          values.spyConfirmation ??
+          (currentForm.spyConfirmation ? "Sim" : "Não"),
         spyConfirmationDetails: values.spyConfirmationDetails
           ? values.spyConfirmationDetails
           : !currentForm.spyConfirmationDetails
-          ? ""
-          : currentForm.spyConfirmationDetails,
-        terrorismConfirmation: values.terrorismConfirmation ?? (currentForm.terrorismConfirmation ? "Sim" : "Não"),
+            ? ""
+            : currentForm.spyConfirmationDetails,
+        terrorismConfirmation:
+          values.terrorismConfirmation ??
+          (currentForm.terrorismConfirmation ? "Sim" : "Não"),
         terrorismConfirmationDetails: values.terrorismConfirmationDetails
           ? values.terrorismConfirmationDetails
           : !currentForm.terrorismConfirmationDetails
-          ? ""
-          : currentForm.terrorismConfirmationDetails,
+            ? ""
+            : currentForm.terrorismConfirmationDetails,
         financialAssistanceConfirmation:
-          values.financialAssistanceConfirmation ?? (currentForm.financialAssistanceConfirmation ? "Sim" : "Não"),
-        financialAssistanceConfirmationDetails: values.financialAssistanceConfirmationDetails
-          ? values.financialAssistanceConfirmationDetails
-          : !currentForm.financialAssistanceConfirmationDetails
-          ? ""
-          : currentForm.financialAssistanceConfirmationDetails,
+          values.financialAssistanceConfirmation ??
+          (currentForm.financialAssistanceConfirmation ? "Sim" : "Não"),
+        financialAssistanceConfirmationDetails:
+          values.financialAssistanceConfirmationDetails
+            ? values.financialAssistanceConfirmationDetails
+            : !currentForm.financialAssistanceConfirmationDetails
+              ? ""
+              : currentForm.financialAssistanceConfirmationDetails,
         terrorismMemberConfirmation:
-          values.terrorismMemberConfirmation ?? (currentForm.terrorismMemberConfirmation ? "Sim" : "Não"),
-        terrorismMemberConfirmationDetails: values.terrorismMemberConfirmationDetails
-          ? values.terrorismMemberConfirmationDetails
-          : !currentForm.terrorismMemberConfirmationDetails
-          ? ""
-          : currentForm.terrorismMemberConfirmationDetails,
+          values.terrorismMemberConfirmation ??
+          (currentForm.terrorismMemberConfirmation ? "Sim" : "Não"),
+        terrorismMemberConfirmationDetails:
+          values.terrorismMemberConfirmationDetails
+            ? values.terrorismMemberConfirmationDetails
+            : !currentForm.terrorismMemberConfirmationDetails
+              ? ""
+              : currentForm.terrorismMemberConfirmationDetails,
         parentTerrorismConfirmation:
-          values.parentTerrorismConfirmation ?? (currentForm.parentTerrorismConfirmation ? "Sim" : "Não"),
-        parentTerrorismConfirmationDetails: values.parentTerrorismConfirmationDetails
-          ? values.parentTerrorismConfirmationDetails
-          : !currentForm.parentTerrorismConfirmationDetails
-          ? ""
-          : currentForm.parentTerrorismConfirmationDetails,
-        genocideConfirmation: values.genocideConfirmation ?? (currentForm.genocideConfirmation ? "Sim" : "Não"),
+          values.parentTerrorismConfirmation ??
+          (currentForm.parentTerrorismConfirmation ? "Sim" : "Não"),
+        parentTerrorismConfirmationDetails:
+          values.parentTerrorismConfirmationDetails
+            ? values.parentTerrorismConfirmationDetails
+            : !currentForm.parentTerrorismConfirmationDetails
+              ? ""
+              : currentForm.parentTerrorismConfirmationDetails,
+        genocideConfirmation:
+          values.genocideConfirmation ??
+          (currentForm.genocideConfirmation ? "Sim" : "Não"),
         genocideConfirmationDetails: values.genocideConfirmationDetails
           ? values.genocideConfirmationDetails
           : !currentForm.genocideConfirmationDetails
-          ? ""
-          : currentForm.genocideConfirmationDetails,
-        tortureConfirmation: values.tortureConfirmation ?? (currentForm.tortureConfirmation ? "Sim" : "Não"),
+            ? ""
+            : currentForm.genocideConfirmationDetails,
+        tortureConfirmation:
+          values.tortureConfirmation ??
+          (currentForm.tortureConfirmation ? "Sim" : "Não"),
         tortureConfirmationDetails: values.tortureConfirmationDetails
           ? values.tortureConfirmationDetails
           : !currentForm.tortureConfirmationDetails
-          ? ""
-          : currentForm.tortureConfirmationDetails,
-        assassinConfirmation: values.assassinConfirmation ?? (currentForm.assassinConfirmation ? "Sim" : "Não"),
+            ? ""
+            : currentForm.tortureConfirmationDetails,
+        assassinConfirmation:
+          values.assassinConfirmation ??
+          (currentForm.assassinConfirmation ? "Sim" : "Não"),
         assassinConfirmationDetails: values.assassinConfirmationDetails
           ? values.assassinConfirmationDetails
           : !currentForm.assassinConfirmationDetails
-          ? ""
-          : currentForm.assassinConfirmationDetails,
+            ? ""
+            : currentForm.assassinConfirmationDetails,
         childSoldierConfirmation:
-          values.childSoldierConfirmation ?? (currentForm.childSoldierConfirmation ? "Sim" : "Não"),
+          values.childSoldierConfirmation ??
+          (currentForm.childSoldierConfirmation ? "Sim" : "Não"),
         childSoldierConfirmationDetails: values.childSoldierConfirmationDetails
           ? values.childSoldierConfirmationDetails
           : !currentForm.childSoldierConfirmationDetails
-          ? ""
-          : currentForm.childSoldierConfirmationDetails,
+            ? ""
+            : currentForm.childSoldierConfirmationDetails,
         religionLibertyConfirmation:
-          values.religionLibertyConfirmation ?? (currentForm.religionLibertyConfirmation ? "Sim" : "Não"),
-        religionLibertyConfirmationDetails: values.religionLibertyConfirmationDetails
-          ? values.religionLibertyConfirmationDetails
-          : !currentForm.religionLibertyConfirmationDetails
-          ? ""
-          : currentForm.religionLibertyConfirmationDetails,
-        abortConfirmation: values.abortConfirmation ?? (currentForm.abortConfirmation ? "Sim" : "Não"),
+          values.religionLibertyConfirmation ??
+          (currentForm.religionLibertyConfirmation ? "Sim" : "Não"),
+        religionLibertyConfirmationDetails:
+          values.religionLibertyConfirmationDetails
+            ? values.religionLibertyConfirmationDetails
+            : !currentForm.religionLibertyConfirmationDetails
+              ? ""
+              : currentForm.religionLibertyConfirmationDetails,
+        abortConfirmation:
+          values.abortConfirmation ??
+          (currentForm.abortConfirmation ? "Sim" : "Não"),
         abortConfirmationDetails: values.abortConfirmationDetails
           ? values.abortConfirmationDetails
           : !currentForm.abortConfirmationDetails
-          ? ""
-          : currentForm.abortConfirmationDetails,
+            ? ""
+            : currentForm.abortConfirmationDetails,
         coerciveTransplantConfirmation:
-          values.coerciveTransplantConfirmation ?? (currentForm.coerciveTransplantConfirmation ? "Sim" : "Não"),
-        coerciveTransplantConfirmationDetails: values.coerciveTransplantConfirmationDetails
-          ? values.coerciveTransplantConfirmationDetails
-          : !currentForm.coerciveTransplantConfirmationDetails
-          ? ""
-          : currentForm.coerciveTransplantConfirmationDetails,
-        visaFraudConfirmation: values.visaFraudConfirmation ?? (currentForm.visaFraudConfirmation ? "Sim" : "Não"),
+          values.coerciveTransplantConfirmation ??
+          (currentForm.coerciveTransplantConfirmation ? "Sim" : "Não"),
+        coerciveTransplantConfirmationDetails:
+          values.coerciveTransplantConfirmationDetails
+            ? values.coerciveTransplantConfirmationDetails
+            : !currentForm.coerciveTransplantConfirmationDetails
+              ? ""
+              : currentForm.coerciveTransplantConfirmationDetails,
+        visaFraudConfirmation:
+          values.visaFraudConfirmation ??
+          (currentForm.visaFraudConfirmation ? "Sim" : "Não"),
         visaFraudConfirmationDetails: values.visaFraudConfirmationDetails
           ? values.visaFraudConfirmationDetails
           : !currentForm.visaFraudConfirmationDetails
-          ? ""
-          : currentForm.visaFraudConfirmationDetails,
-        deportedConfirmation: values.deportedConfirmation ?? (currentForm.deportedConfirmation ? "Sim" : "Não"),
+            ? ""
+            : currentForm.visaFraudConfirmationDetails,
+        deportedConfirmation:
+          values.deportedConfirmation ??
+          (currentForm.deportedConfirmation ? "Sim" : "Não"),
         deportedConfirmationDetails: values.deportedConfirmationDetails
           ? values.deportedConfirmationDetails
           : !currentForm.deportedConfirmationDetails
-          ? ""
-          : currentForm.deportedConfirmationDetails,
+            ? ""
+            : currentForm.deportedConfirmationDetails,
         childCustodyConfirmation:
-          values.childCustodyConfirmation ?? (currentForm.childCustodyConfirmation ? "Sim" : "Não"),
+          values.childCustodyConfirmation ??
+          (currentForm.childCustodyConfirmation ? "Sim" : "Não"),
         childCustodyConfirmationDetails: values.childCustodyConfirmationDetails
           ? values.childCustodyConfirmationDetails
           : !currentForm.childCustodyConfirmationDetails
-          ? ""
-          : currentForm.childCustodyConfirmationDetails,
+            ? ""
+            : currentForm.childCustodyConfirmationDetails,
         lawViolationConfirmation:
-          values.lawViolationConfirmation ?? (currentForm.lawViolationConfirmation ? "Sim" : "Não"),
+          values.lawViolationConfirmation ??
+          (currentForm.lawViolationConfirmation ? "Sim" : "Não"),
         lawViolationConfirmationDetails: values.lawViolationConfirmationDetails
           ? values.lawViolationConfirmationDetails
           : !currentForm.lawViolationConfirmationDetails
-          ? ""
-          : currentForm.lawViolationConfirmationDetails,
-        avoidTaxConfirmation: values.avoidTaxConfirmation ?? (currentForm.avoidTaxConfirmation ? "Sim" : "Não"),
+            ? ""
+            : currentForm.lawViolationConfirmationDetails,
+        avoidTaxConfirmation:
+          values.avoidTaxConfirmation ??
+          (currentForm.avoidTaxConfirmation ? "Sim" : "Não"),
         avoidTaxConfirmationDetails: values.avoidTaxConfirmationDetails
           ? values.avoidTaxConfirmationDetails
           : !currentForm.avoidTaxConfirmationDetails
-          ? ""
-          : currentForm.avoidTaxConfirmationDetails,
+            ? ""
+            : currentForm.avoidTaxConfirmationDetails,
       });
       setRedirectStep(null);
     }
   }, [redirectStep, setRedirectStep, saveSecurity, profileId]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    submitSecurity({ ...values, profileId, step: 11, isEditing });
+    if (isEditing) {
+      submitSecurity({ ...values, profileId, isEditing, step: 11 });
+    } else {
+      form
+        .trigger(
+          [
+            "contagiousDiseaseConfirmation",
+            "contagiousDiseaseConfirmationDetails",
+            "phisicalMentalProblemConfirmation",
+            "phisicalMentalProblemConfirmationDetails",
+            "crimeConfirmation",
+            "crimeConfirmationDetails",
+            "drugsProblemConfirmation",
+            "drugsProblemConfirmationDetails",
+            "lawViolateConfirmation",
+            "lawViolateConfirmationDetails",
+            "prostitutionConfirmation",
+            "prostitutionConfirmationDetails",
+            "moneyLaundryConfirmation",
+            "moneyLaundryConfirmationDetails",
+            "peopleTrafficConfirmation",
+            "peopleTrafficConfirmationDetails",
+            "helpPeopleTrafficConfirmation",
+            "helpPeopleTrafficConfirmationDetails",
+            "parentPeopleTrafficConfirmation",
+            "parentPeopleTrafficConfirmationDetails",
+            "spyConfirmation",
+            "spyConfirmationDetails",
+            "terrorismConfirmation",
+            "terrorismConfirmationDetails",
+            "financialAssistanceConfirmation",
+            "financialAssistanceConfirmationDetails",
+            "terrorismMemberConfirmation",
+            "terrorismMemberConfirmationDetails",
+            "parentTerrorismConfirmation",
+            "parentTerrorismConfirmationDetails",
+            "genocideConfirmation",
+            "genocideConfirmationDetails",
+            "tortureConfirmation",
+            "tortureConfirmationDetails",
+            "assassinConfirmation",
+            "assassinConfirmationDetails",
+            "childSoldierConfirmation",
+            "childSoldierConfirmationDetails",
+            "religionLibertyConfirmation",
+            "religionLibertyConfirmationDetails",
+            "abortConfirmation",
+            "abortConfirmationDetails",
+            "coerciveTransplantConfirmation",
+            "coerciveTransplantConfirmationDetails",
+            "visaFraudConfirmation",
+            "visaFraudConfirmationDetails",
+            "deportedConfirmation",
+            "deportedConfirmationDetails",
+            "childCustodyConfirmation",
+            "childCustodyConfirmationDetails",
+            "lawViolationConfirmation",
+            "lawViolationConfirmationDetails",
+            "avoidTaxConfirmation",
+            "avoidTaxConfirmationDetails",
+          ],
+          {
+            shouldFocus: true,
+          },
+        )
+        .then(() => {
+          if (Object.keys(form.formState.errors).length === 0) {
+            const values = form.getValues();
+
+            setTimeout(() => {
+              router.push(
+                `/formulario/${profileId}?formStep=10&confirmation=true`,
+              );
+            }, 300);
+          }
+        });
+    }
+  }
+
+  function handleSubmitOnModal() {
+    const values = form.getValues();
+
+    submitSecurity({ ...values, profileId, isEditing, step: 11 });
   }
 
   function onSave() {
@@ -787,190 +1138,241 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
     saveSecurity({
       profileId,
       contagiousDiseaseConfirmation:
-        values.contagiousDiseaseConfirmation ?? (currentForm.contagiousDiseaseConfirmation ? "Sim" : "Não"),
-      contagiousDiseaseConfirmationDetails: values.contagiousDiseaseConfirmationDetails
-        ? values.contagiousDiseaseConfirmationDetails
-        : !currentForm.contagiousDiseaseConfirmationDetails
-        ? ""
-        : currentForm.contagiousDiseaseConfirmationDetails,
+        values.contagiousDiseaseConfirmation ??
+        (currentForm.contagiousDiseaseConfirmation ? "Sim" : "Não"),
+      contagiousDiseaseConfirmationDetails:
+        values.contagiousDiseaseConfirmationDetails
+          ? values.contagiousDiseaseConfirmationDetails
+          : !currentForm.contagiousDiseaseConfirmationDetails
+            ? ""
+            : currentForm.contagiousDiseaseConfirmationDetails,
       phisicalMentalProblemConfirmation:
-        values.phisicalMentalProblemConfirmation ?? (currentForm.phisicalMentalProblemConfirmation ? "Sim" : "Não"),
-      phisicalMentalProblemConfirmationDetails: values.phisicalMentalProblemConfirmationDetails
-        ? values.phisicalMentalProblemConfirmationDetails
-        : !currentForm.phisicalMentalProblemConfirmationDetails
-        ? ""
-        : currentForm.phisicalMentalProblemConfirmationDetails,
-      crimeConfirmation: values.crimeConfirmation ?? (currentForm.crimeConfirmation ? "Sim" : "Não"),
+        values.phisicalMentalProblemConfirmation ??
+        (currentForm.phisicalMentalProblemConfirmation ? "Sim" : "Não"),
+      phisicalMentalProblemConfirmationDetails:
+        values.phisicalMentalProblemConfirmationDetails
+          ? values.phisicalMentalProblemConfirmationDetails
+          : !currentForm.phisicalMentalProblemConfirmationDetails
+            ? ""
+            : currentForm.phisicalMentalProblemConfirmationDetails,
+      crimeConfirmation:
+        values.crimeConfirmation ??
+        (currentForm.crimeConfirmation ? "Sim" : "Não"),
       crimeConfirmationDetails: values.crimeConfirmationDetails
         ? values.crimeConfirmationDetails
         : !currentForm.crimeConfirmationDetails
-        ? ""
-        : currentForm.crimeConfirmationDetails,
+          ? ""
+          : currentForm.crimeConfirmationDetails,
       drugsProblemConfirmation:
-        values.drugsProblemConfirmation ?? (currentForm.drugsProblemConfirmation ? "Sim" : "Não"),
+        values.drugsProblemConfirmation ??
+        (currentForm.drugsProblemConfirmation ? "Sim" : "Não"),
       drugsProblemConfirmationDetails: values.drugsProblemConfirmationDetails
         ? values.drugsProblemConfirmationDetails
         : !currentForm.drugsProblemConfirmationDetails
-        ? ""
-        : currentForm.drugsProblemConfirmationDetails,
-      lawViolateConfirmation: values.lawViolateConfirmation ?? (currentForm.lawViolateConfirmation ? "Sim" : "Não"),
+          ? ""
+          : currentForm.drugsProblemConfirmationDetails,
+      lawViolateConfirmation:
+        values.lawViolateConfirmation ??
+        (currentForm.lawViolateConfirmation ? "Sim" : "Não"),
       lawViolateConfirmationDetails: values.lawViolateConfirmationDetails
         ? values.lawViolateConfirmationDetails
         : !currentForm.lawViolateConfirmationDetails
-        ? ""
-        : currentForm.lawViolateConfirmationDetails,
+          ? ""
+          : currentForm.lawViolateConfirmationDetails,
       prostitutionConfirmation:
-        values.prostitutionConfirmation ?? (currentForm.prostitutionConfirmation ? "Sim" : "Não"),
+        values.prostitutionConfirmation ??
+        (currentForm.prostitutionConfirmation ? "Sim" : "Não"),
       prostitutionConfirmationDetails: values.prostitutionConfirmationDetails
         ? values.prostitutionConfirmationDetails
         : !currentForm.prostitutionConfirmationDetails
-        ? ""
-        : currentForm.prostitutionConfirmationDetails,
+          ? ""
+          : currentForm.prostitutionConfirmationDetails,
       moneyLaundryConfirmation:
-        values.moneyLaundryConfirmation ?? (currentForm.moneyLaundryConfirmation ? "Sim" : "Não"),
+        values.moneyLaundryConfirmation ??
+        (currentForm.moneyLaundryConfirmation ? "Sim" : "Não"),
       moneyLaundryConfirmationDetails: values.moneyLaundryConfirmationDetails
         ? values.moneyLaundryConfirmationDetails
         : !currentForm.moneyLaundryConfirmationDetails
-        ? ""
-        : currentForm.moneyLaundryConfirmationDetails,
+          ? ""
+          : currentForm.moneyLaundryConfirmationDetails,
       peopleTrafficConfirmation:
-        values.peopleTrafficConfirmation ?? (currentForm.peopleTrafficConfirmation ? "Sim" : "Não"),
+        values.peopleTrafficConfirmation ??
+        (currentForm.peopleTrafficConfirmation ? "Sim" : "Não"),
       peopleTrafficConfirmationDetails: values.peopleTrafficConfirmationDetails
         ? values.peopleTrafficConfirmationDetails
         : !currentForm.peopleTrafficConfirmationDetails
-        ? ""
-        : currentForm.peopleTrafficConfirmationDetails,
+          ? ""
+          : currentForm.peopleTrafficConfirmationDetails,
       helpPeopleTrafficConfirmation:
-        values.helpPeopleTrafficConfirmation ?? (currentForm.helpPeopleTrafficConfirmation ? "Sim" : "Não"),
-      helpPeopleTrafficConfirmationDetails: values.helpPeopleTrafficConfirmationDetails
-        ? values.helpPeopleTrafficConfirmationDetails
-        : !currentForm.helpPeopleTrafficConfirmationDetails
-        ? ""
-        : currentForm.helpPeopleTrafficConfirmationDetails,
+        values.helpPeopleTrafficConfirmation ??
+        (currentForm.helpPeopleTrafficConfirmation ? "Sim" : "Não"),
+      helpPeopleTrafficConfirmationDetails:
+        values.helpPeopleTrafficConfirmationDetails
+          ? values.helpPeopleTrafficConfirmationDetails
+          : !currentForm.helpPeopleTrafficConfirmationDetails
+            ? ""
+            : currentForm.helpPeopleTrafficConfirmationDetails,
       parentPeopleTrafficConfirmation:
-        values.parentPeopleTrafficConfirmation ?? (currentForm.parentPeopleTrafficConfirmation ? "Sim" : "Não"),
-      parentPeopleTrafficConfirmationDetails: values.parentPeopleTrafficConfirmationDetails
-        ? values.parentPeopleTrafficConfirmationDetails
-        : !currentForm.parentPeopleTrafficConfirmationDetails
-        ? ""
-        : currentForm.parentPeopleTrafficConfirmationDetails,
-      spyConfirmation: values.spyConfirmation ?? (currentForm.spyConfirmation ? "Sim" : "Não"),
+        values.parentPeopleTrafficConfirmation ??
+        (currentForm.parentPeopleTrafficConfirmation ? "Sim" : "Não"),
+      parentPeopleTrafficConfirmationDetails:
+        values.parentPeopleTrafficConfirmationDetails
+          ? values.parentPeopleTrafficConfirmationDetails
+          : !currentForm.parentPeopleTrafficConfirmationDetails
+            ? ""
+            : currentForm.parentPeopleTrafficConfirmationDetails,
+      spyConfirmation:
+        values.spyConfirmation ?? (currentForm.spyConfirmation ? "Sim" : "Não"),
       spyConfirmationDetails: values.spyConfirmationDetails
         ? values.spyConfirmationDetails
         : !currentForm.spyConfirmationDetails
-        ? ""
-        : currentForm.spyConfirmationDetails,
-      terrorismConfirmation: values.terrorismConfirmation ?? (currentForm.terrorismConfirmation ? "Sim" : "Não"),
+          ? ""
+          : currentForm.spyConfirmationDetails,
+      terrorismConfirmation:
+        values.terrorismConfirmation ??
+        (currentForm.terrorismConfirmation ? "Sim" : "Não"),
       terrorismConfirmationDetails: values.terrorismConfirmationDetails
         ? values.terrorismConfirmationDetails
         : !currentForm.terrorismConfirmationDetails
-        ? ""
-        : currentForm.terrorismConfirmationDetails,
+          ? ""
+          : currentForm.terrorismConfirmationDetails,
       financialAssistanceConfirmation:
-        values.financialAssistanceConfirmation ?? (currentForm.financialAssistanceConfirmation ? "Sim" : "Não"),
-      financialAssistanceConfirmationDetails: values.financialAssistanceConfirmationDetails
-        ? values.financialAssistanceConfirmationDetails
-        : !currentForm.financialAssistanceConfirmationDetails
-        ? ""
-        : currentForm.financialAssistanceConfirmationDetails,
+        values.financialAssistanceConfirmation ??
+        (currentForm.financialAssistanceConfirmation ? "Sim" : "Não"),
+      financialAssistanceConfirmationDetails:
+        values.financialAssistanceConfirmationDetails
+          ? values.financialAssistanceConfirmationDetails
+          : !currentForm.financialAssistanceConfirmationDetails
+            ? ""
+            : currentForm.financialAssistanceConfirmationDetails,
       terrorismMemberConfirmation:
-        values.terrorismMemberConfirmation ?? (currentForm.terrorismMemberConfirmation ? "Sim" : "Não"),
-      terrorismMemberConfirmationDetails: values.terrorismMemberConfirmationDetails
-        ? values.terrorismMemberConfirmationDetails
-        : !currentForm.terrorismMemberConfirmationDetails
-        ? ""
-        : currentForm.terrorismMemberConfirmationDetails,
+        values.terrorismMemberConfirmation ??
+        (currentForm.terrorismMemberConfirmation ? "Sim" : "Não"),
+      terrorismMemberConfirmationDetails:
+        values.terrorismMemberConfirmationDetails
+          ? values.terrorismMemberConfirmationDetails
+          : !currentForm.terrorismMemberConfirmationDetails
+            ? ""
+            : currentForm.terrorismMemberConfirmationDetails,
       parentTerrorismConfirmation:
-        values.parentTerrorismConfirmation ?? (currentForm.parentTerrorismConfirmation ? "Sim" : "Não"),
-      parentTerrorismConfirmationDetails: values.parentTerrorismConfirmationDetails
-        ? values.parentTerrorismConfirmationDetails
-        : !currentForm.parentTerrorismConfirmationDetails
-        ? ""
-        : currentForm.parentTerrorismConfirmationDetails,
-      genocideConfirmation: values.genocideConfirmation ?? (currentForm.genocideConfirmation ? "Sim" : "Não"),
+        values.parentTerrorismConfirmation ??
+        (currentForm.parentTerrorismConfirmation ? "Sim" : "Não"),
+      parentTerrorismConfirmationDetails:
+        values.parentTerrorismConfirmationDetails
+          ? values.parentTerrorismConfirmationDetails
+          : !currentForm.parentTerrorismConfirmationDetails
+            ? ""
+            : currentForm.parentTerrorismConfirmationDetails,
+      genocideConfirmation:
+        values.genocideConfirmation ??
+        (currentForm.genocideConfirmation ? "Sim" : "Não"),
       genocideConfirmationDetails: values.genocideConfirmationDetails
         ? values.genocideConfirmationDetails
         : !currentForm.genocideConfirmationDetails
-        ? ""
-        : currentForm.genocideConfirmationDetails,
-      tortureConfirmation: values.tortureConfirmation ?? (currentForm.tortureConfirmation ? "Sim" : "Não"),
+          ? ""
+          : currentForm.genocideConfirmationDetails,
+      tortureConfirmation:
+        values.tortureConfirmation ??
+        (currentForm.tortureConfirmation ? "Sim" : "Não"),
       tortureConfirmationDetails: values.tortureConfirmationDetails
         ? values.tortureConfirmationDetails
         : !currentForm.tortureConfirmationDetails
-        ? ""
-        : currentForm.tortureConfirmationDetails,
-      assassinConfirmation: values.assassinConfirmation ?? (currentForm.assassinConfirmation ? "Sim" : "Não"),
+          ? ""
+          : currentForm.tortureConfirmationDetails,
+      assassinConfirmation:
+        values.assassinConfirmation ??
+        (currentForm.assassinConfirmation ? "Sim" : "Não"),
       assassinConfirmationDetails: values.assassinConfirmationDetails
         ? values.assassinConfirmationDetails
         : !currentForm.assassinConfirmationDetails
-        ? ""
-        : currentForm.assassinConfirmationDetails,
+          ? ""
+          : currentForm.assassinConfirmationDetails,
       childSoldierConfirmation:
-        values.childSoldierConfirmation ?? (currentForm.childSoldierConfirmation ? "Sim" : "Não"),
+        values.childSoldierConfirmation ??
+        (currentForm.childSoldierConfirmation ? "Sim" : "Não"),
       childSoldierConfirmationDetails: values.childSoldierConfirmationDetails
         ? values.childSoldierConfirmationDetails
         : !currentForm.childSoldierConfirmationDetails
-        ? ""
-        : currentForm.childSoldierConfirmationDetails,
+          ? ""
+          : currentForm.childSoldierConfirmationDetails,
       religionLibertyConfirmation:
-        values.religionLibertyConfirmation ?? (currentForm.religionLibertyConfirmation ? "Sim" : "Não"),
-      religionLibertyConfirmationDetails: values.religionLibertyConfirmationDetails
-        ? values.religionLibertyConfirmationDetails
-        : !currentForm.religionLibertyConfirmationDetails
-        ? ""
-        : currentForm.religionLibertyConfirmationDetails,
-      abortConfirmation: values.abortConfirmation ?? (currentForm.abortConfirmation ? "Sim" : "Não"),
+        values.religionLibertyConfirmation ??
+        (currentForm.religionLibertyConfirmation ? "Sim" : "Não"),
+      religionLibertyConfirmationDetails:
+        values.religionLibertyConfirmationDetails
+          ? values.religionLibertyConfirmationDetails
+          : !currentForm.religionLibertyConfirmationDetails
+            ? ""
+            : currentForm.religionLibertyConfirmationDetails,
+      abortConfirmation:
+        values.abortConfirmation ??
+        (currentForm.abortConfirmation ? "Sim" : "Não"),
       abortConfirmationDetails: values.abortConfirmationDetails
         ? values.abortConfirmationDetails
         : !currentForm.abortConfirmationDetails
-        ? ""
-        : currentForm.abortConfirmationDetails,
+          ? ""
+          : currentForm.abortConfirmationDetails,
       coerciveTransplantConfirmation:
-        values.coerciveTransplantConfirmation ?? (currentForm.coerciveTransplantConfirmation ? "Sim" : "Não"),
-      coerciveTransplantConfirmationDetails: values.coerciveTransplantConfirmationDetails
-        ? values.coerciveTransplantConfirmationDetails
-        : !currentForm.coerciveTransplantConfirmationDetails
-        ? ""
-        : currentForm.coerciveTransplantConfirmationDetails,
-      visaFraudConfirmation: values.visaFraudConfirmation ?? (currentForm.visaFraudConfirmation ? "Sim" : "Não"),
+        values.coerciveTransplantConfirmation ??
+        (currentForm.coerciveTransplantConfirmation ? "Sim" : "Não"),
+      coerciveTransplantConfirmationDetails:
+        values.coerciveTransplantConfirmationDetails
+          ? values.coerciveTransplantConfirmationDetails
+          : !currentForm.coerciveTransplantConfirmationDetails
+            ? ""
+            : currentForm.coerciveTransplantConfirmationDetails,
+      visaFraudConfirmation:
+        values.visaFraudConfirmation ??
+        (currentForm.visaFraudConfirmation ? "Sim" : "Não"),
       visaFraudConfirmationDetails: values.visaFraudConfirmationDetails
         ? values.visaFraudConfirmationDetails
         : !currentForm.visaFraudConfirmationDetails
-        ? ""
-        : currentForm.visaFraudConfirmationDetails,
-      deportedConfirmation: values.deportedConfirmation ?? (currentForm.deportedConfirmation ? "Sim" : "Não"),
+          ? ""
+          : currentForm.visaFraudConfirmationDetails,
+      deportedConfirmation:
+        values.deportedConfirmation ??
+        (currentForm.deportedConfirmation ? "Sim" : "Não"),
       deportedConfirmationDetails: values.deportedConfirmationDetails
         ? values.deportedConfirmationDetails
         : !currentForm.deportedConfirmationDetails
-        ? ""
-        : currentForm.deportedConfirmationDetails,
+          ? ""
+          : currentForm.deportedConfirmationDetails,
       childCustodyConfirmation:
-        values.childCustodyConfirmation ?? (currentForm.childCustodyConfirmation ? "Sim" : "Não"),
+        values.childCustodyConfirmation ??
+        (currentForm.childCustodyConfirmation ? "Sim" : "Não"),
       childCustodyConfirmationDetails: values.childCustodyConfirmationDetails
         ? values.childCustodyConfirmationDetails
         : !currentForm.childCustodyConfirmationDetails
-        ? ""
-        : currentForm.childCustodyConfirmationDetails,
+          ? ""
+          : currentForm.childCustodyConfirmationDetails,
       lawViolationConfirmation:
-        values.lawViolationConfirmation ?? (currentForm.lawViolationConfirmation ? "Sim" : "Não"),
+        values.lawViolationConfirmation ??
+        (currentForm.lawViolationConfirmation ? "Sim" : "Não"),
       lawViolationConfirmationDetails: values.lawViolationConfirmationDetails
         ? values.lawViolationConfirmationDetails
         : !currentForm.lawViolationConfirmationDetails
-        ? ""
-        : currentForm.lawViolationConfirmationDetails,
-      avoidTaxConfirmation: values.avoidTaxConfirmation ?? (currentForm.avoidTaxConfirmation ? "Sim" : "Não"),
+          ? ""
+          : currentForm.lawViolationConfirmationDetails,
+      avoidTaxConfirmation:
+        values.avoidTaxConfirmation ??
+        (currentForm.avoidTaxConfirmation ? "Sim" : "Não"),
       avoidTaxConfirmationDetails: values.avoidTaxConfirmationDetails
         ? values.avoidTaxConfirmationDetails
         : !currentForm.avoidTaxConfirmationDetails
-        ? ""
-        : currentForm.avoidTaxConfirmationDetails,
+          ? ""
+          : currentForm.avoidTaxConfirmationDetails,
     });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
-        <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">Segurança</h2>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full flex flex-col flex-grow gap-6"
+      >
+        <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
+          Segurança
+        </h2>
 
         <div className="w-full flex flex-col gap-12 justify-between flex-grow">
           <div className="w-full flex flex-col">
@@ -981,9 +1383,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Possui alguma doença contagiosa (cancroide, gonorreia, granuloma inguinal, hanseníase infecciosa,
-                      linfogranuloma venéreo, sífilis em estágio infeccioso, tuberculose ativa e outras doenças)
-                      conforme determinado pelo Departamento de Saúde e Serviços Humanos?
+                      Possui alguma doença contagiosa (cancroide, gonorreia,
+                      granuloma inguinal, hanseníase infecciosa, linfogranuloma
+                      venéreo, sífilis em estágio infeccioso, tuberculose ativa
+                      e outras doenças) conforme determinado pelo Departamento
+                      de Saúde e Serviços Humanos?
                     </FormLabel>
 
                     <FormControl>
@@ -1020,7 +1424,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                contagiousDiseaseConfirmation !== "Sim" && "hidden"
+                contagiousDiseaseConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1031,7 +1435,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1047,7 +1455,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Possui algum problema físico ou mental que possa interferir em sua segurança ou de outras pessoas?
+                      Possui algum problema físico ou mental que possa
+                      interferir em sua segurança ou de outras pessoas?
                     </FormLabel>
 
                     <FormControl>
@@ -1084,7 +1493,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                phisicalMentalProblemConfirmation !== "Sim" && "hidden"
+                phisicalMentalProblemConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1095,7 +1504,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1111,68 +1524,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já foi preso ou condenado por algum delito ou crime, mesmo que tenha sido objeto de perdão,
-                      anistia ou outra ação semelhante?
+                      Você já foi preso ou condenado por algum delito ou crime,
+                      mesmo que tenha sido objeto de perdão, anistia ou outra
+                      ação semelhante?
                     </FormLabel>
-
-                    <FormControl>
-                      <RadioGroup
-                        disabled={isPending || isSavePending}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Não" />
-                          </FormControl>
-
-                          <FormLabel className="font-normal">Não</FormLabel>
-                        </FormItem>
-
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sim" />
-                          </FormControl>
-
-                          <FormLabel className="font-normal">Sim</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-
-                    <FormMessage className="text-sm text-destructive" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div
-              className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", crimeConfirmation !== "Sim" && "hidden")}
-            >
-              <FormField
-                control={form.control}
-                name="crimeConfirmationDetails"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">Explique</FormLabel>
-
-                    <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
-                    </FormControl>
-
-                    <FormMessage className="text-sm text-destructive" />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
-              <FormField
-                control={form.control}
-                name="drugsProblemConfirmation"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">Já teve problemas com drogas?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -1208,7 +1563,75 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                drugsProblemConfirmation !== "Sim" && "hidden"
+                crimeConfirmation !== "Sim" && "hidden",
+              )}
+            >
+              <FormField
+                control={form.control}
+                name="crimeConfirmationDetails"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground">Explique</FormLabel>
+
+                    <FormControl>
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
+              <FormField
+                control={form.control}
+                name="drugsProblemConfirmation"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground">
+                      Já teve problemas com drogas?
+                    </FormLabel>
+
+                    <FormControl>
+                      <RadioGroup
+                        disabled={isPending || isSavePending}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Não" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Não</FormLabel>
+                        </FormItem>
+
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Sim" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Sim</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                drugsProblemConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1219,7 +1642,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1235,8 +1662,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já violou ou esteve envolvido em alguma conspiração para violar qualquer lei relacionada ao
-                      controle de substâncias?
+                      Você já violou ou esteve envolvido em alguma conspiração
+                      para violar qualquer lei relacionada ao controle de
+                      substâncias?
                     </FormLabel>
 
                     <FormControl>
@@ -1273,7 +1701,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                lawViolateConfirmation !== "Sim" && "hidden"
+                lawViolateConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1284,7 +1712,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1300,8 +1732,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você está vindo para os Estados Unidos para se envolver em prostituição ou vício comercializado
-                      ilegalmente ou esteve envolvido em prostituição ou procura de prostitutas nos últimos 10 anos?
+                      Você está vindo para os Estados Unidos para se envolver em
+                      prostituição ou vício comercializado ilegalmente ou esteve
+                      envolvido em prostituição ou procura de prostitutas nos
+                      últimos 10 anos?
                     </FormLabel>
 
                     <FormControl>
@@ -1338,7 +1772,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                prostitutionConfirmation !== "Sim" && "hidden"
+                prostitutionConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1349,7 +1783,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1365,7 +1803,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já esteve envolvido ou pretende se envolver em lavagem de dinheiro?
+                      Você já esteve envolvido ou pretende se envolver em
+                      lavagem de dinheiro?
                     </FormLabel>
 
                     <FormControl>
@@ -1402,7 +1841,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                moneyLaundryConfirmation !== "Sim" && "hidden"
+                moneyLaundryConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1413,7 +1852,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1429,8 +1872,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já cometeu ou conspirou para cometer um crime de tráfico de pessoas nos Estados Unidos ou
-                      fora dos Estados Unidos?
+                      Você já cometeu ou conspirou para cometer um crime de
+                      tráfico de pessoas nos Estados Unidos ou fora dos Estados
+                      Unidos?
                     </FormLabel>
 
                     <FormControl>
@@ -1467,7 +1911,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                peopleTrafficConfirmation !== "Sim" && "hidden"
+                peopleTrafficConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1478,7 +1922,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1494,8 +1942,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já ajudou, encorajou, ajudou ou conspirou conscientemente com um indivíduo que cometeu ou
-                      conspirou para cometer um crime grave de tráfico de pessoas nos Estados Unidos ou fora?
+                      Você já ajudou, encorajou, ajudou ou conspirou
+                      conscientemente com um indivíduo que cometeu ou conspirou
+                      para cometer um crime grave de tráfico de pessoas nos
+                      Estados Unidos ou fora?
                     </FormLabel>
 
                     <FormControl>
@@ -1532,7 +1982,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                helpPeopleTrafficConfirmation !== "Sim" && "hidden"
+                helpPeopleTrafficConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1543,7 +1993,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1559,9 +2013,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você é cônjuge, filho ou filha de um indivíduo que cometeu ou conspirou para cometer um crime de
-                      tráfico de pessoas nos Estados Unidos ou fora e, nos últimos cinco anos, beneficiou-se
-                      conscientemente das atividades de tráfico?
+                      Você é cônjuge, filho ou filha de um indivíduo que cometeu
+                      ou conspirou para cometer um crime de tráfico de pessoas
+                      nos Estados Unidos ou fora e, nos últimos cinco anos,
+                      beneficiou-se conscientemente das atividades de tráfico?
                     </FormLabel>
 
                     <FormControl>
@@ -1598,7 +2053,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                parentPeopleTrafficConfirmation !== "Sim" && "hidden"
+                parentPeopleTrafficConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1609,7 +2064,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1625,8 +2084,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você procura se envolver em espionagem, sabotagem, violações de controle de exportação ou qualquer
-                      outra atividade ilegal enquanto estiver nos Estados Unidos?
+                      Você procura se envolver em espionagem, sabotagem,
+                      violações de controle de exportação ou qualquer outra
+                      atividade ilegal enquanto estiver nos Estados Unidos?
                     </FormLabel>
 
                     <FormControl>
@@ -1660,7 +2120,12 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
               />
             </div>
 
-            <div className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", spyConfirmation !== "Sim" && "hidden")}>
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                spyConfirmation !== "Sim" && "hidden",
+              )}
+            >
               <FormField
                 control={form.control}
                 name="spyConfirmationDetails"
@@ -1669,7 +2134,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1685,8 +2154,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você procura se envolver em atividades terroristas enquanto estiver nos Estados Unidos ou já se
-                      envolveu em atividades terroristas?
+                      Você procura se envolver em atividades terroristas
+                      enquanto estiver nos Estados Unidos ou já se envolveu em
+                      atividades terroristas?
                     </FormLabel>
 
                     <FormControl>
@@ -1723,7 +2193,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                terrorismConfirmation !== "Sim" && "hidden"
+                terrorismConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1734,7 +2204,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1750,8 +2224,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já prestou ou pretende fornecer assistência financeira ou outro tipo de apoio a terroristas
-                      ou organizações terroristas?
+                      Você já prestou ou pretende fornecer assistência
+                      financeira ou outro tipo de apoio a terroristas ou
+                      organizações terroristas?
                     </FormLabel>
 
                     <FormControl>
@@ -1788,7 +2263,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                financialAssistanceConfirmation !== "Sim" && "hidden"
+                financialAssistanceConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1799,7 +2274,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1815,7 +2294,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você é membro ou representante de uma organização terrorista?
+                      Você é membro ou representante de uma organização
+                      terrorista?
                     </FormLabel>
 
                     <FormControl>
@@ -1852,7 +2332,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                terrorismMemberConfirmation !== "Sim" && "hidden"
+                terrorismMemberConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1863,7 +2343,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1879,9 +2363,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você é cônjuge, filho ou filha de um indivíduo que se envolveu em atividades terroristas,
-                      inclusive fornecendo assistência financeira ou outro apoio a terroristas ou organizações
-                      terroristas, nos últimos cinco anos?
+                      Você é cônjuge, filho ou filha de um indivíduo que se
+                      envolveu em atividades terroristas, inclusive fornecendo
+                      assistência financeira ou outro apoio a terroristas ou
+                      organizações terroristas, nos últimos cinco anos?
                     </FormLabel>
 
                     <FormControl>
@@ -1918,7 +2403,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                parentTerrorismConfirmation !== "Sim" && "hidden"
+                parentTerrorismConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -1929,7 +2414,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -1945,7 +2434,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já ordenou, incitou, cometeu, ajudou ou de alguma forma participou de genocídio?
+                      Você já ordenou, incitou, cometeu, ajudou ou de alguma
+                      forma participou de genocídio?
                     </FormLabel>
 
                     <FormControl>
@@ -1980,7 +2470,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             </div>
 
             <div
-              className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", genocideConfirmation !== "Sim" && "hidden")}
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                genocideConfirmation !== "Sim" && "hidden",
+              )}
             >
               <FormField
                 control={form.control}
@@ -1990,7 +2483,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2006,7 +2503,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já cometeu, ordenou, incitou, ajudou ou participou de alguma forma em tortura?
+                      Você já cometeu, ordenou, incitou, ajudou ou participou de
+                      alguma forma em tortura?
                     </FormLabel>
 
                     <FormControl>
@@ -2041,7 +2539,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             </div>
 
             <div
-              className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", tortureConfirmation !== "Sim" && "hidden")}
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                tortureConfirmation !== "Sim" && "hidden",
+              )}
             >
               <FormField
                 control={form.control}
@@ -2051,7 +2552,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2067,8 +2572,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você cometeu, ordenou, incitou, ajudou ou de alguma forma participou em assassinatos
-                      extrajudiciais, assassinatos políticos ou outros atos de violência?
+                      Você cometeu, ordenou, incitou, ajudou ou de alguma forma
+                      participou em assassinatos extrajudiciais, assassinatos
+                      políticos ou outros atos de violência?
                     </FormLabel>
 
                     <FormControl>
@@ -2103,7 +2609,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             </div>
 
             <div
-              className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", assassinConfirmation !== "Sim" && "hidden")}
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                assassinConfirmation !== "Sim" && "hidden",
+              )}
             >
               <FormField
                 control={form.control}
@@ -2113,7 +2622,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2129,7 +2642,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já se envolveu no recrutamento ou na utilização de crianças-soldados?
+                      Você já se envolveu no recrutamento ou na utilização de
+                      crianças-soldados?
                     </FormLabel>
 
                     <FormControl>
@@ -2166,7 +2680,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                childSoldierConfirmation !== "Sim" && "hidden"
+                childSoldierConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -2177,7 +2691,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2193,8 +2711,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você, enquanto servia como funcionário do governo, foi responsável ou executou diretamente, em
-                      qualquer momento, violações particularmente graves da liberdade religiosa?
+                      Você, enquanto servia como funcionário do governo, foi
+                      responsável ou executou diretamente, em qualquer momento,
+                      violações particularmente graves da liberdade religiosa?
                     </FormLabel>
 
                     <FormControl>
@@ -2231,7 +2750,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                religionLibertyConfirmation !== "Sim" && "hidden"
+                religionLibertyConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -2242,7 +2761,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2258,9 +2781,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já esteve diretamente envolvido no estabelecimento ou na aplicação de controles populacionais
-                      que forçaram uma mulher a se submeter a um aborto contra a sua livre escolha ou um homem ou uma
-                      mulher a se submeter à esterilização contra a sua livre vontade?
+                      Você já esteve diretamente envolvido no estabelecimento ou
+                      na aplicação de controles populacionais que forçaram uma
+                      mulher a se submeter a um aborto contra a sua livre
+                      escolha ou um homem ou uma mulher a se submeter à
+                      esterilização contra a sua livre vontade?
                     </FormLabel>
 
                     <FormControl>
@@ -2295,7 +2820,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             </div>
 
             <div
-              className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", abortConfirmation !== "Sim" && "hidden")}
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                abortConfirmation !== "Sim" && "hidden",
+              )}
             >
               <FormField
                 control={form.control}
@@ -2305,7 +2833,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2321,8 +2853,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já esteve diretamente envolvido no transplante coercitivo de órgãos humanos ou tecidos
-                      corporais?
+                      Você já esteve diretamente envolvido no transplante
+                      coercitivo de órgãos humanos ou tecidos corporais?
                     </FormLabel>
 
                     <FormControl>
@@ -2359,7 +2891,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                coerciveTransplantConfirmation !== "Sim" && "hidden"
+                coerciveTransplantConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -2370,7 +2902,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2386,9 +2922,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já tentou obter ou ajudar outras pessoas a obter um visto, entrada nos Estados Unidos ou
-                      qualquer outro benefício de imigração dos Estados Unidos por meio de fraude, deturpação
-                      intencional ou outros meios ilegais?
+                      Você já tentou obter ou ajudar outras pessoas a obter um
+                      visto, entrada nos Estados Unidos ou qualquer outro
+                      benefício de imigração dos Estados Unidos por meio de
+                      fraude, deturpação intencional ou outros meios ilegais?
                     </FormLabel>
 
                     <FormControl>
@@ -2425,7 +2962,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                visaFraudConfirmation !== "Sim" && "hidden"
+                visaFraudConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -2436,7 +2973,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2451,7 +2992,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 name="deportedConfirmation"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">Você já foi removido ou deportado de algum país?</FormLabel>
+                    <FormLabel className="text-foreground">
+                      Você já foi removido ou deportado de algum país?
+                    </FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -2485,7 +3028,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             </div>
 
             <div
-              className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", deportedConfirmation !== "Sim" && "hidden")}
+              className={cn(
+                "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+                deportedConfirmation !== "Sim" && "hidden",
+              )}
             >
               <FormField
                 control={form.control}
@@ -2495,7 +3041,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2511,8 +3061,9 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já recebeu a custódia de uma criança cidadã dos EUA fora dos Estados Unidos de uma pessoa que
-                      recebeu a custódia legal de um tribunal dos EUA?
+                      Você já recebeu a custódia de uma criança cidadã dos EUA
+                      fora dos Estados Unidos de uma pessoa que recebeu a
+                      custódia legal de um tribunal dos EUA?
                     </FormLabel>
 
                     <FormControl>
@@ -2549,7 +3100,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                childCustodyConfirmation !== "Sim" && "hidden"
+                childCustodyConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -2560,7 +3111,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2576,7 +3131,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você votou nos Estados Unidos violando alguma lei ou regulamento?
+                      Você votou nos Estados Unidos violando alguma lei ou
+                      regulamento?
                     </FormLabel>
 
                     <FormControl>
@@ -2613,7 +3169,7 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
-                lawViolationConfirmation !== "Sim" && "hidden"
+                lawViolationConfirmation !== "Sim" && "hidden",
               )}
             >
               <FormField
@@ -2624,7 +3180,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                     <FormLabel className="text-foreground">Explique</FormLabel>
 
                     <FormControl>
-                      <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                      <Textarea
+                        disabled={isPending || isSavePending}
+                        className="!mt-auto resize-none"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -2640,7 +3200,8 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Você já renunciou à cidadania dos Estados Unidos para evitar impostos?
+                      Você já renunciou à cidadania dos Estados Unidos para
+                      evitar impostos?
                     </FormLabel>
 
                     <FormControl>
@@ -2676,7 +3237,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
           </div>
 
           <div
-            className={cn("w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6", avoidTaxConfirmation !== "Sim" && "hidden")}
+            className={cn(
+              "w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6",
+              avoidTaxConfirmation !== "Sim" && "hidden",
+            )}
           >
             <FormField
               control={form.control}
@@ -2686,7 +3250,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                   <FormLabel className="text-foreground">Explique</FormLabel>
 
                   <FormControl>
-                    <Textarea disabled={isPending || isSavePending} className="!mt-auto resize-none" {...field} />
+                    <Textarea
+                      disabled={isPending || isSavePending}
+                      className="!mt-auto resize-none"
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage className="text-sm text-destructive" />
@@ -2707,7 +3275,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                   {isPending ? (
                     <>
                       Salvando
-                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
                     </>
                   ) : (
                     <>
@@ -2730,7 +3301,10 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                   {isSavePending ? (
                     <>
                       Salvando
-                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
                     </>
                   ) : (
                     <>
@@ -2740,24 +3314,11 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
                   )}
                 </Button>
 
-                <Button
-                  size="xl"
-                  type="submit"
-                  className="w-full flex items-center gap-2 sm:w-fit"
-                  disabled={isPending || isSavePending}
-                >
-                  {isPending ? (
-                    <>
-                      Enviando
-                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
-                    </>
-                  ) : (
-                    <>
-                      Finalizar
-                      <ArrowRight className="size-5" strokeWidth={1.5} />
-                    </>
-                  )}
-                </Button>
+                <FinishFormConfirmation
+                  profileId={profileId}
+                  submit={handleSubmitOnModal}
+                  isPending={isPending}
+                />
               </>
             )}
           </div>

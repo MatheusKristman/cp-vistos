@@ -126,6 +126,8 @@ export function ClientDetailsResume({ handleClose }: Props) {
     },
   });
 
+  const isLoading = isVisaStatusUpdating || isStatusDSUpdating || isDSValidPending || isPending;
+
   function handleAnnotation() {
     unsetToResume();
     setToAnnotation();
@@ -165,13 +167,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
       <div className="w-full flex flex-col-reverse gap-4 mb-9 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">Conta: {client.user.name}</h1>
 
-        <Button
-          onClick={handleClose}
-          variant="link"
-          size="icon"
-          className="self-end"
-          disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
-        >
+        <Button onClick={handleClose} variant="link" size="icon" className="self-end" disabled={isLoading}>
           <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
         </Button>
       </div>
@@ -255,7 +251,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
             className={cn("w-full flex items-center gap-2 sm:w-fit", {
               hidden: role !== "ADMIN",
             })}
-            disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+            disabled={isLoading}
             onClick={handleAnnotation}
           >
             <NotepadText className="w-5 h-5" strokeWidth={1.5} />
@@ -266,7 +262,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
             variant="outline"
             size="xl"
             className="w-full flex items-center gap-2 sm:w-fit"
-            disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+            disabled={isLoading}
             onClick={handleEditAccount}
           >
             <Edit className="w-5 h-5" strokeWidth={1.5} />
@@ -277,7 +273,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
             variant="outline"
             size="xl"
             className="w-full flex items-center gap-2 sm:w-fit"
-            disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+            disabled={isLoading}
             onClick={handleNewProfile}
           >
             <Plus className="w-5 h-5" strokeWidth={1.5} />
@@ -295,6 +291,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               {client.user.profiles.length > 0 && (
                 <Select
                   value={profileSelected}
+                  disabled={isLoading}
                   onValueChange={(value) => {
                     setProfileSelected("");
                     changeProfile({ profileId: value });
@@ -338,7 +335,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                         variant="outline"
                         size="icon"
                         className="rounded-lg"
-                        disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                        disabled={isLoading}
                         onClick={() => updateDSValidationDate({ profileId: client.id })}
                       >
                         <RotateCw
@@ -367,6 +364,18 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 </span>
               </div>
 
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">Data do pagamento do boleto</span>
+
+                  <span className="text-base font-medium text-foreground">
+                    {client.taxDate ? format(client.taxDate, "dd/MM/yyyy") : "Pendente"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Passaporte</span>
 
@@ -374,9 +383,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.passport ? client.passport : "---"}
                 </span>
               </div>
-            </div>
 
-            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Classe do Visto</span>
 
@@ -394,7 +401,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
                     : "Não informado"}
                 </span>
               </div>
+            </div>
 
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Tipo de Visto</span>
 
@@ -406,9 +415,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                     : "Não informado"}
                 </span>
               </div>
-            </div>
 
-            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Data CASV</span>
 
@@ -416,7 +423,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.CASVDate ? format(client.CASVDate, "dd/MM/yyyy") : "--/--/----"}
                 </span>
               </div>
+            </div>
 
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Data da Entrevista</span>
 
@@ -446,7 +455,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                       status: value as StatusDS,
                     });
                   }}
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                 >
                   <SelectTrigger className={cn(!client.statusDS && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status do DS" />
@@ -476,7 +485,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                       status: value as VisaStatus,
                     });
                   }}
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                 >
                   <SelectTrigger className={cn(!client.visaStatus && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status do visto" />
@@ -484,6 +493,8 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
                   <SelectContent className="z-[99999]">
                     <SelectItem value="awaiting">Aguardando</SelectItem>
+                    <SelectItem value="in_progress">Em Andamento</SelectItem>
+                    <SelectItem value="finished">Finalizado</SelectItem>
                     <SelectItem value="approved">Aprovado</SelectItem>
                     <SelectItem value="disapproved">Reprovado</SelectItem>
                   </SelectContent>
@@ -502,12 +513,14 @@ export function ClientDetailsResume({ handleClose }: Props) {
                     type="archived"
                     title="Tem certeza que deseja desarquivar esse perfil?"
                     description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
                   />
 
                   <ConfirmProspectStatusModal
                     isOpen={isConfirmProspectStatusOpen}
                     setOpen={setConfirmProspectStatusOpen}
                     profileId={client.id}
+                    isLoading={isLoading}
                   />
                 </div>
               ) : client.status === "prospect" ? (
@@ -516,6 +529,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                     isOpen={isConfirmArchiveStatusOpen}
                     setOpen={setConfirmArchiveStatusOpen}
                     profileId={client.id}
+                    isLoading={isLoading}
                   />
 
                   <ConfirmActiveStatusModal
@@ -526,6 +540,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                     type="prospect"
                     title="Tem certeza que deseja ativar esse perfil?"
                     description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
                   />
                 </div>
               ) : (
@@ -534,12 +549,14 @@ export function ClientDetailsResume({ handleClose }: Props) {
                     isOpen={isConfirmArchiveStatusOpen}
                     setOpen={setConfirmArchiveStatusOpen}
                     profileId={client.id}
+                    isLoading={isLoading}
                   />
 
                   <ConfirmProspectStatusModal
                     isOpen={isConfirmProspectStatusOpen}
                     setOpen={setConfirmProspectStatusOpen}
                     profileId={client.id}
+                    isLoading={isLoading}
                   />
                 </div>
               )}
@@ -549,7 +566,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   variant="outline"
                   size="xl"
                   className="flex items-center gap-2"
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                   onClick={handleComment}
                 >
                   <MessageCircleMore className="w-5 h-5" strokeWidth={1.5} />
@@ -560,7 +577,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   variant="outline"
                   size="xl"
                   className="flex items-center gap-2"
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                   onClick={handleEditProfile}
                 >
                   <Edit className="w-5 h-5" strokeWidth={1.5} />
@@ -568,12 +585,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 </Button>
               </div>
 
-              <Button
-                disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
-                size="xl"
-                className="flex items-center gap-2"
-                onClick={handleForm}
-              >
+              <Button disabled={isLoading} size="xl" className="flex items-center gap-2" onClick={handleForm}>
                 <FileText className="w-5 h-5" strokeWidth={1.5} />
                 Formulário
               </Button>

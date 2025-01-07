@@ -23,25 +23,32 @@ interface ConfirmProspectStatusModalProps {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   profileId: string;
+  isLoading: boolean;
 }
 
-export function ConfirmProspectStatusModal({ isOpen, setOpen, profileId }: ConfirmProspectStatusModalProps) {
+export function ConfirmProspectStatusModal({
+  isOpen,
+  setOpen,
+  profileId,
+  isLoading,
+}: ConfirmProspectStatusModalProps) {
   const { closeModal } = useClientDetailsModalStore();
 
   const utils = trpc.useUtils();
 
-  const { mutate: prospectProfile, isPending } = trpc.userRouter.prospectProfile.useMutation({
-    onSuccess: ({ message }) => {
-      toast.success(message);
+  const { mutate: prospectProfile, isPending } =
+    trpc.userRouter.prospectProfile.useMutation({
+      onSuccess: ({ message }) => {
+        toast.success(message);
 
-      utils.userRouter.getActiveClients.invalidate();
-      utils.userRouter.getProspectsClients.invalidate();
-      utils.userRouter.getArchivedClients.invalidate();
+        utils.userRouter.getActiveClients.invalidate();
+        utils.userRouter.getProspectsClients.invalidate();
+        utils.userRouter.getArchivedClients.invalidate();
 
-      setOpen(false);
-      closeModal();
-    },
-  });
+        setOpen(false);
+        closeModal();
+      },
+    });
 
   return (
     <AlertDialog open={isOpen}>
@@ -50,7 +57,7 @@ export function ConfirmProspectStatusModal({ isOpen, setOpen, profileId }: Confi
           variant="outline"
           size="xl"
           className="flex items-center gap-2"
-          disabled={isPending}
+          disabled={isPending || isLoading}
           onClick={() => setOpen(true)}
         >
           <Bookmark className="w-5 h-5" strokeWidth={1.5} />
@@ -60,17 +67,27 @@ export function ConfirmProspectStatusModal({ isOpen, setOpen, profileId }: Confi
 
       <AlertDialogContent className="rounded-3xl">
         <AlertDialogHeader>
-          <AlertDialogTitle>Tem certeza que deseja prospectar esse perfil?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Tem certeza que deseja prospectar esse perfil?
+          </AlertDialogTitle>
 
-          <AlertDialogDescription>O perfil será armazenado na página de prospects.</AlertDialogDescription>
+          <AlertDialogDescription>
+            O perfil será armazenado na página de prospects.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending} onClick={() => setOpen(false)}>
+          <AlertDialogCancel
+            disabled={isPending || isLoading}
+            onClick={() => setOpen(false)}
+          >
             Cancelar
           </AlertDialogCancel>
 
-          <AlertDialogAction disabled={isPending} onClick={() => prospectProfile({ profileId })}>
+          <AlertDialogAction
+            disabled={isPending || isLoading}
+            onClick={() => prospectProfile({ profileId })}
+          >
             Prospectar
             {isPending && <Loader2 className="animate-spin size-4 ml-2" />}
           </AlertDialogAction>

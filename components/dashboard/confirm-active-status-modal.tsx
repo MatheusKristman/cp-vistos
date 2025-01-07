@@ -27,6 +27,7 @@ interface ConfirmActiveStatusModalProps {
   type: "prospect" | "archived";
   title: string;
   description: string;
+  isLoading: boolean;
 }
 
 export function ConfirmActiveStatusModal({
@@ -37,23 +38,25 @@ export function ConfirmActiveStatusModal({
   type,
   title,
   description,
+  isLoading,
 }: ConfirmActiveStatusModalProps) {
   const { closeModal } = useClientDetailsModalStore();
 
   const utils = trpc.useUtils();
 
-  const { mutate: activateProfile, isPending } = trpc.userRouter.activateProfile.useMutation({
-    onSuccess: ({ message }) => {
-      toast.success(message);
+  const { mutate: activateProfile, isPending } =
+    trpc.userRouter.activateProfile.useMutation({
+      onSuccess: ({ message }) => {
+        toast.success(message);
 
-      utils.userRouter.getActiveClients.invalidate();
-      utils.userRouter.getProspectsClients.invalidate();
-      utils.userRouter.getArchivedClients.invalidate();
+        utils.userRouter.getActiveClients.invalidate();
+        utils.userRouter.getProspectsClients.invalidate();
+        utils.userRouter.getArchivedClients.invalidate();
 
-      setOpen(false);
-      closeModal();
-    },
-  });
+        setOpen(false);
+        closeModal();
+      },
+    });
 
   return (
     <AlertDialog open={isOpen}>
@@ -62,11 +65,15 @@ export function ConfirmActiveStatusModal({
           variant="outline"
           size="xl"
           className="flex items-center gap-2"
-          disabled={isPending}
+          disabled={isPending || isLoading}
           onClick={() => setOpen(true)}
         >
-          {(type === "prospect" && <Bookmark className="w-5 h-5" strokeWidth={1.5} />) ||
-            (type === "archived" && <Archive className="w-5 h-5" strokeWidth={1.5} />)}
+          {(type === "prospect" && (
+            <Bookmark className="w-5 h-5" strokeWidth={1.5} />
+          )) ||
+            (type === "archived" && (
+              <Archive className="w-5 h-5" strokeWidth={1.5} />
+            ))}
           {btnLabel}
         </Button>
       </AlertDialogTrigger>
@@ -79,11 +86,17 @@ export function ConfirmActiveStatusModal({
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending} onClick={() => setOpen(false)}>
+          <AlertDialogCancel
+            disabled={isPending || isLoading}
+            onClick={() => setOpen(false)}
+          >
             Cancelar
           </AlertDialogCancel>
 
-          <AlertDialogAction disabled={isPending} onClick={() => activateProfile({ profileId })}>
+          <AlertDialogAction
+            disabled={isPending || isLoading}
+            onClick={() => activateProfile({ profileId })}
+          >
             {btnLabel}
             {isPending && <Loader2 className="animate-spin size-4 ml-2" />}
           </AlertDialogAction>

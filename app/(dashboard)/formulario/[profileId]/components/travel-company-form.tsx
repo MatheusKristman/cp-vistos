@@ -1,21 +1,29 @@
 "use client";
 
+import { z } from "zod";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as FormType } from "@prisma/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, Loader2, Plus, Save, X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import useFormStore from "@/constants/stores/useFormStore";
+
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
+import useFormStore from "@/constants/stores/useFormStore";
 
 const formSchema = z
   .object({
@@ -24,13 +32,21 @@ const formSchema = z
       z.object({
         name: z.string(),
         relation: z.string(),
-      })
+      }),
     ),
     groupMemberConfirmation: z.enum(["Sim", "Não"]),
     groupName: z.string(),
   })
   .superRefine(
-    ({ otherPeopleTravelingConfirmation, otherPeopleTraveling, groupMemberConfirmation, groupName }, ctx) => {
+    (
+      {
+        otherPeopleTravelingConfirmation,
+        otherPeopleTraveling,
+        groupMemberConfirmation,
+        groupName,
+      },
+      ctx,
+    ) => {
       if (groupMemberConfirmation === "Sim" && groupName.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -47,7 +63,9 @@ const formSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.name`],
+          path: [
+            `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.name`,
+          ],
         });
       }
 
@@ -59,10 +77,12 @@ const formSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
-          path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`],
+          path: [
+            `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`,
+          ],
         });
       }
-    }
+    },
   );
 
 interface Props {
@@ -71,82 +91,104 @@ interface Props {
   isEditing: boolean;
 }
 
-export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) {
-  const [currentOtherPeopleTravelingIndex, setCurrentOtherPeopleTravelingIndex] = useState<number>(
-    currentForm.otherPeopleTraveling.length ?? 0
-  );
-  const [otherPeopleTravelingItems, setOtherPeopleTravelingItems] = useState<{ name: string; relation: string }[]>([]);
-  const [resetOtherPeopleTravelingFields, setResetOtherPeopleTravelingFields] = useState<boolean>(false);
+export function TravelCompanyForm({
+  currentForm,
+  profileId,
+  isEditing,
+}: Props) {
+  const [
+    currentOtherPeopleTravelingIndex,
+    setCurrentOtherPeopleTravelingIndex,
+  ] = useState<number>(currentForm.otherPeopleTraveling.length ?? 0);
+  const [otherPeopleTravelingItems, setOtherPeopleTravelingItems] = useState<
+    { name: string; relation: string }[]
+  >([]);
+  const [resetOtherPeopleTravelingFields, setResetOtherPeopleTravelingFields] =
+    useState<boolean>(false);
 
   const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      otherPeopleTravelingConfirmation: currentForm.otherPeopleTravelingConfirmation ? "Sim" : "Não",
+      otherPeopleTravelingConfirmation:
+        currentForm.otherPeopleTravelingConfirmation ? "Sim" : "Não",
       otherPeopleTraveling:
         currentForm.otherPeopleTraveling.length > 0
           ? [...currentForm.otherPeopleTraveling, { name: "", relation: "" }]
           : [{ name: "", relation: "" }],
-      groupMemberConfirmation: currentForm.groupMemberConfirmation ? "Sim" : "Não",
+      groupMemberConfirmation: currentForm.groupMemberConfirmation
+        ? "Sim"
+        : "Não",
       groupName: currentForm.groupName ? currentForm.groupName : "",
     },
   });
 
-  const otherPeopleTravelingConfirmation: "Sim" | "Não" = form.watch("otherPeopleTravelingConfirmation");
-  const groupMemberConfirmation: "Sim" | "Não" = form.watch("groupMemberConfirmation");
+  const otherPeopleTravelingConfirmation: "Sim" | "Não" = form.watch(
+    "otherPeopleTravelingConfirmation",
+  );
+  const groupMemberConfirmation: "Sim" | "Não" = form.watch(
+    "groupMemberConfirmation",
+  );
   const otherPeopleTraveling = form.watch("otherPeopleTraveling");
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitTravelCompany, isPending } = trpc.formsRouter.submitTravelCompany.useMutation({
-    onSuccess: (data) => {
-      toast.success(data.message);
-      utils.formsRouter.getForm.invalidate();
+  const { mutate: submitTravelCompany, isPending } =
+    trpc.formsRouter.submitTravelCompany.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
 
-      if (data.isEditing) {
-        router.push(`/resumo-formulario/${profileId}`);
-      } else {
-        router.push(`/formulario/${profileId}?formStep=5`);
-      }
-    },
-    onError: (error) => {
-      console.error(error.data);
+        if (data.isEditing) {
+          router.push(`/resumo-formulario/${profileId}`);
+        } else {
+          router.push(`/formulario/${profileId}?formStep=5`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
 
-      if (error.data && error.data.code === "NOT_FOUND") {
-        toast.error(error.message);
-      } else {
-        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
-      }
-    },
-  });
-  const { mutate: saveTravelCompany, isPending: isSavePending } = trpc.formsRouter.saveTravelCompany.useMutation({
-    onSuccess: (data) => {
-      toast.success(data.message);
-      utils.formsRouter.getForm.invalidate();
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: saveTravelCompany, isPending: isSavePending } =
+    trpc.formsRouter.saveTravelCompany.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
 
-      if (data.redirectStep !== undefined) {
-        router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
-      }
-    },
-    onError: (error) => {
-      console.error(error.data);
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
 
-      if (error.data && error.data.code === "NOT_FOUND") {
-        toast.error(error.message);
-      } else {
-        toast.error("Ocorreu um erro ao salvar os dados");
-      }
-    },
-  });
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
 
   useEffect(() => {
     if (currentForm.otherPeopleTraveling.length > 0) {
-      setCurrentOtherPeopleTravelingIndex(currentForm.otherPeopleTraveling.length);
-
-      const otherPeopleTravelingFiltered = currentForm.otherPeopleTraveling.filter(
-        (item) => item.name !== "" && item.relation !== ""
+      setCurrentOtherPeopleTravelingIndex(
+        currentForm.otherPeopleTraveling.length,
       );
+
+      const otherPeopleTravelingFiltered =
+        currentForm.otherPeopleTraveling.filter(
+          (item) => item.name !== "" && item.relation !== "",
+        );
 
       setOtherPeopleTravelingItems(otherPeopleTravelingFiltered);
     }
@@ -154,8 +196,14 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
 
   useEffect(() => {
     if (resetOtherPeopleTravelingFields) {
-      form.setValue(`otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.name`, "");
-      form.setValue(`otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.relation`, "");
+      form.setValue(
+        `otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.name`,
+        "",
+      );
+      form.setValue(
+        `otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.relation`,
+        "",
+      );
 
       setResetOtherPeopleTravelingFields(false);
     }
@@ -169,11 +217,16 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
         profileId,
         redirectStep,
         otherPeopleTravelingConfirmation:
-          values.otherPeopleTravelingConfirmation ?? currentForm.otherPeopleTravelingConfirmation,
+          values.otherPeopleTravelingConfirmation ??
+          currentForm.otherPeopleTravelingConfirmation,
         otherPeopleTraveling:
-          otherPeopleTravelingItems.length > 0 ? otherPeopleTravelingItems : currentForm.otherPeopleTraveling,
-        groupMemberConfirmation: values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
-        groupName: values.groupName !== "" ? values.groupName : currentForm.groupName,
+          otherPeopleTravelingItems.length > 0
+            ? otherPeopleTravelingItems
+            : currentForm.otherPeopleTraveling,
+        groupMemberConfirmation:
+          values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
+        groupName:
+          values.groupName !== "" ? values.groupName : currentForm.groupName,
       });
       setRedirectStep(null);
     }
@@ -195,11 +248,16 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
     saveTravelCompany({
       profileId,
       otherPeopleTravelingConfirmation:
-        values.otherPeopleTravelingConfirmation ?? currentForm.otherPeopleTravelingConfirmation,
+        values.otherPeopleTravelingConfirmation ??
+        currentForm.otherPeopleTravelingConfirmation,
       otherPeopleTraveling:
-        otherPeopleTravelingItems.length > 0 ? otherPeopleTravelingItems : currentForm.otherPeopleTraveling,
-      groupMemberConfirmation: values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
-      groupName: values.groupName !== "" ? values.groupName : currentForm.groupName,
+        otherPeopleTravelingItems.length > 0
+          ? otherPeopleTravelingItems
+          : currentForm.otherPeopleTraveling,
+      groupMemberConfirmation:
+        values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
+      groupName:
+        values.groupName !== "" ? values.groupName : currentForm.groupName,
     });
   }
 
@@ -220,7 +278,7 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
           ]);
 
           const otherPeopleTravelingFiltered = otherPeopleTraveling.filter(
-            (item) => item.name !== "" && item.relation !== ""
+            (item) => item.name !== "" && item.relation !== "",
           );
 
           setCurrentOtherPeopleTravelingIndex((prev) => prev + 1);
@@ -235,7 +293,9 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
 
     form.setValue("otherPeopleTraveling", newArr);
 
-    const otherPeopleTravelingFiltered = newArr.filter((item) => item.name !== "" && item.relation !== "");
+    const otherPeopleTravelingFiltered = newArr.filter(
+      (item) => item.name !== "" && item.relation !== "",
+    );
 
     setCurrentOtherPeopleTravelingIndex((prev) => prev - 1);
     setOtherPeopleTravelingItems(otherPeopleTravelingFiltered);
@@ -243,7 +303,10 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full flex flex-col flex-grow gap-6"
+      >
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Companhia de Viagem
         </h2>
@@ -256,7 +319,9 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
                 name="otherPeopleTravelingConfirmation"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">Há outras pessoas viajando com você?</FormLabel>
+                    <FormLabel className="text-foreground">
+                      Há outras pessoas viajando com você?
+                    </FormLabel>
 
                     <FormControl>
                       <RadioGroup
@@ -291,7 +356,7 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
               <div
                 className={cn(
                   "flex flex-col gap-2 bg-secondary rounded-xl p-4",
-                  otherPeopleTravelingConfirmation === "Não" && "hidden"
+                  otherPeopleTravelingConfirmation === "Não" && "hidden",
                 )}
               >
                 <span className="text-sm font-medium text-foreground">
@@ -357,7 +422,9 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
                         key={`otherName-${index}`}
                         className="py-2 px-4 bg-primary/50 rounded-full flex items-center gap-2 group"
                       >
-                        <span className="text-sm font-medium text-white">{item.name}</span>
+                        <span className="text-sm font-medium text-white">
+                          {item.name}
+                        </span>
 
                         <Button
                           type="button"
@@ -420,11 +487,22 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
                 control={form.control}
                 name="groupName"
                 render={({ field }) => (
-                  <FormItem className={cn("flex flex-col gap-2", groupMemberConfirmation === "Não" && "hidden")}>
-                    <FormLabel className="text-foreground text-sm">Nome da Organização ou Grupo</FormLabel>
+                  <FormItem
+                    className={cn(
+                      "flex flex-col gap-2",
+                      groupMemberConfirmation === "Não" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="text-foreground text-sm">
+                      Nome da Organização ou Grupo
+                    </FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" disabled={isPending || isSavePending} {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
@@ -446,7 +524,10 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
                   {isPending ? (
                     <>
                       Salvando
-                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
                     </>
                   ) : (
                     <>
@@ -469,7 +550,10 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
                   {isSavePending ? (
                     <>
                       Salvando
-                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
                     </>
                   ) : (
                     <>
@@ -488,7 +572,10 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
                   {isPending ? (
                     <>
                       Enviando
-                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
                     </>
                   ) : (
                     <>

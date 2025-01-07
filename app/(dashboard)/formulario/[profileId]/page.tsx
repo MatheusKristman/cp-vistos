@@ -10,17 +10,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PersonalDataForm } from "@/components/form/personal-data-form";
-import { ContactAndAddressForm } from "@/components/form/contact-and-address-form";
-import { PassportForm } from "@/components/form/passport-form";
-import { AboutTravelForm } from "@/components/form/about-travel-form";
-import { TravelCompanyForm } from "@/components/form/travel-company-form";
-import { PreviousTravelForm } from "@/components/form/previous-travel-form";
-import { USAContactForm } from "@/components/form/usa-contact-form";
-import { FamilyForm } from "@/components/form/family-form";
-import { WorkEducationForm } from "@/components/form/work-education-form";
-import { AdditionalInformationForm } from "@/components/form/additional-information-form";
-import { SecurityForm } from "@/components/form/security-form";
+import { PersonalDataForm } from "./components/personal-data-form";
+import { ContactAndAddressForm } from "./components/contact-and-address-form";
+import { PassportForm } from "./components/passport-form";
+import { AboutTravelForm } from "./components/about-travel-form";
+import { TravelCompanyForm } from "./components/travel-company-form";
+import { PreviousTravelForm } from "./components/previous-travel-form";
+import { USAContactForm } from "./components/usa-contact-form";
+import { FamilyForm } from "./components/family-form";
+import { WorkEducationForm } from "./components/work-education-form";
+import { AdditionalInformationForm } from "./components/additional-information-form";
+import { SecurityForm } from "./components/security-form";
 import { DashboardHeader } from "../../perfil/components/dashboard-header";
 
 import { trpc } from "@/lib/trpc-client";

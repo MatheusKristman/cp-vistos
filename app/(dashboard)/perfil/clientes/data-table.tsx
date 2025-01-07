@@ -41,6 +41,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     interviewDate: true,
     meetingDate: true,
     visaType: true,
+    visaStatus: true,
     scheduleAccount: true,
     tax: true,
     statusDS: true,

@@ -49,6 +49,8 @@ enum VisaStatus {
   approved
   disapproved
   awaiting
+  in_progress
+  finished
 }
 
 enum StatusDS {

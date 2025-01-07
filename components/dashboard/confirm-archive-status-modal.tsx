@@ -23,25 +23,32 @@ interface ConfirmArchiveStatusModalProps {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   profileId: string;
+  isLoading: boolean;
 }
 
-export function ConfirmArchiveStatusModal({ isOpen, setOpen, profileId }: ConfirmArchiveStatusModalProps) {
+export function ConfirmArchiveStatusModal({
+  isOpen,
+  setOpen,
+  profileId,
+  isLoading,
+}: ConfirmArchiveStatusModalProps) {
   const { closeModal } = useClientDetailsModalStore();
 
   const utils = trpc.useUtils();
 
-  const { mutate: archiveProfile, isPending } = trpc.userRouter.archiveProfile.useMutation({
-    onSuccess: ({ message }) => {
-      toast.success(message);
+  const { mutate: archiveProfile, isPending } =
+    trpc.userRouter.archiveProfile.useMutation({
+      onSuccess: ({ message }) => {
+        toast.success(message);
 
-      utils.userRouter.getActiveClients.invalidate();
-      utils.userRouter.getProspectsClients.invalidate();
-      utils.userRouter.getArchivedClients.invalidate();
+        utils.userRouter.getActiveClients.invalidate();
+        utils.userRouter.getProspectsClients.invalidate();
+        utils.userRouter.getArchivedClients.invalidate();
 
-      setOpen(false);
-      closeModal();
-    },
-  });
+        setOpen(false);
+        closeModal();
+      },
+    });
 
   return (
     <AlertDialog open={isOpen}>
@@ -50,7 +57,7 @@ export function ConfirmArchiveStatusModal({ isOpen, setOpen, profileId }: Confir
           variant="outline"
           size="xl"
           className="flex items-center gap-2"
-          disabled={isPending}
+          disabled={isPending || isLoading}
           onClick={() => setOpen(true)}
         >
           <Archive className="w-5 h-5" strokeWidth={1.5} />
@@ -60,17 +67,27 @@ export function ConfirmArchiveStatusModal({ isOpen, setOpen, profileId }: Confir
 
       <AlertDialogContent className="rounded-3xl">
         <AlertDialogHeader>
-          <AlertDialogTitle>Tem certeza que deseja arquivar esse perfil?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Tem certeza que deseja arquivar esse perfil?
+          </AlertDialogTitle>
 
-          <AlertDialogDescription>O perfil será armazenado na página de arquivados.</AlertDialogDescription>
+          <AlertDialogDescription>
+            O perfil será armazenado na página de arquivados.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending} onClick={() => setOpen(false)}>
+          <AlertDialogCancel
+            disabled={isPending || isLoading}
+            onClick={() => setOpen(false)}
+          >
             Cancelar
           </AlertDialogCancel>
 
-          <AlertDialogAction disabled={isPending} onClick={() => archiveProfile({ profileId })}>
+          <AlertDialogAction
+            disabled={isPending || isLoading}
+            onClick={() => archiveProfile({ profileId })}
+          >
             Arquivar
             {isPending && <Loader2 className="animate-spin size-4 ml-2" />}
           </AlertDialogAction>

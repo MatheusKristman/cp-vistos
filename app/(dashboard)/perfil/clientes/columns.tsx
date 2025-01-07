@@ -1,17 +1,12 @@
 "use client";
 
-import { ScheduleAccount, StatusDS, VisaType } from "@prisma/client";
+import { ScheduleAccount, StatusDS, VisaStatus, VisaType } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { differenceInDays, format } from "date-fns";
 import { AlertTriangle, ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type UserTable = {
   id: string;
@@ -35,10 +30,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Nome
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -49,10 +41,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "group",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Grupo
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -70,10 +59,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "DSValid",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Data Venc. do barcode
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -120,10 +106,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "CASVDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Data do CASV
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -143,10 +126,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "interviewDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Data da entrevista
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -166,10 +146,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "meetingDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Data da reunião
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -190,11 +167,8 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "visaType",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status do visto
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Tipo do visto
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -217,13 +191,46 @@ export const columns: ColumnDef<UserTable>[] = [
     },
   },
   {
+    accessorKey: "visaStatus",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Status do visto
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      let visaStatus;
+
+      const value = row.getValue("visaStatus") as VisaStatus;
+
+      switch (value) {
+        case "awaiting":
+          visaStatus = "Aguardando";
+          break;
+        case "in_progress":
+          visaStatus = "Em Andamento";
+          break;
+        case "approved":
+          visaStatus = "Aprovado";
+          break;
+        case "disapproved":
+          visaStatus = "Reprovado";
+          break;
+        case "finished":
+          visaStatus = "Finalizado";
+          break;
+      }
+
+      return <span>{visaStatus}</span>;
+    },
+  },
+  {
     accessorKey: "scheduleAccount",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Conta de agendamento
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -250,10 +257,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "tax",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           Taxa
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -277,10 +281,7 @@ export const columns: ColumnDef<UserTable>[] = [
     accessorKey: "statusDS",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           DS-160
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
