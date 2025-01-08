@@ -125,6 +125,13 @@ const formSchema = z.object({
       invalid_type_error: "Data da taxa inválida",
     })
     .optional(),
+  shipping: z
+    .enum(["A Verificar", "Retirada", "SEDEX", "C-Retirada", "C-SEDEX", ""], {
+      message: "Opção de envio inválida",
+    })
+    .refine((val) => val.length !== 0, {
+      message: "Opção de envio é obrigatória",
+    }),
   interviewDate: z
     .date({
       required_error: "Data da entrevista é obrigatória",
@@ -174,6 +181,18 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
       birthDate: client?.birthDate ?? undefined,
       CASVDate: client?.CASVDate ?? undefined,
       DSNumber: client?.DSNumber.toString() ?? "",
+      shipping:
+        client?.shipping === "pickup"
+          ? "Retirada"
+          : client?.shipping === "sedex"
+            ? "SEDEX"
+            : client?.shipping === "c_pickup"
+              ? "C-Retirada"
+              : client?.shipping === "c_sedex"
+                ? "C-SEDEX"
+                : client?.shipping === "verifying"
+                  ? "A Verificar"
+                  : "",
       interviewDate: client?.interviewDate ?? undefined,
       interviewTime: client?.interviewTime ?? "",
       passport: client?.passport ?? "",
@@ -852,7 +871,49 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <FormField
+                control={form.control}
+                name={`shipping`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Opção de envio*</FormLabel>
+
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          disabled={isPending}
+                          className={cn(
+                            field.value === "" &&
+                              "[&>span]:text-muted-foreground",
+                          )}
+                        >
+                          <SelectValue placeholder="Selecione uma opção de envio" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent className="z-[99999]">
+                        <SelectItem value="A Verificar">A Verificar</SelectItem>
+
+                        <SelectItem value="Retirada">Retirada</SelectItem>
+
+                        <SelectItem value="SEDEX">SEDEX</SelectItem>
+
+                        <SelectItem value="C-Retirada">C-Retirada</SelectItem>
+
+                        <SelectItem value="C-SEDEX">C-SEDEX</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name={`interviewDate`}
@@ -940,7 +1001,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                         name={field.name}
                         value={field.value}
                         onBlur={field.onBlur}
-                        disabled={field.disabled}
+                        disabled={isPending}
                         onChange={(event) => {
                           const newValue = handleTime(event);
 

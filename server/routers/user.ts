@@ -1,6 +1,15 @@
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { BudgetPaid, Category, Role, ScheduleAccount, Status, VisaClass, VisaType } from "@prisma/client";
+import {
+  BudgetPaid,
+  Category,
+  Role,
+  ScheduleAccount,
+  Shipping,
+  Status,
+  VisaClass,
+  VisaType,
+} from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays } from "date-fns";
 
@@ -43,9 +52,12 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
-            message: "Celular inválido",
-          }),
+          .refine(
+            (val) => !val || (val && (val.length === 0 || val.length === 14)),
+            {
+              message: "Celular inválido",
+            },
+          ),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -161,14 +173,16 @@ export const userRouter = router({
                     "O3 Cônjuge ou Filho de um O1 ou O2",
                     "",
                   ],
-                  { message: "Classe de visto inválida" }
+                  { message: "Classe de visto inválida" },
                 )
                 .refine((val) => val.length !== 0, {
                   message: "Classe de visto é obrigatória",
                 }),
-              category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
-                message: "Categoria é obrigatória",
-              }),
+              category: z
+                .enum(["Visto Americano", "Passaporte", "E-TA", ""])
+                .refine((val) => val.length !== 0, {
+                  message: "Categoria é obrigatória",
+                }),
               issuanceDate: z
                 .date({
                   required_error: "Data de Emissão é obrigatória",
@@ -185,12 +199,12 @@ export const userRouter = router({
                 required_error: "Barcode é obrigatório",
                 invalid_type_error: "Barcode inválido",
               }),
-            })
+            }),
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      })
+      }),
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -356,11 +370,15 @@ export const userRouter = router({
       z.object({
         userId: z.string().min(1),
         profileName: z.string().min(1).min(6),
-        profileCpf: z.string().refine((val) => val.length > 0 && val.length === 14),
+        profileCpf: z
+          .string()
+          .refine((val) => val.length > 0 && val.length === 14),
         profileAddress: z.string(),
         birthDate: z.date().optional(),
         passport: z.string(),
-        visaType: z.enum(["Renovação", "Primeiro Visto", ""]).refine((val) => val.length !== 0),
+        visaType: z
+          .enum(["Renovação", "Primeiro Visto", ""])
+          .refine((val) => val.length !== 0),
         visaClass: z
           .enum([
             "B1 Babá",
@@ -371,9 +389,11 @@ export const userRouter = router({
             "",
           ])
           .refine((val) => val.length !== 0),
-        category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
-          message: "Categoria é obrigatória",
-        }),
+        category: z
+          .enum(["Visto Americano", "Passaporte", "E-TA", ""])
+          .refine((val) => val.length !== 0, {
+            message: "Categoria é obrigatória",
+          }),
         issuanceDate: z.date().optional(),
         expireDate: z.date().optional(),
         DSNumber: z.string(),
@@ -381,9 +401,12 @@ export const userRouter = router({
         interviewDate: z.date().optional(),
         interviewTime: z
           .string()
-          .regex(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/, "Horário da entrevista inválido")
+          .regex(
+            /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/,
+            "Horário da entrevista inválido",
+          )
           .optional(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -505,7 +528,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -552,7 +575,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -597,7 +620,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -638,36 +661,40 @@ export const userRouter = router({
 
       return { clients };
     }),
-  getAnnotations: adminProcedure.input(z.object({ accountId: z.string().min(1) })).query(async (opts) => {
-    const accountId = opts.input.accountId;
+  getAnnotations: adminProcedure
+    .input(z.object({ accountId: z.string().min(1) }))
+    .query(async (opts) => {
+      const accountId = opts.input.accountId;
 
-    const annotations = await prisma.annotations.findMany({
-      where: {
-        userId: accountId,
-      },
-    });
+      const annotations = await prisma.annotations.findMany({
+        where: {
+          userId: accountId,
+        },
+      });
 
-    return { annotations };
-  }),
-  getComments: collaboratorProcedure.input(z.object({ profileId: z.string().min(1) })).query(async (opts) => {
-    const { profileId } = opts.input;
+      return { annotations };
+    }),
+  getComments: collaboratorProcedure
+    .input(z.object({ profileId: z.string().min(1) }))
+    .query(async (opts) => {
+      const { profileId } = opts.input;
 
-    const comments = await prisma.comments.findMany({
-      where: {
-        profileId,
-      },
-      include: {
-        author: true,
-      },
-    });
+      const comments = await prisma.comments.findMany({
+        where: {
+          profileId,
+        },
+        include: {
+          author: true,
+        },
+      });
 
-    return { comments };
-  }),
+      return { comments };
+    }),
   getClientDetails: collaboratorProcedure
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -700,7 +727,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -737,7 +764,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "filling", "filled", "emitted"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -773,8 +800,14 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-        status: z.enum(["awaiting", "approved", "disapproved", "in_progress", "finished"]),
-      })
+        status: z.enum([
+          "awaiting",
+          "approved",
+          "disapproved",
+          "in_progress",
+          "finished",
+        ]),
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -811,7 +844,7 @@ export const userRouter = router({
       z.object({
         userId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { userId, annotation } = opts.input;
@@ -833,7 +866,7 @@ export const userRouter = router({
     .input(
       z.object({
         annotationId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { annotationId } = opts.input;
@@ -851,7 +884,7 @@ export const userRouter = router({
       z.object({
         annotationId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { annotationId, annotation } = opts.input;
@@ -878,7 +911,9 @@ export const userRouter = router({
           cel: z
             .string()
             .optional()
-            .refine((val) => !val || (val && (val.length === 0 || val.length === 14))),
+            .refine(
+              (val) => !val || (val && (val.length === 0 || val.length === 14)),
+            ),
           address: z.string(),
           email: z.string().email().min(1),
           password: z.string(),
@@ -890,55 +925,71 @@ export const userRouter = router({
           budgetPaid: z.enum(["", "Pago", "Pendente"]),
           scheduleAccount: z.enum(["Ativado", "Inativo", ""]),
         })
-        .superRefine(({ password, passwordConfirm, passwordScheduleAccount, passwordConfirmScheduleAccount }, ctx) => {
-          if (password.length > 0 && password.length < 6) {
-            ctx.addIssue({
-              path: ["password"],
-              code: "custom",
-              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-            });
-          }
+        .superRefine(
+          (
+            {
+              password,
+              passwordConfirm,
+              passwordScheduleAccount,
+              passwordConfirmScheduleAccount,
+            },
+            ctx,
+          ) => {
+            if (password.length > 0 && password.length < 6) {
+              ctx.addIssue({
+                path: ["password"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
 
-          if (passwordConfirm.length > 0 && passwordConfirm.length < 6) {
-            ctx.addIssue({
-              path: ["passwordConfirm"],
-              code: "custom",
-              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-            });
-          }
+            if (passwordConfirm.length > 0 && passwordConfirm.length < 6) {
+              ctx.addIssue({
+                path: ["passwordConfirm"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
 
-          if (passwordConfirm !== password) {
-            ctx.addIssue({
-              path: ["passwordConfirm"],
-              code: "custom",
-              message: "As senhas não coincidem, verifique e tente novamente",
-            });
-          }
+            if (passwordConfirm !== password) {
+              ctx.addIssue({
+                path: ["passwordConfirm"],
+                code: "custom",
+                message: "As senhas não coincidem, verifique e tente novamente",
+              });
+            }
 
-          if (passwordScheduleAccount.length > 0 && passwordScheduleAccount.length < 6) {
-            ctx.addIssue({
-              path: ["passwordScheduleAccount"],
-              code: "custom",
-              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-            });
-          }
+            if (
+              passwordScheduleAccount.length > 0 &&
+              passwordScheduleAccount.length < 6
+            ) {
+              ctx.addIssue({
+                path: ["passwordScheduleAccount"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
 
-          if (passwordConfirmScheduleAccount.length > 0 && passwordConfirmScheduleAccount.length < 6) {
-            ctx.addIssue({
-              path: ["passwordConfirmScheduleAccount"],
-              code: "custom",
-              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-            });
-          }
+            if (
+              passwordConfirmScheduleAccount.length > 0 &&
+              passwordConfirmScheduleAccount.length < 6
+            ) {
+              ctx.addIssue({
+                path: ["passwordConfirmScheduleAccount"],
+                code: "custom",
+                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+              });
+            }
 
-          if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
-            ctx.addIssue({
-              path: ["passwordConfirmScheduleAccount"],
-              code: "custom",
-              message: "As senhas não coincidem, verifique e tente novamente",
-            });
-          }
-        })
+            if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
+              ctx.addIssue({
+                path: ["passwordConfirmScheduleAccount"],
+                code: "custom",
+                message: "As senhas não coincidem, verifique e tente novamente",
+              });
+            }
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -1016,7 +1067,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, comment } = opts.input;
@@ -1044,7 +1095,7 @@ export const userRouter = router({
     .input(
       z.object({
         commentId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { commentId } = opts.input;
@@ -1062,7 +1113,7 @@ export const userRouter = router({
       z.object({
         commentId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { commentId, comment } = opts.input;
@@ -1083,11 +1134,15 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         profileName: z.string().min(1).min(6),
-        profileCpf: z.string().refine((val) => val.length > 0 && val.length === 14),
+        profileCpf: z
+          .string()
+          .refine((val) => val.length > 0 && val.length === 14),
         profileAddress: z.string(),
         birthDate: z.date().optional(),
         passport: z.string(),
-        visaType: z.enum(["Renovação", "Primeiro Visto", ""]).refine((val) => val.length !== 0),
+        visaType: z
+          .enum(["Renovação", "Primeiro Visto", ""])
+          .refine((val) => val.length !== 0),
         visaClass: z
           .enum([
             "B1 Babá",
@@ -1103,12 +1158,25 @@ export const userRouter = router({
         DSNumber: z.string(),
         CASVDate: z.date().optional(),
         taxDate: z.date().optional(),
+        shipping: z
+          .enum([
+            "A Verificar",
+            "Retirada",
+            "SEDEX",
+            "C-Retirada",
+            "C-SEDEX",
+            "",
+          ])
+          .refine((val) => val.length !== 0),
         interviewDate: z.date().optional(),
         interviewTime: z
           .string()
-          .regex(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/, "Horário da entrevista inválido")
+          .regex(
+            /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/,
+            "Horário da entrevista inválido",
+          )
           .optional(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -1129,6 +1197,7 @@ export const userRouter = router({
 
       let visaClass;
       let visaType;
+      let shipping;
 
       switch (opts.input.visaClass) {
         case "B1 Babá":
@@ -1148,6 +1217,27 @@ export const userRouter = router({
           break;
         default:
           visaClass = VisaClass.B1;
+          break;
+      }
+
+      switch (opts.input.shipping) {
+        case "A Verificar":
+          shipping = Shipping.verifying;
+          break;
+        case "Retirada":
+          shipping = Shipping.pickup;
+          break;
+        case "SEDEX":
+          shipping = Shipping.sedex;
+          break;
+        case "C-Retirada":
+          shipping = Shipping.c_pickup;
+          break;
+        case "C-SEDEX":
+          shipping = Shipping.c_sedex;
+          break;
+        default:
+          shipping = Shipping.verifying;
           break;
       }
 
@@ -1180,6 +1270,7 @@ export const userRouter = router({
           expireDate,
           CASVDate,
           taxDate,
+          shipping,
           interviewDate,
           interviewTime,
         },
@@ -1200,7 +1291,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1220,7 +1311,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1240,7 +1331,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;

@@ -88,6 +88,14 @@ enum Category {
   e_ta
 }
 
+enum Shipping {
+  verifying
+  pickup
+  sedex
+  c_pickup
+  c_sedex
+}
+
 model User {
   id                      String           @id @default(auto()) @map("_id") @db.ObjectId
   name                    String
@@ -140,6 +148,7 @@ model Profile {
   formStep      Int        @default(0)
   category      Category
   status        Status     @default(active)
+  shipping      Shipping   @default(verifying)
 
   userId       String         @db.ObjectId
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
