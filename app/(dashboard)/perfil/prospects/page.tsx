@@ -104,7 +104,9 @@ function ProspectsComponent() {
 }
 
 export default function ProspectsPage() {
-  <Suspense>
-    <ProspectsComponent />
-  </Suspense>;
+  return (
+    <Suspense>
+      <ProspectsComponent />
+    </Suspense>
+  );
 }

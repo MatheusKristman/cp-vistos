@@ -104,7 +104,9 @@ function ClientsComponent() {
 }
 
 export default function ClientsPage() {
-  <Suspense>
-    <ClientsComponent />
-  </Suspense>;
+  return (
+    <Suspense>
+      <ClientsComponent />
+    </Suspense>
+  );
 }

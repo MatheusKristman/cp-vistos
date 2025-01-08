@@ -567,6 +567,7 @@ export const userRouter = router({
         tax: !!profile.taxDate,
         visaType: profile.visaType,
         visaStatus: profile.visaStatus,
+        shipping: profile.shipping,
       }));
 
       return { clients };
@@ -612,6 +613,7 @@ export const userRouter = router({
         tax: !!profile.taxDate,
         visaType: profile.visaType,
         visaStatus: profile.visaStatus,
+        shipping: profile.shipping,
       }));
 
       return { clients };
@@ -657,6 +659,7 @@ export const userRouter = router({
         tax: !!profile.taxDate,
         visaType: profile.visaType,
         visaStatus: profile.visaStatus,
+        shipping: profile.shipping,
       }));
 
       return { clients };

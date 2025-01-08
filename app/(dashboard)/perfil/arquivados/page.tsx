@@ -104,7 +104,9 @@ function ArchivedComponent() {
 }
 
 export default function ArchivedPage() {
-  <Suspense>
-    <ArchivedComponent />
-  </Suspense>;
+  return (
+    <Suspense>
+      <ArchivedComponent />
+    </Suspense>
+  );
 }
