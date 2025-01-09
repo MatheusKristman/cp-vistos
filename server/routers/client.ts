@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { isUserAuthedProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
+import { Category } from "@prisma/client";
 
 export const clientRouter = router({
   getProfiles: isUserAuthedProcedure.query(async (opts) => {
@@ -21,7 +22,11 @@ export const clientRouter = router({
         email,
       },
       include: {
-        profiles: true,
+        profiles: {
+          where: {
+            category: Category.american_visa,
+          },
+        },
       },
     });
 
@@ -38,7 +43,7 @@ export const clientRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID obrigatório"),
-      }),
+      })
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
