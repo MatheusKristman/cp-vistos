@@ -10,26 +10,9 @@ import { FormAnimation } from "@/constants/animations/modal";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format, getYear } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -116,14 +99,12 @@ const formSchema = z
           "O3 Cônjuge ou Filho de um O1 ou O2",
           "",
         ],
-        { message: "Classe de visto inválida" },
+        { message: "Classe de visto inválida" }
       )
       .optional(),
-    category: z
-      .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-      .refine((val) => val.length !== 0, {
-        message: "Categoria é obrigatória",
-      }),
+    category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
+      message: "Categoria é obrigatória",
+    }),
     issuanceDate: z
       .date({
         invalid_type_error: "Data de Emissão inválida",
@@ -139,9 +120,7 @@ const formSchema = z
         invalid_type_error: "Barcode inválido",
       })
       .optional(),
-    responsibleCpf: z
-      .string({ invalid_type_error: "CPF do responsável inválido" })
-      .optional(),
+    responsibleCpf: z.string({ invalid_type_error: "CPF do responsável inválido" }).optional(),
     protocol: z
       .string({
         invalid_type_error: "Barcode inválido",
@@ -155,6 +134,11 @@ const formSchema = z
     scheduleDate: z
       .date({
         invalid_type_error: "Data de Agendamento inválida",
+      })
+      .optional(),
+    scheduleTime: z
+      .string({
+        invalid_type_error: "Horário do agendamento inválido",
       })
       .optional(),
     scheduleLocation: z
@@ -178,72 +162,72 @@ const formSchema = z
       })
       .optional(),
   })
-  .superRefine(
-    ({ category, visaType, visaClass, interviewDate, interviewTime }, ctx) => {
-      if (
-        category === "Visto Americano" &&
-        (visaType === "" || visaType === undefined)
-      ) {
-        ctx.addIssue({
-          path: ["visaType"],
-          code: "custom",
-          message: "Tipo do visto é obrigatório",
-        });
-      }
+  .superRefine(({ category, visaType, visaClass, scheduleTime, interviewDate, interviewTime }, ctx) => {
+    if (category === "Visto Americano" && (visaType === "" || visaType === undefined)) {
+      ctx.addIssue({
+        path: ["visaType"],
+        code: "custom",
+        message: "Tipo do visto é obrigatório",
+      });
+    }
 
-      if (
-        category === "Visto Americano" &&
-        (visaClass === "" || visaClass === undefined)
-      ) {
-        ctx.addIssue({
-          path: ["visaClass"],
-          code: "custom",
-          message: "Classe do visto é obrigatória",
-        });
-      }
+    if (category === "Visto Americano" && (visaClass === "" || visaClass === undefined)) {
+      ctx.addIssue({
+        path: ["visaClass"],
+        code: "custom",
+        message: "Classe do visto é obrigatória",
+      });
+    }
 
-      if (
-        category === "Visto Americano" &&
-        interviewDate &&
-        (interviewTime === "" ||
-          interviewTime === undefined ||
-          /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(
-            interviewTime,
-          ) === false)
-      ) {
-        ctx.addIssue({
-          path: ["interviewTime"],
-          code: "custom",
-          message: "Horário da entrevista é obrigatório",
-        });
-      }
-    },
-  );
+    if (
+      category === "Visto Americano" &&
+      interviewDate &&
+      (interviewTime === "" ||
+        interviewTime === undefined ||
+        /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(interviewTime) === false)
+    ) {
+      ctx.addIssue({
+        path: ["interviewTime"],
+        code: "custom",
+        message: "Horário da entrevista é obrigatório",
+      });
+    }
+
+    if (
+      category === "Passaporte" &&
+      scheduleTime !== undefined &&
+      /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(scheduleTime) === false
+    ) {
+      ctx.addIssue({
+        path: ["scheduleTime"],
+        code: "custom",
+        message: "Horário do agendamento inválido",
+      });
+    }
+  });
 
 export function ClientDetailsEditProfile({ handleClose }: Props) {
-  const { unsetToEditProfile, setToResume, client, setClient } =
-    useClientDetailsModalStore();
+  const { unsetToEditProfile, setToResume, client, setClient } = useClientDetailsModalStore();
 
   const utils = trpc.useUtils();
 
-  const { mutate: editProfile, isPending } =
-    trpc.userRouter.editProfile.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
+  const { mutate: editProfile, isPending } = trpc.userRouter.editProfile.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
 
-        utils.userRouter.getActiveClients.invalidate();
-        utils.userRouter.getProspectsClients.invalidate();
-        utils.userRouter.getArchivedClients.invalidate();
+      utils.userRouter.getActiveClients.invalidate();
+      utils.userRouter.getProspectsClients.invalidate();
+      utils.userRouter.getArchivedClients.invalidate();
 
-        setClient(data.clientUpdated);
-        handleBack();
-      },
-      onError: (error) => {
-        console.log(error);
+      setClient(data.clientUpdated);
+      handleBack();
+    },
+    onError: (error) => {
+      console.log(error);
 
-        toast.error("Ocorreu um erro ao editar o perfil");
-      },
-    });
+      toast.error("Ocorreu um erro ao editar o perfil");
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -258,55 +242,47 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
         client?.shipping === "pickup"
           ? "Retirada"
           : client?.shipping === "sedex"
-            ? "SEDEX"
-            : client?.shipping === "c_pickup"
-              ? "C-Retirada"
-              : client?.shipping === "c_sedex"
-                ? "C-SEDEX"
-                : client?.shipping === "verifying"
-                  ? "A Verificar"
-                  : "",
+          ? "SEDEX"
+          : client?.shipping === "c_pickup"
+          ? "C-Retirada"
+          : client?.shipping === "c_sedex"
+          ? "C-SEDEX"
+          : client?.shipping === "verifying"
+          ? "A Verificar"
+          : "",
       interviewDate: client?.interviewDate ?? undefined,
       interviewTime: client?.interviewTime ?? "",
       passport: client?.passport ?? "",
       visaType:
-        client?.visaType === "primeiro_visto"
-          ? "Primeiro Visto"
-          : client?.visaType === "renovacao"
-            ? "Renovação"
-            : "",
+        client?.visaType === "primeiro_visto" ? "Primeiro Visto" : client?.visaType === "renovacao" ? "Renovação" : "",
       visaClass:
         client?.visaClass === "B1"
           ? "B1 Babá"
           : client?.visaClass === "B2_B1"
-            ? "B1/B2 Turismo"
-            : client?.visaClass === "O1"
-              ? "O1 Capacidade Extraordinária"
-              : client?.visaClass === "O2"
-                ? "O2 Estrangeiro Acompanhante/Assistente"
-                : client?.visaClass === "O3"
-                  ? "O3 Cônjuge ou Filho de um O1 ou O2"
-                  : "",
+          ? "B1/B2 Turismo"
+          : client?.visaClass === "O1"
+          ? "O1 Capacidade Extraordinária"
+          : client?.visaClass === "O2"
+          ? "O2 Estrangeiro Acompanhante/Assistente"
+          : client?.visaClass === "O3"
+          ? "O3 Cônjuge ou Filho de um O1 ou O2"
+          : "",
       category:
         client?.category === "american_visa"
           ? "Visto Americano"
           : client?.category === "passport"
-            ? "Passaporte"
-            : client?.category === "e_ta"
-              ? "E-TA"
-              : "",
+          ? "Passaporte"
+          : client?.category === "e_ta"
+          ? "E-TA"
+          : "",
       issuanceDate: client?.issuanceDate ?? undefined,
       expireDate: client?.expireDate ?? undefined,
       DSNumber: client?.DSNumber.toString() ?? "",
       responsibleCpf: client?.responsibleCpf ?? "",
       protocol: client?.protocol ?? "",
-      paymentStatus:
-        client?.paymentStatus === "pending"
-          ? "Pendente"
-          : client?.paymentStatus === "paid"
-            ? "Pago"
-            : "",
+      paymentStatus: client?.paymentStatus === "pending" ? "Pendente" : client?.paymentStatus === "paid" ? "Pago" : "",
       scheduleDate: client?.scheduleDate ?? undefined,
+      scheduleTime: client?.scheduleTime ?? "",
       scheduleLocation: client?.scheduleLocation ?? "",
       entryDate: client?.entryDate ?? undefined,
       process: client?.process ?? "",
@@ -314,10 +290,10 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
         client?.ETAStatus === "analysis"
           ? "Em Análise"
           : client?.ETAStatus === "approved"
-            ? "Aprovado"
-            : client?.ETAStatus === "disapproved"
-              ? "Reprovado"
-              : "",
+          ? "Aprovado"
+          : client?.ETAStatus === "disapproved"
+          ? "Reprovado"
+          : "",
     },
   });
 
@@ -353,26 +329,10 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
   }
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={FormAnimation}
-    >
+    <motion.div initial="initial" animate="animate" exit="exit" variants={FormAnimation}>
       <div className="w-full grid grid-cols-2 grid-rows-2 gap-4 mb-9 sm:flex sm:flex-row sm:items-center sm:justify-between">
-        <Button
-          onClick={handleBack}
-          disabled={isPending}
-          variant="link"
-          size="icon"
-          className="row-start-1 row-end-2"
-        >
-          <Image
-            src="/assets/icons/arrow-left-dark.svg"
-            alt="Voltar"
-            width={24}
-            height={24}
-          />
+        <Button onClick={handleBack} disabled={isPending} variant="link" size="icon" className="row-start-1 row-end-2">
+          <Image src="/assets/icons/arrow-left-dark.svg" alt="Voltar" width={24} height={24} />
         </Button>
 
         <h1 className="text-2xl font-semibold text-foreground text-center sm:text-3xl row-end-3 row-start-2 col-span-2">
@@ -386,20 +346,12 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
           size="icon"
           className="row-start-1 row-end-2 justify-self-end"
         >
-          <Image
-            src="/assets/icons/cross-blue.svg"
-            alt="Fechar"
-            width={24}
-            height={24}
-          />
+          <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
         </Button>
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full flex flex-col gap-9"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-9">
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
               <FormField
@@ -468,14 +420,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                           <Button
                             variant="date"
                             disabled={isPending}
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -484,33 +431,25 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
 
-                      <PopoverContent
-                        className="w-auto p-0 bg-background z-[99999]"
-                        align="start"
-                      >
+                      <PopoverContent className="w-auto p-0 bg-background z-[99999]" align="start">
                         <Calendar
                           mode="single"
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -556,22 +495,65 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                 control={form.control}
                 name={`passport`}
                 render={({ field }) => (
-                  <FormItem
-                    className={cn(
-                      category !== "Visto Americano" &&
-                        category !== "E-TA" &&
-                        "hidden",
-                    )}
-                  >
+                  <FormItem className={cn(category !== "Visto Americano" && category !== "E-TA" && "hidden")}>
                     <FormLabel>Passaporte</FormLabel>
 
                     <FormControl>
-                      <Input
-                        disabled={isPending}
-                        placeholder="Insira o passaporte"
-                        {...field}
-                      />
+                      <Input disabled={isPending} placeholder="Insira o passaporte" {...field} />
                     </FormControl>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="entryDate"
+                render={({ field }) => (
+                  <FormItem className={cn("flex flex-col gap-1", category !== "Passaporte" && "hidden")}>
+                    <FormLabel className="truncate">Data de entrada</FormLabel>
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button variant="date" className={cn(!field.value && "text-muted-foreground")}>
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                            {field.value ? (
+                              format(field.value, "dd/MM/yyyy", {
+                                locale: ptBR,
+                              })
+                            ) : (
+                              <span className="text-muted-foreground truncate">Selecione a data</span>
+                            )}
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+
+                      <PopoverContent className="w-auto p-0 bg-background" align="start">
+                        <Calendar
+                          mode="single"
+                          locale={ptBR}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                          captionLayout="dropdown"
+                          fromYear={1900}
+                          toYear={currentYear}
+                          classNames={{
+                            day_hidden: "invisible",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            caption_dropdowns: "flex gap-3",
+                            vhidden: "hidden",
+                            caption_label: "hidden",
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
 
                     <FormMessage className="font-normal text-destructive" />
                   </FormItem>
@@ -581,10 +563,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
 
             {/* NOTE: Visivel somente para Visto Americano */}
             <div
-              className={cn(
-                "w-full grid grid-cols-1 sm:grid-cols-2 gap-6",
-                category !== "Visto Americano" && "hidden",
-              )}
+              className={cn("w-full grid grid-cols-1 sm:grid-cols-2 gap-6", category !== "Visto Americano" && "hidden")}
             >
               <FormField
                 control={form.control}
@@ -593,18 +572,11 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                   <FormItem>
                     <FormLabel>Tipo de Visto*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger
                           disabled={isPending}
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground",
-                          )}
+                          className={cn(field.value === "" && "[&>span]:text-muted-foreground")}
                         >
                           <SelectValue placeholder="Selecione o tipo de visto" />
                         </SelectTrigger>
@@ -612,9 +584,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
 
                       <SelectContent className="z-[99999]">
                         <SelectItem value="Renovação">Renovação</SelectItem>
-                        <SelectItem value="Primeiro Visto">
-                          Primeiro Visto
-                        </SelectItem>
+                        <SelectItem value="Primeiro Visto">Primeiro Visto</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -630,18 +600,11 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                   <FormItem>
                     <FormLabel>Classe do Visto*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger
                           disabled={isPending}
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground",
-                          )}
+                          className={cn(field.value === "" && "[&>span]:text-muted-foreground")}
                         >
                           <SelectValue placeholder="Selecione a classe do visto" />
                         </SelectTrigger>
@@ -650,13 +613,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                       <SelectContent className="z-[99999]">
                         <SelectItem value="B1 Babá">B1 Babá</SelectItem>
 
-                        <SelectItem value="B1/B2 Turismo">
-                          B1/B2 Turismo
-                        </SelectItem>
+                        <SelectItem value="B1/B2 Turismo">B1/B2 Turismo</SelectItem>
 
-                        <SelectItem value="O1 Capacidade Extraordinária">
-                          O1 Capacidade Extraordinária
-                        </SelectItem>
+                        <SelectItem value="O1 Capacidade Extraordinária">O1 Capacidade Extraordinária</SelectItem>
 
                         <SelectItem value="O2 Estrangeiro Acompanhante/Assistente">
                           O2 Estrangeiro Acompanhante/Assistente
@@ -677,8 +636,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
             {/* NOTE: Visivel somente para Visto Americano */}
             <div
               className={cn("w-full grid grid-cols-1 sm:grid-cols-2 gap-6", {
-                hidden:
-                  visaType !== "Renovação" && category !== "Visto Americano",
+                hidden: visaType !== "Renovação" && category !== "Visto Americano",
               })}
             >
               <FormField
@@ -694,14 +652,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                           <Button
                             disabled={isPending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -710,33 +663,25 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data de emissão
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data de emissão</span>
                             )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
 
-                      <PopoverContent
-                        className="w-auto p-0 bg-background z-[99999]"
-                        align="start"
-                      >
+                      <PopoverContent className="w-auto p-0 bg-background z-[99999]" align="start">
                         <Calendar
                           mode="single"
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -764,14 +709,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                           <Button
                             disabled={isPending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -780,33 +720,25 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data de expiração
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data de expiração</span>
                             )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
 
-                      <PopoverContent
-                        className="w-auto p-0 bg-background z-[99999]"
-                        align="start"
-                      >
+                      <PopoverContent className="w-auto p-0 bg-background z-[99999]" align="start">
                         <Calendar
                           mode="single"
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -826,7 +758,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
-                category !== "Visto Americano" && "hidden",
+                category !== "Visto Americano" && "hidden"
               )}
             >
               <FormField
@@ -837,11 +769,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                     <FormLabel>Barcode</FormLabel>
 
                     <FormControl>
-                      <Input
-                        disabled={isPending}
-                        placeholder="Insira o número da DS"
-                        {...field}
-                      />
+                      <Input disabled={isPending} placeholder="Insira o número da DS" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -862,14 +790,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                           <Button
                             disabled={isPending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -878,34 +801,25 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data do CASV
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data do CASV</span>
                             )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
 
-                      <PopoverContent
-                        className="w-auto p-0 bg-background z-[99999]"
-                        align="start"
-                      >
+                      <PopoverContent className="w-auto p-0 bg-background z-[99999]" align="start">
                         <Calendar
                           mode="single"
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date("2200-01-01") ||
-                            date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date("2200-01-01") || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -933,14 +847,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                           <Button
                             disabled={isPending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -949,34 +858,25 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data da taxa
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data da taxa</span>
                             )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
 
-                      <PopoverContent
-                        className="w-auto p-0 bg-background z-[99999]"
-                        align="start"
-                      >
+                      <PopoverContent className="w-auto p-0 bg-background z-[99999]" align="start">
                         <Calendar
                           mode="single"
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date("2200-01-01") ||
-                            date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date("2200-01-01") || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -994,10 +894,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
 
             {/* NOTE: Visivel somente para Visto Americano */}
             <div
-              className={cn(
-                "w-full grid grid-cols-1 sm:grid-cols-3 gap-6",
-                category !== "Visto Americano" && "hidden",
-              )}
+              className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", category !== "Visto Americano" && "hidden")}
             >
               <FormField
                 control={form.control}
@@ -1006,18 +903,11 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                   <FormItem>
                     <FormLabel>Opção de envio*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
                         <SelectTrigger
                           disabled={isPending}
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground",
-                          )}
+                          className={cn(field.value === "" && "[&>span]:text-muted-foreground")}
                         >
                           <SelectValue placeholder="Selecione uma opção de envio" />
                         </SelectTrigger>
@@ -1054,14 +944,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                           <Button
                             disabled={isPending}
                             variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
+                            className={cn(!field.value && "text-muted-foreground")}
                           >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1070,34 +955,25 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground">
-                                Selecione a data da entrevista
-                              </span>
+                              <span className="text-muted-foreground">Selecione a data da entrevista</span>
                             )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
 
-                      <PopoverContent
-                        className="w-auto p-0 bg-background z-[99999]"
-                        align="start"
-                      >
+                      <PopoverContent className="w-auto p-0 bg-background z-[99999]" align="start">
                         <Calendar
                           mode="single"
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date("2200-01-01") ||
-                            date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date("2200-01-01") || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1144,20 +1020,13 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
             </div>
 
             {/* NOTE: Apresenta somente em Passaporte */}
-            <div
-              className={cn(
-                "w-full grid grid-cols-1 sm:grid-cols-3 gap-6",
-                category !== "Passaporte" && "hidden",
-              )}
-            >
+            <div className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", category !== "Passaporte" && "hidden")}>
               <FormField
                 control={form.control}
                 name="responsibleCpf"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="truncate">
-                      CPF do responsável
-                    </FormLabel>
+                    <FormLabel className="truncate">CPF do responsável</FormLabel>
 
                     <FormControl>
                       <Input
@@ -1202,22 +1071,11 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                 name="paymentStatus"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="truncate">
-                      Status do pagamento
-                    </FormLabel>
+                    <FormLabel className="truncate">Status do pagamento</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground",
-                          )}
-                        >
+                        <SelectTrigger className={cn(field.value === "" && "[&>span]:text-muted-foreground")}>
                           <SelectValue placeholder="Selecione o status do pagamento" />
                         </SelectTrigger>
                       </FormControl>
@@ -1236,34 +1094,19 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
             </div>
 
             {/* NOTE: Apresenta somente em Passaporte */}
-            <div
-              className={cn(
-                "w-full grid grid-cols-1 sm:grid-cols-3 gap-6",
-                category !== "Passaporte" && "hidden",
-              )}
-            >
+            <div className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", category !== "Passaporte" && "hidden")}>
               <FormField
                 control={form.control}
                 name="scheduleDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="truncate">
-                      Data do agendamento
-                    </FormLabel>
+                    <FormLabel className="truncate">Data do agendamento</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
-                          <Button
-                            variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
-                          >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
+                          <Button variant="date" className={cn(!field.value && "text-muted-foreground")}>
+                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
                             <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1272,33 +1115,25 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                                 locale: ptBR,
                               })
                             ) : (
-                              <span className="text-muted-foreground truncate">
-                                Selecione a data
-                              </span>
+                              <span className="text-muted-foreground truncate">Selecione a data</span>
                             )}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
 
-                      <PopoverContent
-                        className="w-auto p-0 bg-background"
-                        align="start"
-                      >
+                      <PopoverContent className="w-auto p-0 bg-background" align="start">
                         <Calendar
                           mode="single"
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1307,6 +1142,35 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                         />
                       </PopoverContent>
                     </Popover>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="scheduleTime"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="truncate">Horário do agendamento</FormLabel>
+
+                    <FormControl>
+                      <Input
+                        placeholder="Insira o horário do agendamento"
+                        maxLength={5}
+                        ref={field.ref}
+                        name={field.name}
+                        value={field.value}
+                        onBlur={field.onBlur}
+                        disabled={isPending}
+                        onChange={(event) => {
+                          const newValue = handleTime(event);
+
+                          form.setValue("scheduleTime", newValue);
+                        }}
+                      />
+                    </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
                   </FormItem>
@@ -1318,85 +1182,11 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                 name="scheduleLocation"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="truncate">
-                      Local do agendamento
-                    </FormLabel>
+                    <FormLabel className="truncate">Local do agendamento</FormLabel>
 
                     <FormControl>
-                      <Input
-                        placeholder="Insira o local do agendamento"
-                        {...field}
-                      />
+                      <Input placeholder="Insira o local do agendamento" {...field} />
                     </FormControl>
-
-                    <FormMessage className="font-normal text-destructive" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="entryDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="truncate">Data de entrada</FormLabel>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="date"
-                            className={cn(
-                              !field.value && "text-muted-foreground",
-                            )}
-                          >
-                            <CalendarIcon
-                              strokeWidth={1.5}
-                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                            />
-
-                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
-
-                            {field.value ? (
-                              format(field.value, "PPP", {
-                                locale: ptBR,
-                              })
-                            ) : (
-                              <span className="text-muted-foreground truncate">
-                                Selecione a data
-                              </span>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-
-                      <PopoverContent
-                        className="w-auto p-0 bg-background"
-                        align="start"
-                      >
-                        <Calendar
-                          mode="single"
-                          locale={ptBR}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          captionLayout="dropdown"
-                          fromYear={1900}
-                          toYear={currentYear}
-                          classNames={{
-                            day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
-                            caption_dropdowns: "flex gap-3",
-                            vhidden: "hidden",
-                            caption_label: "hidden",
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
 
                     <FormMessage className="font-normal text-destructive" />
                   </FormItem>
@@ -1408,7 +1198,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
-                category !== "E-TA" && "hidden",
+                category !== "E-TA" && "hidden"
               )}
             >
               <FormField
@@ -1418,18 +1208,9 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="truncate">Status</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className={cn(
-                            field.value === "" &&
-                              "[&>span]:text-muted-foreground",
-                          )}
-                        >
+                        <SelectTrigger className={cn(field.value === "" && "[&>span]:text-muted-foreground")}>
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
                       </FormControl>
@@ -1467,22 +1248,11 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
           </div>
 
           <div className="w-full flex flex-col-reverse gap-6 sm:flex-row">
-            <Button
-              disabled={isPending}
-              type="button"
-              variant="outline"
-              size="xl"
-              className="w-full sm:w-fit"
-            >
+            <Button disabled={isPending} type="button" variant="outline" size="xl" className="w-full sm:w-fit">
               Cancelar
             </Button>
 
-            <Button
-              disabled={isPending}
-              type="submit"
-              size="xl"
-              className="w-full sm:w-fit flex items-center gap-2"
-            >
+            <Button disabled={isPending} type="submit" size="xl" className="w-full sm:w-fit flex items-center gap-2">
               {isPending ? (
                 <>
                   <Loader2 className="animate-spin" />

@@ -84,18 +84,6 @@ export function PassportProfileItem({ profile }: PassportProfileItemProps) {
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">
-            Data de Entrada
-          </span>
-
-          <span className="text-base font-medium">
-            {profile.entryDate
-              ? format(profile.entryDate, "dd/MM/yyyy")
-              : "--/--/----"}
-          </span>
-        </div>
-
-        <div className="w-full flex flex-col">
-          <span className="text-xs font-medium opacity-50">
             Data do agendamento
           </span>
 
@@ -108,11 +96,35 @@ export function PassportProfileItem({ profile }: PassportProfileItemProps) {
 
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">
+            Horário do agendamento
+          </span>
+
+          <span className="text-base font-medium">
+            {profile.scheduleTime ? profile.scheduleTime : "---"}
+          </span>
+        </div>
+
+        <div className="w-full flex flex-col">
+          <span className="text-xs font-medium opacity-50">
             Local do agendamento
           </span>
 
           <span className="text-base font-medium">
             {profile.scheduleLocation ? profile.scheduleLocation : "---"}
+          </span>
+        </div>
+      </div>
+
+      <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="w-full flex flex-col">
+          <span className="text-xs font-medium opacity-50">
+            Data de Entrada
+          </span>
+
+          <span className="text-base font-medium">
+            {profile.entryDate
+              ? format(profile.entryDate, "dd/MM/yyyy")
+              : "--/--/----"}
           </span>
         </div>
       </div>
