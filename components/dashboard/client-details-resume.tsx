@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { StatusDS, VisaStatus } from "@prisma/client";
+import { Category, StatusDS, VisaStatus } from "@prisma/client";
 import {
   Edit,
   NotepadText,
@@ -73,10 +73,6 @@ export function ClientDetailsResume({ handleClose }: Props) {
   const utils = trpc.useUtils();
 
   useEffect(() => {
-    console.log(role);
-  }, [role]);
-
-  useEffect(() => {
     if (client) {
       setStatusDS(client.statusDS);
       setVisaStatus(client.visaStatus);
@@ -86,7 +82,6 @@ export function ClientDetailsResume({ handleClose }: Props) {
   const { mutate: changeProfile, isPending } =
     trpc.userRouter.getClientDetails.useMutation({
       onSuccess({ client }) {
-        console.log({ client });
         setClient(client);
       },
       onError(error) {
@@ -306,7 +301,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="flex flex-col">
               <span className="text-sm text-foreground/50 font-medium">
-                Conta de Agendamento
+                Conta de agendamento
               </span>
 
               <span className="text-lg font-medium text-foreground">
@@ -358,7 +353,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
         <div className="w-full h-px bg-[#E6EBEE]" />
 
-        <div className="w-full flex flex-col gap-6">
+        {client.category === Category.american_visa && (
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
@@ -739,7 +734,428 @@ export function ClientDetailsResume({ handleClose }: Props) {
               </Button>
             </div>
           </div>
-        </div>
+        )}
+
+        {client.category === Category.passport && (
+          <div className="w-full flex flex-col gap-6">
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
+                Perfil: {client.name}
+              </h2>
+
+              {client.user.profiles.length > 0 && (
+                <Select
+                  value={profileSelected}
+                  disabled={isLoading}
+                  onValueChange={(value) => {
+                    setProfileSelected("");
+                    changeProfile({ profileId: value });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione outro perfil" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    {client.user.profiles.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">
+                  CPF
+                </span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.cpf}
+                </span>
+              </div>
+
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">
+                    CPF do responsável
+                  </span>
+
+                  <span className="text-base font-medium text-foreground">
+                    {client.responsibleCpf}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">
+                  Protocolo
+                </span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.protocol}
+                </span>
+              </div>
+
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">
+                  Data de entrada
+                </span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.entryDate
+                    ? format(client.entryDate, "dd/MM/yyyy")
+                    : "--/--/----"}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">
+                  Data do agendamento
+                </span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.scheduleDate
+                    ? format(client.scheduleDate, "dd/MM/yyyy")
+                    : "--/--/----"}
+                </span>
+              </div>
+
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">
+                    Local do agendamento
+                  </span>
+
+                  <span className="text-base font-medium text-foreground">
+                    {client.scheduleLocation}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
+                  Status do pagamento
+                  {false && (
+                    <RotateCw
+                      className="h-3 w-3 animate-spin"
+                      strokeWidth={1.5}
+                    />
+                  )}
+                </span>
+
+                <Select
+                  defaultValue={client.paymentStatus}
+                  // value={statusDS}
+                  // onValueChange={(value) => {
+                  //   updateStatusDS({
+                  //     profileId: client.id,
+                  //     status: value as StatusDS,
+                  //   });
+                  // }}
+                  // disabled={isLoading}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      !client.paymentStatus && "[&>span]:text-muted-foreground",
+                    )}
+                  >
+                    <SelectValue placeholder="Selecione o status do pagamento" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    <SelectItem value="pending">Pendente</SelectItem>
+                    <SelectItem value="paid">Pago</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col-reverse gap-6 sm:flex-col">
+              {client.status === "archived" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Desarquivar"
+                    type="archived"
+                    title="Tem certeza que deseja desarquivar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : client.status === "prospect" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Ativar"
+                    type="prospect"
+                    title="Tem certeza que deseja ativar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              )}
+
+              <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleComment}
+                >
+                  <MessageCircleMore className="w-5 h-5" strokeWidth={1.5} />
+                  Comentários
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleEditProfile}
+                >
+                  <Edit className="w-5 h-5" strokeWidth={1.5} />
+                  Editar Perfil
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {client.category === Category.e_ta && (
+          <div className="w-full flex flex-col gap-6">
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
+                Perfil: {client.name}
+              </h2>
+
+              {client.user.profiles.length > 0 && (
+                <Select
+                  value={profileSelected}
+                  disabled={isLoading}
+                  onValueChange={(value) => {
+                    setProfileSelected("");
+                    changeProfile({ profileId: value });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione outro perfil" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    {client.user.profiles.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">
+                  CPF
+                </span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.cpf}
+                </span>
+              </div>
+
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">
+                    Processo
+                  </span>
+
+                  <span className="text-base font-medium text-foreground">
+                    {client.process}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">
+                  Passaporte
+                </span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.passport}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
+                  Status
+                  {false && (
+                    <RotateCw
+                      className="h-3 w-3 animate-spin"
+                      strokeWidth={1.5}
+                    />
+                  )}
+                </span>
+
+                <Select
+                  defaultValue={client.ETAStatus}
+                  // value={statusDS}
+                  // onValueChange={(value) => {
+                  //   updateStatusDS({
+                  //     profileId: client.id,
+                  //     status: value as StatusDS,
+                  //   });
+                  // }}
+                  // disabled={isLoading}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      !client.ETAStatus && "[&>span]:text-muted-foreground",
+                    )}
+                  >
+                    <SelectValue placeholder="Selecione o status" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    <SelectItem value="analysis">Em Análise</SelectItem>
+                    <SelectItem value="approved">Aprovado</SelectItem>
+                    <SelectItem value="disapproved">Reprovado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col-reverse gap-6 sm:flex-col">
+              {client.status === "archived" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Desarquivar"
+                    type="archived"
+                    title="Tem certeza que deseja desarquivar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : client.status === "prospect" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Ativar"
+                    type="prospect"
+                    title="Tem certeza que deseja ativar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              )}
+
+              <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleComment}
+                >
+                  <MessageCircleMore className="w-5 h-5" strokeWidth={1.5} />
+                  Comentários
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleEditProfile}
+                >
+                  <Edit className="w-5 h-5" strokeWidth={1.5} />
+                  Editar Perfil
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );

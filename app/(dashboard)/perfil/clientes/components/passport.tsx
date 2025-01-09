@@ -6,7 +6,6 @@ import { columns } from "../columns";
 import { DataTable } from "../data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// TODO: verificar com a gih os campos que terão no passport
 export function Passport() {
   const { data, isFetching } = trpc.userRouter.getActiveClients.useQuery({
     category: "passport",

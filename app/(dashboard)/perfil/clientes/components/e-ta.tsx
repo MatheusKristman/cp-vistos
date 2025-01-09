@@ -6,10 +6,9 @@ import { columns } from "../columns";
 import { DataTable } from "../data-table";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// TODO: verificar com a gih os campos que terão no e_ta
 export function E_TA() {
   const { data, isFetching } = trpc.userRouter.getActiveClients.useQuery({
-    category: "passport",
+    category: "e_ta",
   });
 
   if (isFetching) {

@@ -17,86 +17,267 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import useUserStore from "@/constants/stores/useUserStore";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useSubmitConfirmationStore } from "@/constants/stores/useSubmitConfirmationStore";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { SubmitConfirmationModal } from "@/app/(dashboard)/perfil/criar-conta/components/submit-confirmation-modal";
 
 import "react-phone-number-input/style.css";
 
-const profileFormSchema = z.object({
-  profileName: z
-    .string({
-      required_error: "Nome do perfil é obrigatório",
-      invalid_type_error: "Nome do perfil inválido",
-    })
-    .min(1, { message: "Nome do perfil é obrigatório" })
-    .min(6, { message: "Nome do perfil precisa ter no mínimo 6 caracteres" }),
-  profileCpf: z
-    .string({
-      required_error: "CPF do perfil é obrigatório",
-      invalid_type_error: "CPF do perfil inválido",
-    })
-    .refine((val) => val.length > 0 && val.length === 14, {
-      message: "CPF inválido",
+const profileFormSchema = z
+  .object({
+    profileName: z
+      .string({
+        required_error: "Nome do perfil é obrigatório",
+        invalid_type_error: "Nome do perfil inválido",
+      })
+      .min(1, { message: "Nome do perfil é obrigatório" })
+      .min(6, { message: "Nome do perfil precisa ter no mínimo 6 caracteres" }),
+    profileCpf: z
+      .string({
+        required_error: "CPF do perfil é obrigatório",
+        invalid_type_error: "CPF do perfil inválido",
+      })
+      .refine((val) => val.length > 0 && val.length === 14, {
+        message: "CPF inválido",
+      }),
+    profileAddress: z.string({
+      required_error: "Endereço do perfil é obrigatório",
+      invalid_type_error: "Endereço do perfil inválido",
     }),
-  profileAddress: z.string({
-    required_error: "Endereço do perfil é obrigatório",
-    invalid_type_error: "Endereço do perfil inválido",
-  }),
-  birthDate: z
-    .date({
-      required_error: "Data de nascimento é obrigatório",
-      invalid_type_error: "Data de nascimento inválida",
-    })
-    .optional(),
-  passport: z.string({
-    required_error: "Passaporte é obrigatório",
-    invalid_type_error: "Passaporte inválido",
-  }),
-  visaType: z
-    .enum(["Renovação", "Primeiro Visto", ""], {
-      message: "Tipo de visto inválido",
-    })
-    .refine((val) => val.length !== 0, {
-      message: "Tipo de visto é obrigatório",
-    }),
-  visaClass: z
-    .enum(
-      [
-        "B1 Babá",
-        "B1/B2 Turismo",
-        "O1 Capacidade Extraordinária",
-        "O2 Estrangeiro Acompanhante/Assistente",
-        "O3 Cônjuge ou Filho de um O1 ou O2",
-        "",
-      ],
-      { message: "Classe de visto inválida" }
-    )
-    .refine((val) => val.length !== 0, {
-      message: "Classe de visto é obrigatória",
-    }),
-  category: z
-    .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-    .refine((val) => val.length !== 0, { message: "Categoria é obrigatória" }),
-  issuanceDate: z
-    .date({
-      required_error: "Data de Emissão é obrigatória",
-      invalid_type_error: "Data de Emissão inválida",
-    })
-    .optional(),
-  expireDate: z
-    .date({
-      required_error: "Data de Expiração é obrigatória",
-      invalid_type_error: "Data de Expiração inválida",
-    })
-    .optional(),
-  DSNumber: z.string({
-    required_error: "Barcode é obrigatório",
-    invalid_type_error: "Barcode inválido",
-  }),
-});
+    birthDate: z
+      .date({
+        invalid_type_error: "Data de nascimento inválida",
+      })
+      .optional(),
+    passport: z
+      .string({
+        invalid_type_error: "Passaporte inválido",
+      })
+      .optional(),
+    visaType: z
+      .enum(["Renovação", "Primeiro Visto", ""], {
+        message: "Tipo de Visto inválido",
+      })
+      .optional(),
+    visaClass: z
+      .enum(
+        [
+          "B1 Babá",
+          "B1/B2 Turismo",
+          "O1 Capacidade Extraordinária",
+          "O2 Estrangeiro Acompanhante/Assistente",
+          "O3 Cônjuge ou Filho de um O1 ou O2",
+          "",
+        ],
+        { message: "Classe de visto inválida" },
+      )
+      .optional(),
+    category: z
+      .enum(["Visto Americano", "Passaporte", "E-TA", ""])
+      .refine((val) => val.length !== 0, {
+        message: "Categoria é obrigatória",
+      }),
+    issuanceDate: z
+      .date({
+        invalid_type_error: "Data de Emissão inválida",
+      })
+      .optional(),
+    expireDate: z
+      .date({
+        invalid_type_error: "Data de Expiração inválida",
+      })
+      .optional(),
+    DSNumber: z
+      .string({
+        invalid_type_error: "Barcode inválido",
+      })
+      .optional(),
+    responsibleCpf: z
+      .string({ invalid_type_error: "CPF do responsável inválido" })
+      .optional(),
+    protocol: z
+      .string({
+        invalid_type_error: "Barcode inválido",
+      })
+      .optional(),
+    paymentStatus: z
+      .enum(["Pendente", "Pago", ""], {
+        message: "Status de pagamento inválido",
+      })
+      .optional(),
+    scheduleDate: z
+      .date({
+        invalid_type_error: "Data de Agendamento inválida",
+      })
+      .optional(),
+    scheduleLocation: z
+      .string({
+        invalid_type_error: "Local do agendamento inválido",
+      })
+      .optional(),
+    entryDate: z
+      .date({
+        invalid_type_error: "Data de entrada inválida",
+      })
+      .optional(),
+    process: z
+      .string({
+        invalid_type_error: "Processo inválido",
+      })
+      .optional(),
+    ETAStatus: z
+      .enum(["Em Análise", "Aprovado", "Reprovado", ""], {
+        message: "Status inválido",
+      })
+      .optional(),
+  })
+  .superRefine(
+    (
+      {
+        category,
+        visaType,
+        visaClass,
+        responsibleCpf,
+        protocol,
+        paymentStatus,
+        scheduleDate,
+        scheduleLocation,
+        entryDate,
+        process,
+        ETAStatus,
+        passport,
+      },
+      ctx,
+    ) => {
+      if (
+        category === "Visto Americano" &&
+        (visaType === "" || visaType === undefined)
+      ) {
+        ctx.addIssue({
+          path: ["visaType"],
+          code: "custom",
+          message: "Tipo do visto é obrigatório",
+        });
+      }
+
+      if (
+        category === "Visto Americano" &&
+        (visaClass === "" || visaClass === undefined)
+      ) {
+        ctx.addIssue({
+          path: ["visaClass"],
+          code: "custom",
+          message: "Classe do visto é obrigatória",
+        });
+      }
+
+      if (
+        category === "Passaporte" &&
+        (responsibleCpf === "" || responsibleCpf === undefined)
+      ) {
+        ctx.addIssue({
+          path: ["responsibleCpf"],
+          code: "custom",
+          message: "CPF do responsável é obrigatório",
+        });
+      }
+
+      if (
+        category === "Passaporte" &&
+        (protocol === "" || protocol === undefined)
+      ) {
+        ctx.addIssue({
+          path: ["protocol"],
+          code: "custom",
+          message: "Protocolo é obrigatório",
+        });
+      }
+
+      if (
+        category === "Passaporte" &&
+        (paymentStatus === "" || paymentStatus === undefined)
+      ) {
+        ctx.addIssue({
+          path: ["paymentStatus"],
+          code: "custom",
+          message: "Status do Pagamento é obrigatório",
+        });
+      }
+
+      if (category === "Passaporte" && scheduleDate === undefined) {
+        ctx.addIssue({
+          path: ["scheduleDate"],
+          code: "custom",
+          message: "Data do agendamento é obrigatória",
+        });
+      }
+
+      if (
+        category === "Passaporte" &&
+        (scheduleLocation === "" || scheduleLocation === undefined)
+      ) {
+        ctx.addIssue({
+          path: ["scheduleLocation"],
+          code: "custom",
+          message: "Local do agendamento é obrigatório",
+        });
+      }
+
+      if (category === "Passaporte" && entryDate === undefined) {
+        ctx.addIssue({
+          path: ["entryDate"],
+          code: "custom",
+          message: "Data de entrada é obrigatório",
+        });
+      }
+
+      if (category === "E-TA" && (process === "" || process === undefined)) {
+        ctx.addIssue({
+          path: ["process"],
+          code: "custom",
+          message: "Processo é obrigatório",
+        });
+      }
+
+      if (
+        category === "E-TA" &&
+        (ETAStatus === "" || ETAStatus === undefined)
+      ) {
+        ctx.addIssue({
+          path: ["ETAStatus"],
+          code: "custom",
+          message: "Status é obrigatório",
+        });
+      }
+
+      if (category === "E-TA" && (passport === "" || passport === undefined)) {
+        ctx.addIssue({
+          path: ["passport"],
+          code: "custom",
+          message: "Passaporte é obrigatório",
+        });
+      }
+    },
+  );
 
 const accountFormSchema = z
   .object({
@@ -127,9 +308,12 @@ const accountFormSchema = z
         invalid_type_error: "Celular inválido",
       })
       .optional()
-      .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
-        message: "Celular inválido",
-      }),
+      .refine(
+        (val) => !val || (val && (val.length === 0 || val.length === 14)),
+        {
+          message: "Celular inválido",
+        },
+      ),
     address: z.string({
       required_error: "Endereço é obrigatório",
       invalid_type_error: "Endereço inválido",
@@ -198,28 +382,40 @@ const accountFormSchema = z
       message: "Precisa ter pelo menos um perfil vinculado a conta",
     }),
   })
-  .superRefine(({ password, passwordConfirm, passwordScheduleAccount, passwordConfirmScheduleAccount }, ctx) => {
-    if (passwordConfirm !== password) {
-      ctx.addIssue({
-        path: ["passwordConfirm"],
-        code: "custom",
-        message: "As senhas não coincidem, verifique e tente novamente",
-      });
-    }
+  .superRefine(
+    (
+      {
+        password,
+        passwordConfirm,
+        passwordScheduleAccount,
+        passwordConfirmScheduleAccount,
+      },
+      ctx,
+    ) => {
+      if (passwordConfirm !== password) {
+        ctx.addIssue({
+          path: ["passwordConfirm"],
+          code: "custom",
+          message: "As senhas não coincidem, verifique e tente novamente",
+        });
+      }
 
-    if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
-      ctx.addIssue({
-        path: ["passwordConfirmScheduleAccount"],
-        code: "custom",
-        message: "As senhas não coincidem, verifique e tente novamente",
-      });
-    }
-  });
+      if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
+        ctx.addIssue({
+          path: ["passwordConfirmScheduleAccount"],
+          code: "custom",
+          message: "As senhas não coincidem, verifique e tente novamente",
+        });
+      }
+    },
+  );
 
 export type formValue = z.infer<typeof accountFormSchema>;
+export type profileFormSchemaType = z.infer<typeof profileFormSchema>;
 
 export default function CreateAccountPage() {
-  const [isProfileSameAsAccount, setIsProfileSameAsAccount] = useState<string>("true");
+  const [isProfileSameAsAccount, setIsProfileSameAsAccount] =
+    useState<string>("true");
   const [currentProfile, setCurrentProfile] = useState<number>(0);
 
   const { openModal, setFormValues } = useSubmitConfirmationStore();
@@ -253,6 +449,14 @@ export default function CreateAccountPage() {
           visaClass: "",
           visaType: "",
           category: "",
+          responsibleCpf: "",
+          protocol: "",
+          paymentStatus: "",
+          scheduleDate: undefined,
+          scheduleLocation: "",
+          entryDate: undefined,
+          process: "",
+          ETAStatus: "",
         },
       ],
     },
@@ -263,7 +467,29 @@ export default function CreateAccountPage() {
   const address = form.watch("address");
   const profiles = form.watch("profiles");
   const visaType = form.watch(`profiles.${currentProfile}.visaType`);
+  const category = form.watch(`profiles.${currentProfile}.category`);
   const currentYear = getYear(new Date());
+  const profilesFields: {
+    name: keyof z.infer<typeof profileFormSchema>;
+    value: string | undefined;
+  }[] = [
+    { name: "birthDate", value: undefined },
+    { name: "passport", value: "" },
+    { name: "visaType", value: "" },
+    { name: "visaClass", value: "" },
+    { name: "category", value: "" },
+    { name: "issuanceDate", value: undefined },
+    { name: "expireDate", value: undefined },
+    { name: "DSNumber", value: "" },
+    { name: "responsibleCpf", value: "" },
+    { name: "protocol", value: "" },
+    { name: "paymentStatus", value: "" },
+    { name: "scheduleDate", value: undefined },
+    { name: "scheduleLocation", value: "" },
+    { name: "entryDate", value: undefined },
+    { name: "process", value: "" },
+    { name: "ETAStatus", value: "" },
+  ];
   // const { fields } = useFieldArray({ name: "profiles", control: form.control }); NOTE: exemplos para os formulário, adiciona fields dinamicamente
 
   // atualiza o index do profile quando é adicionar ou removido
@@ -292,25 +518,50 @@ export default function CreateAccountPage() {
       form.setValue(`profiles.${currentProfile}.profileAddress`, "");
     }
 
-    form.setValue(`profiles.${currentProfile}.birthDate`, undefined);
-    form.setValue(`profiles.${currentProfile}.passport`, "");
-    form.setValue(`profiles.${currentProfile}.visaType`, "");
-    form.setValue(`profiles.${currentProfile}.visaClass`, "");
-    form.setValue(`profiles.${currentProfile}.category`, "");
-    form.setValue(`profiles.${currentProfile}.issuanceDate`, undefined);
-    form.setValue(`profiles.${currentProfile}.expireDate`, undefined);
-    form.setValue(`profiles.${currentProfile}.DSNumber`, "");
+    profilesFields.map((profile) => {
+      form.setValue(
+        `profiles.${currentProfile}.${profile.name}`,
+        profile.value,
+      );
+
+      form.clearErrors(`profiles.${currentProfile}.${profile.name}`);
+    });
 
     form.clearErrors(`profiles.${currentProfile}.profileName`);
     form.clearErrors(`profiles.${currentProfile}.profileCpf`);
     form.clearErrors(`profiles.${currentProfile}.birthDate`);
     form.clearErrors(`profiles.${currentProfile}.profileAddress`);
-    form.clearErrors(`profiles.${currentProfile}.passport`);
-    form.clearErrors(`profiles.${currentProfile}.visaType`);
-    form.clearErrors(`profiles.${currentProfile}.visaClass`);
-    form.clearErrors(`profiles.${currentProfile}.category`);
-    form.clearErrors(`profiles.${currentProfile}.DSNumber`);
   }, [currentProfile]);
+
+  useEffect(() => {
+    if (JSON.parse(isProfileSameAsAccount) && currentProfile === 0) {
+      form.setValue(`profiles.${currentProfile}.profileName`, name);
+      form.setValue(`profiles.${currentProfile}.profileCpf`, cpf);
+      form.setValue(`profiles.${currentProfile}.profileAddress`, address);
+    } else {
+      form.setValue(`profiles.${currentProfile}.profileName`, "");
+      form.setValue(`profiles.${currentProfile}.profileCpf`, "");
+      form.setValue(`profiles.${currentProfile}.profileAddress`, "");
+    }
+
+    console.log("Atualizando category");
+
+    profilesFields.map((profile) => {
+      if (profile.name !== "category") {
+        form.setValue(
+          `profiles.${currentProfile}.${profile.name}`,
+          profile.value,
+        );
+
+        form.clearErrors(`profiles.${currentProfile}.${profile.name}`);
+      }
+    });
+
+    form.clearErrors(`profiles.${currentProfile}.profileName`);
+    form.clearErrors(`profiles.${currentProfile}.profileCpf`);
+    form.clearErrors(`profiles.${currentProfile}.birthDate`);
+    form.clearErrors(`profiles.${currentProfile}.profileAddress`);
+  }, [category]);
 
   function handleCPF(event: ChangeEvent<HTMLInputElement>) {
     let value = event.target.value.replace(/[^\d]/g, "");
@@ -334,6 +585,14 @@ export default function CreateAccountPage() {
         `profiles.${currentProfile}.issuanceDate`,
         `profiles.${currentProfile}.expireDate`,
         `profiles.${currentProfile}.DSNumber`,
+        `profiles.${currentProfile}.responsibleCpf`,
+        `profiles.${currentProfile}.protocol`,
+        `profiles.${currentProfile}.paymentStatus`,
+        `profiles.${currentProfile}.scheduleDate`,
+        `profiles.${currentProfile}.scheduleLocation`,
+        `profiles.${currentProfile}.entryDate`,
+        `profiles.${currentProfile}.process`,
+        `profiles.${currentProfile}.ETAStatus`,
       ])
       .then(() => {
         if (Object.keys(form.formState.errors).length === 0) {
@@ -351,6 +610,14 @@ export default function CreateAccountPage() {
               expireDate: undefined,
               DSNumber: "",
               passport: "",
+              responsibleCpf: "",
+              protocol: "",
+              paymentStatus: "",
+              scheduleDate: undefined,
+              scheduleLocation: "",
+              entryDate: undefined,
+              process: "",
+              ETAStatus: "",
             },
           ]);
 
@@ -389,13 +656,15 @@ export default function CreateAccountPage() {
           ],
           {
             shouldFocus: true,
-          }
+          },
         )
         .then(() => {
           if (Object.keys(form.formState.errors).length === 0) {
             const values = form.getValues();
 
-            values.profiles = values.profiles.filter((_, index) => index !== values.profiles.length - 1);
+            values.profiles = values.profiles.filter(
+              (_, index) => index !== values.profiles.length - 1,
+            );
 
             setFormValues(values);
 
@@ -409,7 +678,9 @@ export default function CreateAccountPage() {
 
   return (
     <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 lg:ml-[250px] lg:px-40">
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">Cadastro da Conta</h1>
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-6 mt-6 lg:mt-12">
+        Cadastro da Conta
+      </h1>
 
       <Form {...form}>
         <form className="flex flex-col gap-y-12">
@@ -420,10 +691,13 @@ export default function CreateAccountPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Nome*</FormLabel>
+                    <FormLabel className="truncate">Nome*</FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Insira o nome do cliente" {...field} />
+                      <Input
+                        placeholder="Insira o nome do cliente"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -436,11 +710,10 @@ export default function CreateAccountPage() {
                 name="cpf"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>CPF</FormLabel>
+                    <FormLabel className="truncate">CPF</FormLabel>
 
                     <FormControl>
                       <Input
-                        className="!mt-auto"
                         placeholder="Insira o CPF do cliente"
                         maxLength={14}
                         ref={field.ref}
@@ -466,10 +739,10 @@ export default function CreateAccountPage() {
                 name="group"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Grupo</FormLabel>
+                    <FormLabel className="truncate">Grupo</FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Crie o nome do grupo" {...field} />
+                      <Input placeholder="Crie o nome do grupo" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -484,10 +757,13 @@ export default function CreateAccountPage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Endereço</FormLabel>
+                    <FormLabel className="truncate">Endereço</FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Insira o endereço completo do cliente" {...field} />
+                      <Input
+                        placeholder="Insira o endereço completo do cliente"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -500,7 +776,7 @@ export default function CreateAccountPage() {
                 name="cel"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Celular</FormLabel>
+                    <FormLabel className="truncate">Celular</FormLabel>
 
                     <FormControl>
                       <PhoneInput
@@ -509,7 +785,7 @@ export default function CreateAccountPage() {
                         placeholder="Insira o celular do cliente"
                         defaultCountry="BR"
                         className={cn(
-                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted"
+                          "flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted",
                         )}
                         {...field}
                       />
@@ -527,10 +803,13 @@ export default function CreateAccountPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>E-mail*</FormLabel>
+                    <FormLabel className="truncate">E-mail*</FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Insira o e-mail do cliente" {...field} />
+                      <Input
+                        placeholder="Insira o e-mail do cliente"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -543,10 +822,10 @@ export default function CreateAccountPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Senha*</FormLabel>
+                    <FormLabel className="truncate">Senha*</FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Crie uma senha" {...field} />
+                      <Input placeholder="Crie uma senha" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -559,10 +838,10 @@ export default function CreateAccountPage() {
                 name="passwordConfirm"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Confirmar Senha*</FormLabel>
+                    <FormLabel className="truncate">Confirmar Senha*</FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Confirme a senha criada" {...field} />
+                      <Input placeholder="Confirme a senha criada" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -577,10 +856,15 @@ export default function CreateAccountPage() {
                 name="emailScheduleAccount"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>E-mail (agendamento)*</FormLabel>
+                    <FormLabel className="truncate">
+                      E-mail (agendamento)*
+                    </FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Insira o e-mail da conta de agendamento" {...field} />
+                      <Input
+                        placeholder="Insira o e-mail da conta de agendamento"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -593,10 +877,15 @@ export default function CreateAccountPage() {
                 name="passwordScheduleAccount"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Senha (agendamento)*</FormLabel>
+                    <FormLabel className="truncate">
+                      Senha (agendamento)*
+                    </FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Insira a senha da conta de agendamento" {...field} />
+                      <Input
+                        placeholder="Insira a senha da conta de agendamento"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -609,10 +898,15 @@ export default function CreateAccountPage() {
                 name="passwordConfirmScheduleAccount"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Confirmar Senha (agendamento)*</FormLabel>
+                    <FormLabel className="truncate">
+                      Confirmar Senha (agendamento)*
+                    </FormLabel>
 
                     <FormControl>
-                      <Input className="!mt-auto" placeholder="Confirme a senha da conta de agendamento" {...field} />
+                      <Input
+                        placeholder="Confirme a senha da conta de agendamento"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />
@@ -626,18 +920,28 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="budget"
                 render={({ field }) => (
-                  <FormItem className={cn("flex flex-col gap-2", role === "COLLABORATOR" && "hidden")}>
-                    <FormLabel>Valor do Serviço</FormLabel>
+                  <FormItem
+                    className={cn(
+                      "flex flex-col gap-2",
+                      role === "COLLABORATOR" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="truncate">Valor do Serviço</FormLabel>
 
                     <FormControl>
-                      <div className="!mt-auto h-12 flex items-center gap-2 border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
-                        <CircleDollarSign className="w-5 h-5 text-border flex-shrink-0" strokeWidth={1.5} />
+                      <div className="h-12 flex items-center gap-2 border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
+                        <CircleDollarSign
+                          className="w-5 h-5 text-border flex-shrink-0"
+                          strokeWidth={1.5}
+                        />
 
                         <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
                         <CurrencyInput
                           placeholder="Insira o valor do serviço"
-                          onValueChange={(value, name) => form.setValue(name as "budget", value ?? "0")}
+                          onValueChange={(value, name) =>
+                            form.setValue(name as "budget", value ?? "0")
+                          }
                           decimalsLimit={2}
                           ref={field.ref}
                           onBlur={field.onBlur}
@@ -658,13 +962,28 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="budgetPaid"
                 render={({ field }) => (
-                  <FormItem className={cn("flex flex-col gap-2", role === "COLLABORATOR" && "hidden")}>
-                    <FormLabel>Status do pagamento</FormLabel>
+                  <FormItem
+                    className={cn(
+                      "flex flex-col gap-2",
+                      role === "COLLABORATOR" && "hidden",
+                    )}
+                  >
+                    <FormLabel className="truncate">
+                      Status do pagamento
+                    </FormLabel>
 
-                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger
-                          className={cn("text-left !mt-auto", field.value === "" && "[&>span]:text-muted-foreground")}
+                          className={cn(
+                            "text-left",
+                            field.value === "" &&
+                              "[&>span]:text-muted-foreground",
+                          )}
                         >
                           <SelectValue placeholder="Selecione o status do pagamento" />
                         </SelectTrigger>
@@ -684,12 +1003,22 @@ export default function CreateAccountPage() {
                 name="scheduleAccount"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Conta de Agendamento*</FormLabel>
+                    <FormLabel className="truncate">
+                      Conta de Agendamento*
+                    </FormLabel>
 
-                    <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger
-                          className={cn("text-left !mt-auto", field.value === "" && "[&>span]:text-muted-foreground")}
+                          className={cn(
+                            "text-left",
+                            field.value === "" &&
+                              "[&>span]:text-muted-foreground",
+                          )}
                         >
                           <SelectValue placeholder="Selecione o status da conta de agendamento" />
                         </SelectTrigger>
@@ -711,15 +1040,33 @@ export default function CreateAccountPage() {
           <div className="w-full h-px bg-muted" />
 
           <div className="w-full flex flex-col gap-9">
-            <h2 className="text-xl font-semibold sm:text-2xl">Cadastro do Perfil</h2>
+            <h2 className="text-xl font-semibold sm:text-2xl">
+              Cadastro do Perfil
+            </h2>
 
             {profiles.length > 1 ? (
               <div className="w-full grid grid-cols-1 gap-12 lg:grid-cols-2">
                 {profiles.slice(0, currentProfile).map((profile, index) => (
-                  <div key={index} className="w-full bg-secondary rounded-2xl p-8 flex items-center justify-between">
-                    <span className="text-xl font-semibold text-card-foreground text-left">{profile.profileName}</span>
+                  <div
+                    key={index}
+                    className="w-full bg-secondary rounded-2xl p-8 flex items-center justify-between"
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-xl font-semibold text-card-foreground text-left">
+                        {profile.profileName}
+                      </span>
 
-                    <Button type="button" variant="ghost" size="icon" onClick={() => handleDeleteProfile(index)}>
+                      <span className="text-sm font-medium text-card-foreground/70 text-left">
+                        {profile.category}
+                      </span>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteProfile(index)}
+                    >
                       <Trash2 className="text-card-foreground w-6 h-6" />
                     </Button>
                   </div>
@@ -743,6 +1090,46 @@ export default function CreateAccountPage() {
               </RadioGroup>
             )}
 
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <FormField
+                control={form.control}
+                name={`profiles.${currentProfile}.category`}
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="truncate">Categoria*</FormLabel>
+
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger
+                          className={cn(
+                            field.value === "" &&
+                              "[&>span]:text-muted-foreground",
+                          )}
+                        >
+                          <SelectValue placeholder="Selecione a categoria do perfil" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        <SelectItem value="Visto Americano">
+                          Visto Americano
+                        </SelectItem>
+                        <SelectItem value="Passaporte">Passaporte</SelectItem>
+                        <SelectItem value="E-TA">E-TA</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <FormMessage className="font-normal text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* NOTE: Apresenta em todos */}
             <div className="w-full flex flex-col gap-6">
               <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <FormField
@@ -750,18 +1137,20 @@ export default function CreateAccountPage() {
                   name={`profiles.${currentProfile}.profileName`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel>Nome*</FormLabel>
+                      <FormLabel className="truncate">Nome*</FormLabel>
 
                       <FormControl>
                         <Input
-                          className="!mt-auto"
                           placeholder="Insira o nome do perfil"
                           onChange={field.onChange}
                           onBlur={field.onBlur}
                           ref={field.ref}
                           name={field.name}
                           value={field.value}
-                          disabled={JSON.parse(isProfileSameAsAccount) && profiles.length === 1}
+                          disabled={
+                            JSON.parse(isProfileSameAsAccount) &&
+                            profiles.length === 1
+                          }
                         />
                       </FormControl>
 
@@ -775,11 +1164,10 @@ export default function CreateAccountPage() {
                   name={`profiles.${currentProfile}.profileCpf`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel>CPF*</FormLabel>
+                      <FormLabel className="truncate">CPF*</FormLabel>
 
                       <FormControl>
                         <Input
-                          className="!mt-auto"
                           placeholder="Insira o CPF do perfil"
                           maxLength={14}
                           ref={field.ref}
@@ -789,9 +1177,15 @@ export default function CreateAccountPage() {
                           onChange={(event) => {
                             const newValue = handleCPF(event);
 
-                            form.setValue(`profiles.${currentProfile}.profileCpf`, newValue);
+                            form.setValue(
+                              `profiles.${currentProfile}.profileCpf`,
+                              newValue,
+                            );
                           }}
-                          disabled={JSON.parse(isProfileSameAsAccount) && profiles.length === 1}
+                          disabled={
+                            JSON.parse(isProfileSameAsAccount) &&
+                            profiles.length === 1
+                          }
                         />
                       </FormControl>
 
@@ -805,13 +1199,23 @@ export default function CreateAccountPage() {
                   name={`profiles.${currentProfile}.birthDate`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel>Data de Nascimento</FormLabel>
+                      <FormLabel className="truncate">
+                        Data de Nascimento
+                      </FormLabel>
 
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button variant="date" className={cn("!mt-auto", !field.value && "text-muted-foreground")}>
-                              <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                            <Button
+                              variant="date"
+                              className={cn(
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon
+                                strokeWidth={1.5}
+                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                              />
 
                               <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -820,25 +1224,33 @@ export default function CreateAccountPage() {
                                   locale: ptBR,
                                 })
                               ) : (
-                                <span className="text-muted-foreground truncate">Selecione a data</span>
+                                <span className="text-muted-foreground truncate">
+                                  Selecione a data
+                                </span>
                               )}
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
 
-                        <PopoverContent className="w-auto p-0 bg-background" align="start">
+                        <PopoverContent
+                          className="w-auto p-0 bg-background"
+                          align="start"
+                        >
                           <Calendar
                             mode="single"
                             locale={ptBR}
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
                             captionLayout="dropdown"
                             fromYear={1900}
                             toYear={currentYear}
                             classNames={{
                               day_hidden: "invisible",
-                              dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                              dropdown:
+                                "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                               caption_dropdowns: "flex gap-3",
                               vhidden: "hidden",
                               caption_label: "hidden",
@@ -854,24 +1266,27 @@ export default function CreateAccountPage() {
                 />
               </div>
 
+              {/* NOTE: Apresenta somente em Visto Americano e E-TA */}
               <div className="w-full grid grid-cols-1 sm:grid-cols-[calc(70%-12px)_calc(30%-12px)] gap-6">
                 <FormField
                   control={form.control}
                   name={`profiles.${currentProfile}.profileAddress`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel>Endereço</FormLabel>
+                      <FormLabel className="truncate">Endereço</FormLabel>
 
                       <FormControl>
                         <Input
-                          className="!mt-auto"
                           placeholder="Insira o endereço do perfil"
                           onChange={field.onChange}
                           onBlur={field.onBlur}
                           ref={field.ref}
                           name={field.name}
                           value={field.value}
-                          disabled={JSON.parse(isProfileSameAsAccount) && profiles.length === 1}
+                          disabled={
+                            JSON.parse(isProfileSameAsAccount) &&
+                            profiles.length === 1
+                          }
                         />
                       </FormControl>
 
@@ -884,11 +1299,18 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.passport`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
-                      <FormLabel>Passaporte</FormLabel>
+                    <FormItem
+                      className={cn(
+                        "flex flex-col gap-2",
+                        category !== "Visto Americano" &&
+                          category !== "E-TA" &&
+                          "hidden",
+                      )}
+                    >
+                      <FormLabel className="truncate">Passaporte</FormLabel>
 
                       <FormControl>
-                        <Input className="!mt-auto" placeholder="Insira o passaporte" {...field} />
+                        <Input placeholder="Insira o passaporte" {...field} />
                       </FormControl>
 
                       <FormMessage className="font-normal text-destructive" />
@@ -897,46 +1319,31 @@ export default function CreateAccountPage() {
                 />
               </div>
 
-              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <FormField
-                  control={form.control}
-                  name={`profiles.${currentProfile}.category`}
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
-                      <FormLabel>Categoria*</FormLabel>
-
-                      <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger
-                            className={cn("!mt-auto", field.value === "" && "[&>span]:text-muted-foreground")}
-                          >
-                            <SelectValue placeholder="Selecione a categoria do perfil" />
-                          </SelectTrigger>
-                        </FormControl>
-
-                        <SelectContent>
-                          <SelectItem value="Visto Americano">Visto Americano</SelectItem>
-                          <SelectItem value="Passaporte">Passaporte</SelectItem>
-                          <SelectItem value="E-TA">E-TA</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      <FormMessage className="font-normal text-destructive" />
-                    </FormItem>
-                  )}
-                />
-
+              {/* NOTE: Apresenta somente em Visto Americano */}
+              <div
+                className={cn(
+                  "w-full grid grid-cols-1 sm:grid-cols-3 gap-6",
+                  category !== "Visto Americano" && "hidden",
+                )}
+              >
                 <FormField
                   control={form.control}
                   name={`profiles.${currentProfile}.visaType`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel>Tipo de Visto*</FormLabel>
+                      <FormLabel className="truncate">Tipo de Visto*</FormLabel>
 
-                      <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger
-                            className={cn("!mt-auto", field.value === "" && "[&>span]:text-muted-foreground")}
+                            className={cn(
+                              field.value === "" &&
+                                "[&>span]:text-muted-foreground",
+                            )}
                           >
                             <SelectValue placeholder="Selecione o tipo de visto" />
                           </SelectTrigger>
@@ -944,7 +1351,9 @@ export default function CreateAccountPage() {
 
                         <SelectContent>
                           <SelectItem value="Renovação">Renovação</SelectItem>
-                          <SelectItem value="Primeiro Visto">Primeiro Visto</SelectItem>
+                          <SelectItem value="Primeiro Visto">
+                            Primeiro Visto
+                          </SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -958,12 +1367,22 @@ export default function CreateAccountPage() {
                   name={`profiles.${currentProfile}.visaClass`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
-                      <FormLabel>Classe do Visto*</FormLabel>
+                      <FormLabel className="truncate">
+                        Classe do Visto*
+                      </FormLabel>
 
-                      <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger
-                            className={cn("text-left !mt-auto", field.value === "" && "[&>span]:text-muted-foreground")}
+                            className={cn(
+                              "text-left",
+                              field.value === "" &&
+                                "[&>span]:text-muted-foreground",
+                            )}
                           >
                             <SelectValue placeholder="Selecione a classe do visto" />
                           </SelectTrigger>
@@ -972,9 +1391,13 @@ export default function CreateAccountPage() {
                         <SelectContent>
                           <SelectItem value="B1 Babá">B1 Babá</SelectItem>
 
-                          <SelectItem value="B1/B2 Turismo">B1/B2 Turismo</SelectItem>
+                          <SelectItem value="B1/B2 Turismo">
+                            B1/B2 Turismo
+                          </SelectItem>
 
-                          <SelectItem value="O1 Capacidade Extraordinária">O1 Capacidade Extraordinária</SelectItem>
+                          <SelectItem value="O1 Capacidade Extraordinária">
+                            O1 Capacidade Extraordinária
+                          </SelectItem>
 
                           <SelectItem value="O2 Estrangeiro Acompanhante/Assistente">
                             O2 Estrangeiro Acompanhante/Assistente
@@ -990,11 +1413,29 @@ export default function CreateAccountPage() {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.DSNumber`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2 sm:order-3 xl:order-1">
+                      <FormLabel className="truncate">Barcode</FormLabel>
+
+                      <FormControl>
+                        <Input placeholder="Insira o número da DS" {...field} />
+                      </FormControl>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
               </div>
 
+              {/* NOTE: Apresenta somente em Visto Americano */}
               <div
                 className={cn("w-full grid grid-cols-1 sm:grid-cols-2 gap-6", {
-                  hidden: visaType !== "Renovação",
+                  hidden:
+                    visaType !== "Renovação" || category !== "Visto Americano",
                 })}
               >
                 <FormField
@@ -1002,13 +1443,23 @@ export default function CreateAccountPage() {
                   name={`profiles.${currentProfile}.issuanceDate`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2 sm:order-1 xl:order-2">
-                      <FormLabel>Data de Emissão</FormLabel>
+                      <FormLabel className="truncate">
+                        Data de Emissão
+                      </FormLabel>
 
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button variant="date" className={cn("!mt-auto", !field.value && "text-muted-foreground")}>
-                              <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                            <Button
+                              variant="date"
+                              className={cn(
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon
+                                strokeWidth={1.5}
+                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                              />
 
                               <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1017,25 +1468,33 @@ export default function CreateAccountPage() {
                                   locale: ptBR,
                                 })
                               ) : (
-                                <span className="text-muted-foreground">Selecione a data de emissão</span>
+                                <span className="text-muted-foreground">
+                                  Selecione a data de emissão
+                                </span>
                               )}
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
 
-                        <PopoverContent className="w-auto p-0 bg-background" align="start">
+                        <PopoverContent
+                          className="w-auto p-0 bg-background"
+                          align="start"
+                        >
                           <Calendar
                             mode="single"
                             locale={ptBR}
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
                             captionLayout="dropdown"
                             fromYear={1900}
                             toYear={currentYear}
                             classNames={{
                               day_hidden: "invisible",
-                              dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                              dropdown:
+                                "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                               caption_dropdowns: "flex gap-3",
                               vhidden: "hidden",
                               caption_label: "hidden",
@@ -1055,13 +1514,23 @@ export default function CreateAccountPage() {
                   name={`profiles.${currentProfile}.expireDate`}
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2 sm:order-2 xl:order-3">
-                      <FormLabel>Data de Expiração</FormLabel>
+                      <FormLabel className="truncate">
+                        Data de Expiração
+                      </FormLabel>
 
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button variant="date" className={cn("!mt-auto", !field.value && "text-muted-foreground")}>
-                              <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                            <Button
+                              variant="date"
+                              className={cn(
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon
+                                strokeWidth={1.5}
+                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                              />
 
                               <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
@@ -1070,25 +1539,34 @@ export default function CreateAccountPage() {
                                   locale: ptBR,
                                 })
                               ) : (
-                                <span className="text-muted-foreground">Selecione a data de expiração</span>
+                                <span className="text-muted-foreground">
+                                  Selecione a data de expiração
+                                </span>
                               )}
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
 
-                        <PopoverContent className="w-auto p-0 bg-background" align="start">
+                        <PopoverContent
+                          className="w-auto p-0 bg-background"
+                          align="start"
+                        >
                           <Calendar
                             mode="single"
                             locale={ptBR}
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date("2200-01-01") || date < new Date("1900-01-01")}
+                            disabled={(date) =>
+                              date > new Date("2200-01-01") ||
+                              date < new Date("1900-01-01")
+                            }
                             captionLayout="dropdown"
                             fromYear={1900}
                             toYear={2200}
                             classNames={{
                               day_hidden: "invisible",
-                              dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                              dropdown:
+                                "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
                               caption_dropdowns: "flex gap-3",
                               vhidden: "hidden",
                               caption_label: "hidden",
@@ -1104,16 +1582,325 @@ export default function CreateAccountPage() {
                 />
               </div>
 
-              <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {/* NOTE: Apresenta somente em Passaporte */}
+              <div
+                className={cn(
+                  "w-full grid grid-cols-1 sm:grid-cols-3 gap-6",
+                  category !== "Passaporte" && "hidden",
+                )}
+              >
                 <FormField
                   control={form.control}
-                  name={`profiles.${currentProfile}.DSNumber`}
+                  name={`profiles.${currentProfile}.responsibleCpf`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2 sm:order-3 xl:order-1">
-                      <FormLabel>Barcode</FormLabel>
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">
+                        CPF do responsável
+                      </FormLabel>
 
                       <FormControl>
-                        <Input className="!mt-auto" placeholder="Insira o número da DS" {...field} />
+                        <Input
+                          placeholder="Insira o CPF do responsável"
+                          maxLength={14}
+                          ref={field.ref}
+                          name={field.name}
+                          value={field.value}
+                          onBlur={field.onBlur}
+                          disabled={field.disabled}
+                          onChange={(event) => {
+                            const newValue = handleCPF(event);
+
+                            form.setValue(
+                              `profiles.${currentProfile}.responsibleCpf`,
+                              newValue,
+                            );
+                          }}
+                        />
+                      </FormControl>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.protocol`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">Protocolo</FormLabel>
+
+                      <FormControl>
+                        <Input placeholder="Insira o protocolo" {...field} />
+                      </FormControl>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.paymentStatus`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">
+                        Status do pagamento
+                      </FormLabel>
+
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger
+                            className={cn(
+                              field.value === "" &&
+                                "[&>span]:text-muted-foreground",
+                            )}
+                          >
+                            <SelectValue placeholder="Selecione o status do pagamento" />
+                          </SelectTrigger>
+                        </FormControl>
+
+                        <SelectContent>
+                          <SelectItem value="Pendente">Pendente</SelectItem>
+
+                          <SelectItem value="Pago">Pago</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* NOTE: Apresenta somente em Passaporte */}
+              <div
+                className={cn(
+                  "w-full grid grid-cols-1 sm:grid-cols-3 gap-6",
+                  category !== "Passaporte" && "hidden",
+                )}
+              >
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.scheduleDate`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">
+                        Data do agendamento
+                      </FormLabel>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="date"
+                              className={cn(
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon
+                                strokeWidth={1.5}
+                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                              />
+
+                              <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                              {field.value ? (
+                                format(field.value, "PPP", {
+                                  locale: ptBR,
+                                })
+                              ) : (
+                                <span className="text-muted-foreground truncate">
+                                  Selecione a data
+                                </span>
+                              )}
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+
+                        <PopoverContent
+                          className="w-auto p-0 bg-background"
+                          align="start"
+                        >
+                          <Calendar
+                            mode="single"
+                            locale={ptBR}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            captionLayout="dropdown"
+                            fromYear={1900}
+                            toYear={currentYear}
+                            classNames={{
+                              day_hidden: "invisible",
+                              dropdown:
+                                "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                              caption_dropdowns: "flex gap-3",
+                              vhidden: "hidden",
+                              caption_label: "hidden",
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.scheduleLocation`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">
+                        Local do agendamento
+                      </FormLabel>
+
+                      <FormControl>
+                        <Input
+                          placeholder="Insira o local do agendamento"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.entryDate`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">
+                        Data de entrada
+                      </FormLabel>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="date"
+                              className={cn(
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon
+                                strokeWidth={1.5}
+                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                              />
+
+                              <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                              {field.value ? (
+                                format(field.value, "PPP", {
+                                  locale: ptBR,
+                                })
+                              ) : (
+                                <span className="text-muted-foreground truncate">
+                                  Selecione a data
+                                </span>
+                              )}
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+
+                        <PopoverContent
+                          className="w-auto p-0 bg-background"
+                          align="start"
+                        >
+                          <Calendar
+                            mode="single"
+                            locale={ptBR}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            captionLayout="dropdown"
+                            fromYear={1900}
+                            toYear={currentYear}
+                            classNames={{
+                              day_hidden: "invisible",
+                              dropdown:
+                                "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                              caption_dropdowns: "flex gap-3",
+                              vhidden: "hidden",
+                              caption_label: "hidden",
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* NOTE: Apresenta somente em E-TA */}
+              <div
+                className={cn(
+                  "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
+                  category !== "E-TA" && "hidden",
+                )}
+              >
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.ETAStatus`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">Status</FormLabel>
+
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger
+                            className={cn(
+                              field.value === "" &&
+                                "[&>span]:text-muted-foreground",
+                            )}
+                          >
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                        </FormControl>
+
+                        <SelectContent>
+                          <SelectItem value="Em Análise">Em Análise</SelectItem>
+
+                          <SelectItem value="Aprovado">Aprovado</SelectItem>
+
+                          <SelectItem value="Reprovado">Reprovado</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <FormMessage className="font-normal text-destructive" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`profiles.${currentProfile}.process`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel className="truncate">Processo</FormLabel>
+
+                      <FormControl>
+                        <Input placeholder="Insira o processo" {...field} />
                       </FormControl>
 
                       <FormMessage className="font-normal text-destructive" />
@@ -1127,6 +1914,7 @@ export default function CreateAccountPage() {
           <div className="flex flex-col sm:flex-row gap-6 mb-12">
             <Button
               onClick={addProfile}
+              disabled={category === ""}
               type="button"
               variant="outline"
               size="xl"

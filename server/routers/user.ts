@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import {
   BudgetPaid,
   Category,
+  ETAStatus,
+  PaymentStatus,
   Role,
   ScheduleAccount,
   Shipping,
@@ -124,82 +126,251 @@ export const userRouter = router({
         }),
         profiles: z
           .array(
-            z.object({
-              profileName: z
-                .string({
-                  required_error: "Nome do perfil é obrigatório",
-                  invalid_type_error: "Nome do perfil inválido",
-                })
-                .min(1, { message: "Nome do perfil é obrigatório" })
-                .min(6, {
-                  message: "Nome do perfil precisa ter no mínimo 6 caracteres",
+            z
+              .object({
+                profileName: z
+                  .string({
+                    required_error: "Nome do perfil é obrigatório",
+                    invalid_type_error: "Nome do perfil inválido",
+                  })
+                  .min(1, { message: "Nome do perfil é obrigatório" })
+                  .min(6, {
+                    message:
+                      "Nome do perfil precisa ter no mínimo 6 caracteres",
+                  }),
+                profileCpf: z
+                  .string({
+                    required_error: "CPF do perfil é obrigatório",
+                    invalid_type_error: "CPF do perfil inválido",
+                  })
+                  .refine((val) => val.length > 0 && val.length === 14, {
+                    message: "CPF inválido",
+                  }),
+                profileAddress: z.string({
+                  required_error: "Endereço do perfil é obrigatório",
+                  invalid_type_error: "Endereço do perfil inválido",
                 }),
-              profileCpf: z
-                .string({
-                  required_error: "CPF do perfil é obrigatório",
-                  invalid_type_error: "CPF do perfil inválido",
-                })
-                .refine((val) => val.length > 0 && val.length === 14, {
-                  message: "CPF inválido",
-                }),
-              profileAddress: z.string({
-                required_error: "Endereço do perfil é obrigatório",
-                invalid_type_error: "Endereço do perfil inválido",
-              }),
-              birthDate: z
-                .date({
-                  required_error: "Data de nascimento é obrigatório",
-                  invalid_type_error: "Data de nascimento inválida",
-                })
-                .optional(),
-              passport: z.string({
-                required_error: "Passaporte é obrigatório",
-                invalid_type_error: "Passaporte inválido",
-              }),
-              visaType: z
-                .enum(["Renovação", "Primeiro Visto", ""], {
-                  message: "Tipo de visto inválido",
-                })
-                .refine((val) => val.length !== 0, {
-                  message: "Tipo de visto é obrigatório",
-                }),
-              visaClass: z
-                .enum(
-                  [
-                    "B1 Babá",
-                    "B1/B2 Turismo",
-                    "O1 Capacidade Extraordinária",
-                    "O2 Estrangeiro Acompanhante/Assistente",
-                    "O3 Cônjuge ou Filho de um O1 ou O2",
-                    "",
-                  ],
-                  { message: "Classe de visto inválida" },
-                )
-                .refine((val) => val.length !== 0, {
-                  message: "Classe de visto é obrigatória",
-                }),
-              category: z
-                .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-                .refine((val) => val.length !== 0, {
-                  message: "Categoria é obrigatória",
-                }),
-              issuanceDate: z
-                .date({
-                  required_error: "Data de Emissão é obrigatória",
-                  invalid_type_error: "Data de Emissão inválida",
-                })
-                .optional(),
-              expireDate: z
-                .date({
-                  required_error: "Data de Expiração é obrigatória",
-                  invalid_type_error: "Data de Expiração inválida",
-                })
-                .optional(),
-              DSNumber: z.string({
-                required_error: "Barcode é obrigatório",
-                invalid_type_error: "Barcode inválido",
-              }),
-            }),
+                birthDate: z
+                  .date({
+                    invalid_type_error: "Data de nascimento inválida",
+                  })
+                  .optional(),
+                passport: z
+                  .string({
+                    invalid_type_error: "Passaporte inválido",
+                  })
+                  .optional(),
+                visaType: z
+                  .enum(["Renovação", "Primeiro Visto", ""], {
+                    message: "Tipo de Visto inválido",
+                  })
+                  .optional(),
+                visaClass: z
+                  .enum(
+                    [
+                      "B1 Babá",
+                      "B1/B2 Turismo",
+                      "O1 Capacidade Extraordinária",
+                      "O2 Estrangeiro Acompanhante/Assistente",
+                      "O3 Cônjuge ou Filho de um O1 ou O2",
+                      "",
+                    ],
+                    { message: "Classe de visto inválida" },
+                  )
+                  .optional(),
+                category: z
+                  .enum(["Visto Americano", "Passaporte", "E-TA", ""])
+                  .refine((val) => val.length !== 0, {
+                    message: "Categoria é obrigatória",
+                  }),
+                issuanceDate: z
+                  .date({
+                    invalid_type_error: "Data de Emissão inválida",
+                  })
+                  .optional(),
+                expireDate: z
+                  .date({
+                    invalid_type_error: "Data de Expiração inválida",
+                  })
+                  .optional(),
+                DSNumber: z
+                  .string({
+                    invalid_type_error: "Barcode inválido",
+                  })
+                  .optional(),
+                responsibleCpf: z
+                  .string({ invalid_type_error: "CPF do responsável inválido" })
+                  .optional(),
+                protocol: z
+                  .string({
+                    invalid_type_error: "Barcode inválido",
+                  })
+                  .optional(),
+                paymentStatus: z
+                  .enum(["Pendente", "Pago", ""], {
+                    message: "Status de pagamento inválido",
+                  })
+                  .optional(),
+                scheduleDate: z
+                  .date({
+                    invalid_type_error: "Data de Agendamento inválida",
+                  })
+                  .optional(),
+                scheduleLocation: z
+                  .string({
+                    invalid_type_error: "Local do agendamento inválido",
+                  })
+                  .optional(),
+                entryDate: z
+                  .date({
+                    invalid_type_error: "Data de entrada inválida",
+                  })
+                  .optional(),
+                process: z
+                  .string({
+                    invalid_type_error: "Processo inválido",
+                  })
+                  .optional(),
+                ETAStatus: z
+                  .enum(["Em Análise", "Aprovado", "Reprovado", ""], {
+                    message: "Status inválido",
+                  })
+                  .optional(),
+              })
+              .superRefine(
+                (
+                  {
+                    category,
+                    visaType,
+                    visaClass,
+                    responsibleCpf,
+                    protocol,
+                    paymentStatus,
+                    scheduleDate,
+                    scheduleLocation,
+                    entryDate,
+                    process,
+                    ETAStatus,
+                    passport,
+                  },
+                  ctx,
+                ) => {
+                  if (
+                    category === "Visto Americano" &&
+                    (visaType === "" || visaType === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["visaType"],
+                      code: "custom",
+                      message: "Tipo do visto é obrigatório",
+                    });
+                  }
+
+                  if (
+                    category === "Visto Americano" &&
+                    (visaClass === "" || visaClass === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["visaClass"],
+                      code: "custom",
+                      message: "Classe do visto é obrigatória",
+                    });
+                  }
+
+                  if (
+                    category === "Passaporte" &&
+                    (responsibleCpf === "" || responsibleCpf === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["responsibleCpf"],
+                      code: "custom",
+                      message: "CPF do responsável é obrigatório",
+                    });
+                  }
+
+                  if (
+                    category === "Passaporte" &&
+                    (protocol === "" || protocol === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["protocol"],
+                      code: "custom",
+                      message: "Protocolo é obrigatório",
+                    });
+                  }
+
+                  if (
+                    category === "Passaporte" &&
+                    (paymentStatus === "" || paymentStatus === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["paymentStatus"],
+                      code: "custom",
+                      message: "Status do Pagamento é obrigatório",
+                    });
+                  }
+
+                  if (category === "Passaporte" && scheduleDate === undefined) {
+                    ctx.addIssue({
+                      path: ["scheduleDate"],
+                      code: "custom",
+                      message: "Data do agendamento é obrigatória",
+                    });
+                  }
+
+                  if (
+                    category === "Passaporte" &&
+                    (scheduleLocation === "" || scheduleLocation === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["scheduleLocation"],
+                      code: "custom",
+                      message: "Local do agendamento é obrigatório",
+                    });
+                  }
+
+                  if (category === "Passaporte" && entryDate === undefined) {
+                    ctx.addIssue({
+                      path: ["entryDate"],
+                      code: "custom",
+                      message: "Data de entrada é obrigatório",
+                    });
+                  }
+
+                  if (
+                    category === "E-TA" &&
+                    (process === "" || process === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["process"],
+                      code: "custom",
+                      message: "Processo é obrigatório",
+                    });
+                  }
+
+                  if (
+                    category === "E-TA" &&
+                    (ETAStatus === "" || ETAStatus === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["ETAStatus"],
+                      code: "custom",
+                      message: "Status é obrigatório",
+                    });
+                  }
+
+                  if (
+                    category === "E-TA" &&
+                    (passport === "" || passport === undefined)
+                  ) {
+                    ctx.addIssue({
+                      path: ["passport"],
+                      code: "custom",
+                      message: "Passaporte é obrigatório",
+                    });
+                  }
+                },
+              ),
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
@@ -277,6 +448,8 @@ export const userRouter = router({
         let visaClass;
         let visaType;
         let category;
+        let paymentStatus;
+        let ETAStatusValue;
 
         switch (profile.visaClass) {
           case "B1 Babá":
@@ -311,6 +484,33 @@ export const userRouter = router({
             break;
         }
 
+        switch (profile.paymentStatus) {
+          case "Pendente":
+            paymentStatus = PaymentStatus.pending;
+            break;
+          case "Pago":
+            paymentStatus = PaymentStatus.paid;
+            break;
+          default:
+            paymentStatus = PaymentStatus.pending;
+            break;
+        }
+
+        switch (profile.ETAStatus) {
+          case "Em Análise":
+            ETAStatusValue = ETAStatus.analysis;
+            break;
+          case "Aprovado":
+            ETAStatusValue = ETAStatus.approved;
+            break;
+          case "Reprovado":
+            ETAStatusValue = ETAStatus.disapproved;
+            break;
+          default:
+            ETAStatusValue = ETAStatus.analysis;
+            break;
+        }
+
         switch (profile.category) {
           case "Visto Americano":
             category = Category.american_visa;
@@ -326,10 +526,12 @@ export const userRouter = router({
             break;
         }
 
+        // ETAStatus        ETAStatus     @default(analysis)
+
         const newProfile = await prisma.profile.create({
           data: {
             DSValid: addDays(new Date(), 30),
-            DSNumber: profile.DSNumber,
+            DSNumber: profile.DSNumber ?? "",
             name: profile.profileName,
             address: profile.profileAddress,
             cpf: profile.profileCpf,
@@ -337,6 +539,14 @@ export const userRouter = router({
             passport: profile.passport,
             issuanceDate: profile.issuanceDate,
             expireDate: profile.expireDate,
+            responsibleCpf: profile.responsibleCpf,
+            protocol: profile.protocol,
+            paymentStatus,
+            scheduleDate: profile.scheduleDate,
+            scheduleLocation: profile.scheduleLocation,
+            entryDate: profile.entryDate,
+            process: profile.process,
+            ETAStatus: ETAStatusValue,
             visaClass,
             visaType,
             category,
@@ -348,15 +558,17 @@ export const userRouter = router({
           },
         });
 
-        await prisma.form.create({
-          data: {
-            profile: {
-              connect: {
-                id: newProfile.id,
+        if (profile.category === "Visto Americano") {
+          await prisma.form.create({
+            data: {
+              profile: {
+                connect: {
+                  id: newProfile.id,
+                },
               },
             },
-          },
-        });
+          });
+        }
 
         return newProfile;
       });
@@ -1134,52 +1346,122 @@ export const userRouter = router({
     }),
   editProfile: collaboratorProcedure
     .input(
-      z.object({
-        profileId: z.string().min(1),
-        profileName: z.string().min(1).min(6),
-        profileCpf: z
-          .string()
-          .refine((val) => val.length > 0 && val.length === 14),
-        profileAddress: z.string(),
-        birthDate: z.date().optional(),
-        passport: z.string(),
-        visaType: z
-          .enum(["Renovação", "Primeiro Visto", ""])
-          .refine((val) => val.length !== 0),
-        visaClass: z
-          .enum([
-            "B1 Babá",
-            "B1/B2 Turismo",
-            "O1 Capacidade Extraordinária",
-            "O2 Estrangeiro Acompanhante/Assistente",
-            "O3 Cônjuge ou Filho de um O1 ou O2",
-            "",
-          ])
-          .refine((val) => val.length !== 0),
-        issuanceDate: z.date().optional(),
-        expireDate: z.date().optional(),
-        DSNumber: z.string(),
-        CASVDate: z.date().optional(),
-        taxDate: z.date().optional(),
-        shipping: z
-          .enum([
-            "A Verificar",
-            "Retirada",
-            "SEDEX",
-            "C-Retirada",
-            "C-SEDEX",
-            "",
-          ])
-          .refine((val) => val.length !== 0),
-        interviewDate: z.date().optional(),
-        interviewTime: z
-          .string()
-          .regex(
-            /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/,
-            "Horário da entrevista inválido",
-          )
-          .optional(),
-      }),
+      z
+        .object({
+          profileId: z.string().min(1),
+          profileName: z
+            .string()
+            .min(1, { message: "Nome do perfil é obrigatório" })
+            .min(6, {
+              message: "Nome do perfil precisa ter no mínimo 6 caracteres",
+            }),
+          profileCpf: z
+            .string()
+            .refine((val) => val.length > 0 && val.length === 14, {
+              message: "CPF inválido",
+            }),
+          profileAddress: z.string(),
+          birthDate: z.date().optional(),
+          CASVDate: z.date().optional(),
+          taxDate: z.date().optional(),
+          shipping: z
+            .enum(
+              ["A Verificar", "Retirada", "SEDEX", "C-Retirada", "C-SEDEX", ""],
+              {
+                message: "Opção de envio inválida",
+              },
+            )
+            .optional(),
+          interviewDate: z.date().optional(),
+          interviewTime: z.string().optional(),
+          passport: z.string().optional(),
+          visaType: z
+            .enum(["Renovação", "Primeiro Visto", ""], {
+              message: "Tipo de Visto inválido",
+            })
+            .optional(),
+          visaClass: z
+            .enum(
+              [
+                "B1 Babá",
+                "B1/B2 Turismo",
+                "O1 Capacidade Extraordinária",
+                "O2 Estrangeiro Acompanhante/Assistente",
+                "O3 Cônjuge ou Filho de um O1 ou O2",
+                "",
+              ],
+              { message: "Classe de visto inválida" },
+            )
+            .optional(),
+          category: z
+            .enum(["Visto Americano", "Passaporte", "E-TA", ""])
+            .refine((val) => val.length !== 0, {
+              message: "Categoria é obrigatória",
+            }),
+          issuanceDate: z.date().optional(),
+          expireDate: z.date().optional(),
+          DSNumber: z.string().optional(),
+          responsibleCpf: z.string().optional(),
+          protocol: z.string().optional(),
+          paymentStatus: z
+            .enum(["Pendente", "Pago", ""], {
+              message: "Status de pagamento inválido",
+            })
+            .optional(),
+          scheduleDate: z.date().optional(),
+          scheduleLocation: z.string().optional(),
+          entryDate: z.date().optional(),
+          process: z.string().optional(),
+          ETAStatus: z
+            .enum(["Em Análise", "Aprovado", "Reprovado", ""], {
+              message: "Status inválido",
+            })
+            .optional(),
+        })
+        .superRefine(
+          (
+            { category, visaType, visaClass, interviewDate, interviewTime },
+            ctx,
+          ) => {
+            if (
+              category === "Visto Americano" &&
+              (visaType === "" || visaType === undefined)
+            ) {
+              ctx.addIssue({
+                path: ["visaType"],
+                code: "custom",
+                message: "Tipo do visto é obrigatório",
+              });
+            }
+
+            if (
+              category === "Visto Americano" &&
+              (visaClass === "" || visaClass === undefined)
+            ) {
+              ctx.addIssue({
+                path: ["visaClass"],
+                code: "custom",
+                message: "Classe do visto é obrigatória",
+              });
+            }
+
+            if (
+              category === "Visto Americano" &&
+              interviewDate &&
+              (interviewTime === "" ||
+                interviewTime === undefined ||
+                /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(
+                  interviewTime,
+                ) === false)
+            ) {
+              ctx.addIssue({
+                path: ["interviewTime"],
+                code: "custom",
+                message: "Horário da entrevista é obrigatório",
+              });
+            }
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -1196,11 +1478,20 @@ export const userRouter = router({
         interviewDate,
         interviewTime,
         taxDate,
+        responsibleCpf,
+        protocol,
+        scheduleDate,
+        scheduleLocation,
+        entryDate,
+        process,
       } = opts.input;
 
       let visaClass;
       let visaType;
       let shipping;
+      let category;
+      let paymentStatus;
+      let ETAStatusValue;
 
       switch (opts.input.visaClass) {
         case "B1 Babá":
@@ -1256,6 +1547,48 @@ export const userRouter = router({
           break;
       }
 
+      switch (opts.input.category) {
+        case "Visto Americano":
+          category = Category.american_visa;
+          break;
+        case "Passaporte":
+          category = Category.passport;
+          break;
+        case "E-TA":
+          category = Category.e_ta;
+          break;
+        default:
+          category = Category.american_visa;
+          break;
+      }
+
+      switch (opts.input.paymentStatus) {
+        case "Pendente":
+          paymentStatus = PaymentStatus.pending;
+          break;
+        case "Pago":
+          paymentStatus = PaymentStatus.paid;
+          break;
+        default:
+          paymentStatus = PaymentStatus.pending;
+          break;
+      }
+
+      switch (opts.input.ETAStatus) {
+        case "Em Análise":
+          ETAStatusValue = ETAStatus.analysis;
+          break;
+        case "Aprovado":
+          ETAStatusValue = ETAStatus.approved;
+          break;
+        case "Reprovado":
+          ETAStatusValue = ETAStatus.disapproved;
+          break;
+        default:
+          ETAStatusValue = ETAStatus.analysis;
+          break;
+      }
+
       const clientUpdated = await prisma.profile.update({
         where: {
           id: profileId,
@@ -1276,6 +1609,15 @@ export const userRouter = router({
           shipping,
           interviewDate,
           interviewTime,
+          category,
+          paymentStatus,
+          ETAStatus: ETAStatusValue,
+          responsibleCpf,
+          protocol,
+          scheduleDate,
+          scheduleLocation,
+          entryDate,
+          process,
         },
         include: {
           user: {
@@ -1308,7 +1650,7 @@ export const userRouter = router({
         },
       });
 
-      return { message: "Perfil movido para arquivos com sucesso" };
+      return { message: "Perfil movido para arquivos" };
     }),
   prospectProfile: collaboratorProcedure
     .input(
@@ -1328,7 +1670,7 @@ export const userRouter = router({
         },
       });
 
-      return { message: "Perfil movido para prospect com sucesso" };
+      return { message: "Perfil movido para prospect" };
     }),
   activateProfile: collaboratorProcedure
     .input(
@@ -1348,6 +1690,6 @@ export const userRouter = router({
         },
       });
 
-      return { message: "Perfil movido para clientes ativos com sucesso" };
+      return { message: "Perfil movido para clientes ativos" };
     }),
 });

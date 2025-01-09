@@ -96,6 +96,17 @@ enum Shipping {
   c_sedex
 }
 
+enum ETAStatus {
+  approved
+  disapproved
+  analysis
+}
+
+enum PaymentStatus {
+  paid
+  pending
+}
+
 model User {
   id                      String           @id @default(auto()) @map("_id") @db.ObjectId
   name                    String
@@ -125,30 +136,38 @@ model User {
 }
 
 model Profile {
-  id            String     @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  birthDate     DateTime?
-  cpf           String?
-  address       String?
-  CASVDate      DateTime?
-  interviewDate DateTime?
-  interviewTime String?
-  visaType      VisaType
-  visaClass     VisaClass
-  visaStatus    VisaStatus @default(awaiting)
-  statusDS      StatusDS   @default(awaiting)
-  DSNumber      String
-  DSValid       DateTime
-  passport      String?
-  taxDate       DateTime?
-  meetingDate   DateTime?
-  issuanceDate  DateTime?
-  expireDate    DateTime?
-  statusForm    StatusForm @default(awaiting)
-  formStep      Int        @default(0)
-  category      Category
-  status        Status     @default(active)
-  shipping      Shipping   @default(verifying)
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  birthDate        DateTime?
+  cpf              String?
+  responsibleCpf   String?
+  address          String?
+  CASVDate         DateTime?
+  interviewDate    DateTime?
+  interviewTime    String?
+  visaType         VisaType
+  visaClass        VisaClass
+  visaStatus       VisaStatus    @default(awaiting)
+  statusDS         StatusDS      @default(awaiting)
+  DSNumber         String
+  DSValid          DateTime
+  passport         String?
+  taxDate          DateTime?
+  meetingDate      DateTime?
+  issuanceDate     DateTime?
+  expireDate       DateTime?
+  statusForm       StatusForm    @default(awaiting)
+  formStep         Int           @default(0)
+  category         Category
+  status           Status        @default(active)
+  shipping         Shipping      @default(verifying)
+  protocol         String?
+  paymentStatus    PaymentStatus @default(pending)
+  scheduleDate     DateTime?
+  scheduleLocation String?
+  entryDate        DateTime?
+  process          String?
+  ETAStatus        ETAStatus     @default(analysis)
 
   userId       String         @db.ObjectId
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
