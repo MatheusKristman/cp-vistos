@@ -1,11 +1,3 @@
-"use client";
-
-import Image from "next/image";
-import { toast } from "sonner";
-import { format } from "date-fns";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { Category, StatusDS, VisaStatus } from "@prisma/client";
 import {
   Edit,
   NotepadText,
@@ -13,11 +5,20 @@ import {
   MessageCircleMore,
   FileText,
   Plus,
-  Archive,
 } from "lucide-react";
+import Image from "next/image";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import {
+  Category,
+  ETAStatus,
+  PaymentStatus,
+  StatusDS,
+  VisaStatus,
+} from "@prisma/client";
 
-import { Button } from "@/components/ui/button";
-import { ConfirmArchiveStatusModal } from "./confirm-archive-status-modal";
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +32,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ConfirmActiveStatusModal } from "./confirm-active-status-modal";
+import { ConfirmArchiveStatusModal } from "./confirm-archive-status-modal";
+import { ConfirmProspectStatusModal } from "./confirm-prospect-status-modal";
 
 import useUserStore from "@/constants/stores/useUserStore";
 import { FormAnimation } from "@/constants/animations/modal";
@@ -39,8 +44,6 @@ import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModal
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
-import { ConfirmProspectStatusModal } from "./confirm-prospect-status-modal";
-import { ConfirmActiveStatusModal } from "./confirm-active-status-modal";
 
 interface Props {
   handleClose: () => void;
@@ -63,6 +66,8 @@ export function ClientDetailsResume({ handleClose }: Props) {
   const [statusDS, setStatusDS] = useState("");
   const [visaStatus, setVisaStatus] = useState("");
   const [profileSelected, setProfileSelected] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [ETAStatusValue, setETAStatusValue] = useState("");
   const [isConfirmArchiveStatusOpen, setConfirmArchiveStatusOpen] =
     useState(false);
   const [isConfirmProspectStatusOpen, setConfirmProspectStatusOpen] =
@@ -76,8 +81,10 @@ export function ClientDetailsResume({ handleClose }: Props) {
     if (client) {
       setStatusDS(client.statusDS);
       setVisaStatus(client.visaStatus);
+      setPaymentStatus(client.paymentStatus);
+      setETAStatusValue(client.ETAStatus);
     }
-  }, [client, statusDS, visaStatus]);
+  }, [client]);
 
   const { mutate: changeProfile, isPending } =
     trpc.userRouter.getClientDetails.useMutation({
@@ -145,9 +152,48 @@ export function ClientDetailsResume({ handleClose }: Props) {
         }
       },
     });
+  const { mutate: updatePaymentStatus, isPending: isPaymentStatusUpdating } =
+    trpc.userRouter.updatePaymentStatus.useMutation({
+      onSuccess: (data) => {
+        setClient(data.updatedClient);
+        setPaymentStatus(data.status);
+        utils.userRouter.getActiveClients.invalidate();
+      },
+      onError: (error) => {
+        console.error(error);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao atualizar o status do pagamento");
+        }
+      },
+    });
+  const { mutate: updateETAStatus, isPending: isETAStatusUpdating } =
+    trpc.userRouter.updateETAStatus.useMutation({
+      onSuccess: (data) => {
+        setClient(data.updatedClient);
+        setETAStatusValue(data.status);
+        utils.userRouter.getActiveClients.invalidate();
+      },
+      onError: (error) => {
+        console.error(error);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao atualizar o status");
+        }
+      },
+    });
 
   const isLoading =
-    isVisaStatusUpdating || isStatusDSUpdating || isDSValidPending || isPending;
+    isVisaStatusUpdating ||
+    isStatusDSUpdating ||
+    isDSValidPending ||
+    isPaymentStatusUpdating ||
+    isETAStatusUpdating ||
+    isPending;
 
   function handleAnnotation() {
     unsetToResume();
@@ -551,9 +597,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
                 <span className="text-base font-medium text-foreground">
                   {client.interviewDate
-                    ? `${format(client.interviewDate, "dd/MM/yyyy")} ${
-                        client.interviewTime && `\às ${client.interviewTime}`
-                      }`
+                    ? client.interviewTime
+                      ? `${format(client.interviewDate, "dd/MM/yyyy")} - ${client.interviewTime}`
+                      : format(client.interviewDate, "dd/MM/yyyy")
                     : "--/--/----"}
                 </span>
               </div>
@@ -823,7 +869,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
                 <span className="text-base font-medium text-foreground">
                   {client.scheduleDate
-                    ? format(client.scheduleDate, "dd/MM/yyyy")
+                    ? client.scheduleTime
+                      ? `${format(client.scheduleDate, "dd/MM/yyyy")} - ${client.scheduleTime}`
+                      : format(client.scheduleDate, "dd/MM/yyyy")
                     : "--/--/----"}
                 </span>
               </div>
@@ -845,7 +893,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
                   Status do pagamento
-                  {false && (
+                  {isPaymentStatusUpdating && (
                     <RotateCw
                       className="h-3 w-3 animate-spin"
                       strokeWidth={1.5}
@@ -855,14 +903,14 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
                 <Select
                   defaultValue={client.paymentStatus}
-                  // value={statusDS}
-                  // onValueChange={(value) => {
-                  //   updateStatusDS({
-                  //     profileId: client.id,
-                  //     status: value as StatusDS,
-                  //   });
-                  // }}
-                  // disabled={isLoading}
+                  value={paymentStatus}
+                  onValueChange={(value) => {
+                    updatePaymentStatus({
+                      profileId: client.id,
+                      status: value as PaymentStatus,
+                    });
+                  }}
+                  disabled={isLoading}
                 >
                   <SelectTrigger
                     className={cn(
@@ -1035,7 +1083,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
                   Status
-                  {false && (
+                  {isETAStatusUpdating && (
                     <RotateCw
                       className="h-3 w-3 animate-spin"
                       strokeWidth={1.5}
@@ -1045,14 +1093,14 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
                 <Select
                   defaultValue={client.ETAStatus}
-                  // value={statusDS}
-                  // onValueChange={(value) => {
-                  //   updateStatusDS({
-                  //     profileId: client.id,
-                  //     status: value as StatusDS,
-                  //   });
-                  // }}
-                  // disabled={isLoading}
+                  value={ETAStatusValue}
+                  onValueChange={(value) => {
+                    updateETAStatus({
+                      profileId: client.id,
+                      status: value as ETAStatus,
+                    });
+                  }}
+                  disabled={isLoading}
                 >
                   <SelectTrigger
                     className={cn(

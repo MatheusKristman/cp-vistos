@@ -1,17 +1,14 @@
-import { motion } from "framer-motion";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { format, getYear } from "date-fns";
-import { ChangeEvent } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ptBR } from "date-fns/locale";
 import Image from "next/image";
 import { toast } from "sonner";
+import { ChangeEvent } from "react";
+import { motion } from "framer-motion";
+import { ptBR } from "date-fns/locale";
+import { useForm } from "react-hook-form";
+import { format, getYear } from "date-fns";
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -32,6 +29,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";

@@ -1206,6 +1206,80 @@ export const userRouter = router({
 
       return { updatedClient, status };
     }),
+  updatePaymentStatus: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        status: z.enum(["paid", "pending"]),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { profileId, status } = opts.input;
+
+      const updatedClient = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          paymentStatus: status,
+        },
+        include: {
+          user: {
+            include: {
+              profiles: true,
+            },
+          },
+          comments: true,
+          form: true,
+        },
+      });
+
+      if (!updatedClient) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado!",
+        });
+      }
+
+      return { updatedClient, status };
+    }),
+  updateETAStatus: collaboratorProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+        status: z.enum(["approved", "disapproved", "analysis"]),
+      }),
+    )
+    .mutation(async (opts) => {
+      const { profileId, status } = opts.input;
+
+      const updatedClient = await prisma.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          ETAStatus: status,
+        },
+        include: {
+          user: {
+            include: {
+              profiles: true,
+            },
+          },
+          comments: true,
+          form: true,
+        },
+      });
+
+      if (!updatedClient) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Perfil não encontrado!",
+        });
+      }
+
+      return { updatedClient, status };
+    }),
   addAnnotation: adminProcedure
     .input(
       z.object({
