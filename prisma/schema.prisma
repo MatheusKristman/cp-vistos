@@ -164,6 +164,7 @@ model Profile {
   protocol         String?
   paymentStatus    PaymentStatus @default(pending)
   scheduleDate     DateTime?
+  scheduleTime     String?
   scheduleLocation String?
   entryDate        DateTime?
   process          String?

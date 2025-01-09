@@ -168,6 +168,7 @@ const profileFormSchema = z
       },
       ctx,
     ) => {
+      // TODO: remover validações para Passaporte e E-TA
       if (
         category === "Visto Americano" &&
         (visaType === "" || visaType === undefined)
@@ -690,7 +691,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">Nome*</FormLabel>
 
                     <FormControl>
@@ -709,7 +710,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="cpf"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">CPF</FormLabel>
 
                     <FormControl>
@@ -738,7 +739,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="group"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">Grupo</FormLabel>
 
                     <FormControl>
@@ -756,7 +757,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="address"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">Endereço</FormLabel>
 
                     <FormControl>
@@ -775,7 +776,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="cel"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">Celular</FormLabel>
 
                     <FormControl>
@@ -802,7 +803,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">E-mail*</FormLabel>
 
                     <FormControl>
@@ -821,7 +822,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">Senha*</FormLabel>
 
                     <FormControl>
@@ -837,7 +838,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="passwordConfirm"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">Confirmar Senha*</FormLabel>
 
                     <FormControl>
@@ -855,7 +856,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="emailScheduleAccount"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">
                       E-mail (agendamento)*
                     </FormLabel>
@@ -876,7 +877,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="passwordScheduleAccount"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">
                       Senha (agendamento)*
                     </FormLabel>
@@ -897,7 +898,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="passwordConfirmScheduleAccount"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">
                       Confirmar Senha (agendamento)*
                     </FormLabel>
@@ -922,14 +923,14 @@ export default function CreateAccountPage() {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "flex flex-col gap-2",
+                      "flex flex-col gap-1",
                       role === "COLLABORATOR" && "hidden",
                     )}
                   >
                     <FormLabel className="truncate">Valor do Serviço</FormLabel>
 
                     <FormControl>
-                      <div className="h-12 flex items-center gap-2 border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
+                      <div className="h-12 flex items-center gap-1 border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
                         <CircleDollarSign
                           className="w-5 h-5 text-border flex-shrink-0"
                           strokeWidth={1.5}
@@ -964,7 +965,7 @@ export default function CreateAccountPage() {
                 render={({ field }) => (
                   <FormItem
                     className={cn(
-                      "flex flex-col gap-2",
+                      "flex flex-col gap-1",
                       role === "COLLABORATOR" && "hidden",
                     )}
                   >
@@ -1002,7 +1003,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name="scheduleAccount"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">
                       Conta de Agendamento*
                     </FormLabel>
@@ -1078,12 +1079,12 @@ export default function CreateAccountPage() {
                 onValueChange={setIsProfileSameAsAccount}
                 className="flex flex-col gap-4"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <RadioGroupItem value="true" id="true" />
                   <Label htmlFor="true">Usar mesmos dados da conta</Label>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <RadioGroupItem value="false" id="false" />
                   <Label htmlFor="false">Inserir novos dados</Label>
                 </div>
@@ -1095,7 +1096,7 @@ export default function CreateAccountPage() {
                 control={form.control}
                 name={`profiles.${currentProfile}.category`}
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
+                  <FormItem className="flex flex-col gap-1">
                     <FormLabel className="truncate">Categoria*</FormLabel>
 
                     <Select
@@ -1136,7 +1137,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.profileName`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">Nome*</FormLabel>
 
                       <FormControl>
@@ -1163,7 +1164,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.profileCpf`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">CPF*</FormLabel>
 
                       <FormControl>
@@ -1198,7 +1199,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.birthDate`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">
                         Data de Nascimento
                       </FormLabel>
@@ -1272,7 +1273,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.profileAddress`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">Endereço</FormLabel>
 
                       <FormControl>
@@ -1301,7 +1302,7 @@ export default function CreateAccountPage() {
                   render={({ field }) => (
                     <FormItem
                       className={cn(
-                        "flex flex-col gap-2",
+                        "flex flex-col gap-1",
                         category !== "Visto Americano" &&
                           category !== "E-TA" &&
                           "hidden",
@@ -1330,7 +1331,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.visaType`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">Tipo de Visto*</FormLabel>
 
                       <Select
@@ -1366,7 +1367,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.visaClass`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">
                         Classe do Visto*
                       </FormLabel>
@@ -1418,7 +1419,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.DSNumber`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2 sm:order-3 xl:order-1">
+                    <FormItem className="flex flex-col gap-1 sm:order-3 xl:order-1">
                       <FormLabel className="truncate">Barcode</FormLabel>
 
                       <FormControl>
@@ -1442,7 +1443,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.issuanceDate`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2 sm:order-1 xl:order-2">
+                    <FormItem className="flex flex-col gap-1 sm:order-1 xl:order-2">
                       <FormLabel className="truncate">
                         Data de Emissão
                       </FormLabel>
@@ -1513,7 +1514,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.expireDate`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2 sm:order-2 xl:order-3">
+                    <FormItem className="flex flex-col gap-1 sm:order-2 xl:order-3">
                       <FormLabel className="truncate">
                         Data de Expiração
                       </FormLabel>
@@ -1593,7 +1594,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.responsibleCpf`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">
                         CPF do responsável
                       </FormLabel>
@@ -1627,7 +1628,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.protocol`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">Protocolo</FormLabel>
 
                       <FormControl>
@@ -1643,7 +1644,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.paymentStatus`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">
                         Status do pagamento
                       </FormLabel>
@@ -1688,7 +1689,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.scheduleDate`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">
                         Data do agendamento
                       </FormLabel>
@@ -1759,7 +1760,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.scheduleLocation`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">
                         Local do agendamento
                       </FormLabel>
@@ -1780,7 +1781,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.entryDate`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">
                         Data de entrada
                       </FormLabel>
@@ -1859,7 +1860,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.ETAStatus`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">Status</FormLabel>
 
                       <Select
@@ -1896,7 +1897,7 @@ export default function CreateAccountPage() {
                   control={form.control}
                   name={`profiles.${currentProfile}.process`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
+                    <FormItem className="flex flex-col gap-1">
                       <FormLabel className="truncate">Processo</FormLabel>
 
                       <FormControl>
