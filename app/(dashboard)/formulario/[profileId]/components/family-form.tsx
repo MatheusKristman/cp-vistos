@@ -244,6 +244,14 @@ export function FamilyForm({
     "familyLivingInTheUSAConfirmation",
   );
   const familyLivingInTheUSA = form.watch("familyLivingInTheUSA");
+  const partnerCompleteName = form.watch("partnerCompleteName");
+  const partnerBirthdate = form.watch("partnerBirthdate");
+  const partnerNationality = form.watch("partnerNationality");
+  const partnerCity = form.watch("partnerCity");
+  const partnerState = form.watch("partnerState");
+  const partnerCountry = form.watch("partnerCountry");
+  const unionDate = form.watch("unionDate");
+  const divorceDate = form.watch("divorceDate");
   const utils = trpc.useUtils();
   const router = useRouter();
   const maritalStatus = currentForm.maritalStatus;
@@ -409,6 +417,89 @@ export function FamilyForm({
   }, [redirectStep, setRedirectStep, saveFamily, profileId]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    let errorCount = 0;
+
+    if (
+      maritalStatus === "Separado(a)" ||
+      maritalStatus === "Divorciado(a)" ||
+      maritalStatus === "Viúvo(a)" ||
+      maritalStatus === "Casado(a)" ||
+      maritalStatus === "União Estavel" ||
+      maritalStatus === "Parceiro(a) Doméstico(a)"
+    ) {
+      if (partnerCompleteName.length === 0) {
+        form.setError("partnerCompleteName", {
+          type: "custom",
+          message: "Nome é obrigatório",
+        });
+        errorCount++;
+      }
+
+      if (partnerBirthdate === undefined) {
+        form.setError("partnerBirthdate", {
+          type: "custom",
+          message: "Data de nascimento é obrigatória",
+        });
+        errorCount++;
+      }
+
+      if (partnerNationality.length === 0) {
+        form.setError("partnerNationality", {
+          type: "custom",
+          message: "Nacionalidade é obrigatório",
+        });
+        errorCount++;
+      }
+
+      if (partnerCity.length === 0) {
+        form.setError("partnerCity", {
+          type: "custom",
+          message: "Cidade de nascimento é obrigatória",
+        });
+        errorCount++;
+      }
+
+      if (partnerState.length === 0) {
+        form.setError("partnerState", {
+          type: "custom",
+          message: "Estado de nascimento é obrigatório",
+        });
+        errorCount++;
+      }
+
+      if (partnerCountry.length === 0) {
+        form.setError("partnerCountry", {
+          type: "custom",
+          message: "País de nascimento é obrigatório",
+        });
+        errorCount++;
+      }
+    }
+
+    if (maritalStatus === "Separado" || maritalStatus === "Divorciado(a)") {
+      if (unionDate === undefined) {
+        form.setError("unionDate", {
+          type: "custom",
+          message: "Data da união é obrigatório",
+        });
+        errorCount++;
+      }
+
+      if (divorceDate === undefined) {
+        form.setError("divorceDate", {
+          type: "custom",
+          message: "Data da separação é obrigatório",
+        });
+        errorCount++;
+      }
+    }
+
+    if (errorCount > 0) {
+      return;
+    }
+
+    form.clearErrors();
+
     if (isMinor) {
       submitFamily({
         ...values,
@@ -1158,9 +1249,7 @@ export function FamilyForm({
             {/* TODO: colocar campos obrigatórios */}
             <span
               className={cn("text-foreground text-base font-medium mb-6", {
-                hidden:
-                  maritalStatus === "Solteiro(a)" ||
-                  maritalStatus === "Divorciado(a)",
+                hidden: maritalStatus === "Solteiro(a)",
               })}
             >
               {maritalStatus === "Divorciado(a)" ||
