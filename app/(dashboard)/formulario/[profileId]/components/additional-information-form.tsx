@@ -33,6 +33,208 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const countries = [
+  "Afeganistão",
+  "Albânia",
+  "Argélia",
+  "Andorra",
+  "Angola",
+  "Argentina",
+  "Armênia",
+  "Austrália",
+  "Áustria",
+  "Azerbaijão",
+  "Bahamas",
+  "Bahrein",
+  "Bangladesh",
+  "Barbados",
+  "Bielorrússia",
+  "Bélgica",
+  "Belize",
+  "Benin",
+  "Butão",
+  "Bolívia",
+  "Bósnia e Herzegovina",
+  "Botswana",
+  "Brasil",
+  "Brunei",
+  "Bulgária",
+  "Burkina Faso",
+  "Burundi",
+  "Cabo Verde",
+  "Camboja",
+  "Camarões",
+  "Canadá",
+  "Chade",
+  "Chile",
+  "China",
+  "Colômbia",
+  "Comores",
+  "Congo",
+  "Costa Rica",
+  "Croácia",
+  "Cuba",
+  "Chipre",
+  "República Tcheca",
+  "Dinamarca",
+  "Djibuti",
+  "Dominica",
+  "República Dominicana",
+  "Equador",
+  "Egito",
+  "El Salvador",
+  "Guiné Equatorial",
+  "Eritreia",
+  "Estônia",
+  "Essuatíni",
+  "Etiópia",
+  "Fiji",
+  "Finlândia",
+  "França",
+  "Gabão",
+  "Gâmbia",
+  "Geórgia",
+  "Alemanha",
+  "Gana",
+  "Grécia",
+  "Granada",
+  "Guatemala",
+  "Guiné",
+  "Guiné-Bissau",
+  "Guiana",
+  "Haiti",
+  "Honduras",
+  "Hungria",
+  "Islândia",
+  "Índia",
+  "Indonésia",
+  "Irã",
+  "Iraque",
+  "Irlanda",
+  "Israel",
+  "Itália",
+  "Jamaica",
+  "Japão",
+  "Jordânia",
+  "Cazaquistão",
+  "Quênia",
+  "Kiribati",
+  "Coreia do Norte",
+  "Coreia do Sul",
+  "Kosovo",
+  "Kuwait",
+  "Quirguistão",
+  "Laos",
+  "Letônia",
+  "Líbano",
+  "Lesoto",
+  "Libéria",
+  "Líbia",
+  "Liechtenstein",
+  "Lituânia",
+  "Luxemburgo",
+  "Madagascar",
+  "Malawi",
+  "Malásia",
+  "Maldivas",
+  "Mali",
+  "Malta",
+  "Ilhas Marshall",
+  "Mauritânia",
+  "Maurício",
+  "México",
+  "Micronésia",
+  "Moldávia",
+  "Mônaco",
+  "Mongólia",
+  "Montenegro",
+  "Marrocos",
+  "Moçambique",
+  "Mianmar (Birmânia)",
+  "Namíbia",
+  "Nauru",
+  "Nepal",
+  "Países Baixos",
+  "Nova Zelândia",
+  "Nicarágua",
+  "Níger",
+  "Nigéria",
+  "Macedônia do Norte",
+  "Noruega",
+  "Omã",
+  "Paquistão",
+  "Palau",
+  "Palestina",
+  "Panamá",
+  "Papua-Nova Guiné",
+  "Paraguai",
+  "Peru",
+  "Filipinas",
+  "Polônia",
+  "Portugal",
+  "Catar",
+  "Romênia",
+  "Rússia",
+  "Ruanda",
+  "São Cristóvão e Nevis",
+  "Santa Lúcia",
+  "São Vicente e Granadinas",
+  "Samoa",
+  "San Marino",
+  "São Tomé e Príncipe",
+  "Arábia Saudita",
+  "Senegal",
+  "Sérvia",
+  "Seychelles",
+  "Serra Leoa",
+  "Cingapura",
+  "Eslováquia",
+  "Eslovênia",
+  "Ilhas Salomão",
+  "Somália",
+  "África do Sul",
+  "Espanha",
+  "Sri Lanka",
+  "Sudão",
+  "Suriname",
+  "Suécia",
+  "Suíça",
+  "Síria",
+  "Taiwan",
+  "Tajiquistão",
+  "Tanzânia",
+  "Tailândia",
+  "Timor-Leste",
+  "Togo",
+  "Tonga",
+  "Trinidad e Tobago",
+  "Tunísia",
+  "Turquia",
+  "Turcomenistão",
+  "Tuvalu",
+  "Uganda",
+  "Ucrânia",
+  "Emirados Árabes Unidos",
+  "Reino Unido",
+  "Estados Unidos",
+  "Uruguai",
+  "Uzbequistão",
+  "Vanuatu",
+  "Vaticano",
+  "Venezuela",
+  "Vietnã",
+  "Iêmen",
+  "Zâmbia",
+  "Zimbábue",
+];
 
 const formSchema = z
   .object({
@@ -422,6 +624,12 @@ export function AdditionalInformationForm({
 
     const currentCountry = fiveYearsOtherCountryTravels ?? [];
 
+    if (fiveYearsOtherCountryTravels.includes(countryValue)) {
+      toast.error("Esse país já foi adicionado!");
+
+      return;
+    }
+
     currentCountry.push(countryValue);
 
     form.setValue("fiveYearsOtherCountryTravels", currentCountry);
@@ -703,18 +911,27 @@ export function AdditionalInformationForm({
                       Forneça uma lista dos países visitados
                     </FormLabel>
 
-                    <FormControl>
+                    <Select
+                      onValueChange={(value) => setCountryValue(value)}
+                      defaultValue={countryValue}
+                    >
                       <div className="!mt-auto w-full flex items-center justify-between gap-2">
-                        <Input
-                          disabled={isPending || isSavePending}
-                          name={field.name}
-                          ref={field.ref}
-                          onBlur={field.onBlur}
-                          value={countryValue}
-                          onChange={(event) =>
-                            setCountryValue(event.target.value)
-                          }
-                        />
+                        <FormControl>
+                          <SelectTrigger
+                            className="!mt-auto"
+                            disabled={isPending || isSavePending}
+                          >
+                            <SelectValue placeholder="Selecione o país" />
+                          </SelectTrigger>
+                        </FormControl>
+
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem value={country} key={country}>
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
 
                         <Button
                           disabled={isPending || isSavePending}
@@ -726,7 +943,7 @@ export function AdditionalInformationForm({
                           <Plus />
                         </Button>
                       </div>
-                    </FormControl>
+                    </Select>
 
                     {fiveYearsOtherCountryTravels && (
                       <div className="w-full flex flex-wrap gap-2">

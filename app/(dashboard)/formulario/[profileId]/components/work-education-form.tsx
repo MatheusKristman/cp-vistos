@@ -1144,12 +1144,15 @@ export function WorkEducationForm({
                 name="office"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("flex flex-col gap-2", {
-                      hidden:
-                        occupation === "Empresário/Proprietário" ||
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
-                    })}
+                    className={cn(
+                      "flex flex-col gap-2 row-start-1 md:col-start-1",
+                      {
+                        hidden:
+                          occupation === "Empresário/Proprietário" ||
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground">
                       {occupation === "Outro" ? (
@@ -1195,12 +1198,16 @@ export function WorkEducationForm({
                 name="companyOrBossName"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("flex flex-col gap-2", {
-                      "md:col-span-1": occupation === "Empresário/Proprietário",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
-                    })}
+                    className={cn(
+                      "flex flex-col gap-2 row-start-2 md:row-start-1 md:col-start-2",
+                      {
+                        "md:col-span-1 md:col-start-1":
+                          occupation === "Empresário/Proprietário",
+                        hidden:
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground">
                       {occupation === "Empresário/Proprietário"
@@ -1239,15 +1246,15 @@ export function WorkEducationForm({
                 )}
               />
 
-              {/* TODO: jogar campo para cima */}
               <FormField
                 control={form.control}
                 name="companyAddress"
                 render={({ field }) => (
                   <FormItem
                     className={cn("flex flex-col gap-2", {
-                      "md:col-span-2": occupation === "Empresário/Proprietário",
-                      "md:row-start-3 md:col-start-1":
+                      "row-start-2 md:row-start-1 md:col-start-2 md:col-span-2":
+                        occupation === "Empresário/Proprietário",
+                      "row-start-3 md:col-span-2 md:row-start-2 md:col-start-1":
                         occupation === "Registrado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Outro",
@@ -1295,15 +1302,18 @@ export function WorkEducationForm({
                 name="companyCity"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("flex flex-col gap-2", {
-                      "md:row-start-2 md:col-start-1":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
-                    })}
+                    className={cn(
+                      "flex flex-col gap-2 row-start-4 md:row-start-2 md:col-start-2",
+                      {
+                        "row-start-6 md:row-start-3 md:col-start-2":
+                          occupation === "Registrado (CLT/PJ)" ||
+                          occupation === "Autônomo" ||
+                          occupation === "Outro",
+                        hidden:
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground">Cidade</FormLabel>
 
@@ -1342,15 +1352,18 @@ export function WorkEducationForm({
                 name="companyState"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("flex flex-col gap-2", {
-                      "md:row-start-2 md:col-start-2":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
-                    })}
+                    className={cn(
+                      "flex flex-col gap-2 row-start-5 md:row-start-2 md:col-start-3",
+                      {
+                        "row-start-7 md:row-start-3 md:col-start-3":
+                          occupation === "Registrado (CLT/PJ)" ||
+                          occupation === "Autônomo" ||
+                          occupation === "Outro",
+                        hidden:
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground">Estado</FormLabel>
 
@@ -1388,15 +1401,18 @@ export function WorkEducationForm({
                 name="companyCountry"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("flex flex-col gap-2", {
-                      "md:row-start-2 md:col-start-3":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
-                    })}
+                    className={cn(
+                      "flex flex-col gap-2 row-start-6 md:row-start-3 md:col-start-1",
+                      {
+                        "row-start-8 md:row-start-4 md:col-start-1":
+                          occupation === "Registrado (CLT/PJ)" ||
+                          occupation === "Autônomo" ||
+                          occupation === "Outro",
+                        hidden:
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground">País</FormLabel>
 
@@ -1434,15 +1450,18 @@ export function WorkEducationForm({
                 name="companyCep"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("flex flex-col gap-2", {
-                      "md:row-start-3 md:col-start-2":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro" ||
-                        occupation === "Autônomo",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
-                    })}
+                    className={cn(
+                      "flex flex-col gap-2 row-start-3 md:row-start-2 md:col-start-1",
+                      {
+                        "row-start-4 md:row-start-2 md:col-start-3":
+                          occupation === "Registrado (CLT/PJ)" ||
+                          occupation === "Outro" ||
+                          occupation === "Autônomo",
+                        hidden:
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground">CEP</FormLabel>
 
@@ -1485,15 +1504,18 @@ export function WorkEducationForm({
                 name="companyTel"
                 render={({ field }) => (
                   <FormItem
-                    className={cn("flex flex-col gap-2", {
-                      "md:row-start-3 md:col-start-3":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro" ||
-                        occupation === "Autônomo",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
-                    })}
+                    className={cn(
+                      "flex flex-col gap-2 row-start-7 md:row-start-3 md:col-start-2",
+                      {
+                        "row-start-5 md:row-start-3 md:col-start-1":
+                          occupation === "Registrado (CLT/PJ)" ||
+                          occupation === "Outro" ||
+                          occupation === "Autônomo",
+                        hidden:
+                          occupation === "Não Trabalho" ||
+                          occupation === "Aposentado",
+                      },
+                    )}
                   >
                     <FormLabel className="text-foreground">Telefone</FormLabel>
 
@@ -1545,8 +1567,9 @@ export function WorkEducationForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn("flex flex-col gap-2", {
-                      "md:row-start-4 md:col-start-1":
-                        occupation === "Empresário/Proprietário" ||
+                      "row-start-8 md:row-start-3 md:col-start-3":
+                        occupation === "Empresário/Proprietário",
+                      "row-start-9 md:row-start-4 md:col-start-2":
                         occupation === "Registrado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Outro",
@@ -1725,10 +1748,11 @@ export function WorkEducationForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn("flex flex-col gap-2", {
-                      "md:row-start-4 md:col-start-2":
-                        occupation === "Empresário/Proprietário" ||
-                        occupation === "Registrado (CLT/PJ)" ||
+                      "row-start-9 md:row-start-4 md:col-start-1":
+                        occupation === "Empresário/Proprietário",
+                      "row-start-10 md:row-start-4 md:col-start-3":
                         occupation === "Autônomo" ||
+                        occupation === "Registrado (CLT/PJ)" ||
                         occupation === "Outro",
                       hidden:
                         occupation === "Não Trabalho" ||
