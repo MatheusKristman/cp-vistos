@@ -1414,7 +1414,7 @@ export function PreviousTravelForm({
                 )}
             </div>
 
-            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6">
+            <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="immigrationRequestByAnotherPersonConfirmation"
@@ -1481,7 +1481,6 @@ export function PreviousTravelForm({
               )}
             </div>
 
-            {/* TODO: ajustar espaçamento do item acima */}
             <div className="w-full grid grid-cols-1 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
