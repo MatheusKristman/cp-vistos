@@ -437,7 +437,9 @@ export function ClientDetailsForm({ handleClose }: Props) {
                 <span className="text-lg font-medium text-foreground">
                   {client.form.fiveYearsOtherTelConfirmation
                     ? client.form.otherTel
-                      ? formatPhoneNumber(client.form.otherTel)
+                      ? client.form.otherTel
+                          .map((tel) => formatPhoneNumber(tel))
+                          .join(" | ")
                       : "Não Preenchido"
                     : "Não Possui"}
                 </span>

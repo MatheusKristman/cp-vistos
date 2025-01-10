@@ -249,7 +249,7 @@ model Form {
   cel                              String?
   tel                              String?
   fiveYearsOtherTelConfirmation    Boolean?
-  otherTel                         String?
+  otherTel                         String[]
   email                            String?
   fiveYearsOtherEmailConfirmation  Boolean?
   otherEmail                       String?

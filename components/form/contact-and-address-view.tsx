@@ -169,7 +169,7 @@ export function ContactAndAddressView({
             {form.fiveYearsOtherTelConfirmation &&
             form.otherTel &&
             form.otherTel.length > 0
-              ? formatPhone(form.otherTel)
+              ? form.otherTel.map((tel) => formatPhone(tel)).join(" | ")
               : "Não possui"}
           </span>
         </div>

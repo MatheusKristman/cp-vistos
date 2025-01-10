@@ -136,7 +136,222 @@ const formSchema = z
       },
       ctx
     ) => {
-      // TODO: adicionar validação para verificar se tem "Sim" ou "Não"
+      if (contagiousDiseaseConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["contagiousDiseaseConfirmation"],
+        });
+      }
+
+      if (phisicalMentalProblemConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["phisicalMentalProblemConfirmation"],
+        });
+      }
+
+      if (crimeConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["crimeConfirmation"],
+        });
+      }
+
+      if (drugsProblemConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["drugsProblemConfirmation"],
+        });
+      }
+
+      if (lawViolateConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["lawViolateConfirmation"],
+        });
+      }
+
+      if (prostitutionConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["prostitutionConfirmation"],
+        });
+      }
+
+      if (moneyLaundryConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["moneyLaundryConfirmation"],
+        });
+      }
+
+      if (peopleTrafficConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["peopleTrafficConfirmation"],
+        });
+      }
+
+      if (helpPeopleTrafficConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["helpPeopleTrafficConfirmation"],
+        });
+      }
+
+      if (parentPeopleTrafficConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["parentPeopleTrafficConfirmation"],
+        });
+      }
+
+      if (spyConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["spyConfirmation"],
+        });
+      }
+
+      if (terrorismConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["terrorismConfirmation"],
+        });
+      }
+
+      if (financialAssistanceConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["financialAssistanceConfirmation"],
+        });
+      }
+
+      if (terrorismMemberConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["terrorismMemberConfirmation"],
+        });
+      }
+
+      if (parentTerrorismConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["parentTerrorismConfirmation"],
+        });
+      }
+
+      if (genocideConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["genocideConfirmation"],
+        });
+      }
+
+      if (tortureConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["tortureConfirmation"],
+        });
+      }
+
+      if (assassinConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["assassinConfirmation"],
+        });
+      }
+
+      if (childSoldierConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["childSoldierConfirmation"],
+        });
+      }
+
+      if (religionLibertyConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["religionLibertyConfirmation"],
+        });
+      }
+
+      if (abortConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["abortConfirmation"],
+        });
+      }
+
+      if (coerciveTransplantConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["coerciveTransplantConfirmation"],
+        });
+      }
+
+      if (visaFraudConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["visaFraudConfirmation"],
+        });
+      }
+
+      if (deportedConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["deportedConfirmation"],
+        });
+      }
+
+      if (childCustodyConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["childCustodyConfirmation"],
+        });
+      }
+
+      if (lawViolationConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["lawViolationConfirmation"],
+        });
+      }
+
+      if (avoidTaxConfirmation === "") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Selecione sim ou não",
+          path: ["avoidTaxConfirmation"],
+        });
+      }
+
       if (contagiousDiseaseConfirmation === "Sim" && contagiousDiseaseConfirmationDetails.length === 0) {
         ctx.addIssue({
           code: "custom",
@@ -598,178 +813,280 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
         profileId,
         redirectStep,
         contagiousDiseaseConfirmation:
-          values.contagiousDiseaseConfirmation ?? (currentForm.contagiousDiseaseConfirmation ? "Sim" : "Não"),
+          values.contagiousDiseaseConfirmation ??
+          (currentForm.contagiousDiseaseConfirmation !== null
+            ? currentForm.contagiousDiseaseConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         contagiousDiseaseConfirmationDetails: values.contagiousDiseaseConfirmationDetails
           ? values.contagiousDiseaseConfirmationDetails
           : !currentForm.contagiousDiseaseConfirmationDetails
           ? ""
           : currentForm.contagiousDiseaseConfirmationDetails,
         phisicalMentalProblemConfirmation:
-          values.phisicalMentalProblemConfirmation ?? (currentForm.phisicalMentalProblemConfirmation ? "Sim" : "Não"),
+          values.phisicalMentalProblemConfirmation ??
+          (currentForm.phisicalMentalProblemConfirmation !== null
+            ? currentForm.phisicalMentalProblemConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         phisicalMentalProblemConfirmationDetails: values.phisicalMentalProblemConfirmationDetails
           ? values.phisicalMentalProblemConfirmationDetails
           : !currentForm.phisicalMentalProblemConfirmationDetails
           ? ""
           : currentForm.phisicalMentalProblemConfirmationDetails,
-        crimeConfirmation: values.crimeConfirmation ?? (currentForm.crimeConfirmation ? "Sim" : "Não"),
+        crimeConfirmation:
+          values.crimeConfirmation ??
+          (currentForm.crimeConfirmation !== null ? (currentForm.crimeConfirmation ? "Sim" : "Não") : null),
         crimeConfirmationDetails: values.crimeConfirmationDetails
           ? values.crimeConfirmationDetails
           : !currentForm.crimeConfirmationDetails
           ? ""
           : currentForm.crimeConfirmationDetails,
         drugsProblemConfirmation:
-          values.drugsProblemConfirmation ?? (currentForm.drugsProblemConfirmation ? "Sim" : "Não"),
+          values.drugsProblemConfirmation ??
+          (currentForm.drugsProblemConfirmation !== null
+            ? currentForm.drugsProblemConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         drugsProblemConfirmationDetails: values.drugsProblemConfirmationDetails
           ? values.drugsProblemConfirmationDetails
           : !currentForm.drugsProblemConfirmationDetails
           ? ""
           : currentForm.drugsProblemConfirmationDetails,
-        lawViolateConfirmation: values.lawViolateConfirmation ?? (currentForm.lawViolateConfirmation ? "Sim" : "Não"),
+        lawViolateConfirmation:
+          values.lawViolateConfirmation ??
+          (currentForm.lawViolateConfirmation !== null ? (currentForm.lawViolateConfirmation ? "Sim" : "Não") : null),
         lawViolateConfirmationDetails: values.lawViolateConfirmationDetails
           ? values.lawViolateConfirmationDetails
           : !currentForm.lawViolateConfirmationDetails
           ? ""
           : currentForm.lawViolateConfirmationDetails,
         prostitutionConfirmation:
-          values.prostitutionConfirmation ?? (currentForm.prostitutionConfirmation ? "Sim" : "Não"),
+          values.prostitutionConfirmation ??
+          (currentForm.prostitutionConfirmation !== null
+            ? currentForm.prostitutionConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         prostitutionConfirmationDetails: values.prostitutionConfirmationDetails
           ? values.prostitutionConfirmationDetails
           : !currentForm.prostitutionConfirmationDetails
           ? ""
           : currentForm.prostitutionConfirmationDetails,
         moneyLaundryConfirmation:
-          values.moneyLaundryConfirmation ?? (currentForm.moneyLaundryConfirmation ? "Sim" : "Não"),
+          values.moneyLaundryConfirmation ??
+          (currentForm.moneyLaundryConfirmation !== null
+            ? currentForm.moneyLaundryConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         moneyLaundryConfirmationDetails: values.moneyLaundryConfirmationDetails
           ? values.moneyLaundryConfirmationDetails
           : !currentForm.moneyLaundryConfirmationDetails
           ? ""
           : currentForm.moneyLaundryConfirmationDetails,
         peopleTrafficConfirmation:
-          values.peopleTrafficConfirmation ?? (currentForm.peopleTrafficConfirmation ? "Sim" : "Não"),
+          values.peopleTrafficConfirmation ??
+          (currentForm.peopleTrafficConfirmation !== null
+            ? currentForm.peopleTrafficConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         peopleTrafficConfirmationDetails: values.peopleTrafficConfirmationDetails
           ? values.peopleTrafficConfirmationDetails
           : !currentForm.peopleTrafficConfirmationDetails
           ? ""
           : currentForm.peopleTrafficConfirmationDetails,
         helpPeopleTrafficConfirmation:
-          values.helpPeopleTrafficConfirmation ?? (currentForm.helpPeopleTrafficConfirmation ? "Sim" : "Não"),
+          values.helpPeopleTrafficConfirmation ??
+          (currentForm.helpPeopleTrafficConfirmation !== null
+            ? currentForm.helpPeopleTrafficConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         helpPeopleTrafficConfirmationDetails: values.helpPeopleTrafficConfirmationDetails
           ? values.helpPeopleTrafficConfirmationDetails
           : !currentForm.helpPeopleTrafficConfirmationDetails
           ? ""
           : currentForm.helpPeopleTrafficConfirmationDetails,
         parentPeopleTrafficConfirmation:
-          values.parentPeopleTrafficConfirmation ?? (currentForm.parentPeopleTrafficConfirmation ? "Sim" : "Não"),
+          values.parentPeopleTrafficConfirmation ??
+          (currentForm.parentPeopleTrafficConfirmation !== null
+            ? currentForm.parentPeopleTrafficConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         parentPeopleTrafficConfirmationDetails: values.parentPeopleTrafficConfirmationDetails
           ? values.parentPeopleTrafficConfirmationDetails
           : !currentForm.parentPeopleTrafficConfirmationDetails
           ? ""
           : currentForm.parentPeopleTrafficConfirmationDetails,
-        spyConfirmation: values.spyConfirmation ?? (currentForm.spyConfirmation ? "Sim" : "Não"),
+        spyConfirmation:
+          values.spyConfirmation ??
+          (currentForm.spyConfirmation !== null ? (currentForm.spyConfirmation ? "Sim" : "Não") : null),
         spyConfirmationDetails: values.spyConfirmationDetails
           ? values.spyConfirmationDetails
           : !currentForm.spyConfirmationDetails
           ? ""
           : currentForm.spyConfirmationDetails,
-        terrorismConfirmation: values.terrorismConfirmation ?? (currentForm.terrorismConfirmation ? "Sim" : "Não"),
+        terrorismConfirmation:
+          values.terrorismConfirmation ??
+          (currentForm.terrorismConfirmation !== null ? (currentForm.terrorismConfirmation ? "Sim" : "Não") : null),
         terrorismConfirmationDetails: values.terrorismConfirmationDetails
           ? values.terrorismConfirmationDetails
           : !currentForm.terrorismConfirmationDetails
           ? ""
           : currentForm.terrorismConfirmationDetails,
         financialAssistanceConfirmation:
-          values.financialAssistanceConfirmation ?? (currentForm.financialAssistanceConfirmation ? "Sim" : "Não"),
+          values.financialAssistanceConfirmation ??
+          (currentForm.financialAssistanceConfirmation !== null
+            ? currentForm.financialAssistanceConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         financialAssistanceConfirmationDetails: values.financialAssistanceConfirmationDetails
           ? values.financialAssistanceConfirmationDetails
           : !currentForm.financialAssistanceConfirmationDetails
           ? ""
           : currentForm.financialAssistanceConfirmationDetails,
         terrorismMemberConfirmation:
-          values.terrorismMemberConfirmation ?? (currentForm.terrorismMemberConfirmation ? "Sim" : "Não"),
+          values.terrorismMemberConfirmation ??
+          (currentForm.terrorismMemberConfirmation !== null
+            ? currentForm.terrorismMemberConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         terrorismMemberConfirmationDetails: values.terrorismMemberConfirmationDetails
           ? values.terrorismMemberConfirmationDetails
           : !currentForm.terrorismMemberConfirmationDetails
           ? ""
           : currentForm.terrorismMemberConfirmationDetails,
         parentTerrorismConfirmation:
-          values.parentTerrorismConfirmation ?? (currentForm.parentTerrorismConfirmation ? "Sim" : "Não"),
+          values.parentTerrorismConfirmation ??
+          (currentForm.parentTerrorismConfirmation !== null
+            ? currentForm.parentTerrorismConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         parentTerrorismConfirmationDetails: values.parentTerrorismConfirmationDetails
           ? values.parentTerrorismConfirmationDetails
           : !currentForm.parentTerrorismConfirmationDetails
           ? ""
           : currentForm.parentTerrorismConfirmationDetails,
-        genocideConfirmation: values.genocideConfirmation ?? (currentForm.genocideConfirmation ? "Sim" : "Não"),
+        genocideConfirmation:
+          values.genocideConfirmation ??
+          (currentForm.genocideConfirmation !== null ? (currentForm.genocideConfirmation ? "Sim" : "Não") : null),
         genocideConfirmationDetails: values.genocideConfirmationDetails
           ? values.genocideConfirmationDetails
           : !currentForm.genocideConfirmationDetails
           ? ""
           : currentForm.genocideConfirmationDetails,
-        tortureConfirmation: values.tortureConfirmation ?? (currentForm.tortureConfirmation ? "Sim" : "Não"),
+        tortureConfirmation:
+          values.tortureConfirmation ??
+          (currentForm.tortureConfirmation !== null ? (currentForm.tortureConfirmation ? "Sim" : "Não") : null),
         tortureConfirmationDetails: values.tortureConfirmationDetails
           ? values.tortureConfirmationDetails
           : !currentForm.tortureConfirmationDetails
           ? ""
           : currentForm.tortureConfirmationDetails,
-        assassinConfirmation: values.assassinConfirmation ?? (currentForm.assassinConfirmation ? "Sim" : "Não"),
+        assassinConfirmation:
+          values.assassinConfirmation ??
+          (currentForm.assassinConfirmation !== null ? (currentForm.assassinConfirmation ? "Sim" : "Não") : null),
         assassinConfirmationDetails: values.assassinConfirmationDetails
           ? values.assassinConfirmationDetails
           : !currentForm.assassinConfirmationDetails
           ? ""
           : currentForm.assassinConfirmationDetails,
         childSoldierConfirmation:
-          values.childSoldierConfirmation ?? (currentForm.childSoldierConfirmation ? "Sim" : "Não"),
+          values.childSoldierConfirmation ??
+          (currentForm.childSoldierConfirmation !== null
+            ? currentForm.childSoldierConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         childSoldierConfirmationDetails: values.childSoldierConfirmationDetails
           ? values.childSoldierConfirmationDetails
           : !currentForm.childSoldierConfirmationDetails
           ? ""
           : currentForm.childSoldierConfirmationDetails,
         religionLibertyConfirmation:
-          values.religionLibertyConfirmation ?? (currentForm.religionLibertyConfirmation ? "Sim" : "Não"),
+          values.religionLibertyConfirmation ??
+          (currentForm.religionLibertyConfirmation !== null
+            ? currentForm.religionLibertyConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         religionLibertyConfirmationDetails: values.religionLibertyConfirmationDetails
           ? values.religionLibertyConfirmationDetails
           : !currentForm.religionLibertyConfirmationDetails
           ? ""
           : currentForm.religionLibertyConfirmationDetails,
-        abortConfirmation: values.abortConfirmation ?? (currentForm.abortConfirmation ? "Sim" : "Não"),
+        abortConfirmation:
+          values.abortConfirmation ??
+          (currentForm.abortConfirmation !== null ? (currentForm.abortConfirmation ? "Sim" : "Não") : null),
         abortConfirmationDetails: values.abortConfirmationDetails
           ? values.abortConfirmationDetails
           : !currentForm.abortConfirmationDetails
           ? ""
           : currentForm.abortConfirmationDetails,
         coerciveTransplantConfirmation:
-          values.coerciveTransplantConfirmation ?? (currentForm.coerciveTransplantConfirmation ? "Sim" : "Não"),
+          values.coerciveTransplantConfirmation ??
+          (currentForm.coerciveTransplantConfirmation !== null
+            ? currentForm.coerciveTransplantConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         coerciveTransplantConfirmationDetails: values.coerciveTransplantConfirmationDetails
           ? values.coerciveTransplantConfirmationDetails
           : !currentForm.coerciveTransplantConfirmationDetails
           ? ""
           : currentForm.coerciveTransplantConfirmationDetails,
-        visaFraudConfirmation: values.visaFraudConfirmation ?? (currentForm.visaFraudConfirmation ? "Sim" : "Não"),
+        visaFraudConfirmation:
+          values.visaFraudConfirmation ??
+          (currentForm.visaFraudConfirmation !== null ? (currentForm.visaFraudConfirmation ? "Sim" : "Não") : null),
         visaFraudConfirmationDetails: values.visaFraudConfirmationDetails
           ? values.visaFraudConfirmationDetails
           : !currentForm.visaFraudConfirmationDetails
           ? ""
           : currentForm.visaFraudConfirmationDetails,
-        deportedConfirmation: values.deportedConfirmation ?? (currentForm.deportedConfirmation ? "Sim" : "Não"),
+        deportedConfirmation:
+          values.deportedConfirmation ??
+          (currentForm.deportedConfirmation !== null ? (currentForm.deportedConfirmation ? "Sim" : "Não") : null),
         deportedConfirmationDetails: values.deportedConfirmationDetails
           ? values.deportedConfirmationDetails
           : !currentForm.deportedConfirmationDetails
           ? ""
           : currentForm.deportedConfirmationDetails,
         childCustodyConfirmation:
-          values.childCustodyConfirmation ?? (currentForm.childCustodyConfirmation ? "Sim" : "Não"),
+          values.childCustodyConfirmation ??
+          (currentForm.childCustodyConfirmation !== null
+            ? currentForm.childCustodyConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         childCustodyConfirmationDetails: values.childCustodyConfirmationDetails
           ? values.childCustodyConfirmationDetails
           : !currentForm.childCustodyConfirmationDetails
           ? ""
           : currentForm.childCustodyConfirmationDetails,
         lawViolationConfirmation:
-          values.lawViolationConfirmation ?? (currentForm.lawViolationConfirmation ? "Sim" : "Não"),
+          values.lawViolationConfirmation ??
+          (currentForm.lawViolationConfirmation !== null
+            ? currentForm.lawViolationConfirmation
+              ? "Sim"
+              : "Não"
+            : null),
         lawViolationConfirmationDetails: values.lawViolationConfirmationDetails
           ? values.lawViolationConfirmationDetails
           : !currentForm.lawViolationConfirmationDetails
           ? ""
           : currentForm.lawViolationConfirmationDetails,
-        avoidTaxConfirmation: values.avoidTaxConfirmation ?? (currentForm.avoidTaxConfirmation ? "Sim" : "Não"),
+        avoidTaxConfirmation:
+          values.avoidTaxConfirmation ??
+          (currentForm.avoidTaxConfirmation !== null ? (currentForm.avoidTaxConfirmation ? "Sim" : "Não") : null),
         avoidTaxConfirmationDetails: values.avoidTaxConfirmationDetails
           ? values.avoidTaxConfirmationDetails
           : !currentForm.avoidTaxConfirmationDetails
@@ -783,85 +1100,81 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (isEditing) {
       submitSecurity({ ...values, profileId, isEditing, step: 11 });
-    } else {
-      form
-        .trigger(
-          [
-            "contagiousDiseaseConfirmation",
-            "contagiousDiseaseConfirmationDetails",
-            "phisicalMentalProblemConfirmation",
-            "phisicalMentalProblemConfirmationDetails",
-            "crimeConfirmation",
-            "crimeConfirmationDetails",
-            "drugsProblemConfirmation",
-            "drugsProblemConfirmationDetails",
-            "lawViolateConfirmation",
-            "lawViolateConfirmationDetails",
-            "prostitutionConfirmation",
-            "prostitutionConfirmationDetails",
-            "moneyLaundryConfirmation",
-            "moneyLaundryConfirmationDetails",
-            "peopleTrafficConfirmation",
-            "peopleTrafficConfirmationDetails",
-            "helpPeopleTrafficConfirmation",
-            "helpPeopleTrafficConfirmationDetails",
-            "parentPeopleTrafficConfirmation",
-            "parentPeopleTrafficConfirmationDetails",
-            "spyConfirmation",
-            "spyConfirmationDetails",
-            "terrorismConfirmation",
-            "terrorismConfirmationDetails",
-            "financialAssistanceConfirmation",
-            "financialAssistanceConfirmationDetails",
-            "terrorismMemberConfirmation",
-            "terrorismMemberConfirmationDetails",
-            "parentTerrorismConfirmation",
-            "parentTerrorismConfirmationDetails",
-            "genocideConfirmation",
-            "genocideConfirmationDetails",
-            "tortureConfirmation",
-            "tortureConfirmationDetails",
-            "assassinConfirmation",
-            "assassinConfirmationDetails",
-            "childSoldierConfirmation",
-            "childSoldierConfirmationDetails",
-            "religionLibertyConfirmation",
-            "religionLibertyConfirmationDetails",
-            "abortConfirmation",
-            "abortConfirmationDetails",
-            "coerciveTransplantConfirmation",
-            "coerciveTransplantConfirmationDetails",
-            "visaFraudConfirmation",
-            "visaFraudConfirmationDetails",
-            "deportedConfirmation",
-            "deportedConfirmationDetails",
-            "childCustodyConfirmation",
-            "childCustodyConfirmationDetails",
-            "lawViolationConfirmation",
-            "lawViolationConfirmationDetails",
-            "avoidTaxConfirmation",
-            "avoidTaxConfirmationDetails",
-          ],
-          {
-            shouldFocus: true,
-          }
-        )
-        .then(() => {
-          if (Object.keys(form.formState.errors).length === 0) {
-            const values = form.getValues();
-
-            setTimeout(() => {
-              router.push(`/formulario/${profileId}?formStep=10&confirmation=true`);
-            }, 300);
-          }
-        });
     }
   }
 
   function handleSubmitOnModal() {
-    const values = form.getValues();
+    form
+      .trigger(
+        [
+          "contagiousDiseaseConfirmation",
+          "contagiousDiseaseConfirmationDetails",
+          "phisicalMentalProblemConfirmation",
+          "phisicalMentalProblemConfirmationDetails",
+          "crimeConfirmation",
+          "crimeConfirmationDetails",
+          "drugsProblemConfirmation",
+          "drugsProblemConfirmationDetails",
+          "lawViolateConfirmation",
+          "lawViolateConfirmationDetails",
+          "prostitutionConfirmation",
+          "prostitutionConfirmationDetails",
+          "moneyLaundryConfirmation",
+          "moneyLaundryConfirmationDetails",
+          "peopleTrafficConfirmation",
+          "peopleTrafficConfirmationDetails",
+          "helpPeopleTrafficConfirmation",
+          "helpPeopleTrafficConfirmationDetails",
+          "parentPeopleTrafficConfirmation",
+          "parentPeopleTrafficConfirmationDetails",
+          "spyConfirmation",
+          "spyConfirmationDetails",
+          "terrorismConfirmation",
+          "terrorismConfirmationDetails",
+          "financialAssistanceConfirmation",
+          "financialAssistanceConfirmationDetails",
+          "terrorismMemberConfirmation",
+          "terrorismMemberConfirmationDetails",
+          "parentTerrorismConfirmation",
+          "parentTerrorismConfirmationDetails",
+          "genocideConfirmation",
+          "genocideConfirmationDetails",
+          "tortureConfirmation",
+          "tortureConfirmationDetails",
+          "assassinConfirmation",
+          "assassinConfirmationDetails",
+          "childSoldierConfirmation",
+          "childSoldierConfirmationDetails",
+          "religionLibertyConfirmation",
+          "religionLibertyConfirmationDetails",
+          "abortConfirmation",
+          "abortConfirmationDetails",
+          "coerciveTransplantConfirmation",
+          "coerciveTransplantConfirmationDetails",
+          "visaFraudConfirmation",
+          "visaFraudConfirmationDetails",
+          "deportedConfirmation",
+          "deportedConfirmationDetails",
+          "childCustodyConfirmation",
+          "childCustodyConfirmationDetails",
+          "lawViolationConfirmation",
+          "lawViolationConfirmationDetails",
+          "avoidTaxConfirmation",
+          "avoidTaxConfirmationDetails",
+        ],
+        {
+          shouldFocus: true,
+        }
+      )
+      .then(() => {
+        if (Object.keys(form.formState.errors).length === 0) {
+          const values = form.getValues();
 
-    submitSecurity({ ...values, profileId, isEditing, step: 11 });
+          submitSecurity({ ...values, profileId, isEditing, step: 11 });
+        } else {
+          router.push(`/formulario/${profileId}?formStep=10`);
+        }
+      });
   }
 
   function onSave() {
@@ -870,178 +1183,256 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
     saveSecurity({
       profileId,
       contagiousDiseaseConfirmation:
-        values.contagiousDiseaseConfirmation ?? (currentForm.contagiousDiseaseConfirmation ? "Sim" : "Não"),
+        values.contagiousDiseaseConfirmation ??
+        (currentForm.contagiousDiseaseConfirmation !== null
+          ? currentForm.contagiousDiseaseConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       contagiousDiseaseConfirmationDetails: values.contagiousDiseaseConfirmationDetails
         ? values.contagiousDiseaseConfirmationDetails
         : !currentForm.contagiousDiseaseConfirmationDetails
         ? ""
         : currentForm.contagiousDiseaseConfirmationDetails,
       phisicalMentalProblemConfirmation:
-        values.phisicalMentalProblemConfirmation ?? (currentForm.phisicalMentalProblemConfirmation ? "Sim" : "Não"),
+        values.phisicalMentalProblemConfirmation ??
+        (currentForm.phisicalMentalProblemConfirmation !== null
+          ? currentForm.phisicalMentalProblemConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       phisicalMentalProblemConfirmationDetails: values.phisicalMentalProblemConfirmationDetails
         ? values.phisicalMentalProblemConfirmationDetails
         : !currentForm.phisicalMentalProblemConfirmationDetails
         ? ""
         : currentForm.phisicalMentalProblemConfirmationDetails,
-      crimeConfirmation: values.crimeConfirmation ?? (currentForm.crimeConfirmation ? "Sim" : "Não"),
+      crimeConfirmation:
+        values.crimeConfirmation ??
+        (currentForm.crimeConfirmation !== null ? (currentForm.crimeConfirmation ? "Sim" : "Não") : null),
       crimeConfirmationDetails: values.crimeConfirmationDetails
         ? values.crimeConfirmationDetails
         : !currentForm.crimeConfirmationDetails
         ? ""
         : currentForm.crimeConfirmationDetails,
       drugsProblemConfirmation:
-        values.drugsProblemConfirmation ?? (currentForm.drugsProblemConfirmation ? "Sim" : "Não"),
+        values.drugsProblemConfirmation ??
+        (currentForm.drugsProblemConfirmation !== null ? (currentForm.drugsProblemConfirmation ? "Sim" : "Não") : null),
       drugsProblemConfirmationDetails: values.drugsProblemConfirmationDetails
         ? values.drugsProblemConfirmationDetails
         : !currentForm.drugsProblemConfirmationDetails
         ? ""
         : currentForm.drugsProblemConfirmationDetails,
-      lawViolateConfirmation: values.lawViolateConfirmation ?? (currentForm.lawViolateConfirmation ? "Sim" : "Não"),
+      lawViolateConfirmation:
+        values.lawViolateConfirmation ??
+        (currentForm.lawViolateConfirmation !== null ? (currentForm.lawViolateConfirmation ? "Sim" : "Não") : null),
       lawViolateConfirmationDetails: values.lawViolateConfirmationDetails
         ? values.lawViolateConfirmationDetails
         : !currentForm.lawViolateConfirmationDetails
         ? ""
         : currentForm.lawViolateConfirmationDetails,
       prostitutionConfirmation:
-        values.prostitutionConfirmation ?? (currentForm.prostitutionConfirmation ? "Sim" : "Não"),
+        values.prostitutionConfirmation ??
+        (currentForm.prostitutionConfirmation !== null ? (currentForm.prostitutionConfirmation ? "Sim" : "Não") : null),
       prostitutionConfirmationDetails: values.prostitutionConfirmationDetails
         ? values.prostitutionConfirmationDetails
         : !currentForm.prostitutionConfirmationDetails
         ? ""
         : currentForm.prostitutionConfirmationDetails,
       moneyLaundryConfirmation:
-        values.moneyLaundryConfirmation ?? (currentForm.moneyLaundryConfirmation ? "Sim" : "Não"),
+        values.moneyLaundryConfirmation ??
+        (currentForm.moneyLaundryConfirmation !== null ? (currentForm.moneyLaundryConfirmation ? "Sim" : "Não") : null),
       moneyLaundryConfirmationDetails: values.moneyLaundryConfirmationDetails
         ? values.moneyLaundryConfirmationDetails
         : !currentForm.moneyLaundryConfirmationDetails
         ? ""
         : currentForm.moneyLaundryConfirmationDetails,
       peopleTrafficConfirmation:
-        values.peopleTrafficConfirmation ?? (currentForm.peopleTrafficConfirmation ? "Sim" : "Não"),
+        values.peopleTrafficConfirmation ??
+        (currentForm.peopleTrafficConfirmation !== null
+          ? currentForm.peopleTrafficConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       peopleTrafficConfirmationDetails: values.peopleTrafficConfirmationDetails
         ? values.peopleTrafficConfirmationDetails
         : !currentForm.peopleTrafficConfirmationDetails
         ? ""
         : currentForm.peopleTrafficConfirmationDetails,
       helpPeopleTrafficConfirmation:
-        values.helpPeopleTrafficConfirmation ?? (currentForm.helpPeopleTrafficConfirmation ? "Sim" : "Não"),
+        values.helpPeopleTrafficConfirmation ??
+        (currentForm.helpPeopleTrafficConfirmation !== null
+          ? currentForm.helpPeopleTrafficConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       helpPeopleTrafficConfirmationDetails: values.helpPeopleTrafficConfirmationDetails
         ? values.helpPeopleTrafficConfirmationDetails
         : !currentForm.helpPeopleTrafficConfirmationDetails
         ? ""
         : currentForm.helpPeopleTrafficConfirmationDetails,
       parentPeopleTrafficConfirmation:
-        values.parentPeopleTrafficConfirmation ?? (currentForm.parentPeopleTrafficConfirmation ? "Sim" : "Não"),
+        values.parentPeopleTrafficConfirmation ??
+        (currentForm.parentPeopleTrafficConfirmation !== null
+          ? currentForm.parentPeopleTrafficConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       parentPeopleTrafficConfirmationDetails: values.parentPeopleTrafficConfirmationDetails
         ? values.parentPeopleTrafficConfirmationDetails
         : !currentForm.parentPeopleTrafficConfirmationDetails
         ? ""
         : currentForm.parentPeopleTrafficConfirmationDetails,
-      spyConfirmation: values.spyConfirmation ?? (currentForm.spyConfirmation ? "Sim" : "Não"),
+      spyConfirmation:
+        values.spyConfirmation ??
+        (currentForm.spyConfirmation !== null ? (currentForm.spyConfirmation ? "Sim" : "Não") : null),
       spyConfirmationDetails: values.spyConfirmationDetails
         ? values.spyConfirmationDetails
         : !currentForm.spyConfirmationDetails
         ? ""
         : currentForm.spyConfirmationDetails,
-      terrorismConfirmation: values.terrorismConfirmation ?? (currentForm.terrorismConfirmation ? "Sim" : "Não"),
+      terrorismConfirmation:
+        values.terrorismConfirmation ??
+        (currentForm.terrorismConfirmation !== null ? (currentForm.terrorismConfirmation ? "Sim" : "Não") : null),
       terrorismConfirmationDetails: values.terrorismConfirmationDetails
         ? values.terrorismConfirmationDetails
         : !currentForm.terrorismConfirmationDetails
         ? ""
         : currentForm.terrorismConfirmationDetails,
       financialAssistanceConfirmation:
-        values.financialAssistanceConfirmation ?? (currentForm.financialAssistanceConfirmation ? "Sim" : "Não"),
+        values.financialAssistanceConfirmation ??
+        (currentForm.financialAssistanceConfirmation !== null
+          ? currentForm.financialAssistanceConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       financialAssistanceConfirmationDetails: values.financialAssistanceConfirmationDetails
         ? values.financialAssistanceConfirmationDetails
         : !currentForm.financialAssistanceConfirmationDetails
         ? ""
         : currentForm.financialAssistanceConfirmationDetails,
       terrorismMemberConfirmation:
-        values.terrorismMemberConfirmation ?? (currentForm.terrorismMemberConfirmation ? "Sim" : "Não"),
+        values.terrorismMemberConfirmation ??
+        (currentForm.terrorismMemberConfirmation !== null
+          ? currentForm.terrorismMemberConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       terrorismMemberConfirmationDetails: values.terrorismMemberConfirmationDetails
         ? values.terrorismMemberConfirmationDetails
         : !currentForm.terrorismMemberConfirmationDetails
         ? ""
         : currentForm.terrorismMemberConfirmationDetails,
       parentTerrorismConfirmation:
-        values.parentTerrorismConfirmation ?? (currentForm.parentTerrorismConfirmation ? "Sim" : "Não"),
+        values.parentTerrorismConfirmation ??
+        (currentForm.parentTerrorismConfirmation !== null
+          ? currentForm.parentTerrorismConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       parentTerrorismConfirmationDetails: values.parentTerrorismConfirmationDetails
         ? values.parentTerrorismConfirmationDetails
         : !currentForm.parentTerrorismConfirmationDetails
         ? ""
         : currentForm.parentTerrorismConfirmationDetails,
-      genocideConfirmation: values.genocideConfirmation ?? (currentForm.genocideConfirmation ? "Sim" : "Não"),
+      genocideConfirmation:
+        values.genocideConfirmation ??
+        (currentForm.genocideConfirmation !== null ? (currentForm.genocideConfirmation ? "Sim" : "Não") : null),
       genocideConfirmationDetails: values.genocideConfirmationDetails
         ? values.genocideConfirmationDetails
         : !currentForm.genocideConfirmationDetails
         ? ""
         : currentForm.genocideConfirmationDetails,
-      tortureConfirmation: values.tortureConfirmation ?? (currentForm.tortureConfirmation ? "Sim" : "Não"),
+      tortureConfirmation:
+        values.tortureConfirmation ??
+        (currentForm.tortureConfirmation !== null ? (currentForm.tortureConfirmation ? "Sim" : "Não") : null),
       tortureConfirmationDetails: values.tortureConfirmationDetails
         ? values.tortureConfirmationDetails
         : !currentForm.tortureConfirmationDetails
         ? ""
         : currentForm.tortureConfirmationDetails,
-      assassinConfirmation: values.assassinConfirmation ?? (currentForm.assassinConfirmation ? "Sim" : "Não"),
+      assassinConfirmation:
+        values.assassinConfirmation ??
+        (currentForm.assassinConfirmation !== null ? (currentForm.assassinConfirmation ? "Sim" : "Não") : null),
       assassinConfirmationDetails: values.assassinConfirmationDetails
         ? values.assassinConfirmationDetails
         : !currentForm.assassinConfirmationDetails
         ? ""
         : currentForm.assassinConfirmationDetails,
       childSoldierConfirmation:
-        values.childSoldierConfirmation ?? (currentForm.childSoldierConfirmation ? "Sim" : "Não"),
+        values.childSoldierConfirmation ??
+        (currentForm.childSoldierConfirmation !== null ? (currentForm.childSoldierConfirmation ? "Sim" : "Não") : null),
       childSoldierConfirmationDetails: values.childSoldierConfirmationDetails
         ? values.childSoldierConfirmationDetails
         : !currentForm.childSoldierConfirmationDetails
         ? ""
         : currentForm.childSoldierConfirmationDetails,
       religionLibertyConfirmation:
-        values.religionLibertyConfirmation ?? (currentForm.religionLibertyConfirmation ? "Sim" : "Não"),
+        values.religionLibertyConfirmation ??
+        (currentForm.religionLibertyConfirmation !== null
+          ? currentForm.religionLibertyConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       religionLibertyConfirmationDetails: values.religionLibertyConfirmationDetails
         ? values.religionLibertyConfirmationDetails
         : !currentForm.religionLibertyConfirmationDetails
         ? ""
         : currentForm.religionLibertyConfirmationDetails,
-      abortConfirmation: values.abortConfirmation ?? (currentForm.abortConfirmation ? "Sim" : "Não"),
+      abortConfirmation:
+        values.abortConfirmation ??
+        (currentForm.abortConfirmation !== null ? (currentForm.abortConfirmation ? "Sim" : "Não") : null),
       abortConfirmationDetails: values.abortConfirmationDetails
         ? values.abortConfirmationDetails
         : !currentForm.abortConfirmationDetails
         ? ""
         : currentForm.abortConfirmationDetails,
       coerciveTransplantConfirmation:
-        values.coerciveTransplantConfirmation ?? (currentForm.coerciveTransplantConfirmation ? "Sim" : "Não"),
+        values.coerciveTransplantConfirmation ??
+        (currentForm.coerciveTransplantConfirmation !== null
+          ? currentForm.coerciveTransplantConfirmation
+            ? "Sim"
+            : "Não"
+          : null),
       coerciveTransplantConfirmationDetails: values.coerciveTransplantConfirmationDetails
         ? values.coerciveTransplantConfirmationDetails
         : !currentForm.coerciveTransplantConfirmationDetails
         ? ""
         : currentForm.coerciveTransplantConfirmationDetails,
-      visaFraudConfirmation: values.visaFraudConfirmation ?? (currentForm.visaFraudConfirmation ? "Sim" : "Não"),
+      visaFraudConfirmation:
+        values.visaFraudConfirmation ??
+        (currentForm.visaFraudConfirmation !== null ? (currentForm.visaFraudConfirmation ? "Sim" : "Não") : null),
       visaFraudConfirmationDetails: values.visaFraudConfirmationDetails
         ? values.visaFraudConfirmationDetails
         : !currentForm.visaFraudConfirmationDetails
         ? ""
         : currentForm.visaFraudConfirmationDetails,
-      deportedConfirmation: values.deportedConfirmation ?? (currentForm.deportedConfirmation ? "Sim" : "Não"),
+      deportedConfirmation:
+        values.deportedConfirmation ??
+        (currentForm.deportedConfirmation !== null ? (currentForm.deportedConfirmation ? "Sim" : "Não") : null),
       deportedConfirmationDetails: values.deportedConfirmationDetails
         ? values.deportedConfirmationDetails
         : !currentForm.deportedConfirmationDetails
         ? ""
         : currentForm.deportedConfirmationDetails,
       childCustodyConfirmation:
-        values.childCustodyConfirmation ?? (currentForm.childCustodyConfirmation ? "Sim" : "Não"),
+        values.childCustodyConfirmation ??
+        (currentForm.childCustodyConfirmation !== null ? (currentForm.childCustodyConfirmation ? "Sim" : "Não") : null),
       childCustodyConfirmationDetails: values.childCustodyConfirmationDetails
         ? values.childCustodyConfirmationDetails
         : !currentForm.childCustodyConfirmationDetails
         ? ""
         : currentForm.childCustodyConfirmationDetails,
       lawViolationConfirmation:
-        values.lawViolationConfirmation ?? (currentForm.lawViolationConfirmation ? "Sim" : "Não"),
+        values.lawViolationConfirmation ??
+        (currentForm.lawViolationConfirmation !== null ? (currentForm.lawViolationConfirmation ? "Sim" : "Não") : null),
       lawViolationConfirmationDetails: values.lawViolationConfirmationDetails
         ? values.lawViolationConfirmationDetails
         : !currentForm.lawViolationConfirmationDetails
         ? ""
         : currentForm.lawViolationConfirmationDetails,
-      avoidTaxConfirmation: values.avoidTaxConfirmation ?? (currentForm.avoidTaxConfirmation ? "Sim" : "Não"),
+      avoidTaxConfirmation:
+        values.avoidTaxConfirmation ??
+        (currentForm.avoidTaxConfirmation !== null ? (currentForm.avoidTaxConfirmation ? "Sim" : "Não") : null),
       avoidTaxConfirmationDetails: values.avoidTaxConfirmationDetails
         ? values.avoidTaxConfirmationDetails
         : !currentForm.avoidTaxConfirmationDetails
