@@ -1105,6 +1105,8 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                         </SelectItem>
 
                         <SelectItem value="Empresa">Empresa</SelectItem>
+
+                        <SelectItem value="Empregador">Empregador</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -1118,7 +1120,10 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
                 {
-                  hidden: payer === "Eu mesmo" || payer === "",
+                  hidden:
+                    payer === "Eu mesmo" ||
+                    payer === "Empregador" ||
+                    payer === "",
                   "sm:grid-cols-2": payer !== "Outra pessoa",
                 },
               )}
@@ -1217,7 +1222,10 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6",
                 {
-                  hidden: payer === "Eu mesmo" || payer === "",
+                  hidden:
+                    payer === "Eu mesmo" ||
+                    payer === "Empregador" ||
+                    payer === "",
                 },
               )}
             >
