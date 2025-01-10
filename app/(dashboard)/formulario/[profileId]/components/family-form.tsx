@@ -1037,13 +1037,19 @@ export function FamilyForm({
                             </FormControl>
 
                             <SelectContent>
-                              <SelectItem value="Pai/Mãe">Pai/Mãe</SelectItem>
+                              <SelectItem value="Irmão/Irmã">
+                                Irmão/Irmã
+                              </SelectItem>
 
                               <SelectItem value="Filho(a)">Filho(a)</SelectItem>
 
-                              <SelectItem value="Amigo(a)">Amigo(a)</SelectItem>
+                              <SelectItem value="Conjugê">Conjugê</SelectItem>
 
-                              <SelectItem value="Parente">Parente</SelectItem>
+                              <SelectItem value="Noivo(a)">Noivo(a)</SelectItem>
+
+                              <SelectItem value="Outro Parente">
+                                Outro Parente
+                              </SelectItem>
                             </SelectContent>
                           </Select>
 
@@ -1076,12 +1082,12 @@ export function FamilyForm({
                           </FormControl>
 
                           <SelectContent>
-                            <SelectItem value="Cidadão Dos EUA">
-                              Cidadão Dos EUA
+                            <SelectItem value="Cidadão dos EUA">
+                              Cidadão dos EUA
                             </SelectItem>
 
-                            <SelectItem value="Residente Permanente Legal Dos EUA">
-                              Residente Permanente Legal Dos EUA
+                            <SelectItem value="Residente Permanente Legal dos EUA (LPR)">
+                              Residente Permanente Legal dos EUA (LPR)
                             </SelectItem>
 
                             <SelectItem value="Não Imigrante">
@@ -1149,6 +1155,7 @@ export function FamilyForm({
               </div>
             </div>
 
+            {/* TODO: colocar campos obrigatórios */}
             <span
               className={cn("text-foreground text-base font-medium mb-6", {
                 hidden:

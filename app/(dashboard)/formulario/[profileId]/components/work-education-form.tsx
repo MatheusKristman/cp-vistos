@@ -101,18 +101,6 @@ const formSchema = z
     if (
       previousJobConfirmation === "Sim" &&
       previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.supervisorName === "").length === 1
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
-        path: [`previousJobs.${previousJobs.length - 1}.supervisorName`],
-      });
-    }
-
-    if (
-      previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
       previousJobs.filter((item) => item.companyCep === "").length === 1
     ) {
       ctx.addIssue({
@@ -566,11 +554,11 @@ export function WorkEducationForm({
               ? ""
               : currentForm.occupation,
         office:
-          values.occupation !== ""
-            ? values.occupation
-            : !currentForm.occupation
+          values.office !== ""
+            ? values.office
+            : !currentForm.office
               ? ""
-              : currentForm.occupation,
+              : currentForm.office,
         companyOrBossName:
           values.companyOrBossName !== ""
             ? values.companyOrBossName
@@ -697,11 +685,11 @@ export function WorkEducationForm({
             ? ""
             : currentForm.occupation,
       office:
-        values.occupation !== ""
-          ? values.occupation
-          : !currentForm.occupation
+        values.office !== ""
+          ? values.office
+          : !currentForm.office
             ? ""
-            : currentForm.occupation,
+            : currentForm.office,
       companyOrBossName:
         values.companyOrBossName !== ""
           ? values.companyOrBossName
@@ -1166,6 +1154,8 @@ export function WorkEducationForm({
                     <FormLabel className="text-foreground">
                       {occupation === "Outro" ? (
                         <>Área de atuação</>
+                      ) : occupation === "Autônomo" ? (
+                        <>Ramo de Atuação</>
                       ) : (
                         <>Cargo</>
                       )}
@@ -1249,6 +1239,7 @@ export function WorkEducationForm({
                 )}
               />
 
+              {/* TODO: jogar campo para cima */}
               <FormField
                 control={form.control}
                 name="companyAddress"
@@ -1266,7 +1257,7 @@ export function WorkEducationForm({
                     })}
                   >
                     <FormLabel className="text-foreground">
-                      Endereço completo
+                      Logradouro
                     </FormLabel>
 
                     <FormControl>
@@ -1814,13 +1805,13 @@ export function WorkEducationForm({
                       {occupation == "Registrado (CLT/PJ)" ? (
                         <>Descreva quais as suas funções dentro da empresa</>
                       ) : occupation === "Autônomo" ? (
-                        <>Descreva suas atividades</>
+                        <>Descreva as suas atividades</>
                       ) : occupation === "Outro" ? (
                         <>Descreva sobre a sua atual ocupação</>
                       ) : occupation === "Empresário/Proprietário" ? (
                         <>
-                          Descreva quais são suas funções dentro da sua empresa,
-                          se possui funcionários registrados e outras
+                          Descreva quais são as suas funções dentro da sua
+                          empresa, se possui funcionários registrados e outras
                           informações relacionadas ao seu negócio
                         </>
                       ) : null}
@@ -1863,8 +1854,8 @@ export function WorkEducationForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Já trabalhou anteriormente? Se sim, informe abaixo os dois
-                      últimos
+                      Já trabalhou anteriormente? Se sim, forneça um histórico
+                      dos últimos cinco anos
                     </FormLabel>
 
                     <FormControl>
@@ -1936,7 +1927,7 @@ export function WorkEducationForm({
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
                         <FormLabel className="text-foreground">
-                          Endereço completo
+                          Logradouro
                         </FormLabel>
 
                         <FormControl>
@@ -2050,7 +2041,9 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.companyTel`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">País</FormLabel>
+                        <FormLabel className="text-foreground">
+                          Telefone
+                        </FormLabel>
 
                         <FormControl>
                           <PhoneInput
@@ -2333,7 +2326,8 @@ export function WorkEducationForm({
             </div>
 
             <span className="text-foreground text-base font-medium mb-6">
-              Informe as duas últimas instituições de ensino que frequentou
+              Informe a sua escolaridade (Preencha com o maximo de detalhes
+              possíveis)
             </span>
 
             <div className="w-full bg-secondary rounded-xl p-4 space-y-6">

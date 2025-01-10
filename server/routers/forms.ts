@@ -11,7 +11,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -35,7 +35,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -96,12 +96,11 @@ export const formsRouter = router({
               otherNamesConfirmation,
               otherNames,
             },
-            ctx,
+            ctx
           ) => {
             if (
               otherNationalityConfirmation === "Sim" &&
-              (otherNationalityPassport === undefined ||
-                otherNationalityPassport?.length === 0)
+              (otherNationalityPassport === undefined || otherNationalityPassport?.length === 0)
             ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -112,8 +111,7 @@ export const formsRouter = router({
 
             if (
               otherNationalityConfirmation === "Sim" &&
-              (otherNationalityCountry === undefined ||
-                otherNationalityCountry?.length === 0)
+              (otherNationalityCountry === undefined || otherNationalityCountry?.length === 0)
             ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -122,11 +120,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              otherNamesConfirmation === "Sim" &&
-              otherNames &&
-              otherNames.length === 0
-            ) {
+            if (otherNamesConfirmation === "Sim" && otherNames && otherNames.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -136,8 +130,7 @@ export const formsRouter = router({
 
             if (
               otherCountryResidentConfirmation === "Sim" &&
-              (otherCountryResident === undefined ||
-                otherCountryResident?.length === 0)
+              (otherCountryResident === undefined || otherCountryResident?.length === 0)
             ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -145,8 +138,8 @@ export const formsRouter = router({
                 path: ["otherCountryResident"],
               });
             }
-          },
-        ),
+          }
+        )
     )
     .mutation(async (opts) => {
       const {
@@ -269,8 +262,7 @@ export const formsRouter = router({
           otherNationalityConfirmation: otherNationalityConfirmation === "Sim",
           otherNationalityPassport,
           otherNationalityCountry,
-          otherCountryResidentConfirmation:
-            otherCountryResidentConfirmation === "Sim",
+          otherCountryResidentConfirmation: otherCountryResidentConfirmation === "Sim",
           otherCountryResident,
           USSocialSecurityNumber,
           USTaxpayerIDNumber,
@@ -303,7 +295,7 @@ export const formsRouter = router({
         otherCountryResident: z.string().optional().nullable(),
         USSocialSecurityNumber: z.string().nullable(),
         USTaxpayerIDNumber: z.string().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -373,8 +365,7 @@ export const formsRouter = router({
           otherNationalityConfirmation: otherNationalityConfirmation === "Sim",
           otherNationalityPassport,
           otherNationalityCountry,
-          otherCountryResidentConfirmation:
-            otherCountryResidentConfirmation === "Sim",
+          otherCountryResidentConfirmation: otherCountryResidentConfirmation === "Sim",
           otherCountryResident,
           USSocialSecurityNumber,
           USTaxpayerIDNumber,
@@ -410,7 +401,7 @@ export const formsRouter = router({
         linkedin: z.string(),
         instagram: z.string(),
         othersSocialMedia: z.string(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -513,12 +504,10 @@ export const formsRouter = router({
           otherPostalAddress,
           cel,
           tel,
-          fiveYearsOtherTelConfirmation:
-            fiveYearsOtherTelConfirmation === "Sim",
+          fiveYearsOtherTelConfirmation: fiveYearsOtherTelConfirmation === "Sim",
           otherTel,
           email,
-          fiveYearsOtherEmailConfirmation:
-            fiveYearsOtherEmailConfirmation === "Sim",
+          fiveYearsOtherEmailConfirmation: fiveYearsOtherEmailConfirmation === "Sim",
           otherEmail,
           facebook,
           linkedin,
@@ -555,7 +544,7 @@ export const formsRouter = router({
         linkedin: z.string().nullable(),
         instagram: z.string().nullable(),
         othersSocialMedia: z.string().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -624,12 +613,10 @@ export const formsRouter = router({
           otherPostalAddress,
           cel,
           tel,
-          fiveYearsOtherTelConfirmation:
-            fiveYearsOtherTelConfirmation === "Sim",
+          fiveYearsOtherTelConfirmation: fiveYearsOtherTelConfirmation === "Sim",
           otherTel,
           email,
-          fiveYearsOtherEmailConfirmation:
-            fiveYearsOtherEmailConfirmation === "Sim",
+          fiveYearsOtherEmailConfirmation: fiveYearsOtherEmailConfirmation === "Sim",
           otherEmail,
           facebook,
           linkedin,
@@ -649,18 +636,14 @@ export const formsRouter = router({
         passportNumber: z.string().min(1, { message: "Campo obrigatório" }),
         passportCity: z.string().min(1, { message: "Campo obrigatório" }),
         passportState: z.string().min(1, { message: "Campo obrigatório" }),
-        passportIssuingCountry: z
-          .string()
-          .min(1, { message: "Campo obrigatório" }),
+        passportIssuingCountry: z.string().min(1, { message: "Campo obrigatório" }),
         passportIssuingDate: z.date({ message: "Selecione uma data" }),
-        passportExpireDate: z
-          .date({ message: "Selecione uma data" })
-          .optional(),
+        passportExpireDate: z.date({ message: "Selecione uma data" }).optional(),
         passportLostConfirmation: z.enum(["Sim", "Não"]),
         lostPassportNumber: z.string(),
         lostPassportCountry: z.string(),
         lostPassportDetails: z.string(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -770,7 +753,7 @@ export const formsRouter = router({
         lostPassportNumber: z.string().nullable(),
         lostPassportCountry: z.string().nullable(),
         lostPassportDetails: z.string().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -839,22 +822,14 @@ export const formsRouter = router({
           step: z.number(),
           isEditing: z.boolean(),
           travelItineraryConfirmation: z.enum(["Sim", "Não"]),
-          USAPreviewArriveDate: z
-            .date({ message: "Campo obrigatório" })
-            .optional(),
+          USAPreviewArriveDate: z.date({ message: "Campo obrigatório" }).optional(),
           arriveFlyNumber: z.string(),
           arriveCity: z.string(),
-          USAPreviewReturnDate: z
-            .date({ message: "Campo obrigatório" })
-            .optional(),
+          USAPreviewReturnDate: z.date({ message: "Campo obrigatório" }).optional(),
           returnFlyNumber: z.string(),
           returnCity: z.string(),
-          estimatedTimeNumber: z.coerce
-            .number()
-            .gt(1, "Campo precisa ter valor maior que zero"),
-          estimatedTimeType: z
-            .string()
-            .min(1, { message: "Campo obrigatório" }),
+          estimatedTimeNumber: z.coerce.number().gt(1, "Campo precisa ter valor maior que zero"),
+          estimatedTimeType: z.string().min(1, { message: "Campo obrigatório" }),
           visitLocations: z.string().min(1),
           hasAddressInUSA: z.enum(["Sim", "Não"]),
           USACompleteAddress: z.string(),
@@ -883,7 +858,7 @@ export const formsRouter = router({
               payerRelation,
               payerEmail,
             },
-            ctx,
+            ctx
           ) => {
             if (hasAddressInUSA === "Sim" && USACompleteAddress.length === 0) {
               ctx.addIssue({
@@ -917,10 +892,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              (payer === "Outra pessoa" || payer === "Empresa") &&
-              payerNameOrCompany.length === 0
-            ) {
+            if ((payer === "Outra pessoa" || payer === "Empresa") && payerNameOrCompany.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -928,10 +900,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              (payer === "Outra pessoa" || payer === "Empresa") &&
-              payerTel.length === 0
-            ) {
+            if ((payer === "Outra pessoa" || payer === "Empresa") && payerTel.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -939,10 +908,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              (payer === "Outra pessoa" || payer === "Empresa") &&
-              payerAddress.length === 0
-            ) {
+            if ((payer === "Outra pessoa" || payer === "Empresa") && payerAddress.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -958,10 +924,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              (payer === "Outra pessoa" || payer === "Empresa") &&
-              !isEmail(payerEmail)
-            ) {
+            if ((payer === "Outra pessoa" || payer === "Empresa") && !isEmail(payerEmail)) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "E-mail inválido",
@@ -969,18 +932,15 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              (payer === "Outra pessoa" || payer === "Empresa") &&
-              payerEmail.length === 0
-            ) {
+            if ((payer === "Outra pessoa" || payer === "Empresa") && payerEmail.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
                 path: ["payerEmail"],
               });
             }
-          },
-        ),
+          }
+        )
     )
     .mutation(async (opts) => {
       const {
@@ -1108,10 +1068,8 @@ export const formsRouter = router({
         USAPreviewReturnDate: z.date().optional().nullable(),
         returnFlyNumber: z.string().nullable(),
         returnCity: z.string().nullable(),
-        estimatedTimeNumber: z.coerce
-          .number()
-          .gt(1, "Campo precisa ter valor maior que zero"),
-        estimatedTimeType: z.string().min(1, { message: "Campo obrigatório" }),
+        estimatedTimeNumber: z.coerce.number().positive("Não é permitido número negativo").nullable(),
+        estimatedTimeType: z.string().nullable(),
         visitLocations: z.string().nullable(),
         hasAddressInUSA: z.enum(["Sim", "Não"]).nullable(),
         USACompleteAddress: z.string().nullable(),
@@ -1124,7 +1082,7 @@ export const formsRouter = router({
         payerAddress: z.string().nullable(),
         payerRelation: z.string().nullable(),
         payerEmail: z.string().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -1218,21 +1176,13 @@ export const formsRouter = router({
             z.object({
               name: z.string(),
               relation: z.string(),
-            }),
+            })
           ),
           groupMemberConfirmation: z.enum(["Sim", "Não"]),
           groupName: z.string(),
         })
         .superRefine(
-          (
-            {
-              otherPeopleTravelingConfirmation,
-              otherPeopleTraveling,
-              groupMemberConfirmation,
-              groupName,
-            },
-            ctx,
-          ) => {
+          ({ otherPeopleTravelingConfirmation, otherPeopleTraveling, groupMemberConfirmation, groupName }, ctx) => {
             if (groupMemberConfirmation === "Sim" && groupName.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -1244,34 +1194,28 @@ export const formsRouter = router({
             if (
               otherPeopleTravelingConfirmation === "Sim" &&
               otherPeopleTraveling.length === 1 &&
-              otherPeopleTraveling.filter((item) => item.name === "").length ===
-                1
+              otherPeopleTraveling.filter((item) => item.name === "").length === 1
             ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
-                path: [
-                  `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.name`,
-                ],
+                path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.name`],
               });
             }
 
             if (
               otherPeopleTravelingConfirmation === "Sim" &&
               otherPeopleTraveling.length === 1 &&
-              otherPeopleTraveling.filter((item) => item.relation === "")
-                .length === 1
+              otherPeopleTraveling.filter((item) => item.relation === "").length === 1
             ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
-                path: [
-                  `otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`,
-                ],
+                path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`],
               });
             }
-          },
-        ),
+          }
+        )
     )
     .mutation(async (opts) => {
       const {
@@ -1345,8 +1289,7 @@ export const formsRouter = router({
           id: profileUpdated.form.id,
         },
         data: {
-          otherPeopleTravelingConfirmation:
-            otherPeopleTravelingConfirmation === "Sim",
+          otherPeopleTravelingConfirmation: otherPeopleTravelingConfirmation === "Sim",
           otherPeopleTraveling,
           groupMemberConfirmation: groupMemberConfirmation === "Sim",
           groupName,
@@ -1365,11 +1308,11 @@ export const formsRouter = router({
           z.object({
             name: z.string(),
             relation: z.string(),
-          }),
+          })
         ),
         groupMemberConfirmation: z.enum(["Sim", "Não"]).nullable(),
         groupName: z.string().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -1409,8 +1352,7 @@ export const formsRouter = router({
           id: profile.form.id,
         },
         data: {
-          otherPeopleTravelingConfirmation:
-            otherPeopleTravelingConfirmation === "Sim",
+          otherPeopleTravelingConfirmation: otherPeopleTravelingConfirmation === "Sim",
           otherPeopleTraveling,
           groupMemberConfirmation: groupMemberConfirmation === "Sim",
           groupName,
@@ -1431,7 +1373,7 @@ export const formsRouter = router({
             z.object({
               arriveDate: z.coerce.date(),
               estimatedTime: z.string(),
-            }),
+            })
           ),
           americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
           americanLicense: z.object({
@@ -1475,13 +1417,12 @@ export const formsRouter = router({
               immigrationRequestByAnotherPersonConfirmation,
               immigrationRequestByAnotherPersonDetails,
             },
-            ctx,
+            ctx
           ) => {
             if (
               hasBeenOnUSAConfirmation === "Sim" &&
               USALastTravel.length === 1 &&
-              USALastTravel.filter((item) => item.arriveDate === undefined)
-                .length === 1
+              USALastTravel.filter((item) => item.arriveDate === undefined).length === 1
             ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -1493,22 +1434,16 @@ export const formsRouter = router({
             if (
               hasBeenOnUSAConfirmation === "Sim" &&
               USALastTravel.length === 1 &&
-              USALastTravel.filter((item) => item.estimatedTime === "")
-                .length === 1
+              USALastTravel.filter((item) => item.estimatedTime === "").length === 1
             ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
-                path: [
-                  `USALastTravel.${USALastTravel.length - 1}.estimatedTime`,
-                ],
+                path: [`USALastTravel.${USALastTravel.length - 1}.estimatedTime`],
               });
             }
 
-            if (
-              americanLicenseToDriveConfirmation === "Sim" &&
-              americanLicense.licenseNumber === ""
-            ) {
+            if (americanLicenseToDriveConfirmation === "Sim" && americanLicense.licenseNumber === "") {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1516,10 +1451,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              americanLicenseToDriveConfirmation === "Sim" &&
-              americanLicense.state === ""
-            ) {
+            if (americanLicenseToDriveConfirmation === "Sim" && americanLicense.state === "") {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1527,10 +1459,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              USAVisaConfirmation === "Sim" &&
-              visaIssuingDate === undefined
-            ) {
+            if (USAVisaConfirmation === "Sim" && visaIssuingDate === undefined) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1546,10 +1475,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              lostVisaConfirmation === "Sim" &&
-              lostVisaDetails.length === 0
-            ) {
+            if (lostVisaConfirmation === "Sim" && lostVisaDetails.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1557,10 +1483,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              canceledVisaConfirmation === "Sim" &&
-              canceledVisaDetails.length === 0
-            ) {
+            if (canceledVisaConfirmation === "Sim" && canceledVisaDetails.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1568,10 +1491,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              deniedVisaConfirmation === "Sim" &&
-              deniedVisaDetails.length === 0
-            ) {
+            if (deniedVisaConfirmation === "Sim" && deniedVisaDetails.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1589,8 +1509,8 @@ export const formsRouter = router({
                 path: ["immigrationRequestByAnotherPersonDetails"],
               });
             }
-          },
-        ),
+          }
+        )
     )
     .mutation(async (opts) => {
       const {
@@ -1683,18 +1603,15 @@ export const formsRouter = router({
         data: {
           hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
           USALastTravel,
-          americanLicenseToDriveConfirmation:
-            americanLicenseToDriveConfirmation === "Sim",
+          americanLicenseToDriveConfirmation: americanLicenseToDriveConfirmation === "Sim",
           americanLicense,
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
           visaNumber,
           newVisaConfirmation: newVisaConfirmation === "Sim",
-          sameCountryResidenceConfirmation:
-            sameCountryResidenceConfirmation === "Sim",
+          sameCountryResidenceConfirmation: sameCountryResidenceConfirmation === "Sim",
           sameVisaTypeConfirmation: sameVisaTypeConfirmation === "Sim",
-          fingerprintsProvidedConfirmation:
-            fingerprintsProvidedConfirmation === "Sim",
+          fingerprintsProvidedConfirmation: fingerprintsProvidedConfirmation === "Sim",
           lostVisaConfirmation: lostVisaConfirmation === "Sim",
           lostVisaDetails,
           canceledVisaConfirmation: canceledVisaConfirmation === "Sim",
@@ -1703,8 +1620,7 @@ export const formsRouter = router({
           deniedVisaDetails,
           consularPost,
           deniedVisaType,
-          immigrationRequestByAnotherPersonConfirmation:
-            immigrationRequestByAnotherPersonConfirmation === "Sim",
+          immigrationRequestByAnotherPersonConfirmation: immigrationRequestByAnotherPersonConfirmation === "Sim",
           immigrationRequestByAnotherPersonDetails,
         },
       });
@@ -1721,7 +1637,7 @@ export const formsRouter = router({
           z.object({
             arriveDate: z.coerce.date(),
             estimatedTime: z.string(),
-          }),
+          })
         ),
         americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
         americanLicense: z.object({
@@ -1745,7 +1661,7 @@ export const formsRouter = router({
         deniedVisaType: z.string(),
         immigrationRequestByAnotherPersonConfirmation: z.enum(["Sim", "Não"]),
         immigrationRequestByAnotherPersonDetails: z.string(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -1804,18 +1720,15 @@ export const formsRouter = router({
         data: {
           hasBeenOnUSAConfirmation: hasBeenOnUSAConfirmation === "Sim",
           USALastTravel,
-          americanLicenseToDriveConfirmation:
-            americanLicenseToDriveConfirmation === "Sim",
+          americanLicenseToDriveConfirmation: americanLicenseToDriveConfirmation === "Sim",
           americanLicense,
           USAVisaConfirmation: USAVisaConfirmation === "Sim",
           visaIssuingDate,
           visaNumber,
           newVisaConfirmation: newVisaConfirmation === "Sim",
-          sameCountryResidenceConfirmation:
-            sameCountryResidenceConfirmation === "Sim",
+          sameCountryResidenceConfirmation: sameCountryResidenceConfirmation === "Sim",
           sameVisaTypeConfirmation: sameVisaTypeConfirmation === "Sim",
-          fingerprintsProvidedConfirmation:
-            fingerprintsProvidedConfirmation === "Sim",
+          fingerprintsProvidedConfirmation: fingerprintsProvidedConfirmation === "Sim",
           lostVisaConfirmation: lostVisaConfirmation === "Sim",
           lostVisaDetails,
           canceledVisaConfirmation: canceledVisaConfirmation === "Sim",
@@ -1824,8 +1737,7 @@ export const formsRouter = router({
           deniedVisaDetails,
           consularPost,
           deniedVisaType,
-          immigrationRequestByAnotherPersonConfirmation:
-            immigrationRequestByAnotherPersonConfirmation === "Sim",
+          immigrationRequestByAnotherPersonConfirmation: immigrationRequestByAnotherPersonConfirmation === "Sim",
           immigrationRequestByAnotherPersonDetails,
         },
       });
@@ -1848,7 +1760,7 @@ export const formsRouter = router({
         organizationOrUSAResidentCountry: z.string(),
         organizationOrUSAResidentTel: z.string(),
         organizationOrUSAResidentEmail: z.string(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -1958,7 +1870,7 @@ export const formsRouter = router({
         organizationOrUSAResidentCountry: z.string(),
         organizationOrUSAResidentTel: z.string(),
         organizationOrUSAResidentEmail: z.string(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -2039,7 +1951,7 @@ export const formsRouter = router({
             name: z.string(),
             relation: z.string(),
             situation: z.string(),
-          }),
+          })
         ),
         partnerCompleteName: z.string(),
         partnerBirthdate: z.date().optional(),
@@ -2049,7 +1961,7 @@ export const formsRouter = router({
         partnerCountry: z.string(),
         unionDate: z.date().optional(),
         divorceDate: z.date().optional(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -2139,16 +2051,13 @@ export const formsRouter = router({
         data: {
           fatherCompleteName,
           fatherBirthdate,
-          fatherLiveInTheUSAConfirmation:
-            fatherLiveInTheUSAConfirmation === "Sim",
+          fatherLiveInTheUSAConfirmation: fatherLiveInTheUSAConfirmation === "Sim",
           fatherUSASituation,
           motherCompleteName,
           motherBirthdate,
-          motherLiveInTheUSAConfirmation:
-            motherLiveInTheUSAConfirmation === "Sim",
+          motherLiveInTheUSAConfirmation: motherLiveInTheUSAConfirmation === "Sim",
           motherUSASituation,
-          familyLivingInTheUSAConfirmation:
-            familyLivingInTheUSAConfirmation === "Sim",
+          familyLivingInTheUSAConfirmation: familyLivingInTheUSAConfirmation === "Sim",
           familyLivingInTheUSA,
           partnerCompleteName,
           partnerBirthdate,
@@ -2182,7 +2091,7 @@ export const formsRouter = router({
             name: z.string(),
             relation: z.string(),
             situation: z.string(),
-          }),
+          })
         ),
         partnerCompleteName: z.string(),
         partnerBirthdate: z.coerce.date().optional().nullable(),
@@ -2192,7 +2101,7 @@ export const formsRouter = router({
         partnerCountry: z.string(),
         unionDate: z.coerce.date().optional().nullable(),
         divorceDate: z.coerce.date().optional().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -2248,16 +2157,13 @@ export const formsRouter = router({
         data: {
           fatherCompleteName,
           fatherBirthdate,
-          fatherLiveInTheUSAConfirmation:
-            fatherLiveInTheUSAConfirmation === "Sim",
+          fatherLiveInTheUSAConfirmation: fatherLiveInTheUSAConfirmation === "Sim",
           fatherUSASituation,
           motherCompleteName,
           motherBirthdate,
-          motherLiveInTheUSAConfirmation:
-            motherLiveInTheUSAConfirmation === "Sim",
+          motherLiveInTheUSAConfirmation: motherLiveInTheUSAConfirmation === "Sim",
           motherUSASituation,
-          familyLivingInTheUSAConfirmation:
-            familyLivingInTheUSAConfirmation === "Sim",
+          familyLivingInTheUSAConfirmation: familyLivingInTheUSAConfirmation === "Sim",
           familyLivingInTheUSA,
           partnerCompleteName,
           partnerBirthdate,
@@ -2306,7 +2212,7 @@ export const formsRouter = router({
             admissionDate: z.coerce.date(),
             resignationDate: z.coerce.date(),
             jobDescription: z.string(),
-          }),
+          })
         ),
         courses: z.array(
           z.object({
@@ -2319,9 +2225,9 @@ export const formsRouter = router({
             courseName: z.string(),
             initialDate: z.coerce.date(),
             finishDate: z.coerce.date(),
-          }),
+          })
         ),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -2461,7 +2367,7 @@ export const formsRouter = router({
             admissionDate: z.coerce.date(),
             resignationDate: z.coerce.date(),
             jobDescription: z.string(),
-          }),
+          })
         ),
         courses: z.array(
           z.object({
@@ -2474,9 +2380,9 @@ export const formsRouter = router({
             courseName: z.string(),
             initialDate: z.coerce.date(),
             finishDate: z.coerce.date(),
-          }),
+          })
         ),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -2556,19 +2462,11 @@ export const formsRouter = router({
           profileId: z.string().min(1),
           step: z.number(),
           isEditing: z.boolean(),
-          languages: z.array(
-            z.string().min(1, { message: "Idioma precisa ser preenchido" }),
-          ),
+          languages: z.array(z.string().min(1, { message: "Idioma precisa ser preenchido" })),
           fiveYearsOtherCountryTravelsConfirmation: z.enum(["Sim", "Não"]),
-          fiveYearsOtherCountryTravels: z.array(
-            z.string().min(1, { message: "Países precisam ser preenchidos" }),
-          ),
+          fiveYearsOtherCountryTravels: z.array(z.string().min(1, { message: "Países precisam ser preenchidos" })),
           socialOrganizationConfirmation: z.enum(["Sim", "Não"]),
-          socialOrganization: z.array(
-            z
-              .string()
-              .min(1, { message: "Os campos precisam ser preenchidos" }),
-          ),
+          socialOrganization: z.array(z.string().min(1, { message: "Os campos precisam ser preenchidos" })),
           weaponTrainingConfirmation: z.enum(["Sim", "Não"]),
           weaponTrainingDetails: z.string(),
           militaryServiceConfirmation: z.enum(["Sim", "Não"]),
@@ -2600,12 +2498,9 @@ export const formsRouter = router({
               insurgencyOrganizationConfirmation,
               insurgencyOrganizationDetails,
             },
-            ctx,
+            ctx
           ) => {
-            if (
-              fiveYearsOtherCountryTravelsConfirmation === "Sim" &&
-              fiveYearsOtherCountryTravels.length === 0
-            ) {
+            if (fiveYearsOtherCountryTravelsConfirmation === "Sim" && fiveYearsOtherCountryTravels.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2613,10 +2508,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              socialOrganizationConfirmation === "Sim" &&
-              socialOrganization.length === 0
-            ) {
+            if (socialOrganizationConfirmation === "Sim" && socialOrganization.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2624,10 +2516,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              weaponTrainingConfirmation === "Sim" &&
-              weaponTrainingDetails.length === 0
-            ) {
+            if (weaponTrainingConfirmation === "Sim" && weaponTrainingDetails.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2635,10 +2524,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              militaryServiceConfirmation === "Sim" &&
-              militaryServiceSpecialty.length === 0
-            ) {
+            if (militaryServiceConfirmation === "Sim" && militaryServiceSpecialty.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2646,10 +2532,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              militaryServiceConfirmation === "Sim" &&
-              militaryServiceCountry.length === 0
-            ) {
+            if (militaryServiceConfirmation === "Sim" && militaryServiceCountry.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2657,10 +2540,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              militaryServiceConfirmation === "Sim" &&
-              militaryServiceLocal.length === 0
-            ) {
+            if (militaryServiceConfirmation === "Sim" && militaryServiceLocal.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2668,10 +2548,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              militaryServiceConfirmation === "Sim" &&
-              militaryServicePatent.length === 0
-            ) {
+            if (militaryServiceConfirmation === "Sim" && militaryServicePatent.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2679,10 +2556,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              militaryServiceConfirmation === "Sim" &&
-              militaryServiceStartDate === undefined
-            ) {
+            if (militaryServiceConfirmation === "Sim" && militaryServiceStartDate === undefined) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2690,10 +2564,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              militaryServiceConfirmation === "Sim" &&
-              militaryServiceEndDate === undefined
-            ) {
+            if (militaryServiceConfirmation === "Sim" && militaryServiceEndDate === undefined) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -2701,18 +2572,15 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              insurgencyOrganizationConfirmation === "Sim" &&
-              insurgencyOrganizationDetails.length === 0
-            ) {
+            if (insurgencyOrganizationConfirmation === "Sim" && insurgencyOrganizationDetails.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
                 path: ["insurgencyOrganizationDetails"],
               });
             }
-          },
-        ),
+          }
+        )
     )
     .mutation(async (opts) => {
       const {
@@ -2799,11 +2667,9 @@ export const formsRouter = router({
         },
         data: {
           languages,
-          fiveYearsOtherCountryTravelsConfirmation:
-            fiveYearsOtherCountryTravelsConfirmation === "Sim",
+          fiveYearsOtherCountryTravelsConfirmation: fiveYearsOtherCountryTravelsConfirmation === "Sim",
           fiveYearsOtherCountryTravels,
-          socialOrganizationConfirmation:
-            socialOrganizationConfirmation === "Sim",
+          socialOrganizationConfirmation: socialOrganizationConfirmation === "Sim",
           socialOrganization,
           weaponTrainingConfirmation: weaponTrainingConfirmation === "Sim",
           weaponTrainingDetails,
@@ -2814,8 +2680,7 @@ export const formsRouter = router({
           militaryServiceSpecialty,
           militaryServiceStartDate,
           militaryServiceEndDate,
-          insurgencyOrganizationConfirmation:
-            insurgencyOrganizationConfirmation === "Sim",
+          insurgencyOrganizationConfirmation: insurgencyOrganizationConfirmation === "Sim",
           insurgencyOrganizationDetails,
         },
       });
@@ -2827,17 +2692,11 @@ export const formsRouter = router({
       z.object({
         profileId: z.string().min(1),
         redirectStep: z.number().optional(),
-        languages: z.array(
-          z.string().min(1, { message: "Idioma precisa ser preenchido" }),
-        ),
+        languages: z.array(z.string().min(1, { message: "Idioma precisa ser preenchido" })),
         fiveYearsOtherCountryTravelsConfirmation: z.enum(["Sim", "Não"]),
-        fiveYearsOtherCountryTravels: z.array(
-          z.string().min(1, { message: "Países precisam ser preenchidos" }),
-        ),
+        fiveYearsOtherCountryTravels: z.array(z.string().min(1, { message: "Países precisam ser preenchidos" })),
         socialOrganizationConfirmation: z.enum(["Sim", "Não"]),
-        socialOrganization: z.array(
-          z.string().min(1, { message: "Os campos precisam ser preenchidos" }),
-        ),
+        socialOrganization: z.array(z.string().min(1, { message: "Os campos precisam ser preenchidos" })),
         weaponTrainingConfirmation: z.enum(["Sim", "Não"]),
         weaponTrainingDetails: z.string().nullable(),
         militaryServiceConfirmation: z.enum(["Sim", "Não"]),
@@ -2849,7 +2708,7 @@ export const formsRouter = router({
         militaryServiceEndDate: z.date().optional().nullable(),
         insurgencyOrganizationConfirmation: z.enum(["Sim", "Não"]),
         insurgencyOrganizationDetails: z.string().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -2902,11 +2761,9 @@ export const formsRouter = router({
         },
         data: {
           languages,
-          fiveYearsOtherCountryTravelsConfirmation:
-            fiveYearsOtherCountryTravelsConfirmation === "Sim",
+          fiveYearsOtherCountryTravelsConfirmation: fiveYearsOtherCountryTravelsConfirmation === "Sim",
           fiveYearsOtherCountryTravels,
-          socialOrganizationConfirmation:
-            socialOrganizationConfirmation === "Sim",
+          socialOrganizationConfirmation: socialOrganizationConfirmation === "Sim",
           socialOrganization,
           weaponTrainingConfirmation: weaponTrainingConfirmation === "Sim",
           weaponTrainingDetails,
@@ -2917,8 +2774,7 @@ export const formsRouter = router({
           militaryServiceSpecialty,
           militaryServiceStartDate,
           militaryServiceEndDate,
-          insurgencyOrganizationConfirmation:
-            insurgencyOrganizationConfirmation === "Sim",
+          insurgencyOrganizationConfirmation: insurgencyOrganizationConfirmation === "Sim",
           insurgencyOrganizationDetails,
         },
       });
@@ -3045,12 +2901,9 @@ export const formsRouter = router({
               avoidTaxConfirmation,
               avoidTaxConfirmationDetails,
             },
-            ctx,
+            ctx
           ) => {
-            if (
-              contagiousDiseaseConfirmation === "Sim" &&
-              contagiousDiseaseConfirmationDetails.length === 0
-            ) {
+            if (contagiousDiseaseConfirmation === "Sim" && contagiousDiseaseConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3058,10 +2911,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              phisicalMentalProblemConfirmation === "Sim" &&
-              phisicalMentalProblemConfirmationDetails.length === 0
-            ) {
+            if (phisicalMentalProblemConfirmation === "Sim" && phisicalMentalProblemConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3069,10 +2919,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              crimeConfirmation === "Sim" &&
-              crimeConfirmationDetails.length === 0
-            ) {
+            if (crimeConfirmation === "Sim" && crimeConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3080,10 +2927,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              drugsProblemConfirmation === "Sim" &&
-              drugsProblemConfirmationDetails.length === 0
-            ) {
+            if (drugsProblemConfirmation === "Sim" && drugsProblemConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3091,10 +2935,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              lawViolateConfirmation === "Sim" &&
-              lawViolateConfirmationDetails.length === 0
-            ) {
+            if (lawViolateConfirmation === "Sim" && lawViolateConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3102,10 +2943,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              prostitutionConfirmation === "Sim" &&
-              prostitutionConfirmationDetails.length === 0
-            ) {
+            if (prostitutionConfirmation === "Sim" && prostitutionConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3113,10 +2951,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              moneyLaundryConfirmation === "Sim" &&
-              moneyLaundryConfirmationDetails.length === 0
-            ) {
+            if (moneyLaundryConfirmation === "Sim" && moneyLaundryConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3124,10 +2959,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              peopleTrafficConfirmation === "Sim" &&
-              peopleTrafficConfirmationDetails.length === 0
-            ) {
+            if (peopleTrafficConfirmation === "Sim" && peopleTrafficConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3135,10 +2967,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              helpPeopleTrafficConfirmation === "Sim" &&
-              helpPeopleTrafficConfirmationDetails.length === 0
-            ) {
+            if (helpPeopleTrafficConfirmation === "Sim" && helpPeopleTrafficConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3146,10 +2975,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              parentPeopleTrafficConfirmation === "Sim" &&
-              parentPeopleTrafficConfirmationDetails.length === 0
-            ) {
+            if (parentPeopleTrafficConfirmation === "Sim" && parentPeopleTrafficConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3157,10 +2983,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              spyConfirmation === "Sim" &&
-              spyConfirmationDetails.length === 0
-            ) {
+            if (spyConfirmation === "Sim" && spyConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3168,10 +2991,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              terrorismConfirmation === "Sim" &&
-              terrorismConfirmationDetails.length === 0
-            ) {
+            if (terrorismConfirmation === "Sim" && terrorismConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3179,10 +2999,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              financialAssistanceConfirmation === "Sim" &&
-              financialAssistanceConfirmationDetails.length === 0
-            ) {
+            if (financialAssistanceConfirmation === "Sim" && financialAssistanceConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3190,10 +3007,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              terrorismMemberConfirmation === "Sim" &&
-              terrorismMemberConfirmationDetails.length === 0
-            ) {
+            if (terrorismMemberConfirmation === "Sim" && terrorismMemberConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3201,10 +3015,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              parentTerrorismConfirmation === "Sim" &&
-              parentTerrorismConfirmationDetails.length === 0
-            ) {
+            if (parentTerrorismConfirmation === "Sim" && parentTerrorismConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3212,10 +3023,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              genocideConfirmation === "Sim" &&
-              genocideConfirmationDetails.length === 0
-            ) {
+            if (genocideConfirmation === "Sim" && genocideConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3223,10 +3031,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              tortureConfirmation === "Sim" &&
-              tortureConfirmationDetails.length === 0
-            ) {
+            if (tortureConfirmation === "Sim" && tortureConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3234,10 +3039,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              assassinConfirmation === "Sim" &&
-              assassinConfirmationDetails.length === 0
-            ) {
+            if (assassinConfirmation === "Sim" && assassinConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3245,10 +3047,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              childSoldierConfirmation === "Sim" &&
-              childSoldierConfirmationDetails.length === 0
-            ) {
+            if (childSoldierConfirmation === "Sim" && childSoldierConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3256,10 +3055,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              religionLibertyConfirmation === "Sim" &&
-              religionLibertyConfirmationDetails.length === 0
-            ) {
+            if (religionLibertyConfirmation === "Sim" && religionLibertyConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3267,10 +3063,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              abortConfirmation === "Sim" &&
-              abortConfirmationDetails.length === 0
-            ) {
+            if (abortConfirmation === "Sim" && abortConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3278,10 +3071,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              coerciveTransplantConfirmation === "Sim" &&
-              coerciveTransplantConfirmationDetails.length === 0
-            ) {
+            if (coerciveTransplantConfirmation === "Sim" && coerciveTransplantConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3289,10 +3079,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              visaFraudConfirmation === "Sim" &&
-              visaFraudConfirmationDetails.length === 0
-            ) {
+            if (visaFraudConfirmation === "Sim" && visaFraudConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3300,10 +3087,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              deportedConfirmation === "Sim" &&
-              deportedConfirmationDetails.length === 0
-            ) {
+            if (deportedConfirmation === "Sim" && deportedConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3311,10 +3095,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              childCustodyConfirmation === "Sim" &&
-              childCustodyConfirmationDetails.length === 0
-            ) {
+            if (childCustodyConfirmation === "Sim" && childCustodyConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3322,10 +3103,7 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              lawViolationConfirmation === "Sim" &&
-              lawViolationConfirmationDetails.length === 0
-            ) {
+            if (lawViolationConfirmation === "Sim" && lawViolationConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
@@ -3333,18 +3111,15 @@ export const formsRouter = router({
               });
             }
 
-            if (
-              avoidTaxConfirmation === "Sim" &&
-              avoidTaxConfirmationDetails.length === 0
-            ) {
+            if (avoidTaxConfirmation === "Sim" && avoidTaxConfirmationDetails.length === 0) {
               ctx.addIssue({
                 code: "custom",
                 message: "Campo obrigatório caso a opção seja sim",
                 path: ["avoidTaxConfirmationDetails"],
               });
             }
-          },
-        ),
+          }
+        )
     )
     .mutation(async (opts) => {
       const {
@@ -3522,11 +3297,9 @@ export const formsRouter = router({
           id: profileUpdated.form.id,
         },
         data: {
-          contagiousDiseaseConfirmation:
-            contagiousDiseaseConfirmation === "Sim",
+          contagiousDiseaseConfirmation: contagiousDiseaseConfirmation === "Sim",
           contagiousDiseaseConfirmationDetails,
-          phisicalMentalProblemConfirmation:
-            phisicalMentalProblemConfirmation === "Sim",
+          phisicalMentalProblemConfirmation: phisicalMentalProblemConfirmation === "Sim",
           phisicalMentalProblemConfirmationDetails,
           crimeConfirmation: crimeConfirmation === "Sim",
           crimeConfirmationDetails,
@@ -3540,18 +3313,15 @@ export const formsRouter = router({
           moneyLaundryConfirmationDetails,
           peopleTrafficConfirmation: peopleTrafficConfirmation === "Sim",
           peopleTrafficConfirmationDetails,
-          helpPeopleTrafficConfirmation:
-            helpPeopleTrafficConfirmation === "Sim",
+          helpPeopleTrafficConfirmation: helpPeopleTrafficConfirmation === "Sim",
           helpPeopleTrafficConfirmationDetails,
-          parentPeopleTrafficConfirmation:
-            parentPeopleTrafficConfirmation === "Sim",
+          parentPeopleTrafficConfirmation: parentPeopleTrafficConfirmation === "Sim",
           parentPeopleTrafficConfirmationDetails,
           spyConfirmation: spyConfirmation === "Sim",
           spyConfirmationDetails,
           terrorismConfirmation: terrorismConfirmation === "Sim",
           terrorismConfirmationDetails,
-          financialAssistanceConfirmation:
-            financialAssistanceConfirmation === "Sim",
+          financialAssistanceConfirmation: financialAssistanceConfirmation === "Sim",
         },
       });
 
@@ -3577,8 +3347,7 @@ export const formsRouter = router({
           religionLibertyConfirmationDetails,
           abortConfirmation: abortConfirmation === "Sim",
           abortConfirmationDetails,
-          coerciveTransplantConfirmation:
-            coerciveTransplantConfirmation === "Sim",
+          coerciveTransplantConfirmation: coerciveTransplantConfirmation === "Sim",
           coerciveTransplantConfirmationDetails,
           visaFraudConfirmation: visaFraudConfirmation === "Sim",
           visaFraudConfirmationDetails,
@@ -3654,7 +3423,7 @@ export const formsRouter = router({
         lawViolationConfirmationDetails: z.string().nullable(),
         avoidTaxConfirmation: z.enum(["", "Sim", "Não"]),
         avoidTaxConfirmationDetails: z.string().nullable(),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const {
@@ -3744,11 +3513,9 @@ export const formsRouter = router({
           id: profile.form.id,
         },
         data: {
-          contagiousDiseaseConfirmation:
-            contagiousDiseaseConfirmation === "Sim",
+          contagiousDiseaseConfirmation: contagiousDiseaseConfirmation === "Sim",
           contagiousDiseaseConfirmationDetails,
-          phisicalMentalProblemConfirmation:
-            phisicalMentalProblemConfirmation === "Sim",
+          phisicalMentalProblemConfirmation: phisicalMentalProblemConfirmation === "Sim",
           phisicalMentalProblemConfirmationDetails,
           crimeConfirmation: crimeConfirmation === "Sim",
           crimeConfirmationDetails,
@@ -3762,18 +3529,15 @@ export const formsRouter = router({
           moneyLaundryConfirmationDetails,
           peopleTrafficConfirmation: peopleTrafficConfirmation === "Sim",
           peopleTrafficConfirmationDetails,
-          helpPeopleTrafficConfirmation:
-            helpPeopleTrafficConfirmation === "Sim",
+          helpPeopleTrafficConfirmation: helpPeopleTrafficConfirmation === "Sim",
           helpPeopleTrafficConfirmationDetails,
-          parentPeopleTrafficConfirmation:
-            parentPeopleTrafficConfirmation === "Sim",
+          parentPeopleTrafficConfirmation: parentPeopleTrafficConfirmation === "Sim",
           parentPeopleTrafficConfirmationDetails,
           spyConfirmation: spyConfirmation === "Sim",
           spyConfirmationDetails,
           terrorismConfirmation: terrorismConfirmation === "Sim",
           terrorismConfirmationDetails,
-          financialAssistanceConfirmation:
-            financialAssistanceConfirmation === "Sim",
+          financialAssistanceConfirmation: financialAssistanceConfirmation === "Sim",
         },
       });
 
@@ -3799,8 +3563,7 @@ export const formsRouter = router({
           religionLibertyConfirmationDetails,
           abortConfirmation: abortConfirmation === "Sim",
           abortConfirmationDetails,
-          coerciveTransplantConfirmation:
-            coerciveTransplantConfirmation === "Sim",
+          coerciveTransplantConfirmation: coerciveTransplantConfirmation === "Sim",
           coerciveTransplantConfirmationDetails,
           visaFraudConfirmation: visaFraudConfirmation === "Sim",
           visaFraudConfirmationDetails,

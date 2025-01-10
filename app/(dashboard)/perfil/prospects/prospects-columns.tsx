@@ -1,6 +1,12 @@
 "use client";
 
-import { ScheduleAccount, Shipping, StatusDS, VisaType } from "@prisma/client";
+import {
+  ScheduleAccount,
+  Shipping,
+  StatusDS,
+  VisaStatus,
+  VisaType,
+} from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { differenceInDays, format } from "date-fns";
 import { AlertTriangle, ArrowUpDown } from "lucide-react";
@@ -47,27 +53,6 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
     },
   },
   {
-    accessorKey: "group",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Grupo
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      if (!row.getValue("group")) {
-        return <span>----</span>;
-      }
-
-      return <span>{row.getValue("group")}</span>;
-    },
-  },
-  {
     accessorKey: "DSValid",
     header: ({ column }) => {
       return (
@@ -75,7 +60,7 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Data Venc. do barcode
+          Data Barcode
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -148,7 +133,7 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Data da entrevista
+          Entrevista
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -171,7 +156,7 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Data da reunião
+          Reunião
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -186,67 +171,6 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
       return <span>{dateFormatted}</span>;
     },
   },
-
-  {
-    accessorKey: "visaType",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status do visto
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      let visaType;
-
-      const value = row.getValue("visaType") as VisaType;
-
-      switch (value) {
-        case "primeiro_visto":
-          visaType = "Primeiro Visto";
-          break;
-        case "renovacao":
-          visaType = "Renovação";
-          break;
-      }
-
-      return <span>{visaType}</span>;
-    },
-  },
-  {
-    accessorKey: "scheduleAccount",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Conta de agendamento
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      let scheduleAccount;
-
-      const value = row.getValue("scheduleAccount") as ScheduleAccount;
-
-      switch (value) {
-        case "active":
-          scheduleAccount = "Ativo";
-          break;
-        case "inactive":
-          scheduleAccount = "Inativo";
-          break;
-      }
-
-      return <span>{scheduleAccount}</span>;
-    },
-  },
   {
     accessorKey: "shipping",
     header: ({ column }) => {
@@ -255,7 +179,7 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Opção de envio
+          Envio
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -287,6 +211,66 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
       }
 
       return <span>{shipping}</span>;
+    },
+  },
+  {
+    accessorKey: "visaType",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Visto
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      let visaType;
+
+      const value = row.getValue("visaType") as VisaType;
+
+      switch (value) {
+        case "primeiro_visto":
+          visaType = "Primeiro Visto";
+          break;
+        case "renovacao":
+          visaType = "Renovação";
+          break;
+      }
+
+      return <span>{visaType}</span>;
+    },
+  },
+  {
+    accessorKey: "scheduleAccount",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Agendamento
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      let scheduleAccount;
+
+      const value = row.getValue("scheduleAccount") as ScheduleAccount;
+
+      switch (value) {
+        case "active":
+          scheduleAccount = "Ativo";
+          break;
+        case "inactive":
+          scheduleAccount = "Inativo";
+          break;
+      }
+
+      return <span>{scheduleAccount}</span>;
     },
   },
   {
@@ -350,6 +334,66 @@ export const prospectsColumns: ColumnDef<UserTable>[] = [
       }
 
       return <span>{statusDS}</span>;
+    },
+  },
+  {
+    accessorKey: "group",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Grupo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("group")) {
+        return <span>----</span>;
+      }
+
+      return <span>{row.getValue("group")}</span>;
+    },
+  },
+  {
+    accessorKey: "visaStatus",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      let visaStatus;
+
+      const value = row.getValue("visaStatus") as VisaStatus;
+
+      switch (value) {
+        case "awaiting":
+          visaStatus = "Aguardando";
+          break;
+        case "in_progress":
+          visaStatus = "Em Andamento";
+          break;
+        case "approved":
+          visaStatus = "Aprovado";
+          break;
+        case "disapproved":
+          visaStatus = "Reprovado";
+          break;
+        case "finished":
+          visaStatus = "Finalizado";
+          break;
+      }
+
+      return <span>{visaStatus}</span>;
     },
   },
 ];

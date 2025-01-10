@@ -51,6 +51,7 @@ export function DataTableArchived<TData, TValue>({
     interviewDate: true,
     meetingDate: true,
     visaType: true,
+    visaStatus: true,
     scheduleAccount: true,
     shipping: true,
     tax: true,

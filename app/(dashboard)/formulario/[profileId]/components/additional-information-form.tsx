@@ -687,6 +687,7 @@ export function AdditionalInformationForm({
                 )}
               />
 
+              {/* TODO: adicionar select com os países que viajou */}
               <FormField
                 name="fiveYearsOtherCountryTravels"
                 control={form.control}
@@ -699,7 +700,7 @@ export function AdditionalInformationForm({
                     )}
                   >
                     <FormLabel className="text-foreground">
-                      Informe os países que viajou
+                      Forneça uma lista dos países visitados
                     </FormLabel>
 
                     <FormControl>
