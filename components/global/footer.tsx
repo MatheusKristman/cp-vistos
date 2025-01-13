@@ -6,7 +6,10 @@ export function Footer() {
     <footer className="w-full bg-primary pt-[520px] sm:pt-[500px]">
       <div className="w-full px-6 pt-12 pb-9 flex items-end justify-between gap-12 sm:px-16 lg:container">
         <div className="flex flex-col gap-6 sm:gap-9">
-          <Link href="/" className="relative h-[56px] w-[102px] sm:h-[70px] sm:w-[128px]">
+          <Link
+            href="/"
+            className="relative h-[56px] w-[102px] sm:h-[70px] sm:w-[128px]"
+          >
             <Image
               src="/assets/images/cp-vistos-logo.png"
               alt="CP Vistos"
@@ -17,7 +20,11 @@ export function Footer() {
 
           <ul className="flex items-center gap-6">
             <li>
-              <a href="https://www.instagram.com/cpvistos/" target="_blank" rel="noreferrer noopener">
+              <a
+                href="https://www.instagram.com/cpvistos/"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
                 <Image
                   src="/assets/icons/Instagram.svg"
                   alt="Instagram"
@@ -29,7 +36,11 @@ export function Footer() {
             </li>
 
             <li>
-              <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+              <a
+                href="https://wa.link/2i5gt9"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
                 <Image
                   src="/assets/icons/Whatsapp.svg"
                   alt="Whatsapp"
@@ -41,7 +52,7 @@ export function Footer() {
             </li>
 
             <li>
-              <a href="mailto:cpassessoriavistos@gmail.com" target="_blank" rel="noreferrer noopener">
+              <a href="mailto:cpassessoriavistos@gmail.com">
                 <Image
                   src="/assets/icons/Gmail.svg"
                   alt="Gmail"
@@ -64,7 +75,10 @@ export function Footer() {
             <div className="absolute -bottom-[2px] right-0 h-[2px] bg-white rounded-full w-0 transition-all group-hover:w-full" />
           </Link>
 
-          <Link href="/termos-de-uso" className="text-base font-medium text-white text-end relative group lg:text-xl">
+          <Link
+            href="/termos-de-uso"
+            className="text-base font-medium text-white text-end relative group lg:text-xl"
+          >
             Termos de Uso
             <div className="absolute -bottom-[2px] right-0 h-[2px] bg-white rounded-full w-0 transition-all group-hover:w-full" />
           </Link>

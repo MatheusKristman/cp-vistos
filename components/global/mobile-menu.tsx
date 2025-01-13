@@ -1,27 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { signOut } from "next-auth/react";
+import { SessionContextValue, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Dot, Menu, X } from "lucide-react";
+import { Session } from "next-auth";
+import { Dot, LogOut, Menu, Users, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { HambergerMenu } from "iconsax-react";
 import { Link as ScrollLink, Events } from "react-scroll";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 import { mobileHeaderAnimation } from "@/constants/animations/header";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  isFormMenu?: boolean;
-  profileId?: string;
-  formStep?: string | null;
+  session: SessionContextValue;
 }
 
-export function MobileMenu({ isFormMenu, profileId, formStep }: Props) {
+export function MobileMenu({ session }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   function handleLogOut() {
@@ -45,7 +44,11 @@ export function MobileMenu({ isFormMenu, profileId, formStep }: Props) {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button size="icon" variant="link" className="z-20 text-foreground lg:hidden">
+        <Button
+          size="icon"
+          variant="link"
+          className="z-20 text-foreground lg:hidden"
+        >
           <HambergerMenu size={36} />
         </Button>
       </SheetTrigger>
@@ -60,7 +63,7 @@ export function MobileMenu({ isFormMenu, profileId, formStep }: Props) {
         />
 
         <nav className="mt-6 h-[calc(100%-24px-36px)] flex flex-col justify-between">
-          <ul className="w-full flex flex-col gap-y-4 sm:gap-y-7">
+          <ul className="w-full h-full overflow-y-auto flex flex-col gap-y-4 sm:gap-y-7">
             <li>
               <ScrollLink
                 to="home"
@@ -170,12 +173,53 @@ export function MobileMenu({ isFormMenu, profileId, formStep }: Props) {
             </li>
           </ul>
 
-          <div className="w-full flex flex-col gap-4">
-            <Button variant="destructive" asChild>
-              <Link href="/login">Entrar</Link>
-            </Button>
+          <div className="pt-6 w-full flex flex-col gap-4">
+            {session.status === "authenticated" ? (
+              <>
+                <Button
+                  variant="outline"
+                  className="bg-secondary/40 flex items-center gap-2"
+                  asChild
+                >
+                  <Link href="/verificando-usuario">
+                    Perfil <Users color="#314060" />
+                  </Link>
+                </Button>
 
-            <Button variant="outline">Contato</Button>
+                <a
+                  href="https://wa.link/2i5gt9"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  Contato
+                </a>
+
+                <Button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  variant="destructive"
+                  className="flex items-center gap-2"
+                >
+                  Sair
+                  <LogOut />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="destructive" asChild>
+                  <Link href="/login">Entrar</Link>
+                </Button>
+
+                <a
+                  href="https://wa.link/2i5gt9"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  Contato
+                </a>
+              </>
+            )}
           </div>
         </nav>
       </SheetContent>

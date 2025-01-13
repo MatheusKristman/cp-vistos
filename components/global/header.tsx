@@ -1,21 +1,20 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import { useWindowScroll } from "react-use";
-import { Link as ScrollLink } from "react-scroll";
-
-import { Button } from "@/components/ui/button";
-import { MobileMenu } from "./mobile-menu";
-import { cn } from "@/lib/utils";
 import { LogOut, Users } from "lucide-react";
+import { Link as ScrollLink } from "react-scroll";
+import { signOut, useSession } from "next-auth/react";
+
+import { cn } from "@/lib/utils";
+
+import { MobileMenu } from "./mobile-menu";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
   const session = useSession();
   const { y } = useWindowScroll();
-
-  console.log({ session });
 
   return (
     <header className="w-full bg-transparent h-20 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-30 sm:px-16 sm:top-4 lg:container">
@@ -24,7 +23,7 @@ export function Header() {
           "w-full h-20 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(80px+32px)] sm:-translate-y-[calc(100%+16px)]",
           {
             "translate-y-0 sm:-translate-y-4": y > 0,
-          },
+          }
         )}
       />
 
@@ -37,7 +36,7 @@ export function Header() {
         />
       </Link>
 
-      <MobileMenu />
+      <MobileMenu session={session} />
 
       <nav className="z-40 hidden lg:flex lg:items-center lg:gap-12">
         <ul className="flex items-center gap-1">
@@ -126,44 +125,38 @@ export function Header() {
           </li>
         </ul>
 
-        {session.status === "authenticated" ? (
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              className="bg-secondary/40 flex items-center gap-2"
-              asChild
-            >
-              <Link href="/verificando-usuario">
-                Perfil <Users color="#314060" />
-              </Link>
-            </Button>
+        <div className="flex items-center gap-4">
+          {session.status === "authenticated" ? (
+            <>
+              <Button variant="outline" className="bg-secondary/40 flex items-center gap-2" asChild>
+                <Link href="/verificando-usuario">
+                  Perfil <Users color="#314060" />
+                </Link>
+              </Button>
 
-            <Button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              variant="destructive"
-              className="flex items-center gap-2"
-            >
-              Sair
-              <LogOut />
-            </Button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-4">
-            <Button variant="outline" className="hover:bg-white/40" asChild>
-              <a
-                href="https://wa.link/2i5gt9"
-                target="_blank"
-                rel="noreferrer noopener"
+              <Button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                variant="destructive"
+                className="flex items-center gap-2"
               >
-                Contato
-              </a>
-            </Button>
+                Sair
+                <LogOut />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" className="hover:bg-white/40" asChild>
+                <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                  Contato
+                </a>
+              </Button>
 
-            <Button variant="destructive" asChild>
-              <Link href="/login">Entrar</Link>
-            </Button>
-          </div>
-        )}
+              <Button variant="destructive" asChild>
+                <Link href="/login">Entrar</Link>
+              </Button>
+            </>
+          )}
+        </div>
       </nav>
       {/* <div className="w-full h-full flex items-center justify-between gap-12 border-t border-b border-secondary">
         <div className="flex items-center gap-24">

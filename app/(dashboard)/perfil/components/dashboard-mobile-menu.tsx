@@ -75,11 +75,25 @@ export function DashboardMobileMenu() {
 
                   <li
                     className={cn("text-xl", {
-                      "font-semibold": pathname.includes("/perfil/gerenciar-colaboradores"),
+                      "font-semibold": pathname.includes(
+                        "/perfil/gerenciar-colaboradores",
+                      ),
                     })}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Link href="/perfil/gerenciar-colaboradores">Colaboradores</Link>
+                    <Link href="/perfil/gerenciar-colaboradores">
+                      Colaboradores
+                    </Link>
+                  </li>
+
+                  <li
+                    className={cn("text-xl", {
+                      "font-semibold": pathname === "/perfil/gerenciar-banners",
+                    })}
+                  >
+                    <Link href="/perfil/gerenciar-banners">
+                      Gerenciar Banners
+                    </Link>
                   </li>
                 </>
               )}

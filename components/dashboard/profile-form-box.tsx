@@ -17,14 +17,23 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
 
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface Props {
   profileId: string;
@@ -48,6 +57,7 @@ interface FormRedirectConfirmationProps {
 
 function FormRedirectConfirmation({ open, setOpen, birthDate, formLink }: FormRedirectConfirmationProps) {
   const [date, setDate] = useState<Date>();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const router = useRouter();
   const currentYear = getYear(new Date());
@@ -82,67 +92,135 @@ function FormRedirectConfirmation({ open, setOpen, birthDate, formLink }: FormRe
     router.push(formLink);
   }
 
-  return (
-    <AlertDialog open={open}>
-      <AlertDialogTrigger asChild>
-        <Button variant="secondary" size="xl" className="flex items-center gap-2" onClick={() => setOpen(true)}>
-          Formulário
-          <ArrowUpRight />
-        </Button>
-      </AlertDialogTrigger>
+  if (isDesktop) {
+    return (
+      <AlertDialog open={open}>
+        <AlertDialogTrigger asChild>
+          <Button variant="secondary" size="xl" className="flex items-center gap-2" onClick={() => setOpen(true)}>
+            Formulário
+            <ArrowUpRight />
+          </Button>
+        </AlertDialogTrigger>
 
-      <AlertDialogContent className="rounded-2xl">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Confirmação de identidade</AlertDialogTitle>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmação de identidade</AlertDialogTitle>
 
-          <div className="w-full flex flex-col gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id="birthDate"
-                  variant={"outline"}
-                  className={cn(
-                    "w-full flex items-center justify-start gap-2 text-left font-normal",
-                    !date && "text-muted-foreground/70"
-                  )}
-                >
-                  <CalendarIcon />
-                  {date ? format(date, "PPP", { locale: ptBR }) : <span>Confirme a data de nascimento</span>}
-                </Button>
-              </PopoverTrigger>
+            <div className="w-full flex flex-col gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="birthDate"
+                    variant={"outline"}
+                    className={cn(
+                      "w-full flex items-center justify-start gap-2 text-left font-normal",
+                      !date && "text-muted-foreground/70"
+                    )}
+                  >
+                    <CalendarIcon />
+                    {date ? format(date, "PPP", { locale: ptBR }) : <span>Confirme a data de nascimento</span>}
+                  </Button>
+                </PopoverTrigger>
 
-              <PopoverContent className="w-auto p-0 z-[99999]">
-                <Calendar
-                  mode="single"
-                  locale={ptBR}
-                  selected={date}
-                  onSelect={setDate}
-                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                  captionLayout="dropdown"
-                  fromYear={1900}
-                  toYear={currentYear}
-                  classNames={{
-                    day_hidden: "invisible",
-                    dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
-                    caption_dropdowns: "flex gap-3",
-                    vhidden: "hidden",
-                    caption_label: "hidden",
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </AlertDialogHeader>
+                <PopoverContent className="w-auto p-0 z-[99999]">
+                  <Calendar
+                    mode="single"
+                    locale={ptBR}
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    captionLayout="dropdown"
+                    fromYear={1900}
+                    toYear={currentYear}
+                    classNames={{
+                      day_hidden: "invisible",
+                      dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                      caption_dropdowns: "flex gap-3",
+                      vhidden: "hidden",
+                      caption_label: "hidden",
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </AlertDialogHeader>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setOpen(false)}>Cancelar</AlertDialogCancel>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpen(false)}>Cancelar</AlertDialogCancel>
 
-          <AlertDialogAction onClick={submitDate}>Confirmar</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
+            <AlertDialogAction onClick={submitDate}>Confirmar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  } else {
+    return (
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild>
+          <Button variant="secondary" size="xl" className="flex items-center gap-2" onClick={() => setOpen(true)}>
+            Formulário
+            <ArrowUpRight />
+          </Button>
+        </DrawerTrigger>
+
+        <DrawerContent>
+          <DrawerHeader className="text-left">
+            <DrawerTitle>Confirmação de identidade</DrawerTitle>
+
+            <div className="w-full flex flex-col gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="birthDate"
+                    variant={"outline"}
+                    className={cn(
+                      "w-full flex items-center justify-start gap-2 text-left font-normal",
+                      !date && "text-muted-foreground/70"
+                    )}
+                  >
+                    <CalendarIcon />
+                    {date ? format(date, "PPP", { locale: ptBR }) : <span>Confirme a data de nascimento</span>}
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="w-auto p-0 z-[99999]">
+                  <Calendar
+                    mode="single"
+                    locale={ptBR}
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    captionLayout="dropdown"
+                    fromYear={1900}
+                    toYear={currentYear}
+                    classNames={{
+                      day_hidden: "invisible",
+                      dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                      caption_dropdowns: "flex gap-3",
+                      vhidden: "hidden",
+                      caption_label: "hidden",
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </DrawerHeader>
+
+          <DrawerFooter className="pt-2">
+            <Button onClick={submitDate}>Confirmar</Button>
+
+            <DrawerClose asChild>
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
 }
 
 export function ProfileFormBox({

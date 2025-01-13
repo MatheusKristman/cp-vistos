@@ -271,6 +271,8 @@ export default function AddBannerPage() {
               variant="outline"
               size="xl"
               className="w-full order-1 sm:order-2 sm:w-fit"
+              disabled={isPending || isUploading}
+              asChild
             >
               <Link href="/perfil/gerenciar-banners">Cancelar</Link>
             </Button>

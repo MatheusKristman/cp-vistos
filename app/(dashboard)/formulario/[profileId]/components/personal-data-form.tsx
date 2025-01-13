@@ -448,16 +448,19 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
     if (redirectStep !== null) {
       const values = form.getValues();
 
-      if (
-        data &&
-        data.birthDate &&
-        format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")
-      ) {
-        toast.error(
-          "Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente",
-        );
+      if (birthDate !== undefined) {
+        if (
+          data &&
+          data.birthDate &&
+          format(birthDate, "dd/MM/yyyy") !==
+            format(data.birthDate, "dd/MM/yyyy")
+        ) {
+          toast.error(
+            "Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente",
+          );
 
-        return;
+          return;
+        }
       }
 
       savePersonalData({
@@ -531,16 +534,18 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
   function onSave() {
     const values = form.getValues();
 
-    if (
-      data &&
-      data.birthDate &&
-      format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")
-    ) {
-      toast.error(
-        "Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente",
-      );
+    if (birthDate !== undefined) {
+      if (
+        data &&
+        data.birthDate &&
+        format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")
+      ) {
+        toast.error(
+          "Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente",
+        );
 
-      return;
+        return;
+      }
     }
 
     savePersonalData({

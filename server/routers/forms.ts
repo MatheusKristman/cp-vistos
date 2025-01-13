@@ -1110,7 +1110,7 @@ export const formsRouter = router({
         returnCity: z.string().nullable(),
         estimatedTimeNumber: z.coerce
           .number()
-          .positive("Não é permitido número negativo")
+          .gte(0, "Não é permitido número negativo")
           .nullable(),
         estimatedTimeType: z.string().nullable(),
         visitLocations: z.string().nullable(),
