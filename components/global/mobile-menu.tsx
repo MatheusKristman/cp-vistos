@@ -18,9 +18,10 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   session: SessionContextValue;
+  pathname: string;
 }
 
-export function MobileMenu({ session }: Props) {
+export function MobileMenu({ session, pathname }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   function handleLogOut() {
@@ -62,8 +63,18 @@ export function MobileMenu({ session }: Props) {
           className="object-center object-contain"
         />
 
-        <nav className="mt-6 h-[calc(100%-24px-36px)] flex flex-col justify-between">
-          <ul className="w-full h-full overflow-y-auto flex flex-col gap-y-4 sm:gap-y-7">
+        <nav
+          className={cn(
+            "mt-6 h-[calc(100%-24px-36px)] flex flex-col justify-between",
+            pathname === "/politica-de-privacidade" && "justify-end",
+          )}
+        >
+          <ul
+            className={cn(
+              "w-full h-full overflow-y-auto flex flex-col gap-y-4 sm:gap-y-7",
+              pathname === "/politica-de-privacidade" && "hidden",
+            )}
+          >
             <li>
               <ScrollLink
                 to="home"

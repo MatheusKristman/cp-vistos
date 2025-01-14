@@ -4,7 +4,12 @@ import { withUt } from "uploadthing/tw";
 
 export default withUt({
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -69,10 +74,17 @@ export default withUt({
         "desktop-services": "url('/assets/images/desktop-services.png')",
         "mobile-testimonial": "url('/assets/images/mobile-testimonial-bg.png')",
         "tablet-testimonial": "url('/assets/images/tablet-testimonial-bg.png')",
-        "desktop-testimonial": "url('/assets/images/desktop-testimonial-bg.png')",
+        "desktop-testimonial":
+          "url('/assets/images/desktop-testimonial-bg.png')",
         "login-1": "url('/assets/images/login-1.png')",
         "login-2": "url('/assets/images/login-2.png')",
         "login-3": "url('/assets/images/login-3.png')",
+        "privacy-policy-mobile":
+          "url('/assets/images/privacy-policy-bg-mobile.png')",
+        "privacy-policy-tablet":
+          "url('/assets/images/privacy-policy-bg-tablet.png')",
+        "privacy-policy-desktop":
+          "url('/assets/images/privacy-policy-bg-desktop.png')",
       },
       borderRadius: {
         lg: "var(--radius)",

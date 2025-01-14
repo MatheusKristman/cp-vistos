@@ -5,6 +5,7 @@ import { Banner } from "@/components/home/banner";
 import { Services } from "@/components/home/services";
 import { Testimonial } from "@/components/home/testimonial";
 import { Features } from "@/components/home/features";
+import { Footer } from "@/components/global/footer";
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         <Testimonial />
         <Features />
       </div>
+      <Footer />
     </>
   );
 }

@@ -11,9 +11,11 @@ import { cn } from "@/lib/utils";
 
 import { MobileMenu } from "./mobile-menu";
 import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
 
 export function Header() {
   const session = useSession();
+  const pathname = usePathname();
   const { y } = useWindowScroll();
 
   return (
@@ -23,7 +25,7 @@ export function Header() {
           "w-full h-20 absolute top-0 left-0 transform -translate-y-full bg-white/35 backdrop-blur-lg rounded-b-xl transition-transform duration-500 sm:rounded-b-3xl sm:h-[calc(80px+32px)] sm:-translate-y-[calc(100%+16px)]",
           {
             "translate-y-0 sm:-translate-y-4": y > 0,
-          }
+          },
         )}
       />
 
@@ -36,10 +38,15 @@ export function Header() {
         />
       </Link>
 
-      <MobileMenu session={session} />
+      <MobileMenu session={session} pathname={pathname} />
 
       <nav className="z-40 hidden lg:flex lg:items-center lg:gap-12">
-        <ul className="flex items-center gap-1">
+        <ul
+          className={cn(
+            "flex items-center gap-1",
+            pathname === "/politica-de-privacidade" && "hidden",
+          )}
+        >
           <li>
             <ScrollLink
               to="home"
@@ -128,7 +135,11 @@ export function Header() {
         <div className="flex items-center gap-4">
           {session.status === "authenticated" ? (
             <>
-              <Button variant="outline" className="bg-secondary/40 flex items-center gap-2" asChild>
+              <Button
+                variant="outline"
+                className="bg-secondary/40 flex items-center gap-2"
+                asChild
+              >
                 <Link href="/verificando-usuario">
                   Perfil <Users color="#314060" />
                 </Link>
@@ -146,7 +157,11 @@ export function Header() {
           ) : (
             <>
               <Button variant="outline" className="hover:bg-white/40" asChild>
-                <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                <a
+                  href="https://wa.link/2i5gt9"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
                   Contato
                 </a>
               </Button>
