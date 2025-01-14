@@ -5,6 +5,7 @@ import {
   MessageCircleMore,
   FileText,
   Plus,
+  UserRoundPlusIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -19,6 +20,10 @@ import {
   VisaStatus,
 } from "@prisma/client";
 
+import { Button } from "@/components/ui/button";
+import { ConfirmActiveStatusModal } from "./confirm-active-status-modal";
+import { ConfirmArchiveStatusModal } from "./confirm-archive-status-modal";
+import { ConfirmProspectStatusModal } from "./confirm-prospect-status-modal";
 import {
   Tooltip,
   TooltipContent,
@@ -32,10 +37,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ConfirmActiveStatusModal } from "./confirm-active-status-modal";
-import { ConfirmArchiveStatusModal } from "./confirm-archive-status-modal";
-import { ConfirmProspectStatusModal } from "./confirm-prospect-status-modal";
 
 import useUserStore from "@/constants/stores/useUserStore";
 import { FormAnimation } from "@/constants/animations/modal";
