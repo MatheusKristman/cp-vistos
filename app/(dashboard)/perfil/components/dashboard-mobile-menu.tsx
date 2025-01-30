@@ -95,6 +95,14 @@ export function DashboardMobileMenu() {
                       Gerenciar Banners
                     </Link>
                   </li>
+
+                  <li
+                    className={cn("text-xl", {
+                      "font-semibold": pathname === "/perfil/alterar-senha",
+                    })}
+                  >
+                    <Link href="/perfil/alterar-senha">Alterar Senha</Link>
+                  </li>
                 </>
               )}
             </ul>
