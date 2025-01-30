@@ -13,10 +13,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Autoplay from "embla-carousel-autoplay";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { LoginHeader } from "./login-header";
 
 import { cn } from "@/lib/utils";
@@ -44,7 +56,9 @@ const CAROUSEL_ITEMS = [
 export function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userSubmitted, setUserSubmitted] = useState(false);
-  const [passwordType, setPasswordType] = useState<"text" | "password">("password");
+  const [passwordType, setPasswordType] = useState<"text" | "password">(
+    "password",
+  );
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -61,11 +75,7 @@ export function LoginForm() {
   });
 
   useEffect(() => {
-    console.log(session);
-
     if (!userSubmitted && session && session.status === "authenticated") {
-      console.log("Usuário não enviou e está logado");
-      console.log({ userSubmitted });
       router.push("/");
     }
   }, [session, router, setUserSubmitted, userSubmitted]);
@@ -138,11 +148,13 @@ export function LoginForm() {
                 <div
                   className={cn(
                     "relative w-full h-full bg-cover bg-center flex sm:justify-end after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0 after:bg-gradient-to-b after:from-transparent after:to-black/50",
-                    item.background
+                    item.background,
                   )}
                 >
                   <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10">
-                    <h5 className="text-white font-semibold text-center text-5xl max-w-xl mx-auto">{item.title}</h5>
+                    <h5 className="text-white font-semibold text-center text-5xl max-w-xl mx-auto">
+                      {item.title}
+                    </h5>
                   </div>
                 </div>
               </CarouselItem>
@@ -153,9 +165,12 @@ export function LoginForm() {
             {Array.from({ length: count }).map((_, index) => (
               <div
                 key={index}
-                className={cn("rounded-full size-3 bg-white/70 transition-all duration-500", {
-                  "bg-white w-11": index === current,
-                })}
+                className={cn(
+                  "rounded-full size-3 bg-white/70 transition-all duration-500",
+                  {
+                    "bg-white w-11": index === current,
+                  },
+                )}
               />
             ))}
           </div>
@@ -172,19 +187,25 @@ export function LoginForm() {
             </h1>
 
             <p className="text-base text-center text-foreground/70 max-w-prose sm:text-xl">
-              Entre para acompanhar seu processo e ter acesso a todos os nossos serviços.
+              Entre para acompanhar seu processo e ter acesso a todos os nossos
+              serviços.
             </p>
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-12">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full flex flex-col gap-12"
+            >
               <div className="w-full flex flex-col space-y-4">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-foreground/70">E-mail</FormLabel>
+                      <FormLabel className="text-base font-medium text-foreground/70">
+                        E-mail
+                      </FormLabel>
 
                       <FormControl>
                         <Input
@@ -207,7 +228,9 @@ export function LoginForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-foreground/70">Senha</FormLabel>
+                      <FormLabel className="text-base font-medium text-foreground/70">
+                        Senha
+                      </FormLabel>
 
                       <FormControl>
                         <div className="relative">
@@ -231,7 +254,11 @@ export function LoginForm() {
                             asChild
                           >
                             <span className="cursor-pointer">
-                              {passwordType === "password" ? <EyeOff color="#C0D2EF" /> : <Eye color="#C0D2EF" />}
+                              {passwordType === "password" ? (
+                                <EyeOff color="#C0D2EF" />
+                              ) : (
+                                <Eye color="#C0D2EF" />
+                              )}
                             </span>
                           </Button>
                         </div>
@@ -243,7 +270,11 @@ export function LoginForm() {
                 />
               </div>
 
-              <Button size="xl" disabled={isSubmitting} className="text-xl flex items-center gap-2">
+              <Button
+                size="xl"
+                disabled={isSubmitting}
+                className="text-xl flex items-center gap-2"
+              >
                 {isSubmitting ? (
                   <>
                     Entrando
@@ -261,7 +292,8 @@ export function LoginForm() {
         </div>
 
         <span className="w-full text-sm text-[#8396BE] text-center sm:max-w-lg">
-          Esqueceu seu acesso? Não se preocupe! Entre em contato conosco para recuperar sua conta.
+          Esqueceu seu acesso? Não se preocupe! Entre em contato conosco para
+          recuperar sua conta.
         </span>
       </div>
     </section>

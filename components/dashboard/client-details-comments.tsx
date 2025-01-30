@@ -46,8 +46,6 @@ export function ClientDetailsComments({ handleClose }: Props) {
   const commentEndRef = useRef<HTMLDivElement | null>(null);
   const session = useSession();
 
-  console.log(session);
-
   function scrollToBottom() {
     setTimeout(() => {
       commentEndRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -466,10 +466,6 @@ export function AdditionalInformationForm({
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  console.log("languages", languages);
-  console.log("fiveYearsOtherCountryTravels", fiveYearsOtherCountryTravels);
-  console.log("socialOrganization", socialOrganization);
-
   const { mutate: submitAdditionalInformation, isPending } =
     trpc.formsRouter.submitAdditionalInformation.useMutation({
       onSuccess: (data) => {

@@ -93,7 +93,6 @@ export default function EditBanner({
 
         const values = form.getValues();
 
-        console.log(values);
         editBanner({ ...values, imageKey: res[0].key, bannerId });
       },
       onUploadError: (error) => {

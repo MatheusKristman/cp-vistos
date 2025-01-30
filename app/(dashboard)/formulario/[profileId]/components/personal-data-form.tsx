@@ -635,8 +635,6 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
     const currentNames = otherNames ?? [];
 
-    console.log(currentNames);
-
     currentNames.push(otherNamesValue);
 
     form.setValue("otherNames", currentNames);

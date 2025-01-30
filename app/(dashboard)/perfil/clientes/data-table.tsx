@@ -80,7 +80,6 @@ export function DataTable<TData, TValue>({
   const { mutate: handleOpenDetailsModal, isPending } =
     trpc.userRouter.getClientDetails.useMutation({
       onSuccess({ client }) {
-        console.log({ client });
         setClient(client);
         openModal();
         setToResume();

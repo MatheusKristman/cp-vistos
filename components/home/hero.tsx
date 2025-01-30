@@ -27,10 +27,6 @@ export function Hero() {
     };
   }, [bannerShowing]);
 
-  useEffect(() => {
-    console.log(bannerShowing);
-  }, [bannerShowing]);
-
   return (
     <main className="w-full relative pt-28 bg-mobile-hero bg-no-repeat bg-[length:100%_100%] sm:pt-40 sm:bg-tablet-hero lg:pt-44 lg:bg-desktop-hero">
       <Element name="home" className="w-full">
@@ -53,7 +49,8 @@ export function Hero() {
                   transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
                   className="text-xl font-medium text-foreground/70 lg:max-w-lg"
                 >
-                  Facilitamos o processo para obter ou renovar seu visto americano, com rapidez e sem complicações.
+                  Facilitamos o processo para obter ou renovar seu visto
+                  americano, com rapidez e sem complicações.
                 </motion.p>
               </div>
 
@@ -63,14 +60,29 @@ export function Hero() {
                 transition={{ delay: 0.6, duration: 0.5, ease: "circOut" }}
                 className="w-full bg-secondary/50 rounded-[36px] flex flex-col gap-4 items-center p-3 sm:flex-row"
               >
-                <Button variant="destructive" className="w-full text-xl font-medium rounded-full" asChild>
-                  <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                <Button
+                  variant="destructive"
+                  className="w-full text-xl font-medium rounded-full"
+                  asChild
+                >
+                  <a
+                    href="https://wa.link/2i5gt9"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
                     Entre em contato
                   </a>
                 </Button>
 
                 <Button variant="link" className="w-full text-xl font-medium">
-                  <ScrollLink to="services" activeClass="active" spy={true} smooth={true} offset={-200} duration={1000}>
+                  <ScrollLink
+                    to="services"
+                    activeClass="active"
+                    spy={true}
+                    smooth={true}
+                    offset={-200}
+                    duration={1000}
+                  >
                     Conheça nossos serviços
                   </ScrollLink>
                 </Button>
@@ -93,8 +105,12 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">1.000</p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">Clientes</p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">
+                    1.000
+                  </p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">
+                    Clientes
+                  </p>
                 </div>
               </div>
 
@@ -110,8 +126,12 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">98%</p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">De Aprovação</p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">
+                    98%
+                  </p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">
+                    De Aprovação
+                  </p>
                 </div>
               </div>
 
@@ -127,8 +147,12 @@ export function Hero() {
                 />
 
                 <div className="flex flex-col sm:items-center">
-                  <p className="text-2xl font-semibold text-foreground sm:text-center">18 Anos</p>
-                  <p className="text-xl text-foreground font-medium sm:text-center">De Experiência</p>
+                  <p className="text-2xl font-semibold text-foreground sm:text-center">
+                    18 Anos
+                  </p>
+                  <p className="text-xl text-foreground font-medium sm:text-center">
+                    De Experiência
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -206,9 +230,13 @@ export function Hero() {
                   transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
                   className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
                 >
-                  <h3 className="text-2xl font-semibold text-foreground">Disneyland</h3>
+                  <h3 className="text-2xl font-semibold text-foreground">
+                    Disneyland
+                  </h3>
 
-                  <p className="text-base font-medium text-foreground/70">Orlando</p>
+                  <p className="text-base font-medium text-foreground/70">
+                    Orlando
+                  </p>
                 </motion.div>
               )}
 
@@ -221,9 +249,13 @@ export function Hero() {
                   transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
                   className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
                 >
-                  <h3 className="text-2xl font-semibold text-foreground">Estátua da Liberdade</h3>
+                  <h3 className="text-2xl font-semibold text-foreground">
+                    Estátua da Liberdade
+                  </h3>
 
-                  <p className="text-base font-medium text-foreground/70">Nova Iorque</p>
+                  <p className="text-base font-medium text-foreground/70">
+                    Nova Iorque
+                  </p>
                 </motion.div>
               )}
 
@@ -236,9 +268,13 @@ export function Hero() {
                   transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
                   className="px-6 py-4 rounded-l-[30px] bg-white border border-r-0 border-secondary flex flex-col absolute z-10 -bottom-8 right-0"
                 >
-                  <h3 className="text-2xl font-semibold text-foreground">Bellagio</h3>
+                  <h3 className="text-2xl font-semibold text-foreground">
+                    Bellagio
+                  </h3>
 
-                  <p className="text-base font-medium text-foreground/70">Las Vegas</p>
+                  <p className="text-base font-medium text-foreground/70">
+                    Las Vegas
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>

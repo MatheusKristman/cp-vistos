@@ -35,26 +35,7 @@ export function ClientDetailsModal() {
     unsetToNewProfile,
   } = useClientDetailsModalStore();
 
-  useEffect(() => {
-    console.log({ isResume });
-    console.log({ isAnnotation });
-    console.log({ isEditAccount });
-    console.log({ isComment });
-    console.log({ isEditProfile });
-    console.log({ isForm });
-    console.log({ isNewProfile });
-  }, [
-    isResume,
-    isAnnotation,
-    isEditAccount,
-    isComment,
-    isEditProfile,
-    isForm,
-    isNewProfile,
-  ]);
-
   if (isModalOpen && !client) {
-    console.log(client);
     return <div>Loading...</div>;
   }
 

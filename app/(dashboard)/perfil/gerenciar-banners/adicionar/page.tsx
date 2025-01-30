@@ -79,7 +79,6 @@ export default function AddBannerPage() {
 
         const values = form.getValues();
 
-        console.log(values);
         createBanner({ ...values, imageKey: res[0].key });
       },
       onUploadError: (error) => {

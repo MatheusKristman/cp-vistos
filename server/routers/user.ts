@@ -824,8 +824,6 @@ export const userRouter = router({
         },
       });
 
-      console.log({ profiles });
-
       if (profiles.length === 0) {
         return { clients: [] };
       }

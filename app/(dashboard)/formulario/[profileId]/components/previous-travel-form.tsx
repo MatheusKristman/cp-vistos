@@ -293,10 +293,6 @@ export function PreviousTravelForm({
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  useEffect(() => {
-    console.log(americanLicense);
-  }, [americanLicense]);
-
   const { mutate: submitPreviousTravel, isPending } =
     trpc.formsRouter.submitPreviousTravel.useMutation({
       onSuccess: (data) => {
