@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import {
   ColumnDef,
@@ -16,14 +16,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -35,27 +28,33 @@ import { trpc } from "@/lib/trpc-client";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  category: "american_visa" | "passport" | "e_ta";
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, category }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: false,
-    name: true,
-    group: true,
-    CASVDate: true,
-    interviewDate: true,
-    meetingDate: true,
-    visaType: true,
-    visaStatus: true,
-    scheduleAccount: true,
-    shipping: true,
-    tax: true,
-    statusDS: true,
+    name: false,
+    cpf: false,
+    group: false,
+    CASVDate: false,
+    interviewDate: false,
+    meetingDate: false,
+    visaType: false,
+    visaStatus: false,
+    scheduleAccount: false,
+    shipping: false,
+    tax: false,
+    statusDS: false,
+    responsibleCpf: false,
+    protocol: false,
+    entryDate: false,
+    scheduleDate: false,
+    process: false,
+    passport: false,
+    ETAStatus: false,
   });
   const { openModal, setClient, setToResume } =
     //eslint-disable-next-line
@@ -77,41 +76,114 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const { mutate: handleOpenDetailsModal, isPending } =
-    trpc.userRouter.getClientDetails.useMutation({
-      onSuccess({ client }) {
-        setClient(client);
-        openModal();
-        setToResume();
-      },
-      onError(error) {
-        console.error(error.data);
+  const { mutate: handleOpenDetailsModal, isPending } = trpc.userRouter.getClientDetails.useMutation({
+    onSuccess({ client }) {
+      setClient(client);
+      openModal();
+      setToResume();
+    },
+    onError(error) {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (category === "american_visa") {
+      setColumnVisibility({
+        id: false,
+        name: true,
+        cpf: true,
+        group: true,
+        CASVDate: true,
+        interviewDate: true,
+        meetingDate: true,
+        visaType: true,
+        visaStatus: true,
+        scheduleAccount: true,
+        shipping: true,
+        tax: true,
+        statusDS: true,
+        responsibleCpf: false,
+        protocol: false,
+        entryDate: false,
+        scheduleDate: false,
+        process: false,
+        passport: false,
+        ETAStatus: false,
+      });
+    }
+
+    if (category === "e_ta") {
+      setColumnVisibility({
+        id: false,
+        name: true,
+        group: true,
+        CASVDate: false,
+        interviewDate: false,
+        meetingDate: false,
+        DSValid: false,
+        scheduleAccount: false,
+        statusDS: false,
+        tax: false,
+        visaType: false,
+        visaStatus: false,
+        shipping: false,
+        cpf: true,
+        responsibleCpf: false,
+        protocol: false,
+        entryDate: false,
+        scheduleDate: false,
+        process: true,
+        passport: true,
+        ETAStatus: true,
+      });
+    }
+
+    if (category === "passport") {
+      setColumnVisibility({
+        id: false,
+        name: true,
+        group: true,
+        CASVDate: false,
+        interviewDate: false,
+        meetingDate: false,
+        DSValid: false,
+        scheduleAccount: false,
+        statusDS: false,
+        tax: false,
+        visaType: false,
+        visaStatus: false,
+        shipping: false,
+        cpf: true,
+        responsibleCpf: true,
+        protocol: true,
+        entryDate: true,
+        scheduleDate: true,
+        process: false,
+        passport: false,
+        ETAStatus: false,
+      });
+    }
+  }, [category]);
 
   return (
     <div>
       <div className="flex items-center py-4">
         <div className="h-12 flex items-center gap-2 border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border w-full sm:max-w-xs">
-          <Search
-            className="w-5 h-5 text-border flex-shrink-0"
-            strokeWidth={1.5}
-          />
+          <Search className="w-5 h-5 text-border flex-shrink-0" strokeWidth={1.5} />
 
           <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
           <Input
             placeholder="Pesquise pelo nome..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
             className="flex h-full w-full transition border-0 duration-300 bg-background text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0  disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
@@ -124,12 +196,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -147,31 +214,21 @@ export function DataTable<TData, TValue>({
                     })
                   }
                   className={cn("cursor-pointer", {
-                    "cursor-not-allowed pointer-events-none opacity-70":
-                      isPending,
+                    "cursor-not-allowed pointer-events-none opacity-70": isPending,
                   })}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="text-center text-foreground font-medium"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                    <TableCell key={cell.id} className="text-center text-foreground font-medium">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  Sem resultados
                 </TableCell>
               </TableRow>
             )}
@@ -181,8 +238,7 @@ export function DataTable<TData, TValue>({
 
       <div className="w-full flex items-center justify-between">
         <div className="hidden sm:flex w-[100px] items-center justify-center text-sm font-medium">
-          Pagina {table.getState().pagination.pageIndex + 1} de{" "}
-          {table.getPageCount()}
+          Pagina {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
         </div>
         <div className="w-full flex items-center justify-between space-x-2 py-4 sm:justify-end sm:w-fit">
           <Button
@@ -193,12 +249,8 @@ export function DataTable<TData, TValue>({
           >
             Anterior
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             Próximo
           </Button>
         </div>

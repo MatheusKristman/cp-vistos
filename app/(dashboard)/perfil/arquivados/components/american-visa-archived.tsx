@@ -1,8 +1,8 @@
 import { UserRoundX } from "lucide-react";
 
+import { columns } from "../../components/columns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { archivedColumns } from "../archived-columns";
-import { DataTableArchived } from "../data-table-archived";
+import { DataTable } from "../../components/data-table";
 
 import { trpc } from "@/lib/trpc-client";
 
@@ -40,5 +40,5 @@ export function AmericanVisaArchived() {
     );
   }
 
-  return <DataTableArchived columns={archivedColumns} data={data?.clients ?? []} />;
+  return <DataTable columns={columns} data={data?.clients ?? []} category="american_visa" />;
 }

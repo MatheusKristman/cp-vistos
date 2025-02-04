@@ -1,8 +1,8 @@
 import { UserRoundX } from "lucide-react";
 
+import { columns } from "../../components/columns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { prospectsColumns } from "../prospects-columns";
-import { DataTableProspects } from "../data-table-prospects";
+import { DataTable } from "../../components/data-table";
 
 import { trpc } from "@/lib/trpc-client";
 
@@ -40,5 +40,5 @@ export function E_TA_Prospects() {
     );
   }
 
-  return <DataTableProspects columns={prospectsColumns} data={data?.clients ?? []} />;
+  return <DataTable columns={columns} data={data?.clients ?? []} category="e_ta" />;
 }

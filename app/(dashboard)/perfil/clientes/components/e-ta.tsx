@@ -2,9 +2,9 @@ import { UserRoundX } from "lucide-react";
 
 import { trpc } from "@/lib/trpc-client";
 
-import { columns } from "../columns";
-import { DataTable } from "../data-table";
+import { columns } from "../../components/columns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DataTable } from "../../components/data-table";
 
 export function E_TA() {
   const { data, isFetching } = trpc.userRouter.getActiveClients.useQuery({
@@ -40,5 +40,5 @@ export function E_TA() {
     );
   }
 
-  return <DataTable columns={columns} data={data?.clients ?? []} />;
+  return <DataTable columns={columns} data={data?.clients ?? []} category="e_ta" />;
 }

@@ -1,23 +1,12 @@
 "use client";
 
-import {
-  ScheduleAccount,
-  Shipping,
-  StatusDS,
-  VisaStatus,
-  VisaType,
-} from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { differenceInDays, format } from "date-fns";
 import { AlertTriangle, ArrowUpDown } from "lucide-react";
+import { ETAStatus, ScheduleAccount, Shipping, StatusDS, VisaStatus, VisaType } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type UserTable = {
   id: string;
@@ -31,6 +20,14 @@ export type UserTable = {
   shipping: Shipping;
   tax: boolean;
   statusDS: StatusDS;
+  cpf: string | null;
+  responsibleCpf: string | null;
+  protocol: string | null;
+  entryDate: Date | null;
+  scheduleDate: Date | null;
+  process: string | null;
+  passport: string | null;
+  ETAStatus: ETAStatus;
 };
 
 export const columns: ColumnDef<UserTable>[] = [
@@ -45,11 +42,206 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Nome
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      return <span className="block min-w-52">{row.getValue("name")}</span>;
+    },
+  },
+  {
+    accessorKey: "cpf",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          CPF
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return <span className="block min-w-36">{row.getValue("cpf")}</span>;
+    },
+  },
+  {
+    accessorKey: "responsibleCpf",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          CPF do Responsável
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("responsibleCpf")) {
+        return <span>---</span>;
+      }
+
+      return <span className="block min-w-36">{row.getValue("responsibleCpf")}</span>;
+    },
+  },
+  {
+    accessorKey: "protocol",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          Protocolo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("protocol")) {
+        return <span>---</span>;
+      }
+
+      return <span>{row.getValue("protocol")}</span>;
+    },
+  },
+  {
+    accessorKey: "entryDate",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          Data de Entrada
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("entryDate")) {
+        return <span>--/--/----</span>;
+      }
+
+      const dateFormatted = format(row.getValue("entryDate"), "dd/MM/yyyy");
+
+      return <span>{dateFormatted}</span>;
+    },
+  },
+  {
+    accessorKey: "scheduleDate",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          Data do Agendamento
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("scheduleDate")) {
+        return <span>--/--/----</span>;
+      }
+
+      const dateFormatted = format(row.getValue("scheduleDate"), "dd/MM/yyyy");
+
+      return <span>{dateFormatted}</span>;
+    },
+  },
+  {
+    accessorKey: "process",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          Processo
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("process")) {
+        return <span>---</span>;
+      }
+
+      return <span>{row.getValue("process")}</span>;
+    },
+  },
+  {
+    accessorKey: "passport",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          Passaporte
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      if (!row.getValue("passport")) {
+        return <span>---</span>;
+      }
+
+      return <span>{row.getValue("passport")}</span>;
+    },
+  },
+  {
+    accessorKey: "ETAStatus",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      let ETAStatus;
+
+      const value = row.getValue("ETAStatus") as ETAStatus;
+
+      switch (value) {
+        case "analysis":
+          ETAStatus = "Em analise";
+          break;
+        case "approved":
+          ETAStatus = "Aprovado";
+          break;
+        case "disapproved":
+          ETAStatus = "Reprovado";
+          break;
+        default:
+          ETAStatus = "Em analise";
+          break;
+      }
+
+      return <span>{ETAStatus}</span>;
     },
   },
   {
@@ -59,6 +251,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Data Barcode
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -109,6 +302,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           CASV
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -132,6 +326,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Entrevista
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -155,6 +350,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Reunião
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -178,6 +374,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Envio
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -220,6 +417,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Visto
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -250,6 +448,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Agendamento
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -280,6 +479,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Taxa
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -307,6 +507,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           DS-160
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -343,6 +544,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Grupo
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -364,6 +566,7 @@ export const columns: ColumnDef<UserTable>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center justify-center w-full"
         >
           Status
           <ArrowUpDown className="ml-2 h-4 w-4" />

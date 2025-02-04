@@ -54,12 +54,9 @@ export const userRouter = router({
             invalid_type_error: "Celular inválido",
           })
           .optional()
-          .refine(
-            (val) => !val || (val && (val.length === 0 || val.length === 14)),
-            {
-              message: "Celular inválido",
-            },
-          ),
+          .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+            message: "Celular inválido",
+          }),
         address: z.string({
           required_error: "Endereço é obrigatório",
           invalid_type_error: "Endereço inválido",
@@ -135,8 +132,7 @@ export const userRouter = router({
                   })
                   .min(1, { message: "Nome do perfil é obrigatório" })
                   .min(6, {
-                    message:
-                      "Nome do perfil precisa ter no mínimo 6 caracteres",
+                    message: "Nome do perfil precisa ter no mínimo 6 caracteres",
                   }),
                 profileCpf: z
                   .string({
@@ -175,14 +171,12 @@ export const userRouter = router({
                       "O3 Cônjuge ou Filho de um O1 ou O2",
                       "",
                     ],
-                    { message: "Classe de visto inválida" },
+                    { message: "Classe de visto inválida" }
                   )
                   .optional(),
-                category: z
-                  .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-                  .refine((val) => val.length !== 0, {
-                    message: "Categoria é obrigatória",
-                  }),
+                category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
+                  message: "Categoria é obrigatória",
+                }),
                 issuanceDate: z
                   .date({
                     invalid_type_error: "Data de Emissão inválida",
@@ -198,9 +192,7 @@ export const userRouter = router({
                     invalid_type_error: "Barcode inválido",
                   })
                   .optional(),
-                responsibleCpf: z
-                  .string({ invalid_type_error: "CPF do responsável inválido" })
-                  .optional(),
+                responsibleCpf: z.string({ invalid_type_error: "CPF do responsável inválido" }).optional(),
                 protocol: z
                   .string({
                     invalid_type_error: "Barcode inválido",
@@ -242,50 +234,40 @@ export const userRouter = router({
                   })
                   .optional(),
               })
-              .superRefine(
-                ({ category, visaType, visaClass, scheduleTime }, ctx) => {
-                  if (
-                    category === "Visto Americano" &&
-                    (visaType === "" || visaType === undefined)
-                  ) {
-                    ctx.addIssue({
-                      path: ["visaType"],
-                      code: "custom",
-                      message: "Tipo do visto é obrigatório",
-                    });
-                  }
+              .superRefine(({ category, visaType, visaClass, scheduleTime }, ctx) => {
+                if (category === "Visto Americano" && (visaType === "" || visaType === undefined)) {
+                  ctx.addIssue({
+                    path: ["visaType"],
+                    code: "custom",
+                    message: "Tipo do visto é obrigatório",
+                  });
+                }
 
-                  if (
-                    category === "Visto Americano" &&
-                    (visaClass === "" || visaClass === undefined)
-                  ) {
-                    ctx.addIssue({
-                      path: ["visaClass"],
-                      code: "custom",
-                      message: "Classe do visto é obrigatória",
-                    });
-                  }
+                if (category === "Visto Americano" && (visaClass === "" || visaClass === undefined)) {
+                  ctx.addIssue({
+                    path: ["visaClass"],
+                    code: "custom",
+                    message: "Classe do visto é obrigatória",
+                  });
+                }
 
-                  if (
-                    category === "Passaporte" &&
-                    scheduleTime !== undefined &&
-                    /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(
-                      scheduleTime,
-                    ) === false
-                  ) {
-                    ctx.addIssue({
-                      path: ["scheduleTime"],
-                      code: "custom",
-                      message: "Horário do agendamento inválido",
-                    });
-                  }
-                },
-              ),
+                if (
+                  category === "Passaporte" &&
+                  scheduleTime !== undefined &&
+                  /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(scheduleTime) === false
+                ) {
+                  ctx.addIssue({
+                    path: ["scheduleTime"],
+                    code: "custom",
+                    message: "Horário do agendamento inválido",
+                  });
+                }
+              })
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      }),
+      })
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -537,14 +519,12 @@ export const userRouter = router({
                 "O3 Cônjuge ou Filho de um O1 ou O2",
                 "",
               ],
-              { message: "Classe de visto inválida" },
+              { message: "Classe de visto inválida" }
             )
             .optional(),
-          category: z
-            .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-            .refine((val) => val.length !== 0, {
-              message: "Categoria é obrigatória",
-            }),
+          category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
+            message: "Categoria é obrigatória",
+          }),
           issuanceDate: z
             .date({
               invalid_type_error: "Data de Emissão inválida",
@@ -560,9 +540,7 @@ export const userRouter = router({
               invalid_type_error: "Barcode inválido",
             })
             .optional(),
-          responsibleCpf: z
-            .string({ invalid_type_error: "CPF do responsável inválido" })
-            .optional(),
+          responsibleCpf: z.string({ invalid_type_error: "CPF do responsável inválido" }).optional(),
           protocol: z
             .string({
               invalid_type_error: "Barcode inválido",
@@ -605,10 +583,7 @@ export const userRouter = router({
             .optional(),
         })
         .superRefine(({ category, visaType, visaClass, scheduleTime }, ctx) => {
-          if (
-            category === "Visto Americano" &&
-            (visaType === "" || visaType === undefined)
-          ) {
+          if (category === "Visto Americano" && (visaType === "" || visaType === undefined)) {
             ctx.addIssue({
               path: ["visaType"],
               code: "custom",
@@ -616,10 +591,7 @@ export const userRouter = router({
             });
           }
 
-          if (
-            category === "Visto Americano" &&
-            (visaClass === "" || visaClass === undefined)
-          ) {
+          if (category === "Visto Americano" && (visaClass === "" || visaClass === undefined)) {
             ctx.addIssue({
               path: ["visaClass"],
               code: "custom",
@@ -630,9 +602,7 @@ export const userRouter = router({
           if (
             category === "Passaporte" &&
             scheduleTime !== undefined &&
-            /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(
-              scheduleTime,
-            ) === false
+            /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(scheduleTime) === false
           ) {
             ctx.addIssue({
               path: ["scheduleTime"],
@@ -640,7 +610,7 @@ export const userRouter = router({
               message: "Horário do agendamento inválido",
             });
           }
-        }),
+        })
     )
     .mutation(async (opts) => {
       const {
@@ -804,7 +774,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      }),
+      })
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -842,6 +812,14 @@ export const userRouter = router({
         visaType: profile.visaType,
         visaStatus: profile.visaStatus,
         shipping: profile.shipping,
+        cpf: profile.cpf,
+        responsibleCpf: profile.responsibleCpf,
+        protocol: profile.protocol,
+        entryDate: profile.entryDate,
+        scheduleDate: profile.scheduleDate,
+        process: profile.process,
+        passport: profile.passport,
+        ETAStatus: profile.ETAStatus,
       }));
 
       return { clients };
@@ -850,7 +828,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      }),
+      })
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -888,6 +866,14 @@ export const userRouter = router({
         visaType: profile.visaType,
         visaStatus: profile.visaStatus,
         shipping: profile.shipping,
+        cpf: profile.cpf,
+        responsibleCpf: profile.responsibleCpf,
+        protocol: profile.protocol,
+        entryDate: profile.entryDate,
+        scheduleDate: profile.scheduleDate,
+        process: profile.process,
+        passport: profile.passport,
+        ETAStatus: profile.ETAStatus,
       }));
 
       return { clients };
@@ -896,7 +882,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      }),
+      })
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -934,44 +920,48 @@ export const userRouter = router({
         visaType: profile.visaType,
         visaStatus: profile.visaStatus,
         shipping: profile.shipping,
+        cpf: profile.cpf,
+        responsibleCpf: profile.responsibleCpf,
+        protocol: profile.protocol,
+        entryDate: profile.entryDate,
+        scheduleDate: profile.scheduleDate,
+        process: profile.process,
+        passport: profile.passport,
+        ETAStatus: profile.ETAStatus,
       }));
 
       return { clients };
     }),
-  getAnnotations: adminProcedure
-    .input(z.object({ accountId: z.string().min(1) }))
-    .query(async (opts) => {
-      const accountId = opts.input.accountId;
+  getAnnotations: adminProcedure.input(z.object({ accountId: z.string().min(1) })).query(async (opts) => {
+    const accountId = opts.input.accountId;
 
-      const annotations = await prisma.annotations.findMany({
-        where: {
-          userId: accountId,
-        },
-      });
+    const annotations = await prisma.annotations.findMany({
+      where: {
+        userId: accountId,
+      },
+    });
 
-      return { annotations };
-    }),
-  getComments: collaboratorProcedure
-    .input(z.object({ profileId: z.string().min(1) }))
-    .query(async (opts) => {
-      const { profileId } = opts.input;
+    return { annotations };
+  }),
+  getComments: collaboratorProcedure.input(z.object({ profileId: z.string().min(1) })).query(async (opts) => {
+    const { profileId } = opts.input;
 
-      const comments = await prisma.comments.findMany({
-        where: {
-          profileId,
-        },
-        include: {
-          author: true,
-        },
-      });
+    const comments = await prisma.comments.findMany({
+      where: {
+        profileId,
+      },
+      include: {
+        author: true,
+      },
+    });
 
-      return { comments };
-    }),
+    return { comments };
+  }),
   getClientDetails: collaboratorProcedure
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -1004,7 +994,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -1041,7 +1031,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "filling", "filled", "emitted"]),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1077,14 +1067,8 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-        status: z.enum([
-          "awaiting",
-          "approved",
-          "disapproved",
-          "in_progress",
-          "finished",
-        ]),
-      }),
+        status: z.enum(["awaiting", "approved", "disapproved", "in_progress", "finished"]),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1121,7 +1105,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["paid", "pending"]),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1158,7 +1142,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["approved", "disapproved", "analysis"]),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1195,7 +1179,7 @@ export const userRouter = router({
       z.object({
         userId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { userId, annotation } = opts.input;
@@ -1217,7 +1201,7 @@ export const userRouter = router({
     .input(
       z.object({
         annotationId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { annotationId } = opts.input;
@@ -1235,7 +1219,7 @@ export const userRouter = router({
       z.object({
         annotationId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { annotationId, annotation } = opts.input;
@@ -1262,9 +1246,7 @@ export const userRouter = router({
           cel: z
             .string()
             .optional()
-            .refine(
-              (val) => !val || (val && (val.length === 0 || val.length === 14)),
-            ),
+            .refine((val) => !val || (val && (val.length === 0 || val.length === 14))),
           address: z.string(),
           email: z.string().email().min(1),
           password: z.string(),
@@ -1276,71 +1258,55 @@ export const userRouter = router({
           budgetPaid: z.enum(["", "Pago", "Pendente"]),
           scheduleAccount: z.enum(["Ativado", "Inativo", ""]),
         })
-        .superRefine(
-          (
-            {
-              password,
-              passwordConfirm,
-              passwordScheduleAccount,
-              passwordConfirmScheduleAccount,
-            },
-            ctx,
-          ) => {
-            if (password.length > 0 && password.length < 6) {
-              ctx.addIssue({
-                path: ["password"],
-                code: "custom",
-                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-              });
-            }
+        .superRefine(({ password, passwordConfirm, passwordScheduleAccount, passwordConfirmScheduleAccount }, ctx) => {
+          if (password.length > 0 && password.length < 6) {
+            ctx.addIssue({
+              path: ["password"],
+              code: "custom",
+              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+            });
+          }
 
-            if (passwordConfirm.length > 0 && passwordConfirm.length < 6) {
-              ctx.addIssue({
-                path: ["passwordConfirm"],
-                code: "custom",
-                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-              });
-            }
+          if (passwordConfirm.length > 0 && passwordConfirm.length < 6) {
+            ctx.addIssue({
+              path: ["passwordConfirm"],
+              code: "custom",
+              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+            });
+          }
 
-            if (passwordConfirm !== password) {
-              ctx.addIssue({
-                path: ["passwordConfirm"],
-                code: "custom",
-                message: "As senhas não coincidem, verifique e tente novamente",
-              });
-            }
+          if (passwordConfirm !== password) {
+            ctx.addIssue({
+              path: ["passwordConfirm"],
+              code: "custom",
+              message: "As senhas não coincidem, verifique e tente novamente",
+            });
+          }
 
-            if (
-              passwordScheduleAccount.length > 0 &&
-              passwordScheduleAccount.length < 6
-            ) {
-              ctx.addIssue({
-                path: ["passwordScheduleAccount"],
-                code: "custom",
-                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-              });
-            }
+          if (passwordScheduleAccount.length > 0 && passwordScheduleAccount.length < 6) {
+            ctx.addIssue({
+              path: ["passwordScheduleAccount"],
+              code: "custom",
+              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+            });
+          }
 
-            if (
-              passwordConfirmScheduleAccount.length > 0 &&
-              passwordConfirmScheduleAccount.length < 6
-            ) {
-              ctx.addIssue({
-                path: ["passwordConfirmScheduleAccount"],
-                code: "custom",
-                message: "Senha inválida, precisa ter no mínimo 6 caracteres",
-              });
-            }
+          if (passwordConfirmScheduleAccount.length > 0 && passwordConfirmScheduleAccount.length < 6) {
+            ctx.addIssue({
+              path: ["passwordConfirmScheduleAccount"],
+              code: "custom",
+              message: "Senha inválida, precisa ter no mínimo 6 caracteres",
+            });
+          }
 
-            if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
-              ctx.addIssue({
-                path: ["passwordConfirmScheduleAccount"],
-                code: "custom",
-                message: "As senhas não coincidem, verifique e tente novamente",
-              });
-            }
-          },
-        ),
+          if (passwordConfirmScheduleAccount !== passwordScheduleAccount) {
+            ctx.addIssue({
+              path: ["passwordConfirmScheduleAccount"],
+              code: "custom",
+              message: "As senhas não coincidem, verifique e tente novamente",
+            });
+          }
+        })
     )
     .mutation(async (opts) => {
       const {
@@ -1418,7 +1384,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId, comment } = opts.input;
@@ -1446,7 +1412,7 @@ export const userRouter = router({
     .input(
       z.object({
         commentId: z.string().min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { commentId } = opts.input;
@@ -1464,7 +1430,7 @@ export const userRouter = router({
       z.object({
         commentId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { commentId, comment } = opts.input;
@@ -1485,28 +1451,20 @@ export const userRouter = router({
       z
         .object({
           profileId: z.string().min(1),
-          profileName: z
-            .string()
-            .min(1, { message: "Nome do perfil é obrigatório" })
-            .min(6, {
-              message: "Nome do perfil precisa ter no mínimo 6 caracteres",
-            }),
-          profileCpf: z
-            .string()
-            .refine((val) => val.length > 0 && val.length === 14, {
-              message: "CPF inválido",
-            }),
+          profileName: z.string().min(1, { message: "Nome do perfil é obrigatório" }).min(6, {
+            message: "Nome do perfil precisa ter no mínimo 6 caracteres",
+          }),
+          profileCpf: z.string().refine((val) => val.length > 0 && val.length === 14, {
+            message: "CPF inválido",
+          }),
           profileAddress: z.string(),
           birthDate: z.date().optional(),
           CASVDate: z.date().optional(),
           taxDate: z.date().optional(),
           shipping: z
-            .enum(
-              ["A Verificar", "Retirada", "SEDEX", "C-Retirada", "C-SEDEX", ""],
-              {
-                message: "Opção de envio inválida",
-              },
-            )
+            .enum(["A Verificar", "Retirada", "SEDEX", "C-Retirada", "C-SEDEX", ""], {
+              message: "Opção de envio inválida",
+            })
             .optional(),
           interviewDate: z.date().optional(),
           interviewTime: z.string().optional(),
@@ -1526,14 +1484,12 @@ export const userRouter = router({
                 "O3 Cônjuge ou Filho de um O1 ou O2",
                 "",
               ],
-              { message: "Classe de visto inválida" },
+              { message: "Classe de visto inválida" }
             )
             .optional(),
-          category: z
-            .enum(["Visto Americano", "Passaporte", "E-TA", ""])
-            .refine((val) => val.length !== 0, {
-              message: "Categoria é obrigatória",
-            }),
+          category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
+            message: "Categoria é obrigatória",
+          }),
           issuanceDate: z.date().optional(),
           expireDate: z.date().optional(),
           DSNumber: z.string().optional(),
@@ -1555,71 +1511,49 @@ export const userRouter = router({
             })
             .optional(),
         })
-        .superRefine(
-          (
-            {
-              category,
-              visaType,
-              visaClass,
-              scheduleTime,
-              interviewDate,
-              interviewTime,
-            },
-            ctx,
-          ) => {
-            if (
-              category === "Visto Americano" &&
-              (visaType === "" || visaType === undefined)
-            ) {
-              ctx.addIssue({
-                path: ["visaType"],
-                code: "custom",
-                message: "Tipo do visto é obrigatório",
-              });
-            }
+        .superRefine(({ category, visaType, visaClass, scheduleTime, interviewDate, interviewTime }, ctx) => {
+          if (category === "Visto Americano" && (visaType === "" || visaType === undefined)) {
+            ctx.addIssue({
+              path: ["visaType"],
+              code: "custom",
+              message: "Tipo do visto é obrigatório",
+            });
+          }
 
-            if (
-              category === "Visto Americano" &&
-              (visaClass === "" || visaClass === undefined)
-            ) {
-              ctx.addIssue({
-                path: ["visaClass"],
-                code: "custom",
-                message: "Classe do visto é obrigatória",
-              });
-            }
+          if (category === "Visto Americano" && (visaClass === "" || visaClass === undefined)) {
+            ctx.addIssue({
+              path: ["visaClass"],
+              code: "custom",
+              message: "Classe do visto é obrigatória",
+            });
+          }
 
-            if (
-              category === "Visto Americano" &&
-              interviewDate &&
-              (interviewTime === "" ||
-                interviewTime === undefined ||
-                /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(
-                  interviewTime,
-                ) === false)
-            ) {
-              ctx.addIssue({
-                path: ["interviewTime"],
-                code: "custom",
-                message: "Horário da entrevista é obrigatório",
-              });
-            }
+          if (
+            category === "Visto Americano" &&
+            interviewDate &&
+            (interviewTime === "" ||
+              interviewTime === undefined ||
+              /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(interviewTime) === false)
+          ) {
+            ctx.addIssue({
+              path: ["interviewTime"],
+              code: "custom",
+              message: "Horário da entrevista é obrigatório",
+            });
+          }
 
-            if (
-              category === "Passaporte" &&
-              scheduleTime !== undefined &&
-              /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(
-                scheduleTime,
-              ) === false
-            ) {
-              ctx.addIssue({
-                path: ["scheduleTime"],
-                code: "custom",
-                message: "Horário do agendamento inválido",
-              });
-            }
-          },
-        ),
+          if (
+            category === "Passaporte" &&
+            scheduleTime !== undefined &&
+            /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(:[0-5][0-9])?$/.test(scheduleTime) === false
+          ) {
+            ctx.addIssue({
+              path: ["scheduleTime"],
+              code: "custom",
+              message: "Horário do agendamento inválido",
+            });
+          }
+        })
     )
     .mutation(async (opts) => {
       const {
@@ -1796,7 +1730,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1816,7 +1750,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1836,7 +1770,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      }),
+      })
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1856,45 +1790,33 @@ export const userRouter = router({
     .input(
       z
         .object({
-          actualPassword: z
-            .string()
-            .min(1, { message: "Senha Atual é obrigatória" })
-            .min(6, {
-              message: "Senha Atual precisa ter no mínimo 6 caracteres",
-            }),
-          newPassword: z
-            .string()
-            .min(1, { message: "Nova Senha é obrigatória" })
-            .min(6, {
-              message: "Nova Senha precisa ter no mínimo 6 caracteres",
-            }),
-          confirmNewPassword: z
-            .string()
-            .min(1, { message: "Confirmar Nova Senha é obrigatória" })
-            .min(6, {
-              message:
-                "Confirmar Nova Senha precisa ter no mínimo 6 caracteres",
-            }),
+          actualPassword: z.string().min(1, { message: "Senha Atual é obrigatória" }).min(6, {
+            message: "Senha Atual precisa ter no mínimo 6 caracteres",
+          }),
+          newPassword: z.string().min(1, { message: "Nova Senha é obrigatória" }).min(6, {
+            message: "Nova Senha precisa ter no mínimo 6 caracteres",
+          }),
+          confirmNewPassword: z.string().min(1, { message: "Confirmar Nova Senha é obrigatória" }).min(6, {
+            message: "Confirmar Nova Senha precisa ter no mínimo 6 caracteres",
+          }),
         })
-        .superRefine(
-          ({ actualPassword, newPassword, confirmNewPassword }, ctx) => {
-            if (newPassword === actualPassword) {
-              ctx.addIssue({
-                path: ["newPassword"],
-                code: "custom",
-                message: "A Nova Senha precisa ser diferente da senha atual",
-              });
-            }
+        .superRefine(({ actualPassword, newPassword, confirmNewPassword }, ctx) => {
+          if (newPassword === actualPassword) {
+            ctx.addIssue({
+              path: ["newPassword"],
+              code: "custom",
+              message: "A Nova Senha precisa ser diferente da senha atual",
+            });
+          }
 
-            if (confirmNewPassword !== newPassword) {
-              ctx.addIssue({
-                path: ["confirmNewPassword"],
-                code: "custom",
-                message: "As senhas não coincidem",
-              });
-            }
-          },
-        ),
+          if (confirmNewPassword !== newPassword) {
+            ctx.addIssue({
+              path: ["confirmNewPassword"],
+              code: "custom",
+              message: "As senhas não coincidem",
+            });
+          }
+        })
     )
     .mutation(async (opts) => {
       const { actualPassword, newPassword } = opts.input;
@@ -1910,10 +1832,7 @@ export const userRouter = router({
         return { error: true, message: "Usuário não encontrado" };
       }
 
-      const isPasswordCorrect: boolean = await bcrypt.compare(
-        actualPassword,
-        user.password,
-      );
+      const isPasswordCorrect: boolean = await bcrypt.compare(actualPassword, user.password);
 
       if (!isPasswordCorrect) {
         return { error: true, message: "Senha inválida" };
