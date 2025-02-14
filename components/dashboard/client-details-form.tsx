@@ -103,7 +103,9 @@ export function ClientDetailsForm({ handleClose }: Props) {
                 </span>
 
                 <span className="text-lg font-medium text-foreground">
-                  {client.form.cpf ? client.form.cpf : "Não Preenchido"}
+                  {client.form.cpf
+                    ? client.form.cpf.replace(/[\.\-]/g, "")
+                    : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -341,7 +343,9 @@ export function ClientDetailsForm({ handleClose }: Props) {
                 </span>
 
                 <span className="text-lg font-medium text-foreground">
-                  {client.form.cep ? client.form.cep : "Não Preenchido"}
+                  {client.form.cep
+                    ? client.form.cep.replace(/[\-]/g, "")
+                    : "Não Preenchido"}
                 </span>
               </div>
 
@@ -399,9 +403,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                 </span>
 
                 <span className="text-lg font-medium text-foreground">
-                  {client.form.cel
-                    ? formatPhoneNumber(client.form.cel)
-                    : "Não Preenchido"}
+                  {client.form.cel ? client.form.cel : "Não Preenchido"}
                 </span>
               </div>
 
@@ -411,9 +413,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                 </span>
 
                 <span className="text-lg font-medium text-foreground">
-                  {client.form.tel
-                    ? formatPhoneNumber(client.form.tel)
-                    : "Não Preenchido"}
+                  {client.form.tel ? client.form.tel : "Não Preenchido"}
                 </span>
               </div>
             </div>
@@ -424,7 +424,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                   E-mail
                 </span>
 
-                <span className="text-lg font-medium text-foreground">
+                <span className="text-lg font-medium text-foreground break-words">
                   {client.form.email ? client.form.email : "Não Preenchido"}
                 </span>
               </div>
@@ -437,9 +437,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                 <span className="text-lg font-medium text-foreground">
                   {client.form.fiveYearsOtherTelConfirmation
                     ? client.form.otherTel
-                      ? client.form.otherTel
-                          .map((tel) => formatPhoneNumber(tel))
-                          .join(" | ")
+                      ? client.form.otherTel.map((tel) => tel).join(" | ")
                       : "Não Preenchido"
                     : "Não Possui"}
                 </span>
@@ -450,7 +448,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                   Outro E-mail
                 </span>
 
-                <span className="text-lg font-medium text-foreground">
+                <span className="text-lg font-medium text-foreground break-words">
                   {client.form.fiveYearsOtherEmailConfirmation
                     ? client.form.otherEmail
                       ? client.form.otherEmail
@@ -798,7 +796,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                 <span className="text-lg font-medium text-foreground">
                   {client.form.USAZipCode
-                    ? client.form.USAZipCode
+                    ? client.form.USAZipCode.replace(/[\-]/g, "")
                     : "Não Preenchido"}
                 </span>
               </div>
@@ -848,7 +846,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                 <span className="text-lg font-medium text-foreground">
                   {client.form.payerTel
-                    ? formatPhoneNumber(client.form.payerTel)
+                    ? client.form.payerTel
                     : "Não Preenchido"}
                 </span>
               </div>
@@ -884,7 +882,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                   E-mail
                 </span>
 
-                <span className="text-lg font-medium text-foreground">
+                <span className="text-lg font-medium text-foreground break-words">
                   {client.form.payerEmail
                     ? client.form.payerEmail
                     : "Não Preenchido"}
@@ -1373,7 +1371,10 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                   <span className="text-lg font-medium text-foreground">
                     {client.form.organizationOrUSAResidentZipCode
-                      ? client.form.organizationOrUSAResidentZipCode
+                      ? client.form.organizationOrUSAResidentZipCode.replace(
+                          /[\-]/g,
+                          "",
+                        )
                       : "Não Preenchido"}
                   </span>
                 </div>
@@ -1425,9 +1426,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                   <span className="text-lg font-medium text-foreground">
                     {client.form.organizationOrUSAResidentTel
-                      ? formatPhoneNumber(
-                          client.form.organizationOrUSAResidentTel,
-                        )
+                      ? client.form.organizationOrUSAResidentTel
                       : "Não Preenchido"}
                   </span>
                 </div>
@@ -1437,7 +1436,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                     E-mail do contato
                   </span>
 
-                  <span className="text-lg font-medium text-foreground">
+                  <span className="text-lg font-medium text-foreground break-words">
                     {client.form.organizationOrUSAResidentEmail
                       ? client.form.organizationOrUSAResidentEmail
                       : "Não Preenchido"}
@@ -1837,7 +1836,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                   <span className="text-lg font-medium text-foreground">
                     {client.form.companyCep
-                      ? client.form.companyCep
+                      ? client.form.companyCep.replace(/[\-]/g, "")
                       : "Não Preenchido"}
                   </span>
                 </div>
@@ -1849,7 +1848,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                   <span className="text-lg font-medium text-foreground">
                     {client.form.companyTel
-                      ? formatPhoneNumber(client.form.companyTel)
+                      ? client.form.companyTel
                       : "Não Preenchido"}
                   </span>
                 </div>
@@ -1991,7 +1990,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                           </span>
 
                           <span className="text-lg font-medium text-foreground">
-                            {previousJobs.companyCep}
+                            {previousJobs.companyCep.replace(/[\-]/g, "")}
                           </span>
                         </div>
 
@@ -2002,7 +2001,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                           <span className="text-lg font-medium text-foreground">
                             {previousJobs.companyTel
-                              ? formatPhoneNumber(previousJobs.companyTel)
+                              ? previousJobs.companyTel
                               : "Não Preenchido"}
                           </span>
                         </div>
@@ -2160,7 +2159,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                           </span>
 
                           <span className="text-lg font-medium text-foreground">
-                            {course.cep}
+                            {course.cep.replace(/[\-]/g, "")}
                           </span>
                         </div>
                       </div>
