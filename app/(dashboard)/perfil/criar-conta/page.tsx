@@ -3,12 +3,13 @@
 import { z } from "zod";
 import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
-import { format, getYear } from "date-fns";
+import { format, getYear, parse } from "date-fns";
 import PhoneInput from "react-phone-number-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyInput from "react-currency-input-field";
 import { useState, useEffect, ChangeEvent } from "react";
 import { CalendarIcon, CircleDollarSign, Trash2 } from "lucide-react";
+import { DatePicker } from "@heroui/react";
 
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -330,6 +331,7 @@ export default function CreateAccountPage() {
   const [isProfileSameAsAccount, setIsProfileSameAsAccount] =
     useState<string>("true");
   const [currentProfile, setCurrentProfile] = useState<number>(0);
+  const [birthPopoverOpen, setBirthPopoverOpen] = useState<boolean>(false);
 
   const { openModal, setFormValues } = useSubmitConfirmationStore();
   const { role } = useUserStore();
@@ -552,6 +554,16 @@ export default function CreateAccountPage() {
     form.setValue("profiles", profileUpdated);
 
     setCurrentProfile((prev) => prev - 1);
+  }
+
+  function openBirthPopover(clicks: number) {
+    if (clicks === 2) {
+      setBirthPopoverOpen(true);
+    }
+  }
+
+  function closeBirthPopover() {
+    setBirthPopoverOpen(false);
   }
 
   function onSubmit() {
@@ -1146,33 +1158,31 @@ export default function CreateAccountPage() {
                       </FormLabel>
 
                       <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="date"
-                              className={cn(
-                                !field.value && "text-muted-foreground",
-                              )}
-                            >
-                              <CalendarIcon
-                                strokeWidth={1.5}
-                                className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                              />
+                        <FormControl>
+                          <Button
+                            variant="date"
+                            className={cn(
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            <CalendarIcon
+                              strokeWidth={1.5}
+                              className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                            />
 
-                              <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
 
-                              {field.value ? (
-                                format(field.value, "PPP", {
-                                  locale: ptBR,
-                                })
-                              ) : (
-                                <span className="text-muted-foreground truncate">
-                                  Selecione a data
-                                </span>
-                              )}
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
+                            {field.value ? (
+                              format(field.value, "PPP", {
+                                locale: ptBR,
+                              })
+                            ) : (
+                              <span className="text-muted-foreground truncate">
+                                Selecione a data
+                              </span>
+                            )}
+                          </Button>
+                        </FormControl>
 
                         <PopoverContent
                           className="w-auto p-0 bg-background"

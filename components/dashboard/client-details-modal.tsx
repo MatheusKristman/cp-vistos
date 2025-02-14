@@ -11,7 +11,6 @@ import { ClientDetailsComments } from "./client-details-comments";
 import { ClientDetailsEditProfile } from "./client-details-edit-profile";
 import { ClientDetailsForm } from "./client-details-form";
 import { ClientDetailsNewProfile } from "./client-details-new-profile";
-import { useEffect } from "react";
 
 export function ClientDetailsModal() {
   const {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins as FontSans } from "next/font/google";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
+import { HeroUIProvider } from "@heroui/react";
 
 import { Toaster } from "@/components/ui/sonner";
 import { NextAuthSessionProvider } from "@/providers/sessionProvider";
@@ -32,7 +33,10 @@ export default function RootLayout({
   return (
     <html className="min-h-screen" lang="pt-BR">
       <body
-        className={cn("relative min-h-screen overflow-x-hidden bg-background font-sans antialiased", poppins.variable)}
+        className={cn(
+          "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
+          poppins.variable,
+        )}
       >
         <NextAuthSessionProvider>
           <TRPCProvider>
@@ -45,7 +49,7 @@ export default function RootLayout({
                */
               routerConfig={extractRouterConfig(ourFileRouter)}
             />
-            {children}
+            <HeroUIProvider>{children}</HeroUIProvider>
           </TRPCProvider>
         </NextAuthSessionProvider>
         <Toaster />

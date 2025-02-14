@@ -267,7 +267,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 E-mail
               </span>
 
-              <span className="text-lg font-medium text-foreground">
+              <span className="text-lg font-medium text-foreground break-words">
                 {client.user.email}
               </span>
             </div>
@@ -278,7 +278,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
               </span>
 
               <span className="text-lg font-medium text-foreground">
-                {client.user.cpf}
+                {client.user.cpf
+                  ? client.user.cpf.replace(/[\.\-]/g, "")
+                  : "---"}
               </span>
             </div>
           </div>
@@ -301,7 +303,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 E-mail de agendamento
               </span>
 
-              <span className="text-lg font-medium text-foreground">
+              <span className="text-lg font-medium text-foreground break-words">
                 {client.user.emailScheduleAccount}
               </span>
             </div>
