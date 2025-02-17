@@ -1,14 +1,10 @@
-import { format } from "date-fns";
-
 import { type profileFormSchemaType } from "../page";
 
 interface AmericanVisaProfileItemProps {
   profile: profileFormSchemaType;
 }
 
-export function AmericanVisaProfileItem({
-  profile,
-}: AmericanVisaProfileItemProps) {
+export function AmericanVisaProfileItem({ profile }: AmericanVisaProfileItemProps) {
   return (
     <div className="w-full border border-muted rounded-xl p-4 flex flex-col gap-4">
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -25,15 +21,9 @@ export function AmericanVisaProfileItem({
         </div>
 
         <div className="w-full flex flex-col">
-          <span className="text-xs font-medium opacity-50">
-            Data de Nascimento
-          </span>
+          <span className="text-xs font-medium opacity-50">Data de Nascimento</span>
 
-          <span className="text-base font-medium">
-            {profile.birthDate
-              ? format(profile.birthDate, "dd/MM/yyyy")
-              : "--/--/----"}
-          </span>
+          <span className="text-base font-medium">{profile.birthDate ? profile.birthDate : "--/--/----"}</span>
         </div>
       </div>
 
@@ -41,17 +31,13 @@ export function AmericanVisaProfileItem({
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">Endereço</span>
 
-          <span className="text-base font-medium">
-            {profile.profileAddress ? profile.profileAddress : "---"}
-          </span>
+          <span className="text-base font-medium">{profile.profileAddress ? profile.profileAddress : "---"}</span>
         </div>
 
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">Passaporte</span>
 
-          <span className="text-base font-medium">
-            {profile.passport ? profile.passport : "---"}
-          </span>
+          <span className="text-base font-medium">{profile.passport ? profile.passport : "---"}</span>
         </div>
       </div>
 
@@ -63,9 +49,7 @@ export function AmericanVisaProfileItem({
         </div>
 
         <div className="w-full flex flex-col">
-          <span className="text-xs font-medium opacity-50">
-            Classe do Visto
-          </span>
+          <span className="text-xs font-medium opacity-50">Classe do Visto</span>
 
           <span className="text-base font-medium">{profile.visaClass}</span>
         </div>
@@ -79,35 +63,21 @@ export function AmericanVisaProfileItem({
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="w-full flex flex-col">
-          <span className="text-xs font-medium opacity-50">
-            Data de Emissão
-          </span>
+          <span className="text-xs font-medium opacity-50">Data de Emissão</span>
 
-          <span className="text-base font-medium">
-            {profile.issuanceDate
-              ? format(profile.issuanceDate, "dd/MM/yyyy")
-              : "--/--/----"}
-          </span>
+          <span className="text-base font-medium">{profile.issuanceDate ? profile.issuanceDate : "--/--/----"}</span>
         </div>
 
         <div className="w-full flex flex-col">
-          <span className="text-xs font-medium opacity-50">
-            Data de Expiração
-          </span>
+          <span className="text-xs font-medium opacity-50">Data de Expiração</span>
 
-          <span className="text-base font-medium">
-            {profile.expireDate
-              ? format(profile.expireDate, "dd/MM/yyyy")
-              : "--/--/----"}
-          </span>
+          <span className="text-base font-medium">{profile.expireDate ? profile.expireDate : "--/--/----"}</span>
         </div>
 
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">Barcode</span>
 
-          <span className="text-base font-medium">
-            {profile.DSNumber ? profile.DSNumber : "---"}
-          </span>
+          <span className="text-base font-medium">{profile.DSNumber ? profile.DSNumber : "---"}</span>
         </div>
       </div>
     </div>

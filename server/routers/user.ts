@@ -13,7 +13,7 @@ import {
   VisaType,
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { addDays } from "date-fns";
+import { addDays, parse } from "date-fns";
 
 import { adminProcedure, collaboratorProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
@@ -47,7 +47,7 @@ export const userRouter = router({
             required_error: "Grupo é obrigatório",
             invalid_type_error: "Grupo inválido",
           })
-          .min(1, "Grupo é obrigatório"),
+          .optional(),
         cel: z
           .string({
             required_error: "Celular é obrigatório",
@@ -147,9 +147,8 @@ export const userRouter = router({
                   invalid_type_error: "Endereço do perfil inválido",
                 }),
                 birthDate: z
-                  .date({
-                    invalid_type_error: "Data de nascimento inválida",
-                  })
+                  .string({ required_error: "Data de nascimento é obrigatório" })
+                  .length(10, "Data inválida")
                   .optional(),
                 passport: z
                   .string({
@@ -177,16 +176,8 @@ export const userRouter = router({
                 category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
                   message: "Categoria é obrigatória",
                 }),
-                issuanceDate: z
-                  .date({
-                    invalid_type_error: "Data de Emissão inválida",
-                  })
-                  .optional(),
-                expireDate: z
-                  .date({
-                    invalid_type_error: "Data de Expiração inválida",
-                  })
-                  .optional(),
+                issuanceDate: z.string({ required_error: "Data de emissão é obrigatório" }).optional(),
+                expireDate: z.string({ required_error: "Data de expiração é obrigatório" }).optional(),
                 DSNumber: z
                   .string({
                     invalid_type_error: "Barcode inválido",
@@ -203,11 +194,7 @@ export const userRouter = router({
                     message: "Status de pagamento inválido",
                   })
                   .optional(),
-                scheduleDate: z
-                  .date({
-                    invalid_type_error: "Data de Agendamento inválida",
-                  })
-                  .optional(),
+                scheduleDate: z.string({ required_error: "Data de agendamento é obrigatório" }).optional(),
                 scheduleTime: z
                   .string({
                     invalid_type_error: "Horário do agendamento inválido",
@@ -218,11 +205,7 @@ export const userRouter = router({
                     invalid_type_error: "Local do agendamento inválido",
                   })
                   .optional(),
-                entryDate: z
-                  .date({
-                    invalid_type_error: "Data de entrada inválida",
-                  })
-                  .optional(),
+                entryDate: z.string({ required_error: "Data de entrada é obrigatório" }).optional(),
                 process: z
                   .string({
                     invalid_type_error: "Processo inválido",
@@ -322,9 +305,9 @@ export const userRouter = router({
       const account = await prisma.user.create({
         data: {
           name: input.name,
-          email: input.email,
+          email: input.email.toLowerCase(),
           password: input.password,
-          emailScheduleAccount: input.emailScheduleAccount,
+          emailScheduleAccount: input.emailScheduleAccount.toLowerCase(),
           passwordScheduleAccount: input.passwordScheduleAccount,
           group: input.group,
           role: Role.CLIENT,
@@ -418,6 +401,22 @@ export const userRouter = router({
             break;
         }
 
+        const profileBirthDateFormatted = profile.birthDate
+          ? parse(profile.birthDate, "dd/MM/yyyy", new Date())
+          : undefined;
+        const profileIssuanceDateFormatted = profile.issuanceDate
+          ? parse(profile.issuanceDate, "dd/MM/yyyy", new Date())
+          : undefined;
+        const profileExpireDateFormatted = profile.expireDate
+          ? parse(profile.expireDate, "dd/MM/yyyy", new Date())
+          : undefined;
+        const profileScheduleDateFormatted = profile.scheduleDate
+          ? parse(profile.scheduleDate, "dd/MM/yyyy", new Date())
+          : undefined;
+        const profileEntryDateFormatted = profile.entryDate
+          ? parse(profile.entryDate, "dd/MM/yyyy", new Date())
+          : undefined;
+
         const newProfile = await prisma.profile.create({
           data: {
             DSValid: addDays(new Date(), 30),
@@ -425,17 +424,17 @@ export const userRouter = router({
             name: profile.profileName,
             address: profile.profileAddress,
             cpf: profile.profileCpf,
-            birthDate: profile.birthDate,
+            birthDate: profileBirthDateFormatted,
             passport: profile.passport,
-            issuanceDate: profile.issuanceDate,
-            expireDate: profile.expireDate,
+            issuanceDate: profileIssuanceDateFormatted,
+            expireDate: profileExpireDateFormatted,
             responsibleCpf: profile.responsibleCpf,
             protocol: profile.protocol,
             paymentStatus,
-            scheduleDate: profile.scheduleDate,
+            scheduleDate: profileScheduleDateFormatted,
             scheduleTime: profile.scheduleTime,
             scheduleLocation: profile.scheduleLocation,
-            entryDate: profile.entryDate,
+            entryDate: profileEntryDateFormatted,
             process: profile.process,
             ETAStatus: ETAStatusValue,
             visaClass,

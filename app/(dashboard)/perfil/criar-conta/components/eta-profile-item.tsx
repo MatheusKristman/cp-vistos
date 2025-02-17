@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-
 import { type profileFormSchemaType } from "../page";
 
 interface ETAProfileItemProps {
@@ -23,15 +21,9 @@ export function ETAProfileItem({ profile }: ETAProfileItemProps) {
         </div>
 
         <div className="w-full flex flex-col">
-          <span className="text-xs font-medium opacity-50">
-            Data de Nascimento
-          </span>
+          <span className="text-xs font-medium opacity-50">Data de Nascimento</span>
 
-          <span className="text-base font-medium">
-            {profile.birthDate
-              ? format(profile.birthDate, "dd/MM/yyyy")
-              : "--/--/----"}
-          </span>
+          <span className="text-base font-medium">{profile.birthDate ? profile.birthDate : "--/--/----"}</span>
         </div>
       </div>
 
@@ -39,17 +31,13 @@ export function ETAProfileItem({ profile }: ETAProfileItemProps) {
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">Endereço</span>
 
-          <span className="text-base font-medium">
-            {profile.profileAddress ? profile.profileAddress : "---"}
-          </span>
+          <span className="text-base font-medium">{profile.profileAddress ? profile.profileAddress : "---"}</span>
         </div>
 
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">Passaporte</span>
 
-          <span className="text-base font-medium">
-            {profile.passport ? profile.passport : "---"}
-          </span>
+          <span className="text-base font-medium">{profile.passport ? profile.passport : "---"}</span>
         </div>
       </div>
 
@@ -63,17 +51,13 @@ export function ETAProfileItem({ profile }: ETAProfileItemProps) {
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">Processo</span>
 
-          <span className="text-base font-medium">
-            {profile.process ? profile.process : "---"}
-          </span>
+          <span className="text-base font-medium">{profile.process ? profile.process : "---"}</span>
         </div>
 
         <div className="w-full flex flex-col">
           <span className="text-xs font-medium opacity-50">Status</span>
 
-          <span className="text-base font-medium">
-            {profile.ETAStatus ? profile.ETAStatus : "---"}
-          </span>
+          <span className="text-base font-medium">{profile.ETAStatus ? profile.ETAStatus : "---"}</span>
         </div>
       </div>
     </div>
