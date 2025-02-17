@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  ArrowRight,
-  CircleDollarSign,
-  Loader2,
-  Plus,
-  Save,
-  X,
-  Calendar as CalendarIcon,
-} from "lucide-react";
+import { ArrowRight, CircleDollarSign, Loader2, Plus, Save, X, Calendar as CalendarIcon } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { ptBR } from "date-fns/locale";
@@ -21,26 +13,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyInput from "react-currency-input-field";
 import { ChangeEvent, useEffect, useState } from "react";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -81,7 +56,7 @@ const formSchema = z
         admissionDate: z.date({ message: "Data inválida" }).optional(),
         resignationDate: z.date({ message: "Data inválida" }).optional(),
         jobDescription: z.string(),
-      }),
+      })
     ),
     courses: z.array(
       z.object({
@@ -94,7 +69,7 @@ const formSchema = z
         courseName: z.string(),
         initialDate: z.date({ message: "Data inválida" }).optional(),
         finishDate: z.date({ message: "Data inválida" }).optional(),
-      }),
+      })
     ),
   })
   .superRefine(({ previousJobConfirmation, previousJobs }, ctx) => {
@@ -209,8 +184,7 @@ const formSchema = z
     if (
       previousJobConfirmation === "Sim" &&
       previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.admissionDate === undefined).length ===
-        1
+      previousJobs.filter((item) => item.admissionDate === undefined).length === 1
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -222,8 +196,7 @@ const formSchema = z
     if (
       previousJobConfirmation === "Sim" &&
       previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.resignationDate === undefined)
-        .length === 1
+      previousJobs.filter((item) => item.resignationDate === undefined).length === 1
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -239,15 +212,11 @@ interface Props {
   isEditing: boolean;
 }
 
-export function WorkEducationForm({
-  currentForm,
-  profileId,
-  isEditing,
-}: Props) {
-  const [currentPreviousJobsIndex, setCurrentPreviousJobsIndex] =
-    useState<number>(currentForm.previousJobs.length ?? 0);
-  const [resetPreviousJobsFields, setResetPreviousJobsFields] =
-    useState<boolean>(false);
+export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) {
+  const [currentPreviousJobsIndex, setCurrentPreviousJobsIndex] = useState<number>(
+    currentForm.previousJobs.length ?? 0
+  );
+  const [resetPreviousJobsFields, setResetPreviousJobsFields] = useState<boolean>(false);
   const [previousJobsItems, setPreviousJobsItems] = useState<
     {
       companyName: string;
@@ -264,9 +233,7 @@ export function WorkEducationForm({
       jobDescription: string;
     }[]
   >([]);
-  const [currentCoursesIndex, setCurrentCoursesIndex] = useState<number>(
-    currentForm.courses.length ?? 0,
-  );
+  const [currentCoursesIndex, setCurrentCoursesIndex] = useState<number>(currentForm.courses.length ?? 0);
   const [resetCoursesFields, setResetCoursesFields] = useState<boolean>(false);
   const [coursesItems, setCoursesItems] = useState<
     {
@@ -288,34 +255,20 @@ export function WorkEducationForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      occupation: currentForm.occupation
-        ? currentForm.occupation
-        : "Aposentado",
+      occupation: currentForm.occupation ? currentForm.occupation : "Aposentado",
       office: currentForm.office ? currentForm.office : "",
-      companyOrBossName: currentForm.companyOrBossName
-        ? currentForm.companyOrBossName
-        : "",
-      companyAddress: currentForm.companyAddress
-        ? currentForm.companyAddress
-        : "",
+      companyOrBossName: currentForm.companyOrBossName ? currentForm.companyOrBossName : "",
+      companyAddress: currentForm.companyAddress ? currentForm.companyAddress : "",
       companyCity: currentForm.companyCity ? currentForm.companyCity : "",
       companyState: currentForm.companyState ? currentForm.companyState : "",
-      companyCountry: currentForm.companyCountry
-        ? currentForm.companyCountry
-        : "",
+      companyCountry: currentForm.companyCountry ? currentForm.companyCountry : "",
       companyCep: currentForm.companyCep ? currentForm.companyCep : "",
       companyTel: currentForm.companyTel ? currentForm.companyTel : "",
-      admissionDate: currentForm.admissionDate
-        ? currentForm.admissionDate
-        : undefined,
+      admissionDate: currentForm.admissionDate ? currentForm.admissionDate : undefined,
       monthlySalary: currentForm.monthlySalary ? currentForm.monthlySalary : "",
-      retireeDate: currentForm.retireeDate
-        ? currentForm.retireeDate
-        : undefined,
+      retireeDate: currentForm.retireeDate ? currentForm.retireeDate : undefined,
       jobDetails: currentForm.jobDetails ? currentForm.jobDetails : "",
-      previousJobConfirmation: currentForm.previousJobConfirmation
-        ? "Sim"
-        : "Não",
+      previousJobConfirmation: currentForm.previousJobConfirmation ? "Sim" : "Não",
       previousJobs:
         currentForm.previousJobs.length > 0
           ? [
@@ -398,50 +351,46 @@ export function WorkEducationForm({
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const { mutate: submitWorkEducation, isPending } =
-    trpc.formsRouter.submitWorkEducation.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+  const { mutate: submitWorkEducation, isPending } = trpc.formsRouter.submitWorkEducation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.isEditing) {
-          router.push(`/resumo-formulario/${profileId}`);
-        } else {
-          router.push(`/formulario/${profileId}?formStep=9`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.isEditing) {
+        router.push(`/resumo-formulario/${profileId}`);
+      } else {
+        router.push(`/formulario/${profileId}?formStep=9`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
-          );
-        }
-      },
-    });
-  const { mutate: saveWorkEducation, isPending: isSavePending } =
-    trpc.formsRouter.saveWorkEducation.useMutation({
-      onSuccess: (data) => {
-        toast.success(data.message);
-        utils.formsRouter.getForm.invalidate();
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao enviar as informações do formulário, tente novamente mais tarde");
+      }
+    },
+  });
+  const { mutate: saveWorkEducation, isPending: isSavePending } = trpc.formsRouter.saveWorkEducation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      utils.formsRouter.getForm.invalidate();
 
-        if (data.redirectStep !== undefined) {
-          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
-        }
-      },
-      onError: (error) => {
-        console.error(error.data);
+      if (data.redirectStep !== undefined) {
+        router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+      }
+    },
+    onError: (error) => {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao salvar os dados");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao salvar os dados");
+      }
+    },
+  });
 
   useEffect(() => {
     if (currentForm.previousJobs.length > 0) {
@@ -460,7 +409,7 @@ export function WorkEducationForm({
           item.supervisorName !== "" ||
           item.admissionDate !== undefined ||
           item.resignationDate !== undefined ||
-          item.jobDescription !== "",
+          item.jobDescription !== ""
       );
 
       setPreviousJobsItems(previousJobsFiltered);
@@ -479,7 +428,7 @@ export function WorkEducationForm({
           item.cep !== "" ||
           item.courseName !== "" ||
           item.initialDate !== undefined ||
-          item.finishDate !== undefined,
+          item.finishDate !== undefined
       );
 
       setCoursesItems(coursesFiltered);
@@ -489,38 +438,17 @@ export function WorkEducationForm({
   useEffect(() => {
     if (resetPreviousJobsFields) {
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyName`, "");
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.companyAddress`,
-        "",
-      );
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyAddress`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCity`, "");
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.companyState`,
-        "",
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.companyCountry`,
-        "",
-      );
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyState`, "");
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCountry`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCep`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyTel`, "");
       form.setValue(`previousJobs.${currentPreviousJobsIndex}.office`, "");
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.supervisorName`,
-        "",
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.admissionDate`,
-        undefined,
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.resignationDate`,
-        undefined,
-      );
-      form.setValue(
-        `previousJobs.${currentPreviousJobsIndex}.jobDescription`,
-        "",
-      );
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.supervisorName`, "");
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.admissionDate`, undefined);
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.resignationDate`, undefined);
+      form.setValue(`previousJobs.${currentPreviousJobsIndex}.jobDescription`, "");
 
       setResetPreviousJobsFields(false);
     }
@@ -548,90 +476,57 @@ export function WorkEducationForm({
         profileId,
         redirectStep,
         occupation:
-          values.occupation !== ""
-            ? values.occupation
-            : !currentForm.occupation
-              ? ""
-              : currentForm.occupation,
-        office:
-          values.office !== ""
-            ? values.office
-            : !currentForm.office
-              ? ""
-              : currentForm.office,
+          values.occupation !== "" ? values.occupation : !currentForm.occupation ? "" : currentForm.occupation,
+        office: values.office !== "" ? values.office : !currentForm.office ? "" : currentForm.office,
         companyOrBossName:
           values.companyOrBossName !== ""
             ? values.companyOrBossName
             : !currentForm.companyOrBossName
-              ? ""
-              : currentForm.companyOrBossName,
+            ? ""
+            : currentForm.companyOrBossName,
         companyAddress:
           values.companyAddress !== ""
             ? values.companyAddress
             : !currentForm.companyAddress
-              ? ""
-              : currentForm.companyAddress,
+            ? ""
+            : currentForm.companyAddress,
         companyCity:
-          values.companyCity !== ""
-            ? values.companyCity
-            : !currentForm.companyCity
-              ? ""
-              : currentForm.companyCity,
+          values.companyCity !== "" ? values.companyCity : !currentForm.companyCity ? "" : currentForm.companyCity,
         companyState:
-          values.companyState !== ""
-            ? values.companyState
-            : !currentForm.companyState
-              ? ""
-              : currentForm.companyState,
+          values.companyState !== "" ? values.companyState : !currentForm.companyState ? "" : currentForm.companyState,
         companyCountry:
           values.companyCountry !== ""
             ? values.companyCountry
             : !currentForm.companyCountry
-              ? ""
-              : currentForm.companyCountry,
+            ? ""
+            : currentForm.companyCountry,
         companyCep:
-          values.companyCep !== ""
-            ? values.companyCep
-            : !currentForm.companyCep
-              ? ""
-              : currentForm.companyCep,
+          values.companyCep !== "" ? values.companyCep : !currentForm.companyCep ? "" : currentForm.companyCep,
         companyTel:
-          values.companyTel !== ""
-            ? values.companyTel
-            : !currentForm.companyTel
-              ? ""
-              : currentForm.companyTel,
+          values.companyTel !== "" ? values.companyTel : !currentForm.companyTel ? "" : currentForm.companyTel,
         admissionDate:
           values.admissionDate !== undefined
             ? values.admissionDate
             : !currentForm.admissionDate
-              ? undefined
-              : currentForm.admissionDate,
+            ? undefined
+            : currentForm.admissionDate,
         monthlySalary:
           values.monthlySalary !== ""
             ? values.monthlySalary
             : !currentForm.monthlySalary
-              ? ""
-              : currentForm.monthlySalary,
+            ? ""
+            : currentForm.monthlySalary,
         retireeDate:
           values.retireeDate !== undefined
             ? values.retireeDate
             : !currentForm.retireeDate
-              ? undefined
-              : currentForm.retireeDate,
+            ? undefined
+            : currentForm.retireeDate,
         jobDetails:
-          values.jobDetails !== ""
-            ? values.jobDetails
-            : !currentForm.jobDetails
-              ? ""
-              : currentForm.jobDetails,
+          values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
         previousJobConfirmation:
-          values.previousJobConfirmation ??
-          (currentForm.previousJobConfirmation ? "Sim" : "Não"),
-        previousJobs:
-          previousJobsItems.length > 0
-            ? previousJobsItems
-            : currentForm.previousJobs,
+          values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
+        previousJobs: previousJobsItems.length > 0 ? previousJobsItems : currentForm.previousJobs,
         courses: coursesItems.length > 0 ? coursesItems : currentForm.courses,
       });
       setRedirectStep(null);
@@ -678,91 +573,53 @@ export function WorkEducationForm({
 
     saveWorkEducation({
       profileId,
-      occupation:
-        values.occupation !== ""
-          ? values.occupation
-          : !currentForm.occupation
-            ? ""
-            : currentForm.occupation,
-      office:
-        values.office !== ""
-          ? values.office
-          : !currentForm.office
-            ? ""
-            : currentForm.office,
+      occupation: values.occupation !== "" ? values.occupation : !currentForm.occupation ? "" : currentForm.occupation,
+      office: values.office !== "" ? values.office : !currentForm.office ? "" : currentForm.office,
       companyOrBossName:
         values.companyOrBossName !== ""
           ? values.companyOrBossName
           : !currentForm.companyOrBossName
-            ? ""
-            : currentForm.companyOrBossName,
+          ? ""
+          : currentForm.companyOrBossName,
       companyAddress:
         values.companyAddress !== ""
           ? values.companyAddress
           : !currentForm.companyAddress
-            ? ""
-            : currentForm.companyAddress,
+          ? ""
+          : currentForm.companyAddress,
       companyCity:
-        values.companyCity !== ""
-          ? values.companyCity
-          : !currentForm.companyCity
-            ? ""
-            : currentForm.companyCity,
+        values.companyCity !== "" ? values.companyCity : !currentForm.companyCity ? "" : currentForm.companyCity,
       companyState:
-        values.companyState !== ""
-          ? values.companyState
-          : !currentForm.companyState
-            ? ""
-            : currentForm.companyState,
+        values.companyState !== "" ? values.companyState : !currentForm.companyState ? "" : currentForm.companyState,
       companyCountry:
         values.companyCountry !== ""
           ? values.companyCountry
           : !currentForm.companyCountry
-            ? ""
-            : currentForm.companyCountry,
-      companyCep:
-        values.companyCep !== ""
-          ? values.companyCep
-          : !currentForm.companyCep
-            ? ""
-            : currentForm.companyCep,
-      companyTel:
-        values.companyTel !== ""
-          ? values.companyTel
-          : !currentForm.companyTel
-            ? ""
-            : currentForm.companyTel,
+          ? ""
+          : currentForm.companyCountry,
+      companyCep: values.companyCep !== "" ? values.companyCep : !currentForm.companyCep ? "" : currentForm.companyCep,
+      companyTel: values.companyTel !== "" ? values.companyTel : !currentForm.companyTel ? "" : currentForm.companyTel,
       admissionDate:
         values.admissionDate !== undefined
           ? values.admissionDate
           : !currentForm.admissionDate
-            ? undefined
-            : currentForm.admissionDate,
+          ? undefined
+          : currentForm.admissionDate,
       monthlySalary:
         values.monthlySalary !== ""
           ? values.monthlySalary
           : !currentForm.monthlySalary
-            ? ""
-            : currentForm.monthlySalary,
+          ? ""
+          : currentForm.monthlySalary,
       retireeDate:
         values.retireeDate !== undefined
           ? values.retireeDate
           : !currentForm.retireeDate
-            ? undefined
-            : currentForm.retireeDate,
-      jobDetails:
-        values.jobDetails !== ""
-          ? values.jobDetails
-          : !currentForm.jobDetails
-            ? ""
-            : currentForm.jobDetails,
-      previousJobConfirmation:
-        values.previousJobConfirmation ??
-        (currentForm.previousJobConfirmation ? "Sim" : "Não"),
-      previousJobs:
-        previousJobsItems.length > 0
-          ? previousJobsItems
-          : currentForm.previousJobs,
+          ? undefined
+          : currentForm.retireeDate,
+      jobDetails: values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
+      previousJobConfirmation: values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
+      previousJobs: previousJobsItems.length > 0 ? previousJobsItems : currentForm.previousJobs,
       courses: coursesItems.length > 0 ? coursesItems : currentForm.courses,
     });
   }
@@ -782,7 +639,7 @@ export function WorkEducationForm({
           item.supervisorName === "" ||
           item.admissionDate === undefined ||
           item.resignationDate === undefined ||
-          item.jobDescription === "",
+          item.jobDescription === ""
       ).length > 0
     ) {
       toast.error("Preencha todos os campos para adicionar");
@@ -838,7 +695,7 @@ export function WorkEducationForm({
             jobDescription: string;
           }[] = previousJobs.filter(
             (
-              item,
+              item
             ): item is {
               companyName: string;
               companyAddress: string;
@@ -866,7 +723,7 @@ export function WorkEducationForm({
                 item.resignationDate !== undefined ||
                 item.jobDescription !== "") &&
               item.admissionDate instanceof Date &&
-              item.resignationDate instanceof Date,
+              item.resignationDate instanceof Date
           );
 
           setCurrentPreviousJobsIndex((prev) => prev + 1);
@@ -896,7 +753,7 @@ export function WorkEducationForm({
       jobDescription: string;
     }[] = newArr.filter(
       (
-        item,
+        item
       ): item is {
         companyName: string;
         companyAddress: string;
@@ -924,7 +781,7 @@ export function WorkEducationForm({
           item.resignationDate !== undefined ||
           item.jobDescription !== "") &&
         item.admissionDate instanceof Date &&
-        item.resignationDate instanceof Date,
+        item.resignationDate instanceof Date
     );
 
     setCurrentPreviousJobsIndex((prev) => prev - 1);
@@ -943,7 +800,7 @@ export function WorkEducationForm({
           item.cep === "" ||
           item.courseName === "" ||
           item.initialDate === undefined ||
-          item.finishDate === undefined,
+          item.finishDate === undefined
       ).length > 0
     ) {
       toast.error("Preencha todos os campos para adicionar");
@@ -991,7 +848,7 @@ export function WorkEducationForm({
             finishDate: Date;
           }[] = courses.filter(
             (
-              item,
+              item
             ): item is {
               institutionName: string;
               address: string;
@@ -1013,7 +870,7 @@ export function WorkEducationForm({
                 item.initialDate !== undefined ||
                 item.finishDate !== undefined) &&
               item.initialDate instanceof Date &&
-              item.finishDate instanceof Date,
+              item.finishDate instanceof Date
           );
 
           setCurrentCoursesIndex((prev) => prev + 1);
@@ -1040,7 +897,7 @@ export function WorkEducationForm({
       finishDate: Date;
     }[] = newArr.filter(
       (
-        item,
+        item
       ): item is {
         institutionName: string;
         address: string;
@@ -1062,7 +919,7 @@ export function WorkEducationForm({
           item.initialDate !== undefined ||
           item.finishDate !== undefined) &&
         item.initialDate instanceof Date &&
-        item.finishDate instanceof Date,
+        item.finishDate instanceof Date
     );
 
     setCurrentCoursesIndex((prev) => prev - 1);
@@ -1071,10 +928,7 @@ export function WorkEducationForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col flex-grow gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col flex-grow gap-6">
         <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
           Trabalho e Educação
         </h2>
@@ -1087,37 +941,23 @@ export function WorkEducationForm({
                 name="occupation"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">
-                      Selecione a sua ocupação atual?*
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Selecione a sua ocupação atual?*</FormLabel>
 
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger
-                          className="!mt-auto"
-                          disabled={isPending}
-                        >
+                        <SelectTrigger className="!mt-auto" disabled={isPending}>
                           <SelectValue placeholder="Selecione a opção" />
                         </SelectTrigger>
                       </FormControl>
 
                       <SelectContent>
-                        <SelectItem value="Empresário/Proprietário">
-                          Empresário/Proprietário
-                        </SelectItem>
+                        <SelectItem value="Empresário/Proprietário">Empresário/Proprietário</SelectItem>
 
-                        <SelectItem value="Registrado (CLT/PJ)">
-                          Registrado (CLT/PJ)
-                        </SelectItem>
+                        <SelectItem value="Contratado (CLT/PJ)">Contratado (CLT/PJ)</SelectItem>
 
                         <SelectItem value="Autônomo">Autônomo</SelectItem>
 
-                        <SelectItem value="Não Trabalho">
-                          Não Trabalho
-                        </SelectItem>
+                        <SelectItem value="Não Trabalho">Não Trabalho</SelectItem>
 
                         <SelectItem value="Aposentado">Aposentado</SelectItem>
 
@@ -1132,27 +972,21 @@ export function WorkEducationForm({
             </div>
 
             <div
-              className={cn(
-                "w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6 mb-6",
-                {
-                  hidden: occupation === "Não Trabalho",
-                },
-              )}
+              className={cn("w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6 mb-6", {
+                hidden: occupation === "Não Trabalho",
+              })}
             >
               <FormField
                 control={form.control}
                 name="office"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2 row-start-1 md:col-start-1",
-                      {
-                        hidden:
-                          occupation === "Empresário/Proprietário" ||
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado",
-                      },
-                    )}
+                    className={cn("flex flex-col gap-2 row-start-1 md:col-start-1", {
+                      hidden:
+                        occupation === "Empresário/Proprietário" ||
+                        occupation === "Não Trabalho" ||
+                        occupation === "Aposentado",
+                    })}
                   >
                     <FormLabel className="text-foreground">
                       {occupation === "Outro" ? (
@@ -1171,11 +1005,11 @@ export function WorkEducationForm({
                           occupation === "Não Trabalho" ||
                           occupation === "Aposentado"
                             ? -1
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 1
-                              : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 1
+                            : 0
                         }
                         disabled={
                           occupation === "Não Trabalho" ||
@@ -1198,23 +1032,17 @@ export function WorkEducationForm({
                 name="companyOrBossName"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2 row-start-2 md:row-start-1 md:col-start-2",
-                      {
-                        "md:col-span-1 md:col-start-1":
-                          occupation === "Empresário/Proprietário",
-                        hidden:
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado",
-                      },
-                    )}
+                    className={cn("flex flex-col gap-2 row-start-2 md:row-start-1 md:col-start-2", {
+                      "row-start-1 md:col-span-1 md:col-start-1": occupation === "Empresário/Proprietário",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
+                    })}
                   >
                     <FormLabel className="text-foreground">
                       {occupation === "Empresário/Proprietário"
                         ? "Nome fantasia ou razão social"
                         : occupation === "Autônomo"
-                          ? "Nome da MEI (se houver)"
-                          : "Nome do empregador atual ou empresa"}
+                        ? "Nome da MEI (se houver)"
+                        : "Nome do empregador atual ou empresa"}
                     </FormLabel>
 
                     <FormControl>
@@ -1222,20 +1050,15 @@ export function WorkEducationForm({
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 1
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 2
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 2
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Aposentado" ||
-                          occupation === "Não Trabalho" ||
-                          isPending
-                        }
+                        disabled={occupation === "Aposentado" || occupation === "Não Trabalho" || isPending}
                         className="!mt-auto"
                         {...field}
                       />
@@ -1255,39 +1078,27 @@ export function WorkEducationForm({
                       "row-start-2 md:row-start-1 md:col-start-2 md:col-span-2":
                         occupation === "Empresário/Proprietário",
                       "row-start-3 md:col-span-2 md:row-start-2 md:col-start-1":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                        occupation === "Contratado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Logradouro
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Logradouro</FormLabel>
 
                     <FormControl>
                       <Input
                         className="!mt-auto"
                         tabIndex={
-                          occupation === "Empresário/Proprietário" ||
-                          occupation === "Não Trabalho"
+                          occupation === "Empresário/Proprietário" || occupation === "Não Trabalho"
                             ? 2
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 6
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 6
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1302,18 +1113,11 @@ export function WorkEducationForm({
                 name="companyCity"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2 row-start-4 md:row-start-2 md:col-start-2",
-                      {
-                        "row-start-6 md:row-start-3 md:col-start-2":
-                          occupation === "Registrado (CLT/PJ)" ||
-                          occupation === "Autônomo" ||
-                          occupation === "Outro",
-                        hidden:
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado",
-                      },
-                    )}
+                    className={cn("flex flex-col gap-2 row-start-4 md:row-start-2 md:col-start-2", {
+                      "row-start-6 md:row-start-3 md:col-start-2":
+                        occupation === "Contratado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
+                    })}
                   >
                     <FormLabel className="text-foreground">Cidade</FormLabel>
 
@@ -1321,23 +1125,17 @@ export function WorkEducationForm({
                       <Input
                         className="!mt-auto"
                         tabIndex={
-                          occupation === "Empresário/Proprietário" ||
-                          occupation === "Não Trabalho"
+                          occupation === "Empresário/Proprietário" || occupation === "Não Trabalho"
                             ? 3
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 3
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 3
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1352,18 +1150,11 @@ export function WorkEducationForm({
                 name="companyState"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2 row-start-5 md:row-start-2 md:col-start-3",
-                      {
-                        "row-start-7 md:row-start-3 md:col-start-3":
-                          occupation === "Registrado (CLT/PJ)" ||
-                          occupation === "Autônomo" ||
-                          occupation === "Outro",
-                        hidden:
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado",
-                      },
-                    )}
+                    className={cn("flex flex-col gap-2 row-start-5 md:row-start-2 md:col-start-3", {
+                      "row-start-7 md:row-start-3 md:col-start-3":
+                        occupation === "Contratado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
+                    })}
                   >
                     <FormLabel className="text-foreground">Estado</FormLabel>
 
@@ -1373,20 +1164,15 @@ export function WorkEducationForm({
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 4
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 4
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 4
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1401,18 +1187,11 @@ export function WorkEducationForm({
                 name="companyCountry"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2 row-start-6 md:row-start-3 md:col-start-1",
-                      {
-                        "row-start-8 md:row-start-4 md:col-start-1":
-                          occupation === "Registrado (CLT/PJ)" ||
-                          occupation === "Autônomo" ||
-                          occupation === "Outro",
-                        hidden:
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado",
-                      },
-                    )}
+                    className={cn("flex flex-col gap-2 row-start-6 md:row-start-3 md:col-start-1", {
+                      "row-start-8 md:row-start-4 md:col-start-1":
+                        occupation === "Contratado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
+                    })}
                   >
                     <FormLabel className="text-foreground">País</FormLabel>
 
@@ -1422,20 +1201,15 @@ export function WorkEducationForm({
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 5
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 5
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 5
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
                       />
                     </FormControl>
@@ -1450,18 +1224,11 @@ export function WorkEducationForm({
                 name="companyCep"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2 row-start-3 md:row-start-2 md:col-start-1",
-                      {
-                        "row-start-4 md:row-start-2 md:col-start-3":
-                          occupation === "Registrado (CLT/PJ)" ||
-                          occupation === "Outro" ||
-                          occupation === "Autônomo",
-                        hidden:
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado",
-                      },
-                    )}
+                    className={cn("flex flex-col gap-2 row-start-3 md:row-start-2 md:col-start-1", {
+                      "row-start-4 md:row-start-2 md:col-start-3":
+                        occupation === "Contratado (CLT/PJ)" || occupation === "Outro" || occupation === "Autônomo",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
+                    })}
                   >
                     <FormLabel className="text-foreground">CEP</FormLabel>
 
@@ -1471,20 +1238,15 @@ export function WorkEducationForm({
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 6
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 7
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 7
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         maxLength={9}
                         name={field.name}
                         ref={field.ref}
@@ -1504,18 +1266,11 @@ export function WorkEducationForm({
                 name="companyTel"
                 render={({ field }) => (
                   <FormItem
-                    className={cn(
-                      "flex flex-col gap-2 row-start-7 md:row-start-3 md:col-start-2",
-                      {
-                        "row-start-5 md:row-start-3 md:col-start-1":
-                          occupation === "Registrado (CLT/PJ)" ||
-                          occupation === "Outro" ||
-                          occupation === "Autônomo",
-                        hidden:
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado",
-                      },
-                    )}
+                    className={cn("flex flex-col gap-2 row-start-7 md:row-start-3 md:col-start-2", {
+                      "row-start-5 md:row-start-3 md:col-start-1":
+                        occupation === "Contratado (CLT/PJ)" || occupation === "Outro" || occupation === "Autônomo",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
+                    })}
                   >
                     <FormLabel className="text-foreground">Telefone</FormLabel>
 
@@ -1524,20 +1279,15 @@ export function WorkEducationForm({
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 7
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 8
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 8
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         limitMaxLength
                         smartCaret={false}
                         placeholder="Insira o telefone da empresa..."
@@ -1546,7 +1296,7 @@ export function WorkEducationForm({
                           "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                           {
                             "input-error": false,
-                          },
+                          }
                         )}
                         name={field.name}
                         ref={field.ref}
@@ -1567,21 +1317,14 @@ export function WorkEducationForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn("flex flex-col gap-2", {
-                      "row-start-8 md:row-start-3 md:col-start-3":
-                        occupation === "Empresário/Proprietário",
+                      "row-start-8 md:row-start-3 md:col-start-3": occupation === "Empresário/Proprietário",
                       "row-start-9 md:row-start-4 md:col-start-2":
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Autônomo" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                        occupation === "Contratado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">
-                      {occupation === "Empresário/Proprietário"
-                        ? "Data de abertura"
-                        : "Data de admissão"}
+                      {occupation === "Empresário/Proprietário" ? "Data de abertura" : "Data de admissão"}
                     </FormLabel>
 
                     <Popover>
@@ -1591,24 +1334,19 @@ export function WorkEducationForm({
                             tabIndex={
                               occupation === "Empresário/Proprietário"
                                 ? 8
-                                : occupation === "Registrado (CLT/PJ)" ||
-                                    occupation === "Autônomo" ||
-                                    occupation === "Outro"
-                                  ? 9
-                                  : occupation === "Não Trabalho" ||
-                                      occupation === "Aposentado"
-                                    ? -1
-                                    : 0
+                                : occupation === "Contratado (CLT/PJ)" ||
+                                  occupation === "Autônomo" ||
+                                  occupation === "Outro"
+                                ? 9
+                                : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                             }
-                            disabled={
-                              occupation === "Não Trabalho" ||
-                              occupation === "Aposentado" ||
-                              isPending
-                            }
+                            disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                             variant={"outline"}
                             className={cn(
                               "!mt-auto w-full h-12 pl-3 text-left border-secondary font-normal group",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value ? (
@@ -1629,16 +1367,13 @@ export function WorkEducationForm({
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1661,15 +1396,13 @@ export function WorkEducationForm({
                     className={cn("flex flex-col gap-2", {
                       hidden:
                         occupation === "Empresário/Proprietário" ||
-                        occupation === "Registrado (CLT/PJ)" ||
+                        occupation === "Contratado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Não Trabalho" ||
                         occupation === "Outro",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Data de aposentadoria
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Data de aposentadoria</FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -1677,19 +1410,19 @@ export function WorkEducationForm({
                           <Button
                             tabIndex={
                               occupation === "Empresário/Proprietário" ||
-                              occupation === "Registrado (CLT/PJ)" ||
+                              occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro" ||
                               occupation === "Não Trabalho"
                                 ? -1
                                 : occupation === "Aposentado"
-                                  ? 1
-                                  : 0
+                                ? 1
+                                : 0
                             }
                             disabled={
                               occupation === "Não Trabalho" ||
                               occupation === "Empresário/Proprietário" ||
-                              occupation === "Registrado (CLT/PJ)" ||
+                              occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro" ||
                               isPending
@@ -1697,7 +1430,7 @@ export function WorkEducationForm({
                             variant={"outline"}
                             className={cn(
                               "!mt-auto w-full h-12 pl-3 text-left border-secondary font-normal group",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value !== undefined ? (
@@ -1718,16 +1451,13 @@ export function WorkEducationForm({
                           locale={ptBR}
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           captionLayout="dropdown"
                           fromYear={1900}
                           toYear={currentYear}
                           classNames={{
                             day_hidden: "invisible",
-                            dropdown:
-                              "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                             caption_dropdowns: "flex gap-3",
                             vhidden: "hidden",
                             caption_label: "hidden",
@@ -1748,27 +1478,17 @@ export function WorkEducationForm({
                 render={({ field }) => (
                   <FormItem
                     className={cn("flex flex-col gap-2", {
-                      "row-start-9 md:row-start-4 md:col-start-1":
-                        occupation === "Empresário/Proprietário",
+                      "row-start-9 md:row-start-4 md:col-start-1": occupation === "Empresário/Proprietário",
                       "row-start-10 md:row-start-4 md:col-start-3":
-                        occupation === "Autônomo" ||
-                        occupation === "Registrado (CLT/PJ)" ||
-                        occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                        occupation === "Autônomo" || occupation === "Contratado (CLT/PJ)" || occupation === "Outro",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
-                    <FormLabel className="text-foreground">
-                      Renda mensal (R$)
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Renda mensal (R$)</FormLabel>
 
                     <FormControl>
                       <div className="h-12 flex items-center gap-2 border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm group focus-within:border-primary hover:border-border">
-                        <CircleDollarSign
-                          className="size-5 text-border flex-shrink-0"
-                          strokeWidth={1.5}
-                        />
+                        <CircleDollarSign className="size-5 text-border flex-shrink-0" strokeWidth={1.5} />
 
                         <div className="w-[2px] flex-shrink-0 h-full bg-muted rounded-full" />
 
@@ -1776,24 +1496,17 @@ export function WorkEducationForm({
                           tabIndex={
                             occupation === "Empresário/Proprietário"
                               ? 9
-                              : occupation === "Registrado (CLT/PJ)" ||
-                                  occupation === "Autônomo" ||
-                                  occupation === "Outro"
-                                ? 10
-                                : occupation === "Não Trabalho" ||
-                                    occupation === "Aposentado"
-                                  ? -1
-                                  : 0
+                              : occupation === "Contratado (CLT/PJ)" ||
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 10
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                              ? -1
+                              : 0
                           }
-                          disabled={
-                            occupation === "Não Trabalho" ||
-                            occupation === "Aposentado" ||
-                            isPending
-                          }
+                          disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                           placeholder="Insira o valor do serviço"
-                          onValueChange={(value, name) =>
-                            form.setValue(name as "monthlySalary", value ?? "0")
-                          }
+                          onValueChange={(value, name) => form.setValue(name as "monthlySalary", value ?? "0")}
                           decimalsLimit={2}
                           ref={field.ref}
                           onBlur={field.onBlur}
@@ -1817,16 +1530,14 @@ export function WorkEducationForm({
                     className={cn({
                       "md:row-start-5 md:col-span-3":
                         occupation === "Empresário/Proprietário" ||
-                        occupation === "Registrado (CLT/PJ)" ||
+                        occupation === "Contratado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Outro",
-                      hidden:
-                        occupation === "Não Trabalho" ||
-                        occupation === "Aposentado",
+                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">
-                      {occupation == "Registrado (CLT/PJ)" ? (
+                      {occupation == "Contratado (CLT/PJ)" ? (
                         <>Descreva quais as suas funções dentro da empresa</>
                       ) : occupation === "Autônomo" ? (
                         <>Descreva as suas atividades</>
@@ -1834,9 +1545,8 @@ export function WorkEducationForm({
                         <>Descreva sobre a sua atual ocupação</>
                       ) : occupation === "Empresário/Proprietário" ? (
                         <>
-                          Descreva quais são as suas funções dentro da sua
-                          empresa, se possui funcionários registrados e outras
-                          informações relacionadas ao seu negócio
+                          Descreva quais são as suas funções dentro da sua empresa, se possui funcionários registrados e
+                          outras informações relacionadas ao seu negócio
                         </>
                       ) : null}
                     </FormLabel>
@@ -1846,20 +1556,15 @@ export function WorkEducationForm({
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 10
-                            : occupation === "Registrado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 11
-                              : occupation === "Não Trabalho" ||
-                                  occupation === "Aposentado"
-                                ? -1
-                                : 0
+                            : occupation === "Contratado (CLT/PJ)" ||
+                              occupation === "Autônomo" ||
+                              occupation === "Outro"
+                            ? 11
+                            : occupation === "Não Trabalho" || occupation === "Aposentado"
+                            ? -1
+                            : 0
                         }
-                        disabled={
-                          occupation === "Não Trabalho" ||
-                          occupation === "Aposentado" ||
-                          isPending
-                        }
+                        disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         className="resize-none"
                         {...field}
                       />
@@ -1878,8 +1583,7 @@ export function WorkEducationForm({
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Já trabalhou anteriormente? Se sim, forneça um histórico
-                      dos últimos cinco anos
+                      Já trabalhou anteriormente? Se sim, forneça um histórico dos últimos cinco anos
                     </FormLabel>
 
                     <FormControl>
@@ -1914,12 +1618,9 @@ export function WorkEducationForm({
             </div>
 
             <div
-              className={cn(
-                "w-full bg-secondary rounded-xl p-4 space-y-6 mb-10",
-                {
-                  hidden: previousJobConfirmation === "Não",
-                },
-              )}
+              className={cn("w-full bg-secondary rounded-xl p-4 space-y-6 mb-10", {
+                hidden: previousJobConfirmation === "Não",
+              })}
             >
               <div className="w-full flex flex-col gap-y-4">
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
@@ -1928,16 +1629,10 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.companyName`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Nome do empregador ou empresa anterior
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Nome do empregador ou empresa anterior</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -1950,16 +1645,10 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.companyAddress`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Logradouro
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Logradouro</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -1974,16 +1663,10 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.companyCity`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Cidade
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Cidade</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -1996,16 +1679,10 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.companyState`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Estado
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Estado</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2021,11 +1698,7 @@ export function WorkEducationForm({
                         <FormLabel className="text-foreground">País</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2065,9 +1738,7 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.companyTel`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Telefone
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Telefone</FormLabel>
 
                         <FormControl>
                           <PhoneInput
@@ -2080,7 +1751,7 @@ export function WorkEducationForm({
                               "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
                               {
                                 "input-error": false,
-                              },
+                              }
                             )}
                             name={field.name}
                             ref={field.ref}
@@ -2102,16 +1773,10 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.office`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Cargo / Função
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Cargo / Função</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2124,16 +1789,10 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.supervisorName`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Nome completo do supervisor
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Nome completo do supervisor</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2148,9 +1807,7 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.admissionDate`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Data de admissão
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Data de admissão</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -2158,10 +1815,7 @@ export function WorkEducationForm({
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  "!mt-auto",
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -2175,9 +1829,7 @@ export function WorkEducationForm({
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -2189,17 +1841,13 @@ export function WorkEducationForm({
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -2219,9 +1867,7 @@ export function WorkEducationForm({
                     name={`previousJobs.${currentPreviousJobsIndex}.resignationDate`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">
-                          Data de demissão
-                        </FormLabel>
+                        <FormLabel className="text-foreground">Data de demissão</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -2229,10 +1875,7 @@ export function WorkEducationForm({
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  "!mt-auto",
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -2246,9 +1889,7 @@ export function WorkEducationForm({
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -2260,17 +1901,13 @@ export function WorkEducationForm({
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -2296,11 +1933,7 @@ export function WorkEducationForm({
                       </FormLabel>
 
                       <FormControl>
-                        <Textarea
-                          disabled={isPending}
-                          className="resize-none !mt-auto"
-                          {...field}
-                        />
+                        <Textarea disabled={isPending} className="resize-none !mt-auto" {...field} />
                       </FormControl>
 
                       <FormMessage className="text-sm text-destructive" />
@@ -2328,9 +1961,7 @@ export function WorkEducationForm({
                       className="w-full py-2 px-4 bg-primary/50 rounded-xl flex items-center gap-2 group sm:w-fit"
                     >
                       <div className="w-full flex flex-col items-center gap-2">
-                        <span className="text-sm font-medium text-white">
-                          Cargo: {item.office}
-                        </span>
+                        <span className="text-sm font-medium text-white">Cargo: {item.office}</span>
                       </div>
 
                       <Button
@@ -2350,8 +1981,7 @@ export function WorkEducationForm({
             </div>
 
             <span className="text-foreground text-base font-medium mb-6">
-              Informe a sua escolaridade (Preencha com o maximo de detalhes
-              possíveis)
+              Informe a sua escolaridade (Preencha com o maximo de detalhes possíveis)
             </span>
 
             <div className="w-full bg-secondary rounded-xl p-4 space-y-6">
@@ -2365,11 +1995,7 @@ export function WorkEducationForm({
                         <FormLabel>Nome completo da instituição</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2385,11 +2011,7 @@ export function WorkEducationForm({
                         <FormLabel>Endereço completo</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2432,11 +2054,7 @@ export function WorkEducationForm({
                         <FormLabel>Cidade</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2452,11 +2070,7 @@ export function WorkEducationForm({
                         <FormLabel>Estado</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2472,11 +2086,7 @@ export function WorkEducationForm({
                         <FormLabel>País</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2494,11 +2104,7 @@ export function WorkEducationForm({
                         <FormLabel>Nome do curso</FormLabel>
 
                         <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            disabled={isPending}
-                            {...field}
-                          />
+                          <Input className="!mt-auto" disabled={isPending} {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
@@ -2519,10 +2125,7 @@ export function WorkEducationForm({
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  "!mt-auto",
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -2536,9 +2139,7 @@ export function WorkEducationForm({
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -2550,17 +2151,13 @@ export function WorkEducationForm({
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -2588,10 +2185,7 @@ export function WorkEducationForm({
                               <Button
                                 disabled={isPending}
                                 variant="date"
-                                className={cn(
-                                  "!mt-auto",
-                                  !field.value && "text-muted-foreground",
-                                )}
+                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
                               >
                                 <CalendarIcon
                                   strokeWidth={1.5}
@@ -2605,9 +2199,7 @@ export function WorkEducationForm({
                                     locale: ptBR,
                                   })
                                 ) : (
-                                  <span className="text-muted-foreground">
-                                    Selecione a data
-                                  </span>
+                                  <span className="text-muted-foreground">Selecione a data</span>
                                 )}
                               </Button>
                             </FormControl>
@@ -2619,17 +2211,13 @@ export function WorkEducationForm({
                               locale={ptBR}
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
                               toYear={currentYear}
                               classNames={{
                                 day_hidden: "invisible",
-                                dropdown:
-                                  "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
                                 caption_dropdowns: "flex gap-3",
                                 vhidden: "hidden",
                                 caption_label: "hidden",
@@ -2665,9 +2253,7 @@ export function WorkEducationForm({
                       className="w-full py-2 px-4 bg-primary/70 rounded-xl flex items-center gap-2 group sm:w-fit"
                     >
                       <div className="w-full flex flex-col items-center gap-2">
-                        <span className="text-sm font-medium text-white">
-                          Curso: {item.courseName}
-                        </span>
+                        <span className="text-sm font-medium text-white">Curso: {item.courseName}</span>
                       </div>
 
                       <Button
@@ -2699,10 +2285,7 @@ export function WorkEducationForm({
                   {isPending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -2725,10 +2308,7 @@ export function WorkEducationForm({
                   {isSavePending ? (
                     <>
                       Salvando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
@@ -2747,10 +2327,7 @@ export function WorkEducationForm({
                   {isPending ? (
                     <>
                       Enviando
-                      <Loader2
-                        className="size-5 animate-spin"
-                        strokeWidth={1.5}
-                      />
+                      <Loader2 className="size-5 animate-spin" strokeWidth={1.5} />
                     </>
                   ) : (
                     <>
