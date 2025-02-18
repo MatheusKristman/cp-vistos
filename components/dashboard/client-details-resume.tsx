@@ -1,42 +1,17 @@
-import {
-  Edit,
-  NotepadText,
-  RotateCw,
-  MessageCircleMore,
-  FileText,
-  Plus,
-  UserRoundPlusIcon,
-} from "lucide-react";
+import { Edit, NotepadText, RotateCw, MessageCircleMore, FileText, Plus, UserRoundPlusIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {
-  Category,
-  ETAStatus,
-  PaymentStatus,
-  StatusDS,
-  VisaStatus,
-} from "@prisma/client";
+import { Category, ETAStatus, PaymentStatus, StatusDS, VisaStatus } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmActiveStatusModal } from "./confirm-active-status-modal";
 import { ConfirmArchiveStatusModal } from "./confirm-archive-status-modal";
 import { ConfirmProspectStatusModal } from "./confirm-prospect-status-modal";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import useUserStore from "@/constants/stores/useUserStore";
 import { FormAnimation } from "@/constants/animations/modal";
@@ -69,12 +44,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
   const [profileSelected, setProfileSelected] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [ETAStatusValue, setETAStatusValue] = useState("");
-  const [isConfirmArchiveStatusOpen, setConfirmArchiveStatusOpen] =
-    useState(false);
-  const [isConfirmProspectStatusOpen, setConfirmProspectStatusOpen] =
-    useState(false);
-  const [isConfirmActiveStatusOpen, setConfirmActiveStatusOpen] =
-    useState(false);
+  const [isConfirmArchiveStatusOpen, setConfirmArchiveStatusOpen] = useState(false);
+  const [isConfirmProspectStatusOpen, setConfirmProspectStatusOpen] = useState(false);
+  const [isConfirmActiveStatusOpen, setConfirmActiveStatusOpen] = useState(false);
 
   const utils = trpc.useUtils();
 
@@ -87,21 +59,20 @@ export function ClientDetailsResume({ handleClose }: Props) {
     }
   }, [client]);
 
-  const { mutate: changeProfile, isPending } =
-    trpc.userRouter.getClientDetails.useMutation({
-      onSuccess({ client }) {
-        setClient(client);
-      },
-      onError(error) {
-        console.error(error.data);
+  const { mutate: changeProfile, isPending } = trpc.userRouter.getClientDetails.useMutation({
+    onSuccess({ client }) {
+      setClient(client);
+    },
+    onError(error) {
+      console.error(error.data);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
+      }
+    },
+  });
   const { mutate: updateDSValidationDate, isPending: isDSValidPending } =
     trpc.userRouter.updateDSValidationDate.useMutation({
       onSuccess: (data) => {
@@ -119,40 +90,38 @@ export function ClientDetailsResume({ handleClose }: Props) {
         }
       },
     });
-  const { mutate: updateStatusDS, isPending: isStatusDSUpdating } =
-    trpc.userRouter.updateStatusDS.useMutation({
-      onSuccess: (data) => {
-        setClient(data.updatedClient);
-        setStatusDS(data.status);
-        utils.userRouter.getActiveClients.invalidate();
-      },
-      onError: (error) => {
-        console.error(error);
+  const { mutate: updateStatusDS, isPending: isStatusDSUpdating } = trpc.userRouter.updateStatusDS.useMutation({
+    onSuccess: (data) => {
+      setClient(data.updatedClient);
+      setStatusDS(data.status);
+      utils.userRouter.getActiveClients.invalidate();
+    },
+    onError: (error) => {
+      console.error(error);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao atualizar o status do DS");
-        }
-      },
-    });
-  const { mutate: updateVisaStatus, isPending: isVisaStatusUpdating } =
-    trpc.userRouter.updateVisaStatus.useMutation({
-      onSuccess: (data) => {
-        setClient(data.updatedClient);
-        setVisaStatus(data.status);
-        utils.userRouter.getActiveClients.invalidate();
-      },
-      onError: (error) => {
-        console.error(error);
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao atualizar o status do DS");
+      }
+    },
+  });
+  const { mutate: updateVisaStatus, isPending: isVisaStatusUpdating } = trpc.userRouter.updateVisaStatus.useMutation({
+    onSuccess: (data) => {
+      setClient(data.updatedClient);
+      setVisaStatus(data.status);
+      utils.userRouter.getActiveClients.invalidate();
+    },
+    onError: (error) => {
+      console.error(error);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao atualizar o status do visto");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao atualizar o status do visto");
+      }
+    },
+  });
   const { mutate: updatePaymentStatus, isPending: isPaymentStatusUpdating } =
     trpc.userRouter.updatePaymentStatus.useMutation({
       onSuccess: (data) => {
@@ -170,23 +139,22 @@ export function ClientDetailsResume({ handleClose }: Props) {
         }
       },
     });
-  const { mutate: updateETAStatus, isPending: isETAStatusUpdating } =
-    trpc.userRouter.updateETAStatus.useMutation({
-      onSuccess: (data) => {
-        setClient(data.updatedClient);
-        setETAStatusValue(data.status);
-        utils.userRouter.getActiveClients.invalidate();
-      },
-      onError: (error) => {
-        console.error(error);
+  const { mutate: updateETAStatus, isPending: isETAStatusUpdating } = trpc.userRouter.updateETAStatus.useMutation({
+    onSuccess: (data) => {
+      setClient(data.updatedClient);
+      setETAStatusValue(data.status);
+      utils.userRouter.getActiveClients.invalidate();
+    },
+    onError: (error) => {
+      console.error(error);
 
-        if (error.data && error.data.code === "NOT_FOUND") {
-          toast.error(error.message);
-        } else {
-          toast.error("Ocorreu um erro ao atualizar o status");
-        }
-      },
-    });
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao atualizar o status");
+      }
+    },
+  });
 
   const isLoading =
     isVisaStatusUpdating ||
@@ -231,31 +199,12 @@ export function ClientDetailsResume({ handleClose }: Props) {
   }
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={FormAnimation}
-      className="w-full"
-    >
+    <motion.div initial="initial" animate="animate" exit="exit" variants={FormAnimation} className="w-full">
       <div className="w-full flex flex-col-reverse gap-4 mb-9 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">
-          Conta: {client.user.name}
-        </h1>
+        <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">Conta: {client.user.name}</h1>
 
-        <Button
-          onClick={handleClose}
-          variant="link"
-          size="icon"
-          className="self-end"
-          disabled={isLoading}
-        >
-          <Image
-            src="/assets/icons/cross-blue.svg"
-            alt="Fechar"
-            width={24}
-            height={24}
-          />
+        <Button onClick={handleClose} variant="link" size="icon" className="self-end" disabled={isLoading}>
+          <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
         </Button>
       </div>
 
@@ -263,45 +212,31 @@ export function ClientDetailsResume({ handleClose }: Props) {
         <div className="w-full flex flex-col gap-6">
           <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">
-                E-mail
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">E-mail</span>
 
-              <span className="text-lg font-medium text-foreground break-words">
-                {client.user.email}
-              </span>
+              <span className="text-lg font-medium text-foreground break-words">{client.user.email}</span>
             </div>
 
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">
-                CPF
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">CPF</span>
 
               <span className="text-lg font-medium text-foreground">
-                {client.user.cpf
-                  ? client.user.cpf.replace(/[\.\-]/g, "")
-                  : "---"}
+                {client.user.cpf ? client.user.cpf.replace(/[\.\-]/g, "") : "---"}
               </span>
             </div>
           </div>
 
           <div className="w-full grid grid-cols-1 gap-6">
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">
-                Senha
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">Senha</span>
 
-              <span className="text-lg font-medium text-foreground">
-                {client.user.password}
-              </span>
+              <span className="text-lg font-medium text-foreground">{client.user.password}</span>
             </div>
           </div>
 
           <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">
-                E-mail de agendamento
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">E-mail de agendamento</span>
 
               <span className="text-lg font-medium text-foreground break-words">
                 {client.user.emailScheduleAccount}
@@ -309,24 +244,18 @@ export function ClientDetailsResume({ handleClose }: Props) {
             </div>
 
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">
-                Senha de agendamento
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">Senha de agendamento</span>
 
-              <span className="text-lg font-medium text-foreground">
-                {client.user.passwordScheduleAccount}
-              </span>
+              <span className="text-lg font-medium text-foreground">{client.user.passwordScheduleAccount}</span>
             </div>
           </div>
 
           <div className="w-full grid grid-cols-1 gap-6">
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">
-                Endereço
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">Endereço</span>
 
               <span className="text-lg font-medium text-foreground">
-                {client.user.address}
+                {client.user.address ? client.user.address : "---"}
               </span>
             </div>
           </div>
@@ -337,21 +266,15 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 hidden: role !== "ADMIN",
               })}
             >
-              <span className="text-sm text-foreground/50 font-medium">
-                Valor
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">Valor</span>
 
               <span className="text-lg font-medium text-foreground">
-                {client.user.budget
-                  ? formatPrice(client.user.budget)
-                  : "Não informado"}
+                {client.user.budget ? formatPrice(client.user.budget) : "Não informado"}
               </span>
             </div>
 
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">
-                Conta de agendamento
-              </span>
+              <span className="text-sm text-foreground/50 font-medium">Conta de agendamento</span>
 
               <span className="text-lg font-medium text-foreground">
                 {client.user.scheduleAccount === "active"
@@ -405,9 +328,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
         {client.category === Category.american_visa && (
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-                Perfil: {client.name}
-              </h2>
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Perfil: {client.name}</h2>
 
               {client.user.profiles.length > 0 && (
                 <Select
@@ -435,25 +356,17 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Barcode
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Barcode</span>
 
-                <span className="text-base font-medium text-foreground">
-                  {client.DSNumber}
-                </span>
+                <span className="text-base font-medium text-foreground">{client.DSNumber}</span>
               </div>
 
               <div className="w-full flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium text-foreground/50">
-                    Data do barcode
-                  </span>
+                  <span className="text-xs font-medium text-foreground/50">Data do barcode</span>
 
                   <span className="text-base font-medium text-foreground">
-                    {client.DSValid
-                      ? format(client.DSValid, "dd/MM/yyyy")
-                      : "Expirado"}
+                    {client.DSValid ? format(client.DSValid, "dd/MM/yyyy") : "Expirado"}
                   </span>
                 </div>
 
@@ -465,9 +378,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                         size="icon"
                         className="rounded-lg"
                         disabled={isLoading}
-                        onClick={() =>
-                          updateDSValidationDate({ profileId: client.id })
-                        }
+                        onClick={() => updateDSValidationDate({ profileId: client.id })}
                       >
                         <RotateCw
                           className={cn("w-6 h-6", {
@@ -488,27 +399,19 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Data de Nascimento
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Data de Nascimento</span>
 
                 <span className="text-base font-medium text-foreground">
-                  {client.birthDate
-                    ? format(client.birthDate, "dd/MM/yyyy")
-                    : "--/--/----"}
+                  {client.birthDate ? format(client.birthDate, "dd/MM/yyyy") : "--/--/----"}
                 </span>
               </div>
 
               <div className="w-full flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium text-foreground/50">
-                    Data do pagamento do boleto
-                  </span>
+                  <span className="text-xs font-medium text-foreground/50">Data do pagamento do boleto</span>
 
                   <span className="text-base font-medium text-foreground">
-                    {client.taxDate
-                      ? format(client.taxDate, "dd/MM/yyyy")
-                      : "Pendente"}
+                    {client.taxDate ? format(client.taxDate, "dd/MM/yyyy") : "Pendente"}
                   </span>
                 </div>
               </div>
@@ -516,9 +419,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Passaporte
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Passaporte</span>
 
                 <span className="text-base font-medium text-foreground">
                   {client.passport ? client.passport : "---"}
@@ -526,9 +427,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Classe do Visto
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Classe do Visto</span>
 
                 <span className="text-base font-medium text-foreground line-clamp-2">
                   {client.visaClass === "B1"
@@ -548,9 +447,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Tipo de Visto
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Tipo de Visto</span>
 
                 <span className="text-base font-medium text-foreground">
                   {client.visaType === "renovacao"
@@ -562,9 +459,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Opção de Envio
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Opção de Envio</span>
 
                 <span className="text-base font-medium text-foreground">
                   {client.shipping === "pickup"
@@ -582,21 +477,15 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Data CASV
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Data CASV</span>
 
                 <span className="text-base font-medium text-foreground line-clamp-2">
-                  {client.CASVDate
-                    ? format(client.CASVDate, "dd/MM/yyyy")
-                    : "--/--/----"}
+                  {client.CASVDate ? format(client.CASVDate, "dd/MM/yyyy") : "--/--/----"}
                 </span>
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Data da Entrevista
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Data da Entrevista</span>
 
                 <span className="text-base font-medium text-foreground">
                   {client.interviewDate
@@ -612,12 +501,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
                   Status do DS
-                  {isStatusDSUpdating && (
-                    <RotateCw
-                      className="h-3 w-3 animate-spin"
-                      strokeWidth={1.5}
-                    />
-                  )}
+                  {isStatusDSUpdating && <RotateCw className="h-3 w-3 animate-spin" strokeWidth={1.5} />}
                 </span>
 
                 <Select
@@ -631,11 +515,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   }}
                   disabled={isLoading}
                 >
-                  <SelectTrigger
-                    className={cn(
-                      !client.statusDS && "[&>span]:text-muted-foreground",
-                    )}
-                  >
+                  <SelectTrigger className={cn(!client.statusDS && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status do DS" />
                   </SelectTrigger>
 
@@ -651,12 +531,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
                   Status do Visto
-                  {isVisaStatusUpdating && (
-                    <RotateCw
-                      className="h-3 w-3 animate-spin"
-                      strokeWidth={1.5}
-                    />
-                  )}
+                  {isVisaStatusUpdating && <RotateCw className="h-3 w-3 animate-spin" strokeWidth={1.5} />}
                 </span>
 
                 <Select
@@ -670,11 +545,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   }}
                   disabled={isLoading}
                 >
-                  <SelectTrigger
-                    className={cn(
-                      !client.visaStatus && "[&>span]:text-muted-foreground",
-                    )}
-                  >
+                  <SelectTrigger className={cn(!client.visaStatus && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status do visto" />
                   </SelectTrigger>
 
@@ -772,12 +643,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 </Button>
               </div>
 
-              <Button
-                disabled={isLoading}
-                size="xl"
-                className="flex items-center gap-2"
-                onClick={handleForm}
-              >
+              <Button disabled={isLoading} size="xl" className="flex items-center gap-2" onClick={handleForm}>
                 <FileText className="w-5 h-5" strokeWidth={1.5} />
                 Formulário
               </Button>
@@ -788,9 +654,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
         {client.category === Category.passport && (
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-                Perfil: {client.name}
-              </h2>
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Perfil: {client.name}</h2>
 
               {client.user.profiles.length > 0 && (
                 <Select
@@ -818,57 +682,39 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  CPF
-                </span>
+                <span className="text-xs font-medium text-foreground/50">CPF</span>
 
-                <span className="text-base font-medium text-foreground">
-                  {client.cpf}
-                </span>
+                <span className="text-base font-medium text-foreground">{client.cpf}</span>
               </div>
 
               <div className="w-full flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium text-foreground/50">
-                    CPF do responsável
-                  </span>
+                  <span className="text-xs font-medium text-foreground/50">CPF do responsável</span>
 
-                  <span className="text-base font-medium text-foreground">
-                    {client.responsibleCpf}
-                  </span>
+                  <span className="text-base font-medium text-foreground">{client.responsibleCpf}</span>
                 </div>
               </div>
             </div>
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Protocolo
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Protocolo</span>
 
-                <span className="text-base font-medium text-foreground">
-                  {client.protocol}
-                </span>
+                <span className="text-base font-medium text-foreground">{client.protocol}</span>
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Data de entrada
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Data de entrada</span>
 
                 <span className="text-base font-medium text-foreground">
-                  {client.entryDate
-                    ? format(client.entryDate, "dd/MM/yyyy")
-                    : "--/--/----"}
+                  {client.entryDate ? format(client.entryDate, "dd/MM/yyyy") : "--/--/----"}
                 </span>
               </div>
             </div>
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Data do agendamento
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Data do agendamento</span>
 
                 <span className="text-base font-medium text-foreground">
                   {client.scheduleDate
@@ -881,13 +727,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
               <div className="w-full flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium text-foreground/50">
-                    Local do agendamento
-                  </span>
+                  <span className="text-xs font-medium text-foreground/50">Local do agendamento</span>
 
-                  <span className="text-base font-medium text-foreground">
-                    {client.scheduleLocation}
-                  </span>
+                  <span className="text-base font-medium text-foreground">{client.scheduleLocation}</span>
                 </div>
               </div>
             </div>
@@ -896,12 +738,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
                   Status do pagamento
-                  {isPaymentStatusUpdating && (
-                    <RotateCw
-                      className="h-3 w-3 animate-spin"
-                      strokeWidth={1.5}
-                    />
-                  )}
+                  {isPaymentStatusUpdating && <RotateCw className="h-3 w-3 animate-spin" strokeWidth={1.5} />}
                 </span>
 
                 <Select
@@ -915,11 +752,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   }}
                   disabled={isLoading}
                 >
-                  <SelectTrigger
-                    className={cn(
-                      !client.paymentStatus && "[&>span]:text-muted-foreground",
-                    )}
-                  >
+                  <SelectTrigger className={cn(!client.paymentStatus && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status do pagamento" />
                   </SelectTrigger>
 
@@ -1020,9 +853,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
         {client.category === Category.e_ta && (
           <div className="w-full flex flex-col gap-6">
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-                Perfil: {client.name}
-              </h2>
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Perfil: {client.name}</h2>
 
               {client.user.profiles.length > 0 && (
                 <Select
@@ -1050,48 +881,31 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  CPF
-                </span>
+                <span className="text-xs font-medium text-foreground/50">CPF</span>
 
-                <span className="text-base font-medium text-foreground">
-                  {client.cpf}
-                </span>
+                <span className="text-base font-medium text-foreground">{client.cpf}</span>
               </div>
 
               <div className="w-full flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium text-foreground/50">
-                    Processo
-                  </span>
+                  <span className="text-xs font-medium text-foreground/50">Processo</span>
 
-                  <span className="text-base font-medium text-foreground">
-                    {client.process}
-                  </span>
+                  <span className="text-base font-medium text-foreground">{client.process}</span>
                 </div>
               </div>
             </div>
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground/50">
-                  Passaporte
-                </span>
+                <span className="text-xs font-medium text-foreground/50">Passaporte</span>
 
-                <span className="text-base font-medium text-foreground">
-                  {client.passport}
-                </span>
+                <span className="text-base font-medium text-foreground">{client.passport}</span>
               </div>
 
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
                   Status
-                  {isETAStatusUpdating && (
-                    <RotateCw
-                      className="h-3 w-3 animate-spin"
-                      strokeWidth={1.5}
-                    />
-                  )}
+                  {isETAStatusUpdating && <RotateCw className="h-3 w-3 animate-spin" strokeWidth={1.5} />}
                 </span>
 
                 <Select
@@ -1105,11 +919,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   }}
                   disabled={isLoading}
                 >
-                  <SelectTrigger
-                    className={cn(
-                      !client.ETAStatus && "[&>span]:text-muted-foreground",
-                    )}
-                  >
+                  <SelectTrigger className={cn(!client.ETAStatus && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status" />
                   </SelectTrigger>
 

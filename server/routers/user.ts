@@ -170,7 +170,7 @@ export const userRouter = router({
                       "O3 Cônjuge ou Filho de um O1 ou O2",
                       "",
                     ],
-                    { message: "Classe de visto inválida" }
+                    { message: "Classe de visto inválida" },
                   )
                   .optional(),
                 category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -245,12 +245,12 @@ export const userRouter = router({
                     message: "Horário do agendamento inválido",
                   });
                 }
-              })
+              }),
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      })
+      }),
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -494,9 +494,8 @@ export const userRouter = router({
             invalid_type_error: "Endereço do perfil inválido",
           }),
           birthDate: z
-            .date({
-              invalid_type_error: "Data de nascimento inválida",
-            })
+            .string({ required_error: "Data de nascimento é obrigatório" })
+            .length(10, "Data inválida")
             .optional(),
           passport: z
             .string({
@@ -518,22 +517,14 @@ export const userRouter = router({
                 "O3 Cônjuge ou Filho de um O1 ou O2",
                 "",
               ],
-              { message: "Classe de visto inválida" }
+              { message: "Classe de visto inválida" },
             )
             .optional(),
           category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
             message: "Categoria é obrigatória",
           }),
-          issuanceDate: z
-            .date({
-              invalid_type_error: "Data de Emissão inválida",
-            })
-            .optional(),
-          expireDate: z
-            .date({
-              invalid_type_error: "Data de Expiração inválida",
-            })
-            .optional(),
+          issuanceDate: z.string({ required_error: "Data de emissão é obrigatório" }).optional(),
+          expireDate: z.string({ required_error: "Data de expiração é obrigatório" }).optional(),
           DSNumber: z
             .string({
               invalid_type_error: "Barcode inválido",
@@ -550,11 +541,7 @@ export const userRouter = router({
               message: "Status de pagamento inválido",
             })
             .optional(),
-          scheduleDate: z
-            .date({
-              invalid_type_error: "Data de Agendamento inválida",
-            })
-            .optional(),
+          scheduleDate: z.string({ required_error: "Data de agendamento é obrigatório" }).optional(),
           scheduleTime: z
             .string({
               invalid_type_error: "Horário do agendamento inválido",
@@ -565,11 +552,7 @@ export const userRouter = router({
               invalid_type_error: "Local do agendamento inválido",
             })
             .optional(),
-          entryDate: z
-            .date({
-              invalid_type_error: "Data de entrada inválida",
-            })
-            .optional(),
+          entryDate: z.string({ required_error: "Data de entrada é obrigatório" }).optional(),
           process: z
             .string({
               invalid_type_error: "Processo inválido",
@@ -609,7 +592,7 @@ export const userRouter = router({
               message: "Horário do agendamento inválido",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const {
@@ -712,6 +695,12 @@ export const userRouter = router({
           break;
       }
 
+      const profileBirthDateFormatted = birthDate ? parse(birthDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileIssuanceDateFormatted = issuanceDate ? parse(issuanceDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileExpireDateFormatted = expireDate ? parse(expireDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileScheduleDateFormatted = scheduleDate ? parse(scheduleDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileEntryDateFormatted = entryDate ? parse(entryDate, "dd/MM/yyyy", new Date()) : undefined;
+
       const profileUpdated = await prisma.profile.create({
         data: {
           DSValid: addDays(new Date(), 30),
@@ -719,16 +708,16 @@ export const userRouter = router({
           name: profileName,
           address: profileAddress,
           cpf: profileCpf,
-          birthDate,
+          birthDate: profileBirthDateFormatted,
           passport,
-          issuanceDate,
-          expireDate,
+          issuanceDate: profileIssuanceDateFormatted,
+          expireDate: profileExpireDateFormatted,
           responsibleCpf,
           protocol,
-          scheduleDate,
+          scheduleDate: profileScheduleDateFormatted,
           scheduleTime,
           scheduleLocation,
-          entryDate,
+          entryDate: profileEntryDateFormatted,
           process,
           visaClass,
           visaType,
@@ -773,7 +762,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -827,7 +816,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -881,7 +870,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -960,7 +949,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -993,7 +982,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -1030,7 +1019,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "filling", "filled", "emitted"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1067,7 +1056,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "approved", "disapproved", "in_progress", "finished"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1104,7 +1093,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["paid", "pending"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1141,7 +1130,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["approved", "disapproved", "analysis"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1178,7 +1167,7 @@ export const userRouter = router({
       z.object({
         userId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { userId, annotation } = opts.input;
@@ -1200,7 +1189,7 @@ export const userRouter = router({
     .input(
       z.object({
         annotationId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { annotationId } = opts.input;
@@ -1218,7 +1207,7 @@ export const userRouter = router({
       z.object({
         annotationId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { annotationId, annotation } = opts.input;
@@ -1305,7 +1294,7 @@ export const userRouter = router({
               message: "As senhas não coincidem, verifique e tente novamente",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const {
@@ -1383,7 +1372,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, comment } = opts.input;
@@ -1411,7 +1400,7 @@ export const userRouter = router({
     .input(
       z.object({
         commentId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { commentId } = opts.input;
@@ -1429,7 +1418,7 @@ export const userRouter = router({
       z.object({
         commentId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { commentId, comment } = opts.input;
@@ -1457,15 +1446,15 @@ export const userRouter = router({
             message: "CPF inválido",
           }),
           profileAddress: z.string(),
-          birthDate: z.date().optional(),
-          CASVDate: z.date().optional(),
-          taxDate: z.date().optional(),
+          birthDate: z.string().optional(),
+          CASVDate: z.string().optional(),
+          taxDate: z.string().optional(),
           shipping: z
             .enum(["A Verificar", "Retirada", "SEDEX", "C-Retirada", "C-SEDEX", ""], {
               message: "Opção de envio inválida",
             })
             .optional(),
-          interviewDate: z.date().optional(),
+          interviewDate: z.string().optional(),
           interviewTime: z.string().optional(),
           passport: z.string().optional(),
           visaType: z
@@ -1483,14 +1472,14 @@ export const userRouter = router({
                 "O3 Cônjuge ou Filho de um O1 ou O2",
                 "",
               ],
-              { message: "Classe de visto inválida" }
+              { message: "Classe de visto inválida" },
             )
             .optional(),
           category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
             message: "Categoria é obrigatória",
           }),
-          issuanceDate: z.date().optional(),
-          expireDate: z.date().optional(),
+          issuanceDate: z.string().optional(),
+          expireDate: z.string().optional(),
           DSNumber: z.string().optional(),
           responsibleCpf: z.string().optional(),
           protocol: z.string().optional(),
@@ -1499,10 +1488,10 @@ export const userRouter = router({
               message: "Status de pagamento inválido",
             })
             .optional(),
-          scheduleDate: z.date().optional(),
+          scheduleDate: z.string().optional(),
           scheduleTime: z.string().optional(),
           scheduleLocation: z.string().optional(),
-          entryDate: z.date().optional(),
+          entryDate: z.string().optional(),
           process: z.string().optional(),
           ETAStatus: z
             .enum(["Em Análise", "Aprovado", "Reprovado", ""], {
@@ -1552,7 +1541,7 @@ export const userRouter = router({
               message: "Horário do agendamento inválido",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const {
@@ -1681,6 +1670,15 @@ export const userRouter = router({
           break;
       }
 
+      const profileBirthDateFormatted = birthDate ? parse(birthDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileIssuanceDateFormatted = issuanceDate ? parse(issuanceDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileExpireDateFormatted = expireDate ? parse(expireDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileCASVDateFormatted = CASVDate ? parse(CASVDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileTaxDateFormatted = taxDate ? parse(taxDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileInterviewDateFormatted = interviewDate ? parse(interviewDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileScheduleDateFormatted = scheduleDate ? parse(scheduleDate, "dd/MM/yyyy", new Date()) : undefined;
+      const profileEntryDateFormatted = entryDate ? parse(entryDate, "dd/MM/yyyy", new Date()) : undefined;
+
       const clientUpdated = await prisma.profile.update({
         where: {
           id: profileId,
@@ -1692,24 +1690,24 @@ export const userRouter = router({
           visaType,
           address: profileAddress,
           cpf: profileCpf,
-          birthDate,
+          birthDate: profileBirthDateFormatted,
           passport,
-          issuanceDate,
-          expireDate,
-          CASVDate,
-          taxDate,
+          issuanceDate: profileIssuanceDateFormatted,
+          expireDate: profileExpireDateFormatted,
+          CASVDate: profileCASVDateFormatted,
+          taxDate: profileTaxDateFormatted,
           shipping,
-          interviewDate,
+          interviewDate: profileInterviewDateFormatted,
           interviewTime,
           category,
           paymentStatus,
           ETAStatus: ETAStatusValue,
           responsibleCpf,
           protocol,
-          scheduleDate,
+          scheduleDate: profileScheduleDateFormatted,
           scheduleTime,
           scheduleLocation,
-          entryDate,
+          entryDate: profileEntryDateFormatted,
           process,
         },
         include: {
@@ -1729,7 +1727,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1749,7 +1747,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1769,7 +1767,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1815,7 +1813,7 @@ export const userRouter = router({
               message: "As senhas não coincidem",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const { actualPassword, newPassword } = opts.input;

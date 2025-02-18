@@ -56,7 +56,7 @@ const profileFormSchema = z
           "O3 Cônjuge ou Filho de um O1 ou O2",
           "",
         ],
-        { message: "Classe de visto inválida" }
+        { message: "Classe de visto inválida" },
       )
       .optional(),
     category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -80,10 +80,7 @@ const profileFormSchema = z
         message: "Status de pagamento inválido",
       })
       .optional(),
-    scheduleDate: z
-      .string({ required_error: "Data de agendamento é obrigatório" })
-
-      .optional(),
+    scheduleDate: z.string({ required_error: "Data de agendamento é obrigatório" }).optional(),
     scheduleTime: z
       .string({
         invalid_type_error: "Horário do agendamento inválido",
@@ -478,7 +475,7 @@ export default function CreateAccountPage() {
           ],
           {
             shouldFocus: true,
-          }
+          },
         )
         .then(() => {
           if (Object.keys(form.formState.errors).length === 0) {
