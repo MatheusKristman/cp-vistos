@@ -44,7 +44,7 @@ export function Footer() {
             </li>
 
             <li>
-              <a href="mailto:cpassessoriavistos@gmail.com">
+              <a href="mailto:contato@cpvistos.com.br">
                 <Image
                   src="/assets/icons/Gmail.svg"
                   alt="Gmail"
