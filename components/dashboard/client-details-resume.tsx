@@ -53,7 +53,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
   useEffect(() => {
     if (client) {
       if (client.birthDate) {
-        console.log({ birthDate: client.birthDate });
+        console.log({ birthDate: client.birthDate.toISOString() });
         console.log({ birthDate: format(client.birthDate, "dd/MM/yyyy") });
       }
 
