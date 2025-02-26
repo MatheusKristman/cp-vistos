@@ -14,6 +14,7 @@ import {
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays, parse } from "date-fns";
+import { TZDate } from "@date-fns/tz";
 
 import { adminProcedure, collaboratorProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
@@ -1685,6 +1686,31 @@ export const userRouter = router({
       const profileScheduleDateFormatted = scheduleDate ? parse(scheduleDate, "dd/MM/yyyy", new Date()) : undefined;
       const profileEntryDateFormatted = entryDate ? parse(entryDate, "dd/MM/yyyy", new Date()) : undefined;
 
+      const profileBirthDate = profileBirthDateFormatted
+        ? new TZDate(profileBirthDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+      const profileIssuanceDate = profileIssuanceDateFormatted
+        ? new TZDate(profileIssuanceDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+      const profileExpireDate = profileExpireDateFormatted
+        ? new TZDate(profileExpireDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+      const profileCASVDate = profileCASVDateFormatted
+        ? new TZDate(profileCASVDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+      const profileTaxDate = profileTaxDateFormatted
+        ? new TZDate(profileTaxDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+      const profileInterviewDate = profileInterviewDateFormatted
+        ? new TZDate(profileInterviewDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+      const profileScheduleDate = profileScheduleDateFormatted
+        ? new TZDate(profileScheduleDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+      const profileEntryDate = profileEntryDateFormatted
+        ? new TZDate(profileEntryDateFormatted.toISOString(), "America/Sao_Paulo")
+        : undefined;
+
       console.log({ profileBirthDateFormatted });
 
       const clientUpdated = await prisma.profile.update({
@@ -1698,24 +1724,24 @@ export const userRouter = router({
           visaType,
           address: profileAddress,
           cpf: profileCpf,
-          birthDate: profileBirthDateFormatted,
+          birthDate: profileBirthDate,
           passport,
-          issuanceDate: profileIssuanceDateFormatted,
-          expireDate: profileExpireDateFormatted,
-          CASVDate: profileCASVDateFormatted,
-          taxDate: profileTaxDateFormatted,
+          issuanceDate: profileIssuanceDate,
+          expireDate: profileExpireDate,
+          CASVDate: profileCASVDate,
+          taxDate: profileTaxDate,
           shipping,
-          interviewDate: profileInterviewDateFormatted,
+          interviewDate: profileInterviewDate,
           interviewTime,
           category,
           paymentStatus,
           ETAStatus: ETAStatusValue,
           responsibleCpf,
           protocol,
-          scheduleDate: profileScheduleDateFormatted,
+          scheduleDate: profileScheduleDate,
           scheduleTime,
           scheduleLocation,
-          entryDate: profileEntryDateFormatted,
+          entryDate: profileEntryDate,
           process,
         },
         include: {
