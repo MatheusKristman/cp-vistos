@@ -67,6 +67,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
   const { mutate: changeProfile, isPending } = trpc.userRouter.getClientDetails.useMutation({
     onSuccess({ client }) {
       console.log({ clientBirthDate: client.birthDate });
+
       setClient(client);
     },
     onError(error) {
