@@ -54,6 +54,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
     if (client) {
       if (client.birthDate) {
         console.log({ birthDate: client.birthDate.toISOString() });
+        console.log({ birthDate: client.birthDate });
         console.log({ birthDate: format(client.birthDate, "dd/MM/yyyy") });
       }
 
@@ -409,7 +410,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 <span className="text-xs font-medium text-foreground/50">Data de Nascimento</span>
 
                 <span className="text-base font-medium text-foreground">
-                  {client.birthDate ? format(client.birthDate, "dd/MM/yyyy") : "--/--/----"}
+                  {client.birthDate ? format(client.birthDate.toISOString(), "dd/MM/yyyy") : "--/--/----"}
                 </span>
               </div>
 
