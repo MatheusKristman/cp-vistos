@@ -23,7 +23,7 @@ export function DashboardMenu() {
   }, [data, setRole]);
 
   return (
-    <div className="hidden lg:flex p-6 h-full min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-96px)] w-[250px] flex-col justify-between border-r border-secondary lg:fixed lg:top-24 lg:left-0">
+    <div className="hidden lg:flex p-6 h-full lg:min-h-full w-[250px] flex-col justify-between border-r border-secondary lg:fixed lg:top-0 lg:left-0">
       <ul className="mt-4 flex flex-col gap-6">
         <li
           className={cn("text-xl", {
@@ -31,6 +31,22 @@ export function DashboardMenu() {
           })}
         >
           <Link href="/perfil/clientes">Clientes</Link>
+        </li>
+
+        <li
+          className={cn("text-xl", {
+            "font-semibold": pathname === "/perfil/prospects",
+          })}
+        >
+          <Link href="/perfil/prospects">Prospects</Link>
+        </li>
+
+        <li
+          className={cn("text-xl", {
+            "font-semibold": pathname === "/perfil/arquivados",
+          })}
+        >
+          <Link href="/perfil/arquivados">Arquivados</Link>
         </li>
 
         <li
@@ -51,6 +67,22 @@ export function DashboardMenu() {
               })}
             >
               <Link href="/perfil/gerenciar-colaboradores">Colaboradores</Link>
+            </li>
+
+            <li
+              className={cn("text-xl", {
+                "font-semibold": pathname === "/perfil/gerenciar-banners",
+              })}
+            >
+              <Link href="/perfil/gerenciar-banners">Gerenciar Banners</Link>
+            </li>
+
+            <li
+              className={cn("text-xl", {
+                "font-semibold": pathname === "/perfil/alterar-senha",
+              })}
+            >
+              <Link href="/perfil/alterar-senha">Alterar Senha</Link>
             </li>
           </>
         )}

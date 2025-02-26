@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
-import { Montserrat as FontSans } from "next/font/google";
+import { Poppins as FontSans } from "next/font/google";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { HeroUIProvider } from "@heroui/react";
 
-import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
-
-import "./globals.css";
 import { NextAuthSessionProvider } from "@/providers/sessionProvider";
 import TRPCProvider from "@/providers/TRPCProvider";
 
-const montserrat = FontSans({
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { cn } from "@/lib/utils";
+
+import "./globals.css";
+
+const poppins = FontSans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
@@ -29,11 +35,22 @@ export default function RootLayout({
       <body
         className={cn(
           "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
-          montserrat.variable
+          poppins.variable,
         )}
       >
         <NextAuthSessionProvider>
-          <TRPCProvider>{children}</TRPCProvider>
+          <TRPCProvider>
+            <NextSSRPlugin
+              /**
+               * The `extractRouterConfig` will extract **only** the route configs
+               * from the router to prevent additional information from being
+               * leaked to the client. The data passed to the client is the same
+               * as if you were to fetch `/api/uploadthing` directly.
+               */
+              routerConfig={extractRouterConfig(ourFileRouter)}
+            />
+            <HeroUIProvider>{children}</HeroUIProvider>
+          </TRPCProvider>
         </NextAuthSessionProvider>
         <Toaster />
       </body>

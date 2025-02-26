@@ -5,27 +5,27 @@
 @layer base {
   :root {
     --background: 0 100% 100%;
-    --foreground: 234 30% 26%;
+    --foreground: 221 32% 28%;
 
-    --card: 220 26% 37%;
-    --card-foreground: 0 0% 100%;
+    --card: 0, 0%, 100%;
+    --card-foreground: 221 32% 28%;
 
     --popover: 0 0% 0%;
     --popover-foreground: 0 0% 0%;
 
-    --primary: 233 44% 32%;
-    --primary-foreground: 197 17% 92%;
+    --primary: 214 64% 44%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 250 25% 95%;
-    --secondary-foreground: 234 30% 26%;
+    --secondary: 217 59% 85%;
+    --secondary-foreground: 221 32% 28%;
 
-    --muted: 203 19% 92%;
-    --muted-foreground: 222 37% 77%;
+    --muted: 217 59% 85%;
+    --muted-foreground: 222 13% 64%;
 
-    --accent: 0 0% 0%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 217 59% 85%;
+    --accent-foreground: 221 32% 28%;
 
-    --destructive: 0 46% 59%;
+    --destructive: 359 85% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --caution: 43 66% 59%;
@@ -34,8 +34,8 @@
     --confirm: 137 46% 59%;
     --confirm-foreground: 0 0% 100%;
 
-    --border: 222 37% 77%;
-    --input: 0 0% 0%;
+    --border: 217 59% 85%;
+    --input: 217 59% 85%;
     --ring: 0 0% 0%;
 
     --radius: 0.5rem;
@@ -72,6 +72,12 @@
   }
 }
 
+html,
+body,
+:root {
+  overflow-x: hidden;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -82,6 +88,90 @@
   }
 }
 
+.active {
+  @apply lg:bg-secondary/60;
+}
+
+.active > div {
+  @apply w-6;
+}
+
 .PhoneInputInput {
   @apply bg-transparent outline-none placeholder:text-muted-foreground;
+}
+
+.scroll-area-body > div {
+  height: 100%;
+}
+
+.about-text-animation {
+  --y-initial: -50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 1024px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: -50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
+}
+
+.how-it-works-text-animation {
+  --y-initial: -50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 640px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: -50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
+}
+
+.services-left-buttons-animation {
+  --y-initial: 50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 640px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: -50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
+}
+
+.services-right-buttons-animation {
+  --y-initial: 50px;
+  --y-animate: 0px;
+  --x-initial: 0px;
+  --x-animate: 0px;
+  --opacity-initial: 0;
+  --opacity-animate: 1;
+
+  @media (min-width: 640px) {
+    --y-initial: 0px;
+    --y-animate: 0px;
+    --x-initial: 50px;
+    --x-animate: 0px;
+    --opacity-initial: 0;
+    --opacity-animate: 1;
+  }
 }

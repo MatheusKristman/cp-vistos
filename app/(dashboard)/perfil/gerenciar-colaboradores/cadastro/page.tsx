@@ -1,16 +1,17 @@
 "use client";
 
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
 import { trpc } from "@/lib/trpc-client";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -77,11 +78,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>Nome</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Insira o nome do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Insira o nome do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -93,11 +99,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>E-mail</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Insira o e-mail do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Insira o e-mail do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -111,11 +122,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>Senha</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Insira a senha do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Insira a senha do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -127,11 +143,16 @@ export default function CollaboratorRegisterPage() {
                 control={form.control}
                 name="passwordConfirm"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel>Confirmar Senha</FormLabel>
 
                     <FormControl>
-                      <Input disabled={isPending} placeholder="Confirme a senha do colaborador" {...field} />
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending}
+                        placeholder="Confirme a senha do colaborador"
+                        {...field}
+                      />
                     </FormControl>
 
                     <FormMessage />

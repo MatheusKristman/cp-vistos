@@ -1,14 +1,29 @@
 "use client";
 
 import Link from "next/link";
+import { toast } from "sonner";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { CollaboratorBox } from "./components/collaborator-box";
+
 import { trpc } from "@/lib/trpc-client";
 
 export default function CollaboratorManagementPage() {
+  const router = useRouter();
+
   const { data } = trpc.collaboratorRouter.getCollaborators.useQuery();
+  const { data: roleData } = trpc.userRouter.getRole.useQuery();
+
+  useEffect(() => {
+    if (roleData !== undefined && roleData.role !== "ADMIN") {
+      toast.error("Acesso não autorizado");
+
+      router.push("/perfil/clientes");
+    }
+  }, [roleData, router]);
 
   return (
     <div className="w-full lg:w-[calc(100%-250px)] px-6 sm:px-16 lg:ml-[250px] lg:px-40">

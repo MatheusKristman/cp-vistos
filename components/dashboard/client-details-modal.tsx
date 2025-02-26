@@ -34,7 +34,7 @@ export function ClientDetailsModal() {
     unsetToNewProfile,
   } = useClientDetailsModalStore();
 
-  if (!client) {
+  if (isModalOpen && !client) {
     return <div>Loading...</div>;
   }
 
@@ -50,7 +50,7 @@ export function ClientDetailsModal() {
       unsetToEditProfile();
       unsetToForm();
       unsetToNewProfile();
-    }, 300);
+    }, 500);
   }
 
   return (
@@ -70,7 +70,7 @@ export function ClientDetailsModal() {
             animate="animate"
             exit="exit"
             variants={ModalAnimation}
-            className="w-full max-w-[800px] bg-white p-6 inline-block align-middle overflow-x-hidden text-left"
+            className="w-full max-w-[800px] bg-white rounded-2xl p-6 inline-block align-middle overflow-x-hidden text-left"
           >
             <AnimatePresence initial={false} mode="wait">
               {isResume && (

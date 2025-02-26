@@ -211,7 +211,9 @@ export type UserWithForm = User & {
 };
 
 export type ProfilesWithUserAndForm = Profile & {
-  user: User;
+  user: User & {
+    profiles: Profile[];
+  };
   form: Form | null;
   comments: Comments[];
 };

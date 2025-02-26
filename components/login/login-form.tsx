@@ -1,17 +1,24 @@
 "use client";
 
-// TODO: adicionar loading no botão de entrar
-
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { LoginCurve } from "iconsax-react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { signIn, useSession } from "next-auth/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Autoplay from "embla-carousel-autoplay";
+import { AnimatePresence, motion } from "framer-motion";
 
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,12 +29,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { LoginHeader } from "./login-header";
+
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string().min(1, "E-mail obrigatório").email("E-mail inválido"),
-  password: z.string().min(1, "Senha inválida"),
+  password: z.string().min(1, "Senha obrigatória"),
 });
+
+const CAROUSEL_ITEMS = [
+  {
+    title: "Conectando você aos seus sonhos",
+    background: "bg-login-1",
+  },
+  {
+    title: "Transformando planos em conquistas",
+    background: "bg-login-2",
+  },
+  {
+    title: "Realize seus planos, nós cuidamos do resto",
+    background: "bg-login-3",
+  },
+];
 
 export function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,6 +59,9 @@ export function LoginForm() {
   const [passwordType, setPasswordType] = useState<"text" | "password">(
     "password",
   );
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
 
   const router = useRouter();
   const session = useSession();
@@ -48,14 +75,23 @@ export function LoginForm() {
   });
 
   useEffect(() => {
-    console.log(session);
-
     if (!userSubmitted && session && session.status === "authenticated") {
-      console.log("Usuário não enviou e está logado");
-      console.log({ userSubmitted });
       router.push("/");
     }
   }, [session, router, setUserSubmitted, userSubmitted]);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   function togglePasswordType() {
     if (passwordType === "text") {
@@ -96,17 +132,70 @@ export function LoginForm() {
   }
 
   return (
-    <section className="min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-96px)] w-full grid grid-cols-2">
-      <div className="w-full h-full relative col-span-2 sm:col-span-1 flex flex-col items-center justify-between sm:justify-center gap-12 p-6">
-        <div className="w-full flex flex-col items-center justify-center pt-36 sm:pt-0">
-          <h1 className="text-3xl sm:text-4xl font-semibold text-center mb-12">
-            Entre na sua conta.
-          </h1>
+    <section className="min-h-screen w-full grid grid-cols-2">
+      <div className="hidden lg:block lg:p-9 lg:pr-0">
+        <Carousel
+          setApi={setApi}
+          className="h-full rounded-[45px] overflow-hidden"
+          opts={{ loop: true }}
+          plugins={[Autoplay({ delay: 10000 })]}
+        >
+          <LoginHeader className="hidden lg:flex z-10" />
+
+          <CarouselContent className="h-full ml-0">
+            {CAROUSEL_ITEMS.map((item, index) => (
+              <CarouselItem key={index} className="h-full pl-0 basis-full">
+                <div
+                  className={cn(
+                    "relative w-full h-full bg-cover bg-center flex sm:justify-end after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0 after:bg-gradient-to-b after:from-transparent after:to-black/50",
+                    item.background,
+                  )}
+                >
+                  <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10">
+                    <h5 className="text-white font-semibold text-center text-5xl max-w-xl mx-auto">
+                      {item.title}
+                    </h5>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+
+          <div className="w-full flex items-center justify-center gap-6 absolute bottom-6 left-1/2 -translate-x-1/2">
+            {Array.from({ length: count }).map((_, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "rounded-full size-3 bg-white/70 transition-all duration-500",
+                  {
+                    "bg-white w-11": index === current,
+                  },
+                )}
+              />
+            ))}
+          </div>
+        </Carousel>
+      </div>
+
+      <div className="w-full h-full relative col-span-2 flex flex-col items-center justify-between gap-16 p-6 pt-28 sm:px-16 sm:justify-center lg:col-span-1 lg:px-24 lg:pb-9">
+        <LoginHeader className="lg:hidden" />
+
+        <div className="w-full flex flex-col items-center justify-center gap-16 my-auto sm:max-w-lg">
+          <div className="w-full flex flex-col items-center gap-6">
+            <h1 className="text-3xl font-bold text-foreground text-center !leading-[110%] sm:text-4xl">
+              Bem-vindo(a) de Volta
+            </h1>
+
+            <p className="text-base text-center text-foreground/70 max-w-prose sm:text-xl">
+              Entre para acompanhar seu processo e ter acesso a todos os nossos
+              serviços.
+            </p>
+          </div>
 
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="w-full max-w-xs flex flex-col gap-6"
+              className="w-full flex flex-col gap-12"
             >
               <div className="w-full flex flex-col space-y-4">
                 <FormField
@@ -114,12 +203,13 @@ export function LoginForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-foreground">
+                      <FormLabel className="text-base font-medium text-foreground/70">
                         E-mail
                       </FormLabel>
 
                       <FormControl>
                         <Input
+                          placeholder="Insira seu e-mail"
                           disabled={isSubmitting}
                           className={cn({
                             "border-red-500": form.formState.errors.email,
@@ -138,13 +228,14 @@ export function LoginForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-base font-medium text-foreground">
+                      <FormLabel className="text-base font-medium text-foreground/70">
                         Senha
                       </FormLabel>
 
                       <FormControl>
                         <div className="relative">
                           <Input
+                            placeholder="Insira sua senha"
                             disabled={isSubmitting}
                             type={passwordType}
                             className={cn({
@@ -164,9 +255,9 @@ export function LoginForm() {
                           >
                             <span className="cursor-pointer">
                               {passwordType === "password" ? (
-                                <EyeOff color="#9CABCB" />
+                                <EyeOff color="#C0D2EF" />
                               ) : (
-                                <Eye color="#9CABCB" />
+                                <Eye color="#C0D2EF" />
                               )}
                             </span>
                           </Button>
@@ -182,34 +273,28 @@ export function LoginForm() {
               <Button
                 size="xl"
                 disabled={isSubmitting}
-                className="flex items-center gap-2"
+                className="text-xl flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="animate-spin" />
                     Entrando
+                    <Loader2 className="animate-spin" />
                   </>
                 ) : (
-                  <>Entrar</>
+                  <>
+                    Entrar
+                    <LoginCurve />
+                  </>
                 )}
               </Button>
             </form>
           </Form>
         </div>
 
-        <span className="w-full text-sm text-[#8396BE] text-center sm:absolute sm:bottom-6 sm:left-1/2 sm:-translate-x-1/2">
+        <span className="w-full text-sm text-[#8396BE] text-center sm:max-w-lg">
           Esqueceu seu acesso? Não se preocupe! Entre em contato conosco para
           recuperar sua conta.
         </span>
-      </div>
-
-      <div className="hidden sm:block relative w-full h-full">
-        <Image
-          src="/assets/images/login.jpeg"
-          alt="Login"
-          fill
-          className="object-cover object-center"
-        />
       </div>
     </section>
   );

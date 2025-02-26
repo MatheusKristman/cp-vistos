@@ -1,9 +1,17 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import { withUt } from "uploadthing/tw";
+import { heroui } from "@heroui/react";
 
-const config = {
+export default withUt({
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -57,6 +65,25 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      backgroundImage: {
+        "mobile-hero": "url('/assets/images/mobile-hero-bg.png')",
+        "tablet-hero": "url('/assets/images/tablet-hero-bg.png')",
+        "desktop-hero": "url('/assets/images/desktop-hero-bg.png')",
+        "mobile-about": "url('/assets/images/mobile-about-bg.png')",
+        "tablet-about": "url('/assets/images/tablet-about-bg.png')",
+        "desktop-about": "url('/assets/images/desktop-about-bg.png')",
+        "mobile-services": "url('/assets/images/mobile-services.png')",
+        "desktop-services": "url('/assets/images/desktop-services.png')",
+        "mobile-testimonial": "url('/assets/images/mobile-testimonial-bg.png')",
+        "tablet-testimonial": "url('/assets/images/tablet-testimonial-bg.png')",
+        "desktop-testimonial": "url('/assets/images/desktop-testimonial-bg.png')",
+        "login-1": "url('/assets/images/login-1.png')",
+        "login-2": "url('/assets/images/login-2.png')",
+        "login-3": "url('/assets/images/login-3.png')",
+        "privacy-policy-mobile": "url('/assets/images/privacy-policy-bg-mobile.png')",
+        "privacy-policy-tablet": "url('/assets/images/privacy-policy-bg-tablet.png')",
+        "privacy-policy-desktop": "url('/assets/images/privacy-policy-bg-desktop.png')",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -81,7 +108,5 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config;
-
-export default config;
+  plugins: [require("tailwindcss-animate"), heroui()],
+});

@@ -1,0 +1,768 @@
+"use client";
+
+import { z } from "zod";
+import { toast } from "sonner";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import PhoneInput from "react-phone-number-input";
+import { Form as FormType } from "@prisma/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, Loader2, Save } from "lucide-react";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc-client";
+import useFormStore from "@/constants/stores/useFormStore";
+
+const formSchema = z
+  .object({
+    hasUSAOrganizationOrResident: z.enum(["Sim", "Não"]),
+    organizationOrUSAResidentName: z.string(),
+    organizationOrUSAResidentRelation: z.string(),
+    organizationOrUSAResidentAddress: z.string(),
+    organizationOrUSAResidentZipCode: z.string(),
+    organizationOrUSAResidentCity: z.string(),
+    organizationOrUSAResidentState: z.string(),
+    organizationOrUSAResidentCountry: z.string(),
+    organizationOrUSAResidentTel: z.string(),
+    organizationOrUSAResidentEmail: z.string(),
+  })
+  .superRefine(
+    (
+      {
+        hasUSAOrganizationOrResident,
+        organizationOrUSAResidentName,
+        organizationOrUSAResidentRelation,
+        organizationOrUSAResidentAddress,
+        organizationOrUSAResidentZipCode,
+        organizationOrUSAResidentCity,
+        organizationOrUSAResidentState,
+        organizationOrUSAResidentCountry,
+        organizationOrUSAResidentTel,
+        organizationOrUSAResidentEmail,
+      },
+      ctx,
+    ) => {
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentName === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentName"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentRelation === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentRelation"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentAddress === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentAddress"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentZipCode === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentZipCode"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentCity === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentCity"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentState === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentState"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentCountry === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentCountry"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentTel === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentTel"],
+        });
+      }
+
+      if (
+        hasUSAOrganizationOrResident === "Sim" &&
+        organizationOrUSAResidentEmail === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo vazio, preencha para prosseguir",
+          path: ["organizationOrUSAResidentEmail"],
+        });
+      }
+    },
+  );
+
+interface Props {
+  profileId: string;
+  currentForm: FormType;
+  isEditing: boolean;
+}
+
+export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
+  const { redirectStep, setRedirectStep } = useFormStore();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      hasUSAOrganizationOrResident: currentForm.hasUSAOrganizationOrResident
+        ? "Sim"
+        : "Não",
+      organizationOrUSAResidentName: currentForm.organizationOrUSAResidentName
+        ? currentForm.organizationOrUSAResidentName
+        : "",
+      organizationOrUSAResidentRelation:
+        currentForm.organizationOrUSAResidentRelation
+          ? currentForm.organizationOrUSAResidentRelation
+          : "",
+      organizationOrUSAResidentAddress:
+        currentForm.organizationOrUSAResidentAddress
+          ? currentForm.organizationOrUSAResidentAddress
+          : "",
+      organizationOrUSAResidentZipCode:
+        currentForm.organizationOrUSAResidentZipCode
+          ? currentForm.organizationOrUSAResidentZipCode
+          : "",
+      organizationOrUSAResidentCity: currentForm.organizationOrUSAResidentCity
+        ? currentForm.organizationOrUSAResidentCity
+        : "",
+      organizationOrUSAResidentState: currentForm.organizationOrUSAResidentState
+        ? currentForm.organizationOrUSAResidentState
+        : "",
+      organizationOrUSAResidentCountry:
+        currentForm.organizationOrUSAResidentCountry
+          ? currentForm.organizationOrUSAResidentCountry
+          : "",
+      organizationOrUSAResidentTel: currentForm.organizationOrUSAResidentTel
+        ? currentForm.organizationOrUSAResidentTel
+        : "",
+      organizationOrUSAResidentEmail: currentForm.organizationOrUSAResidentEmail
+        ? currentForm.organizationOrUSAResidentEmail
+        : "",
+    },
+  });
+
+  const hasUSAOrganizationOrResident = form.watch(
+    "hasUSAOrganizationOrResident",
+  );
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
+  const { mutate: submitUsaContact, isPending } =
+    trpc.formsRouter.submitUsaContact.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.isEditing) {
+          router.push(`/resumo-formulario/${profileId}`);
+        } else {
+          router.push(`/formulario/${profileId}?formStep=7`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error(
+            "Erro ao enviar as informações do formulário, tente novamente mais tarde",
+          );
+        }
+      },
+    });
+  const { mutate: saveUsaContact, isPending: isSavePending } =
+    trpc.formsRouter.saveUsaContact.useMutation({
+      onSuccess: (data) => {
+        toast.success(data.message);
+        utils.formsRouter.getForm.invalidate();
+
+        if (data.redirectStep !== undefined) {
+          router.push(`/formulario/${profileId}?formStep=${data.redirectStep}`);
+        }
+      },
+      onError: (error) => {
+        console.error(error.data);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao salvar os dados");
+        }
+      },
+    });
+
+  useEffect(() => {
+    if (redirectStep !== null) {
+      const values = form.getValues();
+
+      saveUsaContact({
+        profileId,
+        redirectStep,
+        hasUSAOrganizationOrResident:
+          values.hasUSAOrganizationOrResident ??
+          (currentForm.hasUSAOrganizationOrResident ? "Sim" : "Não"),
+        organizationOrUSAResidentName:
+          values.organizationOrUSAResidentName !== ""
+            ? values.organizationOrUSAResidentName
+            : !currentForm.organizationOrUSAResidentName
+              ? ""
+              : currentForm.organizationOrUSAResidentName,
+        organizationOrUSAResidentRelation:
+          values.organizationOrUSAResidentRelation !== ""
+            ? values.organizationOrUSAResidentRelation
+            : !currentForm.organizationOrUSAResidentRelation
+              ? ""
+              : currentForm.organizationOrUSAResidentRelation,
+        organizationOrUSAResidentAddress:
+          values.organizationOrUSAResidentAddress !== ""
+            ? values.organizationOrUSAResidentAddress
+            : !currentForm.organizationOrUSAResidentAddress
+              ? ""
+              : currentForm.organizationOrUSAResidentAddress,
+        organizationOrUSAResidentZipCode:
+          values.organizationOrUSAResidentZipCode !== ""
+            ? values.organizationOrUSAResidentZipCode
+            : !currentForm.organizationOrUSAResidentZipCode
+              ? ""
+              : currentForm.organizationOrUSAResidentZipCode,
+        organizationOrUSAResidentCity:
+          values.organizationOrUSAResidentCity !== ""
+            ? values.organizationOrUSAResidentCity
+            : !currentForm.organizationOrUSAResidentCity
+              ? ""
+              : currentForm.organizationOrUSAResidentCity,
+        organizationOrUSAResidentState:
+          values.organizationOrUSAResidentState !== ""
+            ? values.organizationOrUSAResidentState
+            : !currentForm.organizationOrUSAResidentState
+              ? ""
+              : currentForm.organizationOrUSAResidentState,
+        organizationOrUSAResidentCountry:
+          values.organizationOrUSAResidentCountry !== ""
+            ? values.organizationOrUSAResidentCountry
+            : !currentForm.organizationOrUSAResidentCountry
+              ? ""
+              : currentForm.organizationOrUSAResidentCountry,
+        organizationOrUSAResidentTel:
+          values.organizationOrUSAResidentTel !== ""
+            ? values.organizationOrUSAResidentTel
+            : !currentForm.organizationOrUSAResidentTel
+              ? ""
+              : currentForm.organizationOrUSAResidentTel,
+        organizationOrUSAResidentEmail:
+          values.organizationOrUSAResidentEmail !== ""
+            ? values.organizationOrUSAResidentEmail
+            : !currentForm.organizationOrUSAResidentEmail
+              ? ""
+              : currentForm.organizationOrUSAResidentEmail,
+      });
+      setRedirectStep(null);
+    }
+  }, [redirectStep, setRedirectStep, saveUsaContact, profileId]);
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    submitUsaContact({ ...values, profileId, step: 7, isEditing });
+  }
+
+  function onSave() {
+    const values = form.getValues();
+
+    saveUsaContact({
+      profileId,
+      hasUSAOrganizationOrResident:
+        values.hasUSAOrganizationOrResident ??
+        (currentForm.hasUSAOrganizationOrResident ? "Sim" : "Não"),
+      organizationOrUSAResidentName:
+        values.organizationOrUSAResidentName !== ""
+          ? values.organizationOrUSAResidentName
+          : !currentForm.organizationOrUSAResidentName
+            ? ""
+            : currentForm.organizationOrUSAResidentName,
+      organizationOrUSAResidentRelation:
+        values.organizationOrUSAResidentRelation !== ""
+          ? values.organizationOrUSAResidentRelation
+          : !currentForm.organizationOrUSAResidentRelation
+            ? ""
+            : currentForm.organizationOrUSAResidentRelation,
+      organizationOrUSAResidentAddress:
+        values.organizationOrUSAResidentAddress !== ""
+          ? values.organizationOrUSAResidentAddress
+          : !currentForm.organizationOrUSAResidentAddress
+            ? ""
+            : currentForm.organizationOrUSAResidentAddress,
+      organizationOrUSAResidentZipCode:
+        values.organizationOrUSAResidentZipCode !== ""
+          ? values.organizationOrUSAResidentZipCode
+          : !currentForm.organizationOrUSAResidentZipCode
+            ? ""
+            : currentForm.organizationOrUSAResidentZipCode,
+      organizationOrUSAResidentCity:
+        values.organizationOrUSAResidentCity !== ""
+          ? values.organizationOrUSAResidentCity
+          : !currentForm.organizationOrUSAResidentCity
+            ? ""
+            : currentForm.organizationOrUSAResidentCity,
+      organizationOrUSAResidentState:
+        values.organizationOrUSAResidentState !== ""
+          ? values.organizationOrUSAResidentState
+          : !currentForm.organizationOrUSAResidentState
+            ? ""
+            : currentForm.organizationOrUSAResidentState,
+      organizationOrUSAResidentCountry:
+        values.organizationOrUSAResidentCountry !== ""
+          ? values.organizationOrUSAResidentCountry
+          : !currentForm.organizationOrUSAResidentCountry
+            ? ""
+            : currentForm.organizationOrUSAResidentCountry,
+      organizationOrUSAResidentTel:
+        values.organizationOrUSAResidentTel !== ""
+          ? values.organizationOrUSAResidentTel
+          : !currentForm.organizationOrUSAResidentTel
+            ? ""
+            : currentForm.organizationOrUSAResidentTel,
+      organizationOrUSAResidentEmail:
+        values.organizationOrUSAResidentEmail !== ""
+          ? values.organizationOrUSAResidentEmail
+          : !currentForm.organizationOrUSAResidentEmail
+            ? ""
+            : currentForm.organizationOrUSAResidentEmail,
+    });
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full flex flex-col flex-grow gap-6"
+      >
+        <h2 className="w-full text-center text-2xl sm:text-3xl text-foreground font-semibold mb-6">
+          Contato nos Estados Unidos
+        </h2>
+
+        <div className="w-full flex flex-col gap-12 justify-between flex-grow">
+          <div className="w-full flex flex-col">
+            <FormField
+              control={form.control}
+              name="hasUSAOrganizationOrResident"
+              render={({ field }) => (
+                <FormItem className="flex flex-col gap-2 mb-6">
+                  <FormLabel className="text-foreground">
+                    Você possui contato com alguém dos EUA?
+                  </FormLabel>
+
+                  <FormControl>
+                    <RadioGroup
+                      disabled={isPending || isSavePending}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Não" />
+                        </FormControl>
+
+                        <FormLabel className="font-normal">Não</FormLabel>
+                      </FormItem>
+
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sim" />
+                        </FormControl>
+
+                        <FormLabel className="font-normal">Sim</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+
+                  <FormMessage className="text-sm text-destructive" />
+                </FormItem>
+              )}
+            />
+
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6",
+                hasUSAOrganizationOrResident === "Não" && "hidden",
+              )}
+            >
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentName"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      Nome completo da pessoa ou Organização
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentRelation"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      Qual é a relação do contato com você?
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6",
+                hasUSAOrganizationOrResident === "Não" && "hidden",
+              )}
+            >
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentAddress"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      Endereço do contato nos EUA
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentZipCode"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      Zip code
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        maxLength={5}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
+                hasUSAOrganizationOrResident === "Não" && "hidden",
+              )}
+            >
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentCity"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      Cidade
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentState"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      Estado
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentCountry"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      País
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6",
+                hasUSAOrganizationOrResident === "Não" && "hidden",
+              )}
+            >
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentTel"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      Telefone
+                    </FormLabel>
+
+                    <FormControl>
+                      <PhoneInput
+                        limitMaxLength
+                        smartCaret={false}
+                        placeholder="Insira seu telefone..."
+                        defaultCountry="BR"
+                        className={cn(
+                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                          {
+                            "input-error": false,
+                          },
+                        )}
+                        disabled={isPending || isSavePending}
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="organizationOrUSAResidentEmail"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel className="text-foreground text-sm">
+                      E-mail
+                    </FormLabel>
+
+                    <FormControl>
+                      <Input
+                        className="!mt-auto"
+                        disabled={isPending || isSavePending}
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
+            {isEditing ? (
+              <>
+                <Button
+                  size="xl"
+                  type="submit"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                >
+                  {isPending ? (
+                    <>
+                      Salvando
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Salvar
+                      <Save className="size-5" strokeWidth={1.5} />
+                    </>
+                  )}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={onSave}
+                >
+                  {isSavePending ? (
+                    <>
+                      Salvando
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Salvar
+                      <Save className="size-5" strokeWidth={1.5} />
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  size="xl"
+                  type="submit"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                >
+                  {isPending ? (
+                    <>
+                      Enviando
+                      <Loader2
+                        className="size-5 animate-spin"
+                        strokeWidth={1.5}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Proximo
+                      <ArrowRight className="size-5" strokeWidth={1.5} />
+                    </>
+                  )}
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </form>
+    </Form>
+  );
+}

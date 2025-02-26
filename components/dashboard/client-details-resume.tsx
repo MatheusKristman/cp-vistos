@@ -1,22 +1,25 @@
-"use client";
-
-import { Edit, NotepadText, RotateCw, MessageCircleMore, FileText, Plus } from "lucide-react";
+import { Edit, NotepadText, RotateCw, MessageCircleMore, FileText, Plus, UserRoundPlusIcon } from "lucide-react";
 import Image from "next/image";
-import { format } from "date-fns";
 import { toast } from "sonner";
+import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Category, ETAStatus, PaymentStatus, StatusDS, VisaStatus } from "@prisma/client";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
+import { ConfirmActiveStatusModal } from "./confirm-active-status-modal";
+import { ConfirmArchiveStatusModal } from "./confirm-archive-status-modal";
+import { ConfirmProspectStatusModal } from "./confirm-prospect-status-modal";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+import useUserStore from "@/constants/stores/useUserStore";
+import { FormAnimation } from "@/constants/animations/modal";
+import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
+
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { StatusDS, VisaStatus } from "@prisma/client";
 import { trpc } from "@/lib/trpc-client";
-import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
-import { useEffect, useState } from "react";
-import { FormAnimation } from "@/constants/animations/modal";
-import useUserStore from "@/constants/stores/useUserStore";
 
 interface Props {
   handleClose: () => void;
@@ -38,25 +41,43 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
   const [statusDS, setStatusDS] = useState("");
   const [visaStatus, setVisaStatus] = useState("");
+  const [profileSelected, setProfileSelected] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [ETAStatusValue, setETAStatusValue] = useState("");
+  const [isConfirmArchiveStatusOpen, setConfirmArchiveStatusOpen] = useState(false);
+  const [isConfirmProspectStatusOpen, setConfirmProspectStatusOpen] = useState(false);
+  const [isConfirmActiveStatusOpen, setConfirmActiveStatusOpen] = useState(false);
 
   const utils = trpc.useUtils();
-
-  useEffect(() => {
-    console.log(role);
-  }, [role]);
 
   useEffect(() => {
     if (client) {
       setStatusDS(client.statusDS);
       setVisaStatus(client.visaStatus);
+      setPaymentStatus(client.paymentStatus);
+      setETAStatusValue(client.ETAStatus);
     }
-  }, [client, statusDS, visaStatus]);
+  }, [client]);
 
+  const { mutate: changeProfile, isPending } = trpc.userRouter.getClientDetails.useMutation({
+    onSuccess({ client }) {
+      setClient(client);
+    },
+    onError(error) {
+      console.error(error.data);
+
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao abrir os detalhes do perfil!");
+      }
+    },
+  });
   const { mutate: updateDSValidationDate, isPending: isDSValidPending } =
     trpc.userRouter.updateDSValidationDate.useMutation({
       onSuccess: (data) => {
         setClient(data.updatedClient);
-        utils.userRouter.getClients.invalidate();
+        utils.userRouter.getActiveClients.invalidate();
         toast.success("Data do Barcode atualizada");
       },
       onError: (error) => {
@@ -73,7 +94,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
     onSuccess: (data) => {
       setClient(data.updatedClient);
       setStatusDS(data.status);
-      utils.userRouter.getClients.invalidate();
+      utils.userRouter.getActiveClients.invalidate();
     },
     onError: (error) => {
       console.error(error);
@@ -89,7 +110,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
     onSuccess: (data) => {
       setClient(data.updatedClient);
       setVisaStatus(data.status);
-      utils.userRouter.getClients.invalidate();
+      utils.userRouter.getActiveClients.invalidate();
     },
     onError: (error) => {
       console.error(error);
@@ -101,6 +122,47 @@ export function ClientDetailsResume({ handleClose }: Props) {
       }
     },
   });
+  const { mutate: updatePaymentStatus, isPending: isPaymentStatusUpdating } =
+    trpc.userRouter.updatePaymentStatus.useMutation({
+      onSuccess: (data) => {
+        setClient(data.updatedClient);
+        setPaymentStatus(data.status);
+        utils.userRouter.getActiveClients.invalidate();
+      },
+      onError: (error) => {
+        console.error(error);
+
+        if (error.data && error.data.code === "NOT_FOUND") {
+          toast.error(error.message);
+        } else {
+          toast.error("Ocorreu um erro ao atualizar o status do pagamento");
+        }
+      },
+    });
+  const { mutate: updateETAStatus, isPending: isETAStatusUpdating } = trpc.userRouter.updateETAStatus.useMutation({
+    onSuccess: (data) => {
+      setClient(data.updatedClient);
+      setETAStatusValue(data.status);
+      utils.userRouter.getActiveClients.invalidate();
+    },
+    onError: (error) => {
+      console.error(error);
+
+      if (error.data && error.data.code === "NOT_FOUND") {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocorreu um erro ao atualizar o status");
+      }
+    },
+  });
+
+  const isLoading =
+    isVisaStatusUpdating ||
+    isStatusDSUpdating ||
+    isDSValidPending ||
+    isPaymentStatusUpdating ||
+    isETAStatusUpdating ||
+    isPending;
 
   function handleAnnotation() {
     unsetToResume();
@@ -141,13 +203,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
       <div className="w-full flex flex-col-reverse gap-4 mb-9 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">Conta: {client.user.name}</h1>
 
-        <Button
-          onClick={handleClose}
-          variant="link"
-          size="icon"
-          className="self-end"
-          disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
-        >
+        <Button onClick={handleClose} variant="link" size="icon" className="self-end" disabled={isLoading}>
           <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
         </Button>
       </div>
@@ -158,13 +214,39 @@ export function ClientDetailsResume({ handleClose }: Props) {
             <div className="flex flex-col">
               <span className="text-sm text-foreground/50 font-medium">E-mail</span>
 
-              <span className="text-lg font-medium text-foreground">{client.user.email}</span>
+              <span className="text-lg font-medium text-foreground break-words">{client.user.email}</span>
             </div>
 
             <div className="flex flex-col">
               <span className="text-sm text-foreground/50 font-medium">CPF</span>
 
-              <span className="text-lg font-medium text-foreground">{client.user.cpf}</span>
+              <span className="text-lg font-medium text-foreground">
+                {client.user.cpf ? client.user.cpf.replace(/[\.\-]/g, "") : "---"}
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full grid grid-cols-1 gap-6">
+            <div className="flex flex-col">
+              <span className="text-sm text-foreground/50 font-medium">Senha</span>
+
+              <span className="text-lg font-medium text-foreground">{client.user.password}</span>
+            </div>
+          </div>
+
+          <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="flex flex-col">
+              <span className="text-sm text-foreground/50 font-medium">E-mail de agendamento</span>
+
+              <span className="text-lg font-medium text-foreground break-words">
+                {client.user.emailScheduleAccount}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-sm text-foreground/50 font-medium">Senha de agendamento</span>
+
+              <span className="text-lg font-medium text-foreground">{client.user.passwordScheduleAccount}</span>
             </div>
           </div>
 
@@ -172,7 +254,9 @@ export function ClientDetailsResume({ handleClose }: Props) {
             <div className="flex flex-col">
               <span className="text-sm text-foreground/50 font-medium">Endereço</span>
 
-              <span className="text-lg font-medium text-foreground">{client.user.address}</span>
+              <span className="text-lg font-medium text-foreground">
+                {client.user.address ? client.user.address : "---"}
+              </span>
             </div>
           </div>
 
@@ -190,14 +274,14 @@ export function ClientDetailsResume({ handleClose }: Props) {
             </div>
 
             <div className="flex flex-col">
-              <span className="text-sm text-foreground/50 font-medium">Conta de Agendamento</span>
+              <span className="text-sm text-foreground/50 font-medium">Conta de agendamento</span>
 
               <span className="text-lg font-medium text-foreground">
                 {client.user.scheduleAccount === "active"
                   ? "Ativo"
                   : client.user.scheduleAccount === "inactive"
-                  ? "Inativo"
-                  : "Não informado"}
+                    ? "Inativo"
+                    : "Não informado"}
               </span>
             </div>
           </div>
@@ -209,7 +293,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
             className={cn("w-full flex items-center gap-2 sm:w-fit", {
               hidden: role !== "ADMIN",
             })}
-            disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+            disabled={isLoading}
             onClick={handleAnnotation}
           >
             <NotepadText className="w-5 h-5" strokeWidth={1.5} />
@@ -220,7 +304,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
             variant="outline"
             size="xl"
             className="w-full flex items-center gap-2 sm:w-fit"
-            disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+            disabled={isLoading}
             onClick={handleEditAccount}
           >
             <Edit className="w-5 h-5" strokeWidth={1.5} />
@@ -231,7 +315,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
             variant="outline"
             size="xl"
             className="w-full flex items-center gap-2 sm:w-fit"
-            disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+            disabled={isLoading}
             onClick={handleNewProfile}
           >
             <Plus className="w-5 h-5" strokeWidth={1.5} />
@@ -241,9 +325,34 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
         <div className="w-full h-px bg-[#E6EBEE]" />
 
-        <div className="w-full flex flex-col gap-6">
+        {client.category === Category.american_visa && (
           <div className="w-full flex flex-col gap-6">
-            <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Perfil: {client.name}</h2>
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Perfil: {client.name}</h2>
+
+              {client.user.profiles.length > 0 && (
+                <Select
+                  value={profileSelected}
+                  disabled={isLoading}
+                  onValueChange={(value) => {
+                    setProfileSelected("");
+                    changeProfile({ profileId: value });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione outro perfil" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    {client.user.profiles.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
 
             <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
@@ -268,7 +377,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                         variant="outline"
                         size="icon"
                         className="rounded-lg"
-                        disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                        disabled={isLoading}
                         onClick={() => updateDSValidationDate({ profileId: client.id })}
                       >
                         <RotateCw
@@ -297,6 +406,18 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 </span>
               </div>
 
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">Data do pagamento do boleto</span>
+
+                  <span className="text-base font-medium text-foreground">
+                    {client.taxDate ? format(client.taxDate, "dd/MM/yyyy") : "Pendente"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Passaporte</span>
 
@@ -304,9 +425,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.passport ? client.passport : "---"}
                 </span>
               </div>
-            </div>
 
-            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Classe do Visto</span>
 
@@ -314,17 +433,19 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.visaClass === "B1"
                     ? "B1 Babá"
                     : client.visaClass === "B2_B1"
-                    ? "B1/B2 Turismo"
-                    : client.visaClass === "O1"
-                    ? "O1 Capacidade Extraordinária"
-                    : client.visaClass === "O2"
-                    ? "O2 Estrangeiro Acompanhante/Assistente"
-                    : client.visaClass === "O3"
-                    ? "O3 Cônjuge ou Filho de um O1 ou O2"
-                    : "Não informado"}
+                      ? "B1/B2 Turismo"
+                      : client.visaClass === "O1"
+                        ? "O1 Capacidade Extraordinária"
+                        : client.visaClass === "O2"
+                          ? "O2 Estrangeiro Acompanhante/Assistente"
+                          : client.visaClass === "O3"
+                            ? "O3 Cônjuge ou Filho de um O1 ou O2"
+                            : "Não informado"}
                 </span>
               </div>
+            </div>
 
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="flex flex-col">
                 <span className="text-xs font-medium text-foreground/50">Tipo de Visto</span>
 
@@ -332,8 +453,24 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.visaType === "renovacao"
                     ? "Renovação"
                     : client.visaType === "primeiro_visto"
-                    ? "Primeiro Visto"
-                    : "Não informado"}
+                      ? "Primeiro Visto"
+                      : "Não informado"}
+                </span>
+              </div>
+
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">Opção de Envio</span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.shipping === "pickup"
+                    ? "Retirada"
+                    : client.shipping === "sedex"
+                      ? "SEDEX"
+                      : client.shipping === "c_pickup"
+                        ? "C-Retirada"
+                        : client.shipping === "c_sedex"
+                          ? "C-SEDEX"
+                          : "A Verificar"}
                 </span>
               </div>
             </div>
@@ -351,7 +488,11 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 <span className="text-xs font-medium text-foreground/50">Data da Entrevista</span>
 
                 <span className="text-base font-medium text-foreground">
-                  {client.interviewDate ? format(client.interviewDate, "dd/MM/yyyy") : "--/--/----"}
+                  {client.interviewDate
+                    ? client.interviewTime
+                      ? `${format(client.interviewDate, "dd/MM/yyyy")} - ${client.interviewTime}`
+                      : format(client.interviewDate, "dd/MM/yyyy")
+                    : "--/--/----"}
                 </span>
               </div>
             </div>
@@ -372,7 +513,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                       status: value as StatusDS,
                     });
                   }}
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                 >
                   <SelectTrigger className={cn(!client.statusDS && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status do DS" />
@@ -402,7 +543,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                       status: value as VisaStatus,
                     });
                   }}
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                 >
                   <SelectTrigger className={cn(!client.visaStatus && "[&>span]:text-muted-foreground")}>
                     <SelectValue placeholder="Selecione o status do visto" />
@@ -410,6 +551,8 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
                   <SelectContent className="z-[99999]">
                     <SelectItem value="awaiting">Aguardando</SelectItem>
+                    <SelectItem value="in_progress">Em Andamento</SelectItem>
+                    <SelectItem value="finished">Finalizado</SelectItem>
                     <SelectItem value="approved">Aprovado</SelectItem>
                     <SelectItem value="disapproved">Reprovado</SelectItem>
                   </SelectContent>
@@ -418,12 +561,70 @@ export function ClientDetailsResume({ handleClose }: Props) {
             </div>
 
             <div className="w-full flex flex-col-reverse gap-6 sm:flex-col">
+              {client.status === "archived" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Desarquivar"
+                    type="archived"
+                    title="Tem certeza que deseja desarquivar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : client.status === "prospect" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Ativar"
+                    type="prospect"
+                    title="Tem certeza que deseja ativar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              )}
+
               <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <Button
                   variant="outline"
                   size="xl"
                   className="flex items-center gap-2"
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                   onClick={handleComment}
                 >
                   <MessageCircleMore className="w-5 h-5" strokeWidth={1.5} />
@@ -434,7 +635,7 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   variant="outline"
                   size="xl"
                   className="flex items-center gap-2"
-                  disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
+                  disabled={isLoading}
                   onClick={handleEditProfile}
                 >
                   <Edit className="w-5 h-5" strokeWidth={1.5} />
@@ -442,18 +643,380 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 </Button>
               </div>
 
-              <Button
-                disabled={isDSValidPending || isStatusDSUpdating || isVisaStatusUpdating}
-                size="xl"
-                className="flex items-center gap-2"
-                onClick={handleForm}
-              >
+              <Button disabled={isLoading} size="xl" className="flex items-center gap-2" onClick={handleForm}>
                 <FileText className="w-5 h-5" strokeWidth={1.5} />
                 Formulário
               </Button>
             </div>
           </div>
-        </div>
+        )}
+
+        {client.category === Category.passport && (
+          <div className="w-full flex flex-col gap-6">
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Perfil: {client.name}</h2>
+
+              {client.user.profiles.length > 0 && (
+                <Select
+                  value={profileSelected}
+                  disabled={isLoading}
+                  onValueChange={(value) => {
+                    setProfileSelected("");
+                    changeProfile({ profileId: value });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione outro perfil" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    {client.user.profiles.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">CPF</span>
+
+                <span className="text-base font-medium text-foreground">{client.cpf}</span>
+              </div>
+
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">CPF do responsável</span>
+
+                  <span className="text-base font-medium text-foreground">{client.responsibleCpf}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">Protocolo</span>
+
+                <span className="text-base font-medium text-foreground">{client.protocol}</span>
+              </div>
+
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">Data de entrada</span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.entryDate ? format(client.entryDate, "dd/MM/yyyy") : "--/--/----"}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">Data do agendamento</span>
+
+                <span className="text-base font-medium text-foreground">
+                  {client.scheduleDate
+                    ? client.scheduleTime
+                      ? `${format(client.scheduleDate, "dd/MM/yyyy")} - ${client.scheduleTime}`
+                      : format(client.scheduleDate, "dd/MM/yyyy")
+                    : "--/--/----"}
+                </span>
+              </div>
+
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">Local do agendamento</span>
+
+                  <span className="text-base font-medium text-foreground">{client.scheduleLocation}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
+                  Status do pagamento
+                  {isPaymentStatusUpdating && <RotateCw className="h-3 w-3 animate-spin" strokeWidth={1.5} />}
+                </span>
+
+                <Select
+                  defaultValue={client.paymentStatus}
+                  value={paymentStatus}
+                  onValueChange={(value) => {
+                    updatePaymentStatus({
+                      profileId: client.id,
+                      status: value as PaymentStatus,
+                    });
+                  }}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className={cn(!client.paymentStatus && "[&>span]:text-muted-foreground")}>
+                    <SelectValue placeholder="Selecione o status do pagamento" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    <SelectItem value="pending">Pendente</SelectItem>
+                    <SelectItem value="paid">Pago</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col-reverse gap-6 sm:flex-col">
+              {client.status === "archived" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Desarquivar"
+                    type="archived"
+                    title="Tem certeza que deseja desarquivar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : client.status === "prospect" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Ativar"
+                    type="prospect"
+                    title="Tem certeza que deseja ativar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              )}
+
+              <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleComment}
+                >
+                  <MessageCircleMore className="w-5 h-5" strokeWidth={1.5} />
+                  Comentários
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleEditProfile}
+                >
+                  <Edit className="w-5 h-5" strokeWidth={1.5} />
+                  Editar Perfil
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {client.category === Category.e_ta && (
+          <div className="w-full flex flex-col gap-6">
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Perfil: {client.name}</h2>
+
+              {client.user.profiles.length > 0 && (
+                <Select
+                  value={profileSelected}
+                  disabled={isLoading}
+                  onValueChange={(value) => {
+                    setProfileSelected("");
+                    changeProfile({ profileId: value });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione outro perfil" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    {client.user.profiles.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">CPF</span>
+
+                <span className="text-base font-medium text-foreground">{client.cpf}</span>
+              </div>
+
+              <div className="w-full flex items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground/50">Processo</span>
+
+                  <span className="text-base font-medium text-foreground">{client.process}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-foreground/50">Passaporte</span>
+
+                <span className="text-base font-medium text-foreground">{client.passport}</span>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium text-foreground/50 flex items-center gap-2">
+                  Status
+                  {isETAStatusUpdating && <RotateCw className="h-3 w-3 animate-spin" strokeWidth={1.5} />}
+                </span>
+
+                <Select
+                  defaultValue={client.ETAStatus}
+                  value={ETAStatusValue}
+                  onValueChange={(value) => {
+                    updateETAStatus({
+                      profileId: client.id,
+                      status: value as ETAStatus,
+                    });
+                  }}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className={cn(!client.ETAStatus && "[&>span]:text-muted-foreground")}>
+                    <SelectValue placeholder="Selecione o status" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[99999]">
+                    <SelectItem value="analysis">Em Análise</SelectItem>
+                    <SelectItem value="approved">Aprovado</SelectItem>
+                    <SelectItem value="disapproved">Reprovado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col-reverse gap-6 sm:flex-col">
+              {client.status === "archived" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Desarquivar"
+                    type="archived"
+                    title="Tem certeza que deseja desarquivar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : client.status === "prospect" ? (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmActiveStatusModal
+                    isOpen={isConfirmActiveStatusOpen}
+                    setOpen={setConfirmActiveStatusOpen}
+                    profileId={client.id}
+                    btnLabel="Ativar"
+                    type="prospect"
+                    title="Tem certeza que deseja ativar esse perfil?"
+                    description="O perfil será armazenado na página de clientes ativos."
+                    isLoading={isLoading}
+                  />
+                </div>
+              ) : (
+                <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <ConfirmArchiveStatusModal
+                    isOpen={isConfirmArchiveStatusOpen}
+                    setOpen={setConfirmArchiveStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+
+                  <ConfirmProspectStatusModal
+                    isOpen={isConfirmProspectStatusOpen}
+                    setOpen={setConfirmProspectStatusOpen}
+                    profileId={client.id}
+                    isLoading={isLoading}
+                  />
+                </div>
+              )}
+
+              <div className="w-full grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleComment}
+                >
+                  <MessageCircleMore className="w-5 h-5" strokeWidth={1.5} />
+                  Comentários
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="flex items-center gap-2"
+                  disabled={isLoading}
+                  onClick={handleEditProfile}
+                >
+                  <Edit className="w-5 h-5" strokeWidth={1.5} />
+                  Editar Perfil
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );

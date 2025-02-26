@@ -2,18 +2,31 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { formatDistance } from "date-fns";
+import { format } from "date-fns";
 import TextareaAutosize from "react-textarea-autosize";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ptBR } from "date-fns/locale";
-import { Check, Edit, Loader2, MessageCircleOff, Send, Trash, X } from "lucide-react";
+import {
+  Check,
+  Edit,
+  Loader2,
+  MessageCircleOff,
+  Send,
+  Trash,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { FormAnimation } from "@/constants/animations/modal";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
 import { trpc } from "@/lib/trpc-client";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
@@ -26,7 +39,8 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
   const [editId, setEditId] = useState<string>("");
   const [editAnnotationState, setEditAnnotationState] = useState<string>("");
 
-  const { unsetToAnnotation, setToResume, client } = useClientDetailsModalStore();
+  const { unsetToAnnotation, setToResume, client, isModalOpen } =
+    useClientDetailsModalStore();
   const util = trpc.useUtils();
   const annotationEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -42,20 +56,40 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
     }
   }, [client]);
 
-  if (!client) {
+  if (!client && isModalOpen) {
     return (
       <div>
         <div className="w-full grid grid-cols-2 grid-rows-2 gap-4 mb-9 sm:flex sm:flex-row sm:items-center sm:justify-between">
-          <Button onClick={handleBack} variant="link" size="icon" className="row-start-1 row-end-2">
-            <Image src="/assets/icons/arrow-left-dark.svg" alt="Voltar" width={24} height={24} />
+          <Button
+            onClick={handleBack}
+            variant="link"
+            size="icon"
+            className="row-start-1 row-end-2"
+          >
+            <Image
+              src="/assets/icons/arrow-left-dark.svg"
+              alt="Voltar"
+              width={24}
+              height={24}
+            />
           </Button>
 
           <h1 className="text-2xl font-semibold text-foreground text-center sm:text-3xl row-end-3 row-start-2 col-span-2">
             Anotações
           </h1>
 
-          <Button onClick={handleClose} variant="link" size="icon" className="row-start-1 row-end-2 justify-self-end">
-            <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
+          <Button
+            onClick={handleClose}
+            variant="link"
+            size="icon"
+            className="row-start-1 row-end-2 justify-self-end"
+          >
+            <Image
+              src="/assets/icons/cross-blue.svg"
+              alt="Fechar"
+              width={24}
+              height={24}
+            />
           </Button>
         </div>
 
@@ -65,14 +99,19 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
             <Skeleton className="w-full h-40 rounded-none" />
           </div>
 
-          <div className="w-full border border-muted transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
+          <div className="w-full border border-muted/70 rounded-xl overflow-hidden transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
             <TextareaAutosize
               className="border-none w-full resize-none px-3 py-2 h-12 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="Envie sua anotação"
               disabled
             />
 
-            <Button disabled variant="link" size="icon" className="self-end mx-1">
+            <Button
+              disabled
+              variant="link"
+              size="icon"
+              className="self-end mx-1"
+            >
               <Send />
             </Button>
           </div>
@@ -82,41 +121,44 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
   }
 
   const { data } = trpc.userRouter.getAnnotations.useQuery({
-    accountId: client.userId,
+    accountId: client?.userId ?? "",
   });
-  const { mutate: addAnnotation, isPending } = trpc.userRouter.addAnnotation.useMutation({
-    onSuccess: () => {
-      util.userRouter.getAnnotations.invalidate();
-      setAnnotationState("");
-      scrollToBottom();
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Ocorreu um erro ao salvar a anotação");
-    },
-  });
-  const { mutate: deleteAnnotation, isPending: isDeletePending } = trpc.userRouter.deleteAnnotation.useMutation({
-    onSuccess: (data) => {
-      util.userRouter.getAnnotations.invalidate();
-      toast.success(data.message);
-      setDeleteId("");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Ocorreu um erro ao excluir a anotação");
-    },
-  });
-  const { mutate: editAnnotation, isPending: isEditPending } = trpc.userRouter.editAnnotation.useMutation({
-    onSuccess: (data) => {
-      util.userRouter.getAnnotations.invalidate();
-      toast.success(data.message);
-      setEditId("");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Ocorreu um erro ao editar a anotação");
-    },
-  });
+  const { mutate: addAnnotation, isPending } =
+    trpc.userRouter.addAnnotation.useMutation({
+      onSuccess: () => {
+        util.userRouter.getAnnotations.invalidate();
+        setAnnotationState("");
+        scrollToBottom();
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Ocorreu um erro ao salvar a anotação");
+      },
+    });
+  const { mutate: deleteAnnotation, isPending: isDeletePending } =
+    trpc.userRouter.deleteAnnotation.useMutation({
+      onSuccess: (data) => {
+        util.userRouter.getAnnotations.invalidate();
+        toast.success(data.message);
+        setDeleteId("");
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Ocorreu um erro ao excluir a anotação");
+      },
+    });
+  const { mutate: editAnnotation, isPending: isEditPending } =
+    trpc.userRouter.editAnnotation.useMutation({
+      onSuccess: (data) => {
+        util.userRouter.getAnnotations.invalidate();
+        toast.success(data.message);
+        setEditId("");
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Ocorreu um erro ao editar a anotação");
+      },
+    });
 
   function handleBack() {
     unsetToAnnotation();
@@ -124,7 +166,12 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
   }
 
   return (
-    <motion.div initial="initial" animate="animate" exit="exit" variants={FormAnimation}>
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={FormAnimation}
+    >
       <div className="w-full grid grid-cols-2 grid-rows-2 gap-4 mb-9 sm:flex sm:flex-row sm:items-center sm:justify-between">
         <Button
           onClick={handleBack}
@@ -133,7 +180,12 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
           className="row-start-1 row-end-2"
           disabled={isPending || isDeletePending || isEditPending}
         >
-          <Image src="/assets/icons/arrow-left-dark.svg" alt="Voltar" width={24} height={24} />
+          <Image
+            src="/assets/icons/arrow-left-dark.svg"
+            alt="Voltar"
+            width={24}
+            height={24}
+          />
         </Button>
 
         <h1 className="text-2xl font-semibold text-foreground text-center sm:text-3xl row-end-3 row-start-2 col-span-2">
@@ -147,7 +199,12 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
           className="row-start-1 row-end-2 justify-self-end"
           disabled={isPending || isDeletePending || isEditPending}
         >
-          <Image src="/assets/icons/cross-blue.svg" alt="Fechar" width={24} height={24} />
+          <Image
+            src="/assets/icons/cross-blue.svg"
+            alt="Fechar"
+            width={24}
+            height={24}
+          />
         </Button>
       </div>
 
@@ -155,12 +212,13 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
         <div className="w-full flex flex-col gap-4 max-h-[500px] overflow-y-auto">
           {data?.annotations !== undefined && data.annotations.length > 0 ? (
             data.annotations.map((annotation, index) => (
-              <div key={annotation.id} className="w-full flex flex-col gap-6 border-l border-muted px-4 py-3">
+              <div
+                key={annotation.id}
+                className="w-full flex flex-col gap-6 border-l border-muted px-4 py-3"
+              >
                 <div className="w-full flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground/50">
-                    {formatDistance(annotation.createdAt, new Date(), {
-                      locale: ptBR,
-                    })}
+                    {format(annotation.createdAt, "dd/MM/yyyy - HH:mm")}
                   </span>
 
                   {deleteId === annotation.id ? (
@@ -173,7 +231,9 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
                               size="icon"
                               className="w-7 h-7 text-destructive/70 hover:text-destructive"
                               onClick={() => setDeleteId("")}
-                              disabled={isPending || isDeletePending || isEditPending}
+                              disabled={
+                                isPending || isDeletePending || isEditPending
+                              }
                             >
                               <X size={20} strokeWidth={1.5} />
                             </Button>
@@ -190,11 +250,19 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
                               variant="link"
                               size="icon"
                               className="w-7 h-7 text-confirm/70 hover:text-confirm"
-                              onClick={() => deleteAnnotation({ annotationId: deleteId })}
-                              disabled={isPending || isDeletePending || isEditPending}
+                              onClick={() =>
+                                deleteAnnotation({ annotationId: deleteId })
+                              }
+                              disabled={
+                                isPending || isDeletePending || isEditPending
+                              }
                             >
                               {isDeletePending ? (
-                                <Loader2 size={20} strokeWidth={1.5} className="animate-spin" />
+                                <Loader2
+                                  size={20}
+                                  strokeWidth={1.5}
+                                  className="animate-spin"
+                                />
                               ) : (
                                 <Check size={20} strokeWidth={1.5} />
                               )}
@@ -220,7 +288,9 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
                                 setEditId("");
                                 setEditAnnotationState("");
                               }}
-                              disabled={isPending || isDeletePending || isEditPending}
+                              disabled={
+                                isPending || isDeletePending || isEditPending
+                              }
                             >
                               <X size={20} strokeWidth={1.5} />
                             </Button>
@@ -240,13 +310,21 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
                               onClick={() =>
                                 editAnnotation({
                                   annotationId: editId,
-                                  annotation: editAnnotationState.split("\n").filter((text) => text !== ""),
+                                  annotation: editAnnotationState
+                                    .split("\n")
+                                    .filter((text) => text !== ""),
                                 })
                               }
-                              disabled={isPending || isDeletePending || isEditPending}
+                              disabled={
+                                isPending || isDeletePending || isEditPending
+                              }
                             >
                               {isDeletePending ? (
-                                <Loader2 size={20} strokeWidth={1.5} className="animate-spin" />
+                                <Loader2
+                                  size={20}
+                                  strokeWidth={1.5}
+                                  className="animate-spin"
+                                />
                               ) : (
                                 <Check size={20} strokeWidth={1.5} />
                               )}
@@ -268,7 +346,9 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
                         disabled={isPending || isDeletePending || isEditPending}
                         onClick={() => {
                           setEditId(annotation.id);
-                          setEditAnnotationState(annotation.annotation.join("\n"));
+                          setEditAnnotationState(
+                            annotation.annotation.join("\n"),
+                          );
                         }}
                       >
                         <Edit size={20} strokeWidth={1.5} />
@@ -295,7 +375,9 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
                         placeholder="Envie sua anotação"
                         maxRows={15}
                         value={editAnnotationState}
-                        onChange={(event) => setEditAnnotationState(event.target.value)}
+                        onChange={(event) =>
+                          setEditAnnotationState(event.target.value)
+                        }
                         disabled={isPending || isDeletePending || isEditPending}
                       />
                     </div>
@@ -311,7 +393,11 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
             ))
           ) : (
             <div className="w-full flex flex-col items-center justify-center gap-4">
-              <MessageCircleOff size={50} strokeWidth={1.5} className="opacity-35" />
+              <MessageCircleOff
+                size={50}
+                strokeWidth={1.5}
+                className="opacity-35"
+              />
 
               <span className="text-lg font-medium text-foreground text-center opacity-50">
                 Nenhuma anotação no momento
@@ -321,24 +407,30 @@ export function ClientDetailsAnnotations({ handleClose }: Props) {
           <div ref={annotationEndRef} />
         </div>
 
-        <div className="w-full border border-muted transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
+        <div className="w-full border border-muted/70 rounded-xl overflow-hidden transition duration-300 flex items-center justify-between group focus-within:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted">
           <TextareaAutosize
-            className="border-none w-full resize-none px-3 py-2 h-12 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="border-none w-full resize-none px-4 py-3 h-12 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
             placeholder="Envie sua anotação"
             maxRows={5}
             value={annotationState}
             onChange={(event) => setAnnotationState(event.target.value)}
-            disabled={isPending || isDeletePending || isEditPending || editId.length > 0}
+            disabled={
+              isPending || isDeletePending || isEditPending || editId.length > 0
+            }
           />
 
           <Button
             onClick={() =>
               addAnnotation({
-                userId: client.userId,
-                annotation: annotationState.split("\n").filter((text) => text !== ""),
+                userId: client?.userId ?? "",
+                annotation: annotationState
+                  .split("\n")
+                  .filter((text) => text !== ""),
               })
             }
-            disabled={isPending || isDeletePending || isEditPending || editId.length > 0}
+            disabled={
+              isPending || isDeletePending || isEditPending || editId.length > 0
+            }
             variant="link"
             size="icon"
             className="self-end mx-1"

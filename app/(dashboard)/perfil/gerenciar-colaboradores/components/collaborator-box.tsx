@@ -26,26 +26,22 @@ interface Props {
 }
 
 export function CollaboratorBox({ name, collaboratorId }: Props) {
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] =
-    useState<boolean>(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState<boolean>(false);
 
   const { setCollaborator } = useCollaboratorStore();
   const router = useRouter();
   const util = trpc.useUtils();
 
-  const { mutate: getCollaborator, isPending } =
-    trpc.collaboratorRouter.getCollaborator.useMutation({
-      onSuccess: (data) => {
-        setCollaborator(data.collaborator);
-        router.push(`/perfil/gerenciar-colaboradores/editar/${collaboratorId}`);
-      },
-      onError: (error) => {
-        console.error(error);
-        toast.error(
-          "Ocorreu um erro ao redirecionar para a edição do colaborador, tente novamente mais tarde",
-        );
-      },
-    });
+  const { mutate: getCollaborator, isPending } = trpc.collaboratorRouter.getCollaborator.useMutation({
+    onSuccess: (data) => {
+      setCollaborator(data.collaborator);
+      router.push(`/perfil/gerenciar-colaboradores/editar/${collaboratorId}`);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Ocorreu um erro ao redirecionar para a edição do colaborador, tente novamente mais tarde");
+    },
+  });
   const { mutate: deleteCollaborator, isPending: isDeletePending } =
     trpc.collaboratorRouter.deleteCollaborator.useMutation({
       onSuccess: (data) => {
@@ -55,17 +51,13 @@ export function CollaboratorBox({ name, collaboratorId }: Props) {
       },
       onError: (error) => {
         console.error(error);
-        toast.error(
-          "Ocorreu um erro ao excluir o colaborador, tente novamente mais tarde",
-        );
+        toast.error("Ocorreu um erro ao excluir o colaborador, tente novamente mais tarde");
       },
     });
 
   return (
-    <div className="w-full bg-card p-8 flex items-center justify-between gap-6">
-      <span className="text-xl font-semibold text-white line-clamp-1">
-        {name}
-      </span>
+    <div className="w-full bg-primary rounded-2xl p-8 flex items-center justify-between gap-6">
+      <span className="text-xl font-semibold text-white line-clamp-1">{name}</span>
 
       <div className="flex items-center gap-4">
         <Button
@@ -93,9 +85,7 @@ export function CollaboratorBox({ name, collaboratorId }: Props) {
 
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>
-                Tem certeza que deseja excluir?
-              </AlertDialogTitle>
+              <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
 
               <AlertDialogDescription className="text-foreground/70">
                 Essa ação não pode ser desfeita
@@ -103,7 +93,7 @@ export function CollaboratorBox({ name, collaboratorId }: Props) {
             </AlertDialogHeader>
 
             <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeletePending}>
+              <AlertDialogCancel disabled={isDeletePending} onClick={() => setIsDeleteConfirmOpen(false)}>
                 Cancelar
               </AlertDialogCancel>
 

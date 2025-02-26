@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { LogOut, PanelRightOpen } from "lucide-react";
+import { Grid4 } from "iconsax-react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useUserStore from "@/constants/stores/useUserStore";
@@ -27,8 +27,8 @@ export function DashboardMobileMenu() {
   return (
     <div className="w-full px-6 sm:px-16 mt-12 lg:hidden">
       <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <SheetTrigger>
-          <PanelRightOpen size={30} />
+        <SheetTrigger className="hover:bg-secondary/50 rounded-xl h-12 w-12 flex items-center justify-center transition-colors">
+          <Grid4 size={30} />
         </SheetTrigger>
         <SheetContent side="left" className="w-[250px]">
           <div className="h-full flex flex-col justify-between">
@@ -40,6 +40,24 @@ export function DashboardMobileMenu() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Link href="/perfil/clientes">Clientes</Link>
+              </li>
+
+              <li
+                className={cn("text-xl", {
+                  "font-semibold": pathname === "/perfil/prospects",
+                })}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link href="/perfil/prospects">Prospects</Link>
+              </li>
+
+              <li
+                className={cn("text-xl", {
+                  "font-semibold": pathname === "/perfil/arquivados",
+                })}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link href="/perfil/arquivados">Arquivados</Link>
               </li>
 
               <li
@@ -57,11 +75,33 @@ export function DashboardMobileMenu() {
 
                   <li
                     className={cn("text-xl", {
-                      "font-semibold": pathname.includes("/perfil/gerenciar-colaboradores"),
+                      "font-semibold": pathname.includes(
+                        "/perfil/gerenciar-colaboradores",
+                      ),
                     })}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Link href="/perfil/gerenciar-colaboradores">Colaboradores</Link>
+                    <Link href="/perfil/gerenciar-colaboradores">
+                      Colaboradores
+                    </Link>
+                  </li>
+
+                  <li
+                    className={cn("text-xl", {
+                      "font-semibold": pathname === "/perfil/gerenciar-banners",
+                    })}
+                  >
+                    <Link href="/perfil/gerenciar-banners">
+                      Gerenciar Banners
+                    </Link>
+                  </li>
+
+                  <li
+                    className={cn("text-xl", {
+                      "font-semibold": pathname === "/perfil/alterar-senha",
+                    })}
+                  >
+                    <Link href="/perfil/alterar-senha">Alterar Senha</Link>
                   </li>
                 </>
               )}

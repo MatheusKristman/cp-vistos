@@ -1,102 +1,77 @@
-import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
   return (
-    <footer className="w-full flex flex-col sm:flex-row">
-      <div className="w-full bg-primary flex items-center justify-center py-6 lg:max-w-lg">
-        <div className="relative w-40 aspect-square sm:w-[75%] sm:h-auto lg:w-[60%]">
-          <Image
-            src="/assets/images/cp-vistos-logo.png"
-            alt="CP Vistos"
-            fill
-            className="object-contain object-center"
-          />
-        </div>
-      </div>
+    <footer className="w-full bg-primary pt-[520px] sm:pt-[500px]">
+      <div className="w-full px-6 pt-12 pb-9 flex items-end justify-between gap-4 sm:gap-12 sm:px-16 lg:container">
+        <div className="flex flex-col gap-6 sm:gap-9">
+          <Link href="/" className="relative h-[56px] w-[102px] sm:h-[70px] sm:w-[128px]">
+            <Image
+              src="/assets/images/cp-vistos-logo.png"
+              alt="CP Vistos"
+              fill
+              className="object-contain object-center"
+            />
+          </Link>
 
-      <div className="w-full flex flex-col sm:justify-between">
-        <div className="w-full h-full flex flex-col lg:flex-row items-center">
-          <nav className="w-full lg:w-1/2 2xl:w-2/5 py-12 lg:px-12">
-            <h4 className="text-2xl sm:text-3xl text-center lg:text-left text-foreground font-semibold mb-6">
-              Navegue
-            </h4>
+          <span className="text-white text-sm">CNPJ: 52.264.297/0001-04</span>
 
-            <ul className="w-full flex flex-col items-center justify-center gap-4 lg:justify-start lg:items-start xl:grid xl:grid-cols-2 xl:grid-rows-2 xl:gap-x-12">
-              <li className="text-lg text-foreground text-center font-medium lg:text-start">
-                <Link href="/servicos">Serviços</Link>
-              </li>
-
-              <li className="text-lg text-foreground text-center font-medium lg:text-start">
-                <Link href="/diferenciais">Diferenciais</Link>
-              </li>
-
-              <li className="text-lg text-foreground text-center font-medium lg:text-start">
-                <Link href="/depoimentos">Depoimentos</Link>
-              </li>
-
-              <li className="text-lg text-foreground text-center font-medium lg:text-start">
-                <Link href="/contato">Contato</Link>
-              </li>
-            </ul>
-          </nav>
-
-          <ul className="w-full lg:w-1/2 2xl:w-3/5 2xl:h-full bg-secondary/50 py-12 px-12 flex flex-col 2xl:flex-row items-center justify-center 2xl:justify-start gap-10">
-            <li className="w-full text-foreground font-medium text-lg">
-              {/* TODO: adicionar mailto */}
-              <a href="#" className="flex flex-col items-center gap-1 group">
-                <Mail className="size-10 transition-opacity opacity-50 group-hover:opacity-100" />
-                <span className="opacity-0 -translate-y-1/2 transition-all group-hover:opacity-100 group-hover:translate-y-0">
-                  teste@teste.com
-                </span>
+          <ul className="flex items-center gap-6">
+            <li>
+              <a href="https://www.instagram.com/cpvistos/" target="_blank" rel="noreferrer noopener">
+                <Image
+                  src="/assets/icons/Instagram.svg"
+                  alt="Instagram"
+                  width={24}
+                  height={24}
+                  className="object-contain object-center"
+                />
               </a>
             </li>
 
-            <li className="w-full text-foreground font-medium text-lg">
-              {/* TODO: adicionar telefone */}
-              <a href="#" className="flex flex-col items-center gap-1 group">
-                <FaWhatsapp className="size-10 transition-opacity opacity-50 group-hover:opacity-100" />
-                <span className="opacity-0 -translate-y-1/2 transition-all group-hover:opacity-100 group-hover:translate-y-0">
-                  (11) 91234-5678
-                </span>
+            <li>
+              <a href="https://wa.link/2i5gt9" target="_blank" rel="noreferrer noopener">
+                <Image
+                  src="/assets/icons/Whatsapp.svg"
+                  alt="Whatsapp"
+                  width={24}
+                  height={24}
+                  className="object-contain object-center"
+                />
               </a>
             </li>
 
-            <li className="w-full text-foreground font-medium text-lg">
-              <a
-                href="https://www.instagram.com/cpvistos/"
-                target="_blank"
-                rel="noreferrer noopener"
-                className="flex flex-col items-center gap-1 group"
-              >
-                <FaInstagram className="size-10 transition-opacity opacity-50 group-hover:opacity-100" />
-                <span className="opacity-0 -translate-y-1/2 transition-all group-hover:opacity-100 group-hover:translate-y-0">
-                  @cpvistos
-                </span>
+            <li>
+              <a href="mailto:contato@cpvistos.com.br">
+                <Image
+                  src="/assets/icons/Gmail.svg"
+                  alt="Gmail"
+                  width={24}
+                  height={24}
+                  className="object-contain object-center"
+                />
               </a>
             </li>
           </ul>
         </div>
 
-        <div className="w-full border-t border-secondary p-6 flex flex-col lg:flex-row gap-2 items-center justify-between">
-          <span className="text-sm text-center text-foreground">
-            Desenvolvido por{" "}
-            <a
-              href="https://www.mkdevsolutions.com/"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="underline"
-            >
-              MKDev Solutions
-            </a>
-          </span>
+        {/* TODO: adicionar pagina de política de privacidade e termos de uso, e adicionar links para redirecionar para paginas */}
+        <nav className="flex flex-col items-end gap-6 sm:flex-row">
+          <Link
+            href="/politica-de-privacidade"
+            className="text-base font-medium text-white text-end relative group lg:text-xl"
+          >
+            Política de Privacidade
+            <div className="absolute -bottom-[2px] right-0 h-[2px] bg-white rounded-full w-0 transition-all group-hover:w-full" />
+          </Link>
 
-          <span className="text-sm text-center text-foreground">
-            2024 © CP Vistos
-          </span>
-        </div>
+          <Link href="/termos-de-uso" className="text-base font-medium text-white text-end relative group lg:text-xl">
+            Termos de Uso
+            <div className="absolute -bottom-[2px] right-0 h-[2px] bg-white rounded-full w-0 transition-all group-hover:w-full" />
+          </Link>
+        </nav>
       </div>
     </footer>
   );
