@@ -976,6 +976,8 @@ export const userRouter = router({
         });
       }
 
+      console.log({ clientBirthDate: client.birthDate });
+
       return { client };
     }),
   updateDSValidationDate: collaboratorProcedure
