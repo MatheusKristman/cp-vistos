@@ -14,7 +14,7 @@ import {
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays, parse } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { fromZonedTime } from "date-fns-tz";
 
 import { adminProcedure, collaboratorProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
@@ -1687,28 +1687,28 @@ export const userRouter = router({
       const profileEntryDateFormatted = entryDate ? parse(entryDate, "dd/MM/yyyy", new Date()) : undefined;
 
       const profileBirthDate = profileBirthDateFormatted
-        ? toZonedTime(profileBirthDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileBirthDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileIssuanceDate = profileIssuanceDateFormatted
-        ? toZonedTime(profileIssuanceDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileIssuanceDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileExpireDate = profileExpireDateFormatted
-        ? toZonedTime(profileExpireDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileExpireDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileCASVDate = profileCASVDateFormatted
-        ? toZonedTime(profileCASVDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileCASVDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileTaxDate = profileTaxDateFormatted
-        ? toZonedTime(profileTaxDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileTaxDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileInterviewDate = profileInterviewDateFormatted
-        ? toZonedTime(profileInterviewDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileInterviewDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileScheduleDate = profileScheduleDateFormatted
-        ? toZonedTime(profileScheduleDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileScheduleDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileEntryDate = profileEntryDateFormatted
-        ? toZonedTime(profileEntryDateFormatted, "America/Sao_Paulo")
+        ? fromZonedTime(profileEntryDateFormatted, "America/Sao_Paulo")
         : undefined;
 
       console.log({ profileBirthDate });
