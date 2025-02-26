@@ -418,6 +418,22 @@ export const userRouter = router({
           ? parse(profile.entryDate, "dd/MM/yyyy", new Date())
           : undefined;
 
+        const profileBirthDate = profileBirthDateFormatted
+          ? fromZonedTime(profileBirthDateFormatted, "America/Sao_Paulo")
+          : undefined;
+        const profileIssuanceDate = profileIssuanceDateFormatted
+          ? fromZonedTime(profileIssuanceDateFormatted, "America/Sao_Paulo")
+          : undefined;
+        const profileExpireDate = profileExpireDateFormatted
+          ? fromZonedTime(profileExpireDateFormatted, "America/Sao_Paulo")
+          : undefined;
+        const profileScheduleDate = profileScheduleDateFormatted
+          ? fromZonedTime(profileScheduleDateFormatted, "America/Sao_Paulo")
+          : undefined;
+        const profileEntryDate = profileEntryDateFormatted
+          ? fromZonedTime(profileEntryDateFormatted, "America/Sao_Paulo")
+          : undefined;
+
         const newProfile = await prisma.profile.create({
           data: {
             DSValid: addDays(new Date(), 30),
@@ -425,17 +441,17 @@ export const userRouter = router({
             name: profile.profileName,
             address: profile.profileAddress,
             cpf: profile.profileCpf,
-            birthDate: profileBirthDateFormatted,
+            birthDate: profileBirthDate,
             passport: profile.passport,
-            issuanceDate: profileIssuanceDateFormatted,
-            expireDate: profileExpireDateFormatted,
+            issuanceDate: profileIssuanceDate,
+            expireDate: profileExpireDate,
             responsibleCpf: profile.responsibleCpf,
             protocol: profile.protocol,
             paymentStatus,
-            scheduleDate: profileScheduleDateFormatted,
+            scheduleDate: profileScheduleDate,
             scheduleTime: profile.scheduleTime,
             scheduleLocation: profile.scheduleLocation,
-            entryDate: profileEntryDateFormatted,
+            entryDate: profileEntryDate,
             process: profile.process,
             ETAStatus: ETAStatusValue,
             visaClass,
@@ -702,6 +718,22 @@ export const userRouter = router({
       const profileScheduleDateFormatted = scheduleDate ? parse(scheduleDate, "dd/MM/yyyy", new Date()) : undefined;
       const profileEntryDateFormatted = entryDate ? parse(entryDate, "dd/MM/yyyy", new Date()) : undefined;
 
+      const profileBirthDate = profileBirthDateFormatted
+        ? fromZonedTime(profileBirthDateFormatted, "America/Sao_Paulo")
+        : undefined;
+      const profileIssuanceDate = profileIssuanceDateFormatted
+        ? fromZonedTime(profileIssuanceDateFormatted, "America/Sao_Paulo")
+        : undefined;
+      const profileExpireDate = profileExpireDateFormatted
+        ? fromZonedTime(profileExpireDateFormatted, "America/Sao_Paulo")
+        : undefined;
+      const profileScheduleDate = profileScheduleDateFormatted
+        ? fromZonedTime(profileScheduleDateFormatted, "America/Sao_Paulo")
+        : undefined;
+      const profileEntryDate = profileEntryDateFormatted
+        ? fromZonedTime(profileEntryDateFormatted, "America/Sao_Paulo")
+        : undefined;
+
       const profileUpdated = await prisma.profile.create({
         data: {
           DSValid: addDays(new Date(), 30),
@@ -709,16 +741,16 @@ export const userRouter = router({
           name: profileName,
           address: profileAddress,
           cpf: profileCpf,
-          birthDate: profileBirthDateFormatted,
+          birthDate: profileBirthDate,
           passport,
-          issuanceDate: profileIssuanceDateFormatted,
-          expireDate: profileExpireDateFormatted,
+          issuanceDate: profileIssuanceDate,
+          expireDate: profileExpireDate,
           responsibleCpf,
           protocol,
-          scheduleDate: profileScheduleDateFormatted,
+          scheduleDate: profileScheduleDate,
           scheduleTime,
           scheduleLocation,
-          entryDate: profileEntryDateFormatted,
+          entryDate: profileEntryDate,
           process,
           visaClass,
           visaType,
@@ -997,7 +1029,7 @@ export const userRouter = router({
           id: profileId,
         },
         data: {
-          DSValid: new Date(),
+          DSValid: fromZonedTime(new Date(), "America/Sao_Paulo"),
         },
         include: {
           user: {
