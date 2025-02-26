@@ -52,6 +52,11 @@ export function ClientDetailsResume({ handleClose }: Props) {
 
   useEffect(() => {
     if (client) {
+      if (client.birthDate) {
+        console.log({ birthDate: client.birthDate });
+        console.log({ birthDate: format(client.birthDate, "dd/MM/yyyy") });
+      }
+
       setStatusDS(client.statusDS);
       setVisaStatus(client.visaStatus);
       setPaymentStatus(client.paymentStatus);
@@ -280,8 +285,8 @@ export function ClientDetailsResume({ handleClose }: Props) {
                 {client.user.scheduleAccount === "active"
                   ? "Ativo"
                   : client.user.scheduleAccount === "inactive"
-                    ? "Inativo"
-                    : "Não informado"}
+                  ? "Inativo"
+                  : "Não informado"}
               </span>
             </div>
           </div>
@@ -433,14 +438,14 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.visaClass === "B1"
                     ? "B1 Babá"
                     : client.visaClass === "B2_B1"
-                      ? "B1/B2 Turismo"
-                      : client.visaClass === "O1"
-                        ? "O1 Capacidade Extraordinária"
-                        : client.visaClass === "O2"
-                          ? "O2 Estrangeiro Acompanhante/Assistente"
-                          : client.visaClass === "O3"
-                            ? "O3 Cônjuge ou Filho de um O1 ou O2"
-                            : "Não informado"}
+                    ? "B1/B2 Turismo"
+                    : client.visaClass === "O1"
+                    ? "O1 Capacidade Extraordinária"
+                    : client.visaClass === "O2"
+                    ? "O2 Estrangeiro Acompanhante/Assistente"
+                    : client.visaClass === "O3"
+                    ? "O3 Cônjuge ou Filho de um O1 ou O2"
+                    : "Não informado"}
                 </span>
               </div>
             </div>
@@ -453,8 +458,8 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.visaType === "renovacao"
                     ? "Renovação"
                     : client.visaType === "primeiro_visto"
-                      ? "Primeiro Visto"
-                      : "Não informado"}
+                    ? "Primeiro Visto"
+                    : "Não informado"}
                 </span>
               </div>
 
@@ -465,12 +470,12 @@ export function ClientDetailsResume({ handleClose }: Props) {
                   {client.shipping === "pickup"
                     ? "Retirada"
                     : client.shipping === "sedex"
-                      ? "SEDEX"
-                      : client.shipping === "c_pickup"
-                        ? "C-Retirada"
-                        : client.shipping === "c_sedex"
-                          ? "C-SEDEX"
-                          : "A Verificar"}
+                    ? "SEDEX"
+                    : client.shipping === "c_pickup"
+                    ? "C-Retirada"
+                    : client.shipping === "c_sedex"
+                    ? "C-SEDEX"
+                    : "A Verificar"}
                 </span>
               </div>
             </div>
