@@ -14,7 +14,7 @@ import {
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { addDays, parse } from "date-fns";
-import { TZDate } from "@date-fns/tz";
+import { toZonedTime } from "date-fns-tz";
 
 import { adminProcedure, collaboratorProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
@@ -1687,31 +1687,31 @@ export const userRouter = router({
       const profileEntryDateFormatted = entryDate ? parse(entryDate, "dd/MM/yyyy", new Date()) : undefined;
 
       const profileBirthDate = profileBirthDateFormatted
-        ? new TZDate(profileBirthDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileBirthDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileIssuanceDate = profileIssuanceDateFormatted
-        ? new TZDate(profileIssuanceDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileIssuanceDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileExpireDate = profileExpireDateFormatted
-        ? new TZDate(profileExpireDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileExpireDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileCASVDate = profileCASVDateFormatted
-        ? new TZDate(profileCASVDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileCASVDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileTaxDate = profileTaxDateFormatted
-        ? new TZDate(profileTaxDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileTaxDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileInterviewDate = profileInterviewDateFormatted
-        ? new TZDate(profileInterviewDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileInterviewDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileScheduleDate = profileScheduleDateFormatted
-        ? new TZDate(profileScheduleDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileScheduleDateFormatted, "America/Sao_Paulo")
         : undefined;
       const profileEntryDate = profileEntryDateFormatted
-        ? new TZDate(profileEntryDateFormatted.toISOString(), "America/Sao_Paulo")
+        ? toZonedTime(profileEntryDateFormatted, "America/Sao_Paulo")
         : undefined;
 
-      console.log({ profileBirthDateFormatted });
+      console.log({ profileBirthDate });
 
       const clientUpdated = await prisma.profile.update({
         where: {
