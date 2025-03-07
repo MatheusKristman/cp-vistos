@@ -40,17 +40,13 @@ export const {
         }
 
         if (user.role === "ADMIN" || user.role === "COLLABORATOR") {
-          const isAdminPasswordCorrect: boolean = await bcrypt.compare(
-            credentials.password as string,
-            user.password,
-          );
+          const isAdminPasswordCorrect: boolean = await bcrypt.compare(credentials.password as string, user.password);
 
           if (!isAdminPasswordCorrect) {
             throw new Error("Dados inválidos, verifique e tente novamente");
           }
         } else {
-          const isPasswordCorrect =
-            (credentials.password as string) === user.password;
+          const isPasswordCorrect = (credentials.password as string) === user.password;
 
           if (!isPasswordCorrect) {
             throw new Error("Dados inválidos, verifique e tente novamente");

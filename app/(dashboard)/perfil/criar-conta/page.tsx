@@ -56,7 +56,7 @@ const profileFormSchema = z
           "O3 Cônjuge ou Filho de um O1 ou O2",
           "",
         ],
-        { message: "Classe de visto inválida" },
+        { message: "Classe de visto inválida" }
       )
       .optional(),
     category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -175,7 +175,8 @@ const accountFormSchema = z
         invalid_type_error: "E-mail inválido",
       })
       .email({ message: "E-mail inválido" })
-      .min(1, { message: "E-mail é obrigatório" }),
+      .min(1, { message: "E-mail é obrigatório" })
+      .toLowerCase(),
     password: z
       .string({
         required_error: "Senha é obrigatório",
@@ -198,7 +199,8 @@ const accountFormSchema = z
         invalid_type_error: "E-mail inválida",
       })
       .email("E-mail inválido")
-      .min(1, "E-mail é obrigatório"),
+      .min(1, "E-mail é obrigatório")
+      .toLowerCase(),
     passwordScheduleAccount: z
       .string({
         required_error: "Senha é obrigatória",
@@ -475,7 +477,7 @@ export default function CreateAccountPage() {
           ],
           {
             shouldFocus: true,
-          },
+          }
         )
         .then(() => {
           if (Object.keys(form.formState.errors).length === 0) {
