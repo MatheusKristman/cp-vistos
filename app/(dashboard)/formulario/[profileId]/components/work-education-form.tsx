@@ -7,7 +7,6 @@ import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
 import { format, getYear } from "date-fns";
 import { useRouter } from "next/navigation";
-import PhoneInput from "react-phone-number-input";
 import { Form as FormType } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyInput from "react-currency-input-field";
@@ -56,7 +55,7 @@ const formSchema = z
         admissionDate: z.date({ message: "Data inválida" }).optional(),
         resignationDate: z.date({ message: "Data inválida" }).optional(),
         jobDescription: z.string(),
-      })
+      }),
     ),
     courses: z.array(
       z.object({
@@ -69,7 +68,7 @@ const formSchema = z
         courseName: z.string(),
         initialDate: z.date({ message: "Data inválida" }).optional(),
         finishDate: z.date({ message: "Data inválida" }).optional(),
-      })
+      }),
     ),
   })
   .superRefine(({ previousJobConfirmation, previousJobs }, ctx) => {
@@ -214,7 +213,7 @@ interface Props {
 
 export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) {
   const [currentPreviousJobsIndex, setCurrentPreviousJobsIndex] = useState<number>(
-    currentForm.previousJobs.length ?? 0
+    currentForm.previousJobs.length ?? 0,
   );
   const [resetPreviousJobsFields, setResetPreviousJobsFields] = useState<boolean>(false);
   const [previousJobsItems, setPreviousJobsItems] = useState<
@@ -409,7 +408,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           item.supervisorName !== "" ||
           item.admissionDate !== undefined ||
           item.resignationDate !== undefined ||
-          item.jobDescription !== ""
+          item.jobDescription !== "",
       );
 
       setPreviousJobsItems(previousJobsFiltered);
@@ -428,7 +427,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           item.cep !== "" ||
           item.courseName !== "" ||
           item.initialDate !== undefined ||
-          item.finishDate !== undefined
+          item.finishDate !== undefined,
       );
 
       setCoursesItems(coursesFiltered);
@@ -482,14 +481,14 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           values.companyOrBossName !== ""
             ? values.companyOrBossName
             : !currentForm.companyOrBossName
-            ? ""
-            : currentForm.companyOrBossName,
+              ? ""
+              : currentForm.companyOrBossName,
         companyAddress:
           values.companyAddress !== ""
             ? values.companyAddress
             : !currentForm.companyAddress
-            ? ""
-            : currentForm.companyAddress,
+              ? ""
+              : currentForm.companyAddress,
         companyCity:
           values.companyCity !== "" ? values.companyCity : !currentForm.companyCity ? "" : currentForm.companyCity,
         companyState:
@@ -498,8 +497,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           values.companyCountry !== ""
             ? values.companyCountry
             : !currentForm.companyCountry
-            ? ""
-            : currentForm.companyCountry,
+              ? ""
+              : currentForm.companyCountry,
         companyCep:
           values.companyCep !== "" ? values.companyCep : !currentForm.companyCep ? "" : currentForm.companyCep,
         companyTel:
@@ -508,20 +507,20 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           values.admissionDate !== undefined
             ? values.admissionDate
             : !currentForm.admissionDate
-            ? undefined
-            : currentForm.admissionDate,
+              ? undefined
+              : currentForm.admissionDate,
         monthlySalary:
           values.monthlySalary !== ""
             ? values.monthlySalary
             : !currentForm.monthlySalary
-            ? ""
-            : currentForm.monthlySalary,
+              ? ""
+              : currentForm.monthlySalary,
         retireeDate:
           values.retireeDate !== undefined
             ? values.retireeDate
             : !currentForm.retireeDate
-            ? undefined
-            : currentForm.retireeDate,
+              ? undefined
+              : currentForm.retireeDate,
         jobDetails:
           values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
         previousJobConfirmation:
@@ -579,14 +578,14 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
         values.companyOrBossName !== ""
           ? values.companyOrBossName
           : !currentForm.companyOrBossName
-          ? ""
-          : currentForm.companyOrBossName,
+            ? ""
+            : currentForm.companyOrBossName,
       companyAddress:
         values.companyAddress !== ""
           ? values.companyAddress
           : !currentForm.companyAddress
-          ? ""
-          : currentForm.companyAddress,
+            ? ""
+            : currentForm.companyAddress,
       companyCity:
         values.companyCity !== "" ? values.companyCity : !currentForm.companyCity ? "" : currentForm.companyCity,
       companyState:
@@ -595,28 +594,28 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
         values.companyCountry !== ""
           ? values.companyCountry
           : !currentForm.companyCountry
-          ? ""
-          : currentForm.companyCountry,
+            ? ""
+            : currentForm.companyCountry,
       companyCep: values.companyCep !== "" ? values.companyCep : !currentForm.companyCep ? "" : currentForm.companyCep,
       companyTel: values.companyTel !== "" ? values.companyTel : !currentForm.companyTel ? "" : currentForm.companyTel,
       admissionDate:
         values.admissionDate !== undefined
           ? values.admissionDate
           : !currentForm.admissionDate
-          ? undefined
-          : currentForm.admissionDate,
+            ? undefined
+            : currentForm.admissionDate,
       monthlySalary:
         values.monthlySalary !== ""
           ? values.monthlySalary
           : !currentForm.monthlySalary
-          ? ""
-          : currentForm.monthlySalary,
+            ? ""
+            : currentForm.monthlySalary,
       retireeDate:
         values.retireeDate !== undefined
           ? values.retireeDate
           : !currentForm.retireeDate
-          ? undefined
-          : currentForm.retireeDate,
+            ? undefined
+            : currentForm.retireeDate,
       jobDetails: values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
       previousJobConfirmation: values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
       previousJobs: previousJobsItems.length > 0 ? previousJobsItems : currentForm.previousJobs,
@@ -639,7 +638,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           item.supervisorName === "" ||
           item.admissionDate === undefined ||
           item.resignationDate === undefined ||
-          item.jobDescription === ""
+          item.jobDescription === "",
       ).length > 0
     ) {
       toast.error("Preencha todos os campos para adicionar");
@@ -695,7 +694,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
             jobDescription: string;
           }[] = previousJobs.filter(
             (
-              item
+              item,
             ): item is {
               companyName: string;
               companyAddress: string;
@@ -723,7 +722,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 item.resignationDate !== undefined ||
                 item.jobDescription !== "") &&
               item.admissionDate instanceof Date &&
-              item.resignationDate instanceof Date
+              item.resignationDate instanceof Date,
           );
 
           setCurrentPreviousJobsIndex((prev) => prev + 1);
@@ -753,7 +752,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
       jobDescription: string;
     }[] = newArr.filter(
       (
-        item
+        item,
       ): item is {
         companyName: string;
         companyAddress: string;
@@ -781,7 +780,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           item.resignationDate !== undefined ||
           item.jobDescription !== "") &&
         item.admissionDate instanceof Date &&
-        item.resignationDate instanceof Date
+        item.resignationDate instanceof Date,
     );
 
     setCurrentPreviousJobsIndex((prev) => prev - 1);
@@ -800,7 +799,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           item.cep === "" ||
           item.courseName === "" ||
           item.initialDate === undefined ||
-          item.finishDate === undefined
+          item.finishDate === undefined,
       ).length > 0
     ) {
       toast.error("Preencha todos os campos para adicionar");
@@ -848,7 +847,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
             finishDate: Date;
           }[] = courses.filter(
             (
-              item
+              item,
             ): item is {
               institutionName: string;
               address: string;
@@ -870,7 +869,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 item.initialDate !== undefined ||
                 item.finishDate !== undefined) &&
               item.initialDate instanceof Date &&
-              item.finishDate instanceof Date
+              item.finishDate instanceof Date,
           );
 
           setCurrentCoursesIndex((prev) => prev + 1);
@@ -897,7 +896,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
       finishDate: Date;
     }[] = newArr.filter(
       (
-        item
+        item,
       ): item is {
         institutionName: string;
         address: string;
@@ -919,7 +918,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           item.initialDate !== undefined ||
           item.finishDate !== undefined) &&
         item.initialDate instanceof Date &&
-        item.finishDate instanceof Date
+        item.finishDate instanceof Date,
     );
 
     setCurrentCoursesIndex((prev) => prev - 1);
@@ -1006,10 +1005,10 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Aposentado"
                             ? -1
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 1
+                              : 0
                         }
                         disabled={
                           occupation === "Não Trabalho" ||
@@ -1041,8 +1040,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       {occupation === "Empresário/Proprietário"
                         ? "Nome fantasia ou razão social"
                         : occupation === "Autônomo"
-                        ? "Nome da MEI (se houver)"
-                        : "Nome do empregador atual ou empresa"}
+                          ? "Nome da MEI (se houver)"
+                          : "Nome do empregador atual ou empresa"}
                     </FormLabel>
 
                     <FormControl>
@@ -1051,12 +1050,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Empresário/Proprietário"
                             ? 1
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 2
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 2
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Aposentado" || occupation === "Não Trabalho" || isPending}
                         className="!mt-auto"
@@ -1091,12 +1090,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Empresário/Proprietário" || occupation === "Não Trabalho"
                             ? 2
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 6
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 6
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
@@ -1128,12 +1127,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Empresário/Proprietário" || occupation === "Não Trabalho"
                             ? 3
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 3
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 3
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
@@ -1165,12 +1164,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Empresário/Proprietário"
                             ? 4
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 4
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 4
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
@@ -1202,12 +1201,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Empresário/Proprietário"
                             ? 5
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 5
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 5
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         {...field}
@@ -1239,12 +1238,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Empresário/Proprietário"
                             ? 6
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 7
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 7
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         maxLength={9}
@@ -1275,34 +1274,21 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     <FormLabel className="text-foreground">Telefone</FormLabel>
 
                     <FormControl>
-                      <PhoneInput
+                      <Input
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 7
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 8
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 8
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
-                        limitMaxLength
-                        smartCaret={false}
                         placeholder="Insira o telefone da empresa..."
-                        defaultCountry="BR"
-                        className={cn(
-                          "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
-                          {
-                            "input-error": false,
-                          }
-                        )}
-                        name={field.name}
-                        ref={field.ref}
-                        onBlur={field.onBlur}
-                        value={field.value}
-                        onChange={field.onChange}
+                        {...field}
                       />
                     </FormControl>
 
@@ -1335,18 +1321,18 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                               occupation === "Empresário/Proprietário"
                                 ? 8
                                 : occupation === "Contratado (CLT/PJ)" ||
-                                  occupation === "Autônomo" ||
-                                  occupation === "Outro"
-                                ? 9
-                                : occupation === "Não Trabalho" || occupation === "Aposentado"
-                                ? -1
-                                : 0
+                                    occupation === "Autônomo" ||
+                                    occupation === "Outro"
+                                  ? 9
+                                  : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                    ? -1
+                                    : 0
                             }
                             disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                             variant={"outline"}
                             className={cn(
                               "!mt-auto w-full h-12 pl-3 text-left border-secondary font-normal group",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -1416,8 +1402,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                               occupation === "Não Trabalho"
                                 ? -1
                                 : occupation === "Aposentado"
-                                ? 1
-                                : 0
+                                  ? 1
+                                  : 0
                             }
                             disabled={
                               occupation === "Não Trabalho" ||
@@ -1430,7 +1416,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                             variant={"outline"}
                             className={cn(
                               "!mt-auto w-full h-12 pl-3 text-left border-secondary font-normal group",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value !== undefined ? (
@@ -1497,12 +1483,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                             occupation === "Empresário/Proprietário"
                               ? 9
                               : occupation === "Contratado (CLT/PJ)" ||
-                                occupation === "Autônomo" ||
-                                occupation === "Outro"
-                              ? 10
-                              : occupation === "Não Trabalho" || occupation === "Aposentado"
-                              ? -1
-                              : 0
+                                  occupation === "Autônomo" ||
+                                  occupation === "Outro"
+                                ? 10
+                                : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                  ? -1
+                                  : 0
                           }
                           disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                           placeholder="Insira o valor do serviço"
@@ -1557,12 +1543,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           occupation === "Empresário/Proprietário"
                             ? 10
                             : occupation === "Contratado (CLT/PJ)" ||
-                              occupation === "Autônomo" ||
-                              occupation === "Outro"
-                            ? 11
-                            : occupation === "Não Trabalho" || occupation === "Aposentado"
-                            ? -1
-                            : 0
+                                occupation === "Autônomo" ||
+                                occupation === "Outro"
+                              ? 11
+                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                                ? -1
+                                : 0
                         }
                         disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
                         className="resize-none"
@@ -1741,24 +1727,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                         <FormLabel className="text-foreground">Telefone</FormLabel>
 
                         <FormControl>
-                          <PhoneInput
-                            disabled={isPending}
-                            limitMaxLength
-                            smartCaret={false}
-                            placeholder="Insira seu telefone..."
-                            defaultCountry="BR"
-                            className={cn(
-                              "!mt-auto flex h-12 w-full border border-muted/70 rounded-xl transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-0 focus-within:ring-offset-0 focus-within:border-primary disabled:cursor-not-allowed disabled:opacity-50",
-                              {
-                                "input-error": false,
-                              }
-                            )}
-                            name={field.name}
-                            ref={field.ref}
-                            onBlur={field.onBlur}
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
+                          <Input disabled={isPending} placeholder="Insira seu telefone..." {...field} />
                         </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />

@@ -96,10 +96,6 @@ body,
   @apply w-6;
 }
 
-.PhoneInputInput {
-  @apply bg-transparent outline-none placeholder:text-muted-foreground;
-}
-
 .scroll-area-body > div {
   height: 100%;
 }

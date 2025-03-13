@@ -1,28 +1,28 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Image from "next/image";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChangeEvent, useEffect, useState } from "react";
+import { format, getYear, isValid, parse } from "date-fns";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { FormAnimation } from "@/constants/animations/modal";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format, getYear, isValid, parse } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Calendar } from "@/components/ui/calendar";
 
-import "react-phone-number-input/style.css";
-import { ChangeEvent, useEffect, useState } from "react";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
-import { toast } from "sonner";
 
 interface Props {
   handleClose: () => void;
@@ -83,7 +83,7 @@ const formSchema = z
           "O3 Cônjuge ou Filho de um O1 ou O2",
           "",
         ],
-        { message: "Classe de visto inválida" }
+        { message: "Classe de visto inválida" },
       )
       .optional(),
     category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -219,14 +219,14 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
         client?.shipping === "pickup"
           ? "Retirada"
           : client?.shipping === "sedex"
-          ? "SEDEX"
-          : client?.shipping === "c_pickup"
-          ? "C-Retirada"
-          : client?.shipping === "c_sedex"
-          ? "C-SEDEX"
-          : client?.shipping === "verifying"
-          ? "A Verificar"
-          : "",
+            ? "SEDEX"
+            : client?.shipping === "c_pickup"
+              ? "C-Retirada"
+              : client?.shipping === "c_sedex"
+                ? "C-SEDEX"
+                : client?.shipping === "verifying"
+                  ? "A Verificar"
+                  : "",
       interviewDate: client?.interviewDate ? format(client.interviewDate, "dd/MM/yyyy") : "",
       interviewTime: client?.interviewTime ?? "",
       passport: client?.passport ?? "",
@@ -236,22 +236,22 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
         client?.visaClass === "B1"
           ? "B1 Babá"
           : client?.visaClass === "B2_B1"
-          ? "B1/B2 Turismo"
-          : client?.visaClass === "O1"
-          ? "O1 Capacidade Extraordinária"
-          : client?.visaClass === "O2"
-          ? "O2 Estrangeiro Acompanhante/Assistente"
-          : client?.visaClass === "O3"
-          ? "O3 Cônjuge ou Filho de um O1 ou O2"
-          : "",
+            ? "B1/B2 Turismo"
+            : client?.visaClass === "O1"
+              ? "O1 Capacidade Extraordinária"
+              : client?.visaClass === "O2"
+                ? "O2 Estrangeiro Acompanhante/Assistente"
+                : client?.visaClass === "O3"
+                  ? "O3 Cônjuge ou Filho de um O1 ou O2"
+                  : "",
       category:
         client?.category === "american_visa"
           ? "Visto Americano"
           : client?.category === "passport"
-          ? "Passaporte"
-          : client?.category === "e_ta"
-          ? "E-TA"
-          : "",
+            ? "Passaporte"
+            : client?.category === "e_ta"
+              ? "E-TA"
+              : "",
       issuanceDate: client?.issuanceDate ? format(client.issuanceDate, "dd/MM/yyyy") : "",
       expireDate: client?.expireDate ? format(client.expireDate, "dd/MM/yyyy") : "",
       DSNumber: client?.DSNumber.toString() ?? "",
@@ -267,10 +267,10 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
         client?.ETAStatus === "analysis"
           ? "Em Análise"
           : client?.ETAStatus === "approved"
-          ? "Aprovado"
-          : client?.ETAStatus === "disapproved"
-          ? "Reprovado"
-          : "",
+            ? "Aprovado"
+            : client?.ETAStatus === "disapproved"
+              ? "Reprovado"
+              : "",
     },
   });
 
@@ -382,7 +382,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
       | "issuanceDate"
       | "expireDate"
       | "scheduleDate"
-      | "entryDate"
+      | "entryDate",
   ) {
     const currentDate = form.getValues(field);
 
@@ -942,7 +942,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
-                category !== "Visto Americano" && "hidden"
+                category !== "Visto Americano" && "hidden",
               )}
             >
               <FormField
@@ -1418,7 +1418,7 @@ export function ClientDetailsEditProfile({ handleClose }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
-                category !== "E-TA" && "hidden"
+                category !== "E-TA" && "hidden",
               )}
             >
               <FormField

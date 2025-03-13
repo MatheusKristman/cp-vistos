@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { formatPhoneNumber } from "react-phone-number-input";
 
 import { trpc } from "@/lib/trpc-client";
 import { cn, formatPrice } from "@/lib/utils";
@@ -100,9 +99,7 @@ export function SubmitConfirmationModal({ isCollaborator }: SubmitConfirmationMo
                 <div className="w-full flex flex-col">
                   <span className="text-xs font-medium opacity-50">Celular</span>
 
-                  <span className="text-base font-medium">
-                    {formValues ? formatPhoneNumber(formValues!.cel!) : "---"}
-                  </span>
+                  <span className="text-base font-medium">{formValues ? formValues!.cel! : "---"}</span>
                 </div>
               </div>
 

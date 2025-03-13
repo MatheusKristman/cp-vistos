@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import CurrencyInput from "react-currency-input-field";
 import { CircleDollarSign, Loader2 } from "lucide-react";
-import PhoneInput from "react-phone-number-input";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
@@ -20,8 +19,6 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import { FormAnimation } from "@/constants/animations/modal";
 import useClientDetailsModalStore from "@/constants/stores/useClientDetailsModalStore";
-
-import "react-phone-number-input/style.css";
 
 interface Props {
   handleClose: () => void;
@@ -50,7 +47,7 @@ const formSchema = z
         invalid_type_error: "Celular inválido",
       })
       .optional()
-      .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+      .refine((val) => !val || (val && val.length === 0), {
         message: "Celular inválido",
       }),
     address: z.string({
@@ -193,14 +190,14 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
         (client && client.user.budgetPaid === "paid"
           ? "Pago"
           : client && client.user.budgetPaid === "pending"
-          ? "Pendente"
-          : "") ?? "",
+            ? "Pendente"
+            : "") ?? "",
       scheduleAccount:
         (client && client.user.scheduleAccount === "active"
           ? "Ativado"
           : client && client.user.scheduleAccount === "inactive"
-          ? "Inativo"
-          : "") ?? "",
+            ? "Inativo"
+            : "") ?? "",
     },
   });
 
@@ -322,16 +319,7 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
                     <FormLabel>Celular</FormLabel>
 
                     <FormControl>
-                      <PhoneInput
-                        limitMaxLength
-                        smartCaret={false}
-                        placeholder="Insira o celular do cliente"
-                        defaultCountry="BR"
-                        className={cn(
-                          "flex h-12 w-full border border-muted transition duration-300 bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-primary hover:border-border disabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted"
-                        )}
-                        {...field}
-                      />
+                      <Input placeholder="Insira o celular do cliente" {...field} />
                     </FormControl>
 
                     <FormMessage className="font-normal text-destructive" />

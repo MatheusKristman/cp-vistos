@@ -56,7 +56,7 @@ const profileFormSchema = z
           "O3 Cônjuge ou Filho de um O1 ou O2",
           "",
         ],
-        { message: "Classe de visto inválida" }
+        { message: "Classe de visto inválida" },
       )
       .optional(),
     category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -162,7 +162,7 @@ const accountFormSchema = z
         invalid_type_error: "Celular inválido",
       })
       .optional()
-      .refine((val) => !val || (val && (val.length === 0 || val.length === 14)), {
+      .refine((val) => !val || (val && val.length === 0), {
         message: "Celular inválido",
       }),
     address: z.string({
@@ -477,7 +477,7 @@ export default function CreateAccountPage() {
           ],
           {
             shouldFocus: true,
-          }
+          },
         )
         .then(() => {
           if (Object.keys(form.formState.errors).length === 0) {
