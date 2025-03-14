@@ -71,136 +71,214 @@ const formSchema = z
       }),
     ),
   })
-  .superRefine(({ previousJobConfirmation, previousJobs }, ctx) => {
-    if (
-      previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.companyCep === "").length === 1
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
-        path: [`previousJobs.${previousJobs.length - 1}.companyCep`],
-      });
-    }
+  .superRefine(({ previousJobConfirmation, previousJobs, courses }, ctx) => {
+    const hasPreviousJobsValue =
+      previousJobs[previousJobs.length - 1].companyName !== "" ||
+      previousJobs[previousJobs.length - 1].companyAddress !== "" ||
+      previousJobs[previousJobs.length - 1].companyCity !== "" ||
+      previousJobs[previousJobs.length - 1].companyState !== "" ||
+      previousJobs[previousJobs.length - 1].companyCountry !== "" ||
+      previousJobs[previousJobs.length - 1].companyCep !== "" ||
+      previousJobs[previousJobs.length - 1].companyTel !== "" ||
+      previousJobs[previousJobs.length - 1].office !== "" ||
+      previousJobs[previousJobs.length - 1].supervisorName !== "" ||
+      previousJobs[previousJobs.length - 1].admissionDate !== undefined ||
+      previousJobs[previousJobs.length - 1].resignationDate !== undefined ||
+      previousJobs[previousJobs.length - 1].jobDescription !== "";
+
+    const hasCoursesValue =
+      courses[courses.length - 1].institutionName !== "" ||
+      courses[courses.length - 1].address !== "" ||
+      courses[courses.length - 1].city !== "" ||
+      courses[courses.length - 1].state !== "" ||
+      courses[courses.length - 1].country !== "" ||
+      courses[courses.length - 1].cep !== "" ||
+      courses[courses.length - 1].courseName !== "" ||
+      courses[courses.length - 1].initialDate !== undefined ||
+      courses[courses.length - 1].finishDate !== undefined;
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.companyCity === "").length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].companyCity === ""
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.companyCity`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.companyAddress === "").length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].companyAddress === ""
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.companyAddress`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.companyName === "").length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].companyName === ""
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.companyName`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.companyState === "").length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].companyState === ""
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.companyState`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.jobDescription === "").length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].jobDescription === ""
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.jobDescription`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.companyTel === "").length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].companyCountry === ""
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
-        path: [`previousJobs.${previousJobs.length - 1}.companyTel`],
-      });
-    }
-
-    if (
-      previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.companyCountry === "").length === 1
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.companyCountry`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.office === "").length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].office === ""
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.office`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.admissionDate === undefined).length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].admissionDate === undefined
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.admissionDate`],
       });
     }
 
     if (
       previousJobConfirmation === "Sim" &&
-      previousJobs.length === 1 &&
-      previousJobs.filter((item) => item.resignationDate === undefined).length === 1
+      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+      previousJobs[previousJobs.length - 1].resignationDate === undefined
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Campo vazio, preencha para prosseguir",
+        message: "Campo obrigatório",
         path: [`previousJobs.${previousJobs.length - 1}.resignationDate`],
+      });
+    }
+
+    if (
+      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
+      courses[courses.length - 1].institutionName === ""
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: [`courses.${courses.length - 1}.institutionName`],
+      });
+    }
+
+    if (
+      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
+      courses[courses.length - 1].city === ""
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: [`courses.${courses.length - 1}.city`],
+      });
+    }
+
+    if (
+      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
+      courses[courses.length - 1].state === ""
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: [`courses.${courses.length - 1}.state`],
+      });
+    }
+
+    if (
+      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
+      courses[courses.length - 1].country === ""
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: [`courses.${courses.length - 1}.country`],
+      });
+    }
+
+    if (
+      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
+      courses[courses.length - 1].courseName === ""
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: [`courses.${courses.length - 1}.courseName`],
+      });
+    }
+
+    if (
+      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
+      courses[courses.length - 1].initialDate === undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: [`courses.${courses.length - 1}.initialDate`],
+      });
+    }
+
+    if (
+      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
+      courses[courses.length - 1].finishDate === undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: [`courses.${courses.length - 1}.finishDate`],
       });
     }
   });
@@ -216,37 +294,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
     currentForm.previousJobs.length ?? 0,
   );
   const [resetPreviousJobsFields, setResetPreviousJobsFields] = useState<boolean>(false);
-  const [previousJobsItems, setPreviousJobsItems] = useState<
-    {
-      companyName: string;
-      companyAddress: string;
-      companyCity: string;
-      companyState: string;
-      companyCountry: string;
-      companyCep: string;
-      companyTel: string;
-      office: string;
-      supervisorName: string;
-      admissionDate: Date;
-      resignationDate: Date;
-      jobDescription: string;
-    }[]
-  >([]);
   const [currentCoursesIndex, setCurrentCoursesIndex] = useState<number>(currentForm.courses.length ?? 0);
   const [resetCoursesFields, setResetCoursesFields] = useState<boolean>(false);
-  const [coursesItems, setCoursesItems] = useState<
-    {
-      institutionName: string;
-      address: string;
-      city: string;
-      state: string;
-      country: string;
-      cep: string;
-      courseName: string;
-      initialDate: Date;
-      finishDate: Date;
-    }[]
-  >([]);
 
   const currentYear = getYear(new Date());
   const { redirectStep, setRedirectStep } = useFormStore();
@@ -273,8 +322,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           ? [
               ...currentForm.previousJobs.map((item) => ({
                 ...item,
-                admissionDate: new Date(item.admissionDate),
-                resignationDate: new Date(item.resignationDate),
+                admissionDate: item.admissionDate ? new Date(item.admissionDate) : undefined,
+                resignationDate: item.resignationDate ? new Date(item.resignationDate) : undefined,
               })),
               {
                 companyName: "",
@@ -312,8 +361,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           ? [
               ...currentForm.courses.map((item) => ({
                 ...item,
-                initialDate: new Date(item.initialDate),
-                finishDate: new Date(item.finishDate),
+                initialDate: item.initialDate ? new Date(item.initialDate) : undefined,
+                finishDate: item.finishDate ? new Date(item.finishDate) : undefined,
               })),
               {
                 institutionName: "",
@@ -349,6 +398,10 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   const courses = form.watch("courses");
   const utils = trpc.useUtils();
   const router = useRouter();
+
+  useEffect(() => {
+    console.log({ previousJobs });
+  }, [previousJobs]);
 
   const { mutate: submitWorkEducation, isPending } = trpc.formsRouter.submitWorkEducation.useMutation({
     onSuccess: (data) => {
@@ -394,45 +447,60 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   useEffect(() => {
     if (currentForm.previousJobs.length > 0) {
       setCurrentPreviousJobsIndex(currentForm.previousJobs.length);
-
-      const previousJobsFiltered = currentForm.previousJobs.filter(
-        (item) =>
-          item.companyName !== "" ||
-          item.companyAddress !== "" ||
-          item.companyCity !== "" ||
-          item.companyState !== "" ||
-          item.companyCountry !== "" ||
-          item.companyCep !== "" ||
-          item.companyTel !== "" ||
-          item.office !== "" ||
-          item.supervisorName !== "" ||
-          item.admissionDate !== undefined ||
-          item.resignationDate !== undefined ||
-          item.jobDescription !== "",
-      );
-
-      setPreviousJobsItems(previousJobsFiltered);
     }
 
     if (currentForm.courses.length > 0) {
       setCurrentCoursesIndex(currentForm.courses.length);
-
-      const coursesFiltered = currentForm.courses.filter(
-        (item) =>
-          item.institutionName !== "" ||
-          item.address !== "" ||
-          item.city !== "" ||
-          item.state !== "" ||
-          item.country !== "" ||
-          item.cep !== "" ||
-          item.courseName !== "" ||
-          item.initialDate !== undefined ||
-          item.finishDate !== undefined,
-      );
-
-      setCoursesItems(coursesFiltered);
     }
   }, [currentForm]);
+
+  useEffect(() => {
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.companyName`,
+      previousJobs[currentPreviousJobsIndex].companyName,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.companyAddress`,
+      previousJobs[currentPreviousJobsIndex].companyAddress,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.companyCity`,
+      previousJobs[currentPreviousJobsIndex].companyCity,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.companyState`,
+      previousJobs[currentPreviousJobsIndex].companyState,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.companyCountry`,
+      previousJobs[currentPreviousJobsIndex].companyCountry,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.companyCep`,
+      previousJobs[currentPreviousJobsIndex].companyCep,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.companyTel`,
+      previousJobs[currentPreviousJobsIndex].companyTel,
+    );
+    form.setValue(`previousJobs.${currentPreviousJobsIndex}.office`, previousJobs[currentPreviousJobsIndex].office);
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.supervisorName`,
+      previousJobs[currentPreviousJobsIndex].supervisorName,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.admissionDate`,
+      previousJobs[currentPreviousJobsIndex].admissionDate,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.resignationDate`,
+      previousJobs[currentPreviousJobsIndex].resignationDate,
+    );
+    form.setValue(
+      `previousJobs.${currentPreviousJobsIndex}.jobDescription`,
+      previousJobs[currentPreviousJobsIndex].jobDescription,
+    );
+  }, [currentPreviousJobsIndex]);
 
   useEffect(() => {
     if (resetPreviousJobsFields) {
@@ -470,6 +538,16 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   useEffect(() => {
     if (redirectStep !== null) {
       const values = form.getValues();
+      const previousJobsFormatted = previousJobs.map((prevJob) => ({
+        ...prevJob,
+        admissionDate: prevJob.admissionDate ?? null,
+        resignationDate: prevJob.resignationDate ?? null,
+      }));
+      const coursesFormatted = courses.map((course) => ({
+        ...course,
+        initialDate: course.initialDate ?? null,
+        finishDate: course.finishDate ?? null,
+      }));
 
       saveWorkEducation({
         profileId,
@@ -525,8 +603,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
           values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
         previousJobConfirmation:
           values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
-        previousJobs: previousJobsItems.length > 0 ? previousJobsItems : currentForm.previousJobs,
-        courses: coursesItems.length > 0 ? coursesItems : currentForm.courses,
+        previousJobs: previousJobsFormatted,
+        courses: coursesFormatted,
       });
       setRedirectStep(null);
     }
@@ -557,10 +635,87 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const previousJobsFormatted: {
+      companyName: string;
+      companyAddress: string;
+      companyCity: string;
+      companyState: string;
+      companyCountry: string;
+      companyCep: string;
+      companyTel: string;
+      office: string;
+      supervisorName: string;
+      admissionDate: Date;
+      resignationDate: Date;
+      jobDescription: string;
+    }[] = values.previousJobs.filter(
+      (
+        prev,
+      ): prev is {
+        companyName: string;
+        companyAddress: string;
+        companyCity: string;
+        companyState: string;
+        companyCountry: string;
+        companyCep: string;
+        companyTel: string;
+        office: string;
+        supervisorName: string;
+        admissionDate: Date;
+        resignationDate: Date;
+        jobDescription: string;
+      } =>
+        (prev.companyCity !== "" ||
+          prev.companyAddress !== "" ||
+          prev.companyName !== "" ||
+          prev.companyCountry !== "" ||
+          prev.companyState !== "" ||
+          prev.jobDescription !== "" ||
+          prev.office !== "" ||
+          prev.admissionDate !== undefined ||
+          prev.resignationDate !== undefined) &&
+        prev.admissionDate instanceof Date &&
+        prev.resignationDate instanceof Date,
+    );
+    const coursesFormatted: {
+      institutionName: string;
+      address: string;
+      city: string;
+      state: string;
+      country: string;
+      cep: string;
+      courseName: string;
+      initialDate: Date;
+      finishDate: Date;
+    }[] = values.courses.filter(
+      (
+        course,
+      ): course is {
+        institutionName: string;
+        address: string;
+        city: string;
+        state: string;
+        country: string;
+        cep: string;
+        courseName: string;
+        initialDate: Date;
+        finishDate: Date;
+      } =>
+        (course.institutionName !== "" ||
+          course.city !== "" ||
+          course.state !== "" ||
+          course.country !== "" ||
+          course.courseName !== "" ||
+          course.initialDate !== undefined ||
+          course.finishDate !== undefined) &&
+        course.initialDate instanceof Date &&
+        course.finishDate instanceof Date,
+    );
+
     submitWorkEducation({
       ...values,
-      previousJobs: previousJobsItems,
-      courses: coursesItems,
+      previousJobs: previousJobsFormatted,
+      courses: coursesFormatted,
       profileId,
       step: 9,
       isEditing,
@@ -569,6 +724,16 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
 
   function onSave() {
     const values = form.getValues();
+    const previousJobsFormatted = previousJobs.map((prevJob) => ({
+      ...prevJob,
+      admissionDate: prevJob.admissionDate ?? null,
+      resignationDate: prevJob.resignationDate ?? null,
+    }));
+    const coursesFormatted = courses.map((course) => ({
+      ...course,
+      initialDate: course.initialDate ?? null,
+      finishDate: course.finishDate ?? null,
+    }));
 
     saveWorkEducation({
       profileId,
@@ -618,47 +783,30 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
             : currentForm.retireeDate,
       jobDetails: values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
       previousJobConfirmation: values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
-      previousJobs: previousJobsItems.length > 0 ? previousJobsItems : currentForm.previousJobs,
-      courses: coursesItems.length > 0 ? coursesItems : currentForm.courses,
+      previousJobs: previousJobsFormatted,
+      courses: coursesFormatted,
     });
   }
 
   function addPreviousJobs() {
-    if (
-      previousJobs.filter(
-        (item) =>
-          item.companyName === "" ||
-          item.companyAddress === "" ||
-          item.companyCity === "" ||
-          item.companyState === "" ||
-          item.companyCountry === "" ||
-          item.companyCep === "" ||
-          item.companyTel === "" ||
-          item.office === "" ||
-          item.supervisorName === "" ||
-          item.admissionDate === undefined ||
-          item.resignationDate === undefined ||
-          item.jobDescription === "",
-      ).length > 0
-    ) {
-      toast.error("Preencha todos os campos para adicionar");
-      return;
-    }
     form
-      .trigger([
-        `previousJobs.${currentPreviousJobsIndex}.companyName`,
-        `previousJobs.${currentPreviousJobsIndex}.companyAddress`,
-        `previousJobs.${currentPreviousJobsIndex}.companyCity`,
-        `previousJobs.${currentPreviousJobsIndex}.companyState`,
-        `previousJobs.${currentPreviousJobsIndex}.companyCountry`,
-        `previousJobs.${currentPreviousJobsIndex}.companyCep`,
-        `previousJobs.${currentPreviousJobsIndex}.companyTel`,
-        `previousJobs.${currentPreviousJobsIndex}.office`,
-        `previousJobs.${currentPreviousJobsIndex}.supervisorName`,
-        `previousJobs.${currentPreviousJobsIndex}.admissionDate`,
-        `previousJobs.${currentPreviousJobsIndex}.resignationDate`,
-        `previousJobs.${currentPreviousJobsIndex}.jobDescription`,
-      ])
+      .trigger(
+        [
+          `previousJobs.${currentPreviousJobsIndex}.companyName`,
+          `previousJobs.${currentPreviousJobsIndex}.companyAddress`,
+          `previousJobs.${currentPreviousJobsIndex}.companyCity`,
+          `previousJobs.${currentPreviousJobsIndex}.companyState`,
+          `previousJobs.${currentPreviousJobsIndex}.companyCountry`,
+          `previousJobs.${currentPreviousJobsIndex}.companyCep`,
+          `previousJobs.${currentPreviousJobsIndex}.companyTel`,
+          `previousJobs.${currentPreviousJobsIndex}.office`,
+          `previousJobs.${currentPreviousJobsIndex}.supervisorName`,
+          `previousJobs.${currentPreviousJobsIndex}.admissionDate`,
+          `previousJobs.${currentPreviousJobsIndex}.resignationDate`,
+          `previousJobs.${currentPreviousJobsIndex}.jobDescription`,
+        ],
+        { shouldFocus: true },
+      )
       .then(() => {
         if (Object.keys(form.formState.errors).length === 0) {
           form.setValue("previousJobs", [
@@ -679,145 +827,41 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
             },
           ]);
 
-          const previousJobsFiltered: {
-            companyName: string;
-            companyAddress: string;
-            companyCity: string;
-            companyState: string;
-            companyCountry: string;
-            companyCep: string;
-            companyTel: string;
-            office: string;
-            supervisorName: string;
-            admissionDate: Date;
-            resignationDate: Date;
-            jobDescription: string;
-          }[] = previousJobs.filter(
-            (
-              item,
-            ): item is {
-              companyName: string;
-              companyAddress: string;
-              companyCity: string;
-              companyState: string;
-              companyCountry: string;
-              companyCep: string;
-              companyTel: string;
-              office: string;
-              supervisorName: string;
-              admissionDate: Date;
-              resignationDate: Date;
-              jobDescription: string;
-            } =>
-              (item.companyName !== "" ||
-                item.companyAddress !== "" ||
-                item.companyCity !== "" ||
-                item.companyState !== "" ||
-                item.companyCountry !== "" ||
-                item.companyCep !== "" ||
-                item.companyTel !== "" ||
-                item.office !== "" ||
-                item.supervisorName !== "" ||
-                item.admissionDate !== undefined ||
-                item.resignationDate !== undefined ||
-                item.jobDescription !== "") &&
-              item.admissionDate instanceof Date &&
-              item.resignationDate instanceof Date,
-          );
-
           setCurrentPreviousJobsIndex((prev) => prev + 1);
-          setPreviousJobsItems(previousJobsFiltered);
+          //TODO: verificar se precisar remover isso
           setResetPreviousJobsFields(true);
         }
       });
   }
 
   function removePreviousJobs(index: number) {
-    const newArr = previousJobs.filter((_, i) => i !== index);
+    const previousJobsFiltered = previousJobs.filter((_, i) => i !== index);
 
-    form.setValue("previousJobs", newArr);
+    console.log({ previousJobsFiltered });
 
-    const previousJobsFiltered: {
-      companyName: string;
-      companyAddress: string;
-      companyCity: string;
-      companyState: string;
-      companyCountry: string;
-      companyCep: string;
-      companyTel: string;
-      office: string;
-      supervisorName: string;
-      admissionDate: Date;
-      resignationDate: Date;
-      jobDescription: string;
-    }[] = newArr.filter(
-      (
-        item,
-      ): item is {
-        companyName: string;
-        companyAddress: string;
-        companyCity: string;
-        companyState: string;
-        companyCountry: string;
-        companyCep: string;
-        companyTel: string;
-        office: string;
-        supervisorName: string;
-        admissionDate: Date;
-        resignationDate: Date;
-        jobDescription: string;
-      } =>
-        (item.companyName !== "" ||
-          item.companyAddress !== "" ||
-          item.companyCity !== "" ||
-          item.companyState !== "" ||
-          item.companyCountry !== "" ||
-          item.companyCep !== "" ||
-          item.companyTel !== "" ||
-          item.office !== "" ||
-          item.supervisorName !== "" ||
-          item.admissionDate !== undefined ||
-          item.resignationDate !== undefined ||
-          item.jobDescription !== "") &&
-        item.admissionDate instanceof Date &&
-        item.resignationDate instanceof Date,
-    );
+    form.setValue("previousJobs", previousJobsFiltered);
 
-    setCurrentPreviousJobsIndex((prev) => prev - 1);
-    setPreviousJobsItems(previousJobsFiltered);
+    console.log({ previousJobsFilteredLength: previousJobsFiltered.length - 1 });
+
+    setCurrentPreviousJobsIndex(previousJobsFiltered.length - 1);
   }
 
   function addCourses() {
-    if (
-      courses.filter(
-        (item) =>
-          item.institutionName === "" ||
-          item.address === "" ||
-          item.city === "" ||
-          item.state === "" ||
-          item.country === "" ||
-          item.cep === "" ||
-          item.courseName === "" ||
-          item.initialDate === undefined ||
-          item.finishDate === undefined,
-      ).length > 0
-    ) {
-      toast.error("Preencha todos os campos para adicionar");
-      return;
-    }
-
     form
-      .trigger([
-        `courses.${currentCoursesIndex}.institutionName`,
-        `courses.${currentCoursesIndex}.address`,
-        `courses.${currentCoursesIndex}.city`,
-        `courses.${currentCoursesIndex}.state`,
-        `courses.${currentCoursesIndex}.country`,
-        `courses.${currentCoursesIndex}.cep`,
-        `courses.${currentCoursesIndex}.courseName`,
-        `courses.${currentCoursesIndex}.initialDate`,
-        `courses.${currentCoursesIndex}.finishDate`,
-      ])
+      .trigger(
+        [
+          `courses.${currentCoursesIndex}.institutionName`,
+          `courses.${currentCoursesIndex}.address`,
+          `courses.${currentCoursesIndex}.city`,
+          `courses.${currentCoursesIndex}.state`,
+          `courses.${currentCoursesIndex}.country`,
+          `courses.${currentCoursesIndex}.cep`,
+          `courses.${currentCoursesIndex}.courseName`,
+          `courses.${currentCoursesIndex}.initialDate`,
+          `courses.${currentCoursesIndex}.finishDate`,
+        ],
+        { shouldFocus: true },
+      )
       .then(() => {
         if (Object.keys(form.formState.errors).length === 0) {
           form.setValue("courses", [
@@ -835,45 +879,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
             },
           ]);
 
-          const coursesFiltered: {
-            institutionName: string;
-            address: string;
-            city: string;
-            state: string;
-            country: string;
-            cep: string;
-            courseName: string;
-            initialDate: Date;
-            finishDate: Date;
-          }[] = courses.filter(
-            (
-              item,
-            ): item is {
-              institutionName: string;
-              address: string;
-              city: string;
-              state: string;
-              country: string;
-              cep: string;
-              courseName: string;
-              initialDate: Date;
-              finishDate: Date;
-            } =>
-              (item.institutionName !== "" ||
-                item.address !== "" ||
-                item.city !== "" ||
-                item.state !== "" ||
-                item.country !== "" ||
-                item.cep !== "" ||
-                item.courseName !== "" ||
-                item.initialDate !== undefined ||
-                item.finishDate !== undefined) &&
-              item.initialDate instanceof Date &&
-              item.finishDate instanceof Date,
-          );
-
           setCurrentCoursesIndex((prev) => prev + 1);
-          setCoursesItems(coursesFiltered);
           setResetCoursesFields(true);
         }
       });
@@ -884,45 +890,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
 
     form.setValue("courses", newArr);
 
-    const coursesFiltered: {
-      institutionName: string;
-      address: string;
-      city: string;
-      state: string;
-      country: string;
-      cep: string;
-      courseName: string;
-      initialDate: Date;
-      finishDate: Date;
-    }[] = newArr.filter(
-      (
-        item,
-      ): item is {
-        institutionName: string;
-        address: string;
-        city: string;
-        state: string;
-        country: string;
-        cep: string;
-        courseName: string;
-        initialDate: Date;
-        finishDate: Date;
-      } =>
-        (item.institutionName !== "" ||
-          item.address !== "" ||
-          item.city !== "" ||
-          item.state !== "" ||
-          item.country !== "" ||
-          item.cep !== "" ||
-          item.courseName !== "" ||
-          item.initialDate !== undefined ||
-          item.finishDate !== undefined) &&
-        item.initialDate instanceof Date &&
-        item.finishDate instanceof Date,
-    );
-
     setCurrentCoursesIndex((prev) => prev - 1);
-    setCoursesItems(coursesFiltered);
   }
 
   return (
@@ -1615,7 +1583,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.companyName`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Nome do empregador ou empresa anterior</FormLabel>
+                        <FormLabel className="text-foreground">Nome do empregador ou empresa anterior*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -1631,7 +1599,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.companyAddress`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Logradouro</FormLabel>
+                        <FormLabel className="text-foreground">Logradouro*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -1649,7 +1617,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.companyCity`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Cidade</FormLabel>
+                        <FormLabel className="text-foreground">Cidade*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -1665,7 +1633,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.companyState`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Estado</FormLabel>
+                        <FormLabel className="text-foreground">Estado*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -1681,7 +1649,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.companyCountry`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">País</FormLabel>
+                        <FormLabel className="text-foreground">País*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -1742,7 +1710,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.office`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Cargo / Função</FormLabel>
+                        <FormLabel className="text-foreground">Cargo / Função*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -1776,7 +1744,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.admissionDate`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Data de admissão</FormLabel>
+                        <FormLabel className="text-foreground">Data de admissão*</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -1836,7 +1804,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`previousJobs.${currentPreviousJobsIndex}.resignationDate`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Data de demissão</FormLabel>
+                        <FormLabel className="text-foreground">Data de demissão*</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -1898,7 +1866,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                   render={({ field }) => (
                     <FormItem className="flex flex-col gap-2">
                       <FormLabel className="text-foreground">
-                        Descreva brevemente as tarefas exercidas do seu cargo
+                        Descreva brevemente as tarefas exercidas do seu cargo*
                       </FormLabel>
 
                       <FormControl>
@@ -1918,19 +1886,29 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 disabled={isPending}
                 onClick={addPreviousJobs}
               >
-                Adicionar
+                Adicionar Outro
                 <Plus />
               </Button>
 
-              {previousJobsItems.length > 0 && (
+              {previousJobs.length > 1 && (
                 <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                  {previousJobsItems.map((item, index) => (
+                  {previousJobs.map((item, index) => (
                     <div
                       key={`otherName-${index}`}
-                      className="w-full py-2 px-4 bg-primary/50 rounded-xl flex items-center gap-2 group sm:w-fit"
+                      className={cn(
+                        "w-full py-2 px-4 bg-primary/50 hover:bg-primary/75 transition rounded-xl flex items-center gap-2 group sm:w-fit",
+                        {
+                          "bg-primary hover:bg-primary": currentPreviousJobsIndex === index,
+                        },
+                      )}
                     >
-                      <div className="w-full flex flex-col items-center gap-2">
-                        <span className="text-sm font-medium text-white">Cargo: {item.office}</span>
+                      <div
+                        onClick={() => setCurrentPreviousJobsIndex(index)}
+                        className="w-full flex flex-col items-center gap-2 cursor-pointer"
+                      >
+                        <span className="text-sm font-medium text-white">
+                          Cargo: {item.office ? item.office : "(A preencher)"}
+                        </span>
                       </div>
 
                       <Button
@@ -1950,7 +1928,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
             </div>
 
             <span className="text-foreground text-base font-medium mb-6">
-              Informe a sua escolaridade (Preencha com o maximo de detalhes possíveis)
+              Informe pelo menos os dois últimos cursos concluídos. Caso não tenha ensino superior ou médio completo,
+              informe o ensino básico.
             </span>
 
             <div className="w-full bg-secondary rounded-xl p-4 space-y-6">
@@ -1961,7 +1940,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`courses.${currentCoursesIndex}.institutionName`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Nome completo da instituição</FormLabel>
+                        <FormLabel>Nome completo da instituição*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -2020,7 +1999,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`courses.${currentCoursesIndex}.city`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Cidade</FormLabel>
+                        <FormLabel>Cidade*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -2036,7 +2015,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`courses.${currentCoursesIndex}.state`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Estado</FormLabel>
+                        <FormLabel>Estado*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -2052,7 +2031,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`courses.${currentCoursesIndex}.country`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel>País</FormLabel>
+                        <FormLabel>País*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -2070,7 +2049,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`courses.${currentCoursesIndex}.courseName`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Nome do curso</FormLabel>
+                        <FormLabel>Nome do curso*</FormLabel>
 
                         <FormControl>
                           <Input className="!mt-auto" disabled={isPending} {...field} />
@@ -2086,7 +2065,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`courses.${currentCoursesIndex}.initialDate`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Data de início</FormLabel>
+                        <FormLabel>Data de início*</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -2146,7 +2125,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     name={`courses.${currentCoursesIndex}.finishDate`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Data de término</FormLabel>
+                        <FormLabel>Data de término*</FormLabel>
 
                         <Popover>
                           <PopoverTrigger asChild>
@@ -2214,15 +2193,25 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 <Plus />
               </Button>
 
-              {coursesItems.length > 0 && (
+              {courses.length > 0 && (
                 <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                  {coursesItems.map((item, index) => (
+                  {courses.map((item, index) => (
                     <div
                       key={`otherName-${index}`}
-                      className="w-full py-2 px-4 bg-primary/70 rounded-xl flex items-center gap-2 group sm:w-fit"
+                      className={cn(
+                        "w-full py-2 px-4 bg-primary/50 hover:bg-primary/75 rounded-xl flex items-center gap-2 group sm:w-fit",
+                        {
+                          "bg-primary hover:bg-primary": currentCoursesIndex === index,
+                        },
+                      )}
                     >
-                      <div className="w-full flex flex-col items-center gap-2">
-                        <span className="text-sm font-medium text-white">Curso: {item.courseName}</span>
+                      <div
+                        onClick={() => setCurrentCoursesIndex(index)}
+                        className="w-full flex flex-col items-center gap-2 cursor-pointer"
+                      >
+                        <span className="text-sm font-medium text-white">
+                          Curso: {item.courseName ? item.courseName : "(A preencher)"}
+                        </span>
                       </div>
 
                       <Button

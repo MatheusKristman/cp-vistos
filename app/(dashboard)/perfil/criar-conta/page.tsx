@@ -399,28 +399,31 @@ export default function CreateAccountPage() {
 
   function addProfile() {
     form
-      .trigger([
-        `profiles.${currentProfile}.profileName`,
-        `profiles.${currentProfile}.profileCpf`,
-        `profiles.${currentProfile}.birthDate`,
-        `profiles.${currentProfile}.profileAddress`,
-        `profiles.${currentProfile}.passport`,
-        `profiles.${currentProfile}.visaType`,
-        `profiles.${currentProfile}.visaClass`,
-        `profiles.${currentProfile}.category`,
-        `profiles.${currentProfile}.issuanceDate`,
-        `profiles.${currentProfile}.expireDate`,
-        `profiles.${currentProfile}.DSNumber`,
-        `profiles.${currentProfile}.responsibleCpf`,
-        `profiles.${currentProfile}.protocol`,
-        `profiles.${currentProfile}.paymentStatus`,
-        `profiles.${currentProfile}.scheduleDate`,
-        `profiles.${currentProfile}.scheduleTime`,
-        `profiles.${currentProfile}.scheduleLocation`,
-        `profiles.${currentProfile}.entryDate`,
-        `profiles.${currentProfile}.process`,
-        `profiles.${currentProfile}.ETAStatus`,
-      ])
+      .trigger(
+        [
+          `profiles.${currentProfile}.profileName`,
+          `profiles.${currentProfile}.profileCpf`,
+          `profiles.${currentProfile}.birthDate`,
+          `profiles.${currentProfile}.profileAddress`,
+          `profiles.${currentProfile}.passport`,
+          `profiles.${currentProfile}.visaType`,
+          `profiles.${currentProfile}.visaClass`,
+          `profiles.${currentProfile}.category`,
+          `profiles.${currentProfile}.issuanceDate`,
+          `profiles.${currentProfile}.expireDate`,
+          `profiles.${currentProfile}.DSNumber`,
+          `profiles.${currentProfile}.responsibleCpf`,
+          `profiles.${currentProfile}.protocol`,
+          `profiles.${currentProfile}.paymentStatus`,
+          `profiles.${currentProfile}.scheduleDate`,
+          `profiles.${currentProfile}.scheduleTime`,
+          `profiles.${currentProfile}.scheduleLocation`,
+          `profiles.${currentProfile}.entryDate`,
+          `profiles.${currentProfile}.process`,
+          `profiles.${currentProfile}.ETAStatus`,
+        ],
+        { shouldFocus: true },
+      )
       .then(() => {
         console.log(form.formState.errors);
         if (Object.keys(form.formState.errors).length === 0) {

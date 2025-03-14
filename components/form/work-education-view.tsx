@@ -144,7 +144,9 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Nome do empregador ou empresa anterior</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.companyName}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.companyName ? previousJobs.companyName : "Não Preenchido"}
+                  </span>
                 </div>
               </div>
 
@@ -152,18 +154,24 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Endereço completo da empresa</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.companyAddress}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.companyAddress ? previousJobs.companyAddress : "Não Preenchido"}
+                  </span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Cidade da empresa</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.companyCity}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.companyCity ? previousJobs.companyCity : "Não Preenchido"}
+                  </span>
                 </div>
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Estado da empresa</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.companyState}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.companyState ? previousJobs.companyState : "Não Preenchido"}
+                  </span>
                 </div>
               </div>
 
@@ -171,13 +179,17 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">País da empresa</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.companyCountry}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.companyCountry ? previousJobs.companyCountry : "Não Preenchido"}
+                  </span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">CEP da empresa</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.companyCep}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.companyCep ? previousJobs.companyCep : "Não Preenchido"}
+                  </span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1">
@@ -193,13 +205,17 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Cargo / Função</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.office}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.office ? previousJobs.office : "Não Preenchido"}
+                  </span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Nome completo do supervisor</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.supervisorName}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.supervisorName ? previousJobs.supervisorName : "Não Preenchido"}
+                  </span>
                 </div>
               </div>
 
@@ -227,7 +243,9 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Descrição da tarefa exercida</span>
 
-                  <span className="text-lg font-medium text-foreground">{previousJobs.jobDescription}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {previousJobs.jobDescription ? previousJobs.jobDescription : "Não Preenchido"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -255,7 +273,9 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Nome completo da instituição</span>
 
-                  <span className="text-lg font-medium text-foreground">{course.institutionName}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {course.institutionName ? course.institutionName : "Não Preenchido"}
+                  </span>
                 </div>
               </div>
 
@@ -263,18 +283,24 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Endereço completo da instituição</span>
 
-                  <span className="text-lg font-medium text-foreground">{course.address}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {course.address ? course.address : "Não Preenchido"}
+                  </span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Cidade da instituição</span>
 
-                  <span className="text-lg font-medium text-foreground">{course.city}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {course.city ? course.city : "Não Preenchido"}
+                  </span>
                 </div>
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Estado da instituição</span>
 
-                  <span className="text-lg font-medium text-foreground">{course.state}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {course.state ? course.state : "Não Preenchido"}
+                  </span>
                 </div>
               </div>
 
@@ -282,13 +308,17 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">País da instituição</span>
 
-                  <span className="text-lg font-medium text-foreground">{course.country}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {course.country ? course.country : "Não Preenchido"}
+                  </span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">CEP da instituição</span>
 
-                  <span className="text-lg font-medium text-foreground">{course.cep}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {course.cep ? course.cep : "Não Preenchido"}
+                  </span>
                 </div>
               </div>
 
@@ -296,7 +326,9 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
                 <div className="w-full flex flex-col gap-1">
                   <span className="text-sm text-foreground/70 font-medium">Nome do curso</span>
 
-                  <span className="text-lg font-medium text-foreground">{course.courseName}</span>
+                  <span className="text-lg font-medium text-foreground">
+                    {course.courseName ? course.courseName : "Não Preenchido"}
+                  </span>
                 </div>
 
                 <div className="w-full flex flex-col gap-1">

@@ -8,7 +8,7 @@ declare global {
     };
 
     type USALastTravelType = {
-      arriveDate: Date;
+      arriveDate: Date | null;
       estimatedTime: string;
     };
 
@@ -33,8 +33,8 @@ declare global {
       companyTel: string;
       office: string;
       supervisorName: string;
-      admissionDate: Date;
-      resignationDate: Date;
+      admissionDate: Date | null;
+      resignationDate: Date | null;
       jobDescription: string;
     };
 
@@ -46,8 +46,8 @@ declare global {
       country: string;
       cep: string;
       courseName: string;
-      initialDate: Date;
-      finishDate: Date;
+      initialDate: Date | null;
+      finishDate: Date | null;
     };
   }
 }
