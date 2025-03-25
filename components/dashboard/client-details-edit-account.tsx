@@ -168,6 +168,12 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
     onError: (error) => {
       console.log(error);
 
+      if (error?.data?.code === "CONFLICT") {
+        toast.error(error.message);
+
+        return;
+      }
+
       toast.error("Ocorreu um erro ao editar a conta");
     },
   });

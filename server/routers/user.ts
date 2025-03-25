@@ -1350,6 +1350,16 @@ export const userRouter = router({
       let budgetPaid;
       let scheduleAccount;
 
+      const userWithSameEmail = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (userWithSameEmail && userWithSameEmail.id !== userId) {
+        throw new TRPCError({ code: "CONFLICT", message: "E-mail já está sendo utilizado em outra conta" });
+      }
+
       if (password.length > 0) {
         await prisma.user.update({
           where: {
