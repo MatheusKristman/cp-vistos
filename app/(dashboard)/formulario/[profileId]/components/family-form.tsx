@@ -39,7 +39,7 @@ const formSchema = z
         name: z.string(),
         relation: z.string(),
         situation: z.string(),
-      }),
+      })
     ),
     partnerCompleteName: z.string(),
     partnerBirthdate: z.date({ message: "Campo obrigatório" }).optional(),
@@ -60,7 +60,7 @@ const formSchema = z
         motherLiveInTheUSAConfirmation,
         motherUSASituation,
       },
-      ctx,
+      ctx
     ) => {
       if (fatherLiveInTheUSAConfirmation === "Sim" && fatherUSASituation.length === 0) {
         ctx.addIssue({
@@ -113,7 +113,7 @@ const formSchema = z
           path: [`familyLivingInTheUSA.${familyLivingInTheUSA.length - 1}.situation`],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -227,7 +227,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
       setCurrentFamilyIndex(currentForm.familyLivingInTheUSA.length);
 
       const familyFiltered = currentForm.familyLivingInTheUSA.filter(
-        (item) => (item.name !== "" && item.relation !== "") || item.situation !== "",
+        (item) => (item.name !== "" && item.relation !== "") || item.situation !== ""
       );
 
       setFamilyLivingInTheUSAItems(familyFiltered);
@@ -255,8 +255,8 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           values.fatherCompleteName !== ""
             ? values.fatherCompleteName
             : !currentForm.fatherCompleteName
-              ? ""
-              : currentForm.fatherCompleteName,
+            ? ""
+            : currentForm.fatherCompleteName,
         fatherBirthdate: values.fatherBirthdate ?? currentForm.fatherBirthdate,
         fatherLiveInTheUSAConfirmation:
           values.fatherLiveInTheUSAConfirmation ?? (currentForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"),
@@ -264,14 +264,14 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           values.fatherUSASituation !== ""
             ? values.fatherUSASituation
             : !currentForm.fatherUSASituation
-              ? ""
-              : currentForm.fatherUSASituation,
+            ? ""
+            : currentForm.fatherUSASituation,
         motherCompleteName:
           values.motherCompleteName !== ""
             ? values.motherCompleteName
             : !currentForm.motherCompleteName
-              ? ""
-              : currentForm.motherCompleteName,
+            ? ""
+            : currentForm.motherCompleteName,
         motherBirthdate: values.motherBirthdate ?? currentForm.motherBirthdate,
         motherLiveInTheUSAConfirmation:
           values.motherLiveInTheUSAConfirmation ?? (currentForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não"),
@@ -279,8 +279,8 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           values.motherUSASituation !== ""
             ? values.motherUSASituation
             : !currentForm.motherUSASituation
-              ? ""
-              : currentForm.motherUSASituation,
+            ? ""
+            : currentForm.motherUSASituation,
         familyLivingInTheUSAConfirmation:
           values.familyLivingInTheUSAConfirmation ?? (currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
         familyLivingInTheUSA:
@@ -289,15 +289,15 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           values.partnerCompleteName !== ""
             ? values.partnerCompleteName
             : !currentForm.partnerCompleteName
-              ? ""
-              : currentForm.partnerCompleteName,
+            ? ""
+            : currentForm.partnerCompleteName,
         partnerBirthdate: values.partnerBirthdate ?? currentForm.partnerBirthdate,
         partnerNationality:
           values.partnerNationality !== ""
             ? values.partnerNationality
             : !currentForm.partnerNationality
-              ? ""
-              : currentForm.partnerNationality,
+            ? ""
+            : currentForm.partnerNationality,
         partnerCity:
           values.partnerCity !== "" ? values.partnerCity : !currentForm.partnerCity ? "" : currentForm.partnerCity,
         partnerState:
@@ -306,8 +306,8 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           values.partnerCountry !== ""
             ? values.partnerCountry
             : !currentForm.partnerCountry
-              ? ""
-              : currentForm.partnerCountry,
+            ? ""
+            : currentForm.partnerCountry,
         unionDate: values.unionDate ?? currentForm.unionDate,
         divorceDate: values.divorceDate ?? currentForm.divorceDate,
       });
@@ -427,8 +427,8 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
         values.fatherCompleteName !== ""
           ? values.fatherCompleteName
           : !currentForm.fatherCompleteName
-            ? ""
-            : currentForm.fatherCompleteName,
+          ? ""
+          : currentForm.fatherCompleteName,
       fatherBirthdate: values.fatherBirthdate ?? currentForm.fatherBirthdate,
       fatherLiveInTheUSAConfirmation:
         values.fatherLiveInTheUSAConfirmation ?? (currentForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"),
@@ -436,14 +436,14 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
         values.fatherUSASituation !== ""
           ? values.fatherUSASituation
           : !currentForm.fatherUSASituation
-            ? ""
-            : currentForm.fatherUSASituation,
+          ? ""
+          : currentForm.fatherUSASituation,
       motherCompleteName:
         values.motherCompleteName !== ""
           ? values.motherCompleteName
           : !currentForm.motherCompleteName
-            ? ""
-            : currentForm.motherCompleteName,
+          ? ""
+          : currentForm.motherCompleteName,
       motherBirthdate: values.motherBirthdate ?? currentForm.motherBirthdate,
       motherLiveInTheUSAConfirmation:
         values.motherLiveInTheUSAConfirmation ?? (currentForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não"),
@@ -451,8 +451,8 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
         values.motherUSASituation !== ""
           ? values.motherUSASituation
           : !currentForm.motherUSASituation
-            ? ""
-            : currentForm.motherUSASituation,
+          ? ""
+          : currentForm.motherUSASituation,
       familyLivingInTheUSAConfirmation:
         values.familyLivingInTheUSAConfirmation ?? (currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
       familyLivingInTheUSA:
@@ -461,15 +461,15 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
         values.partnerCompleteName !== ""
           ? values.partnerCompleteName
           : !currentForm.partnerCompleteName
-            ? ""
-            : currentForm.partnerCompleteName,
+          ? ""
+          : currentForm.partnerCompleteName,
       partnerBirthdate: values.partnerBirthdate ?? currentForm.partnerBirthdate,
       partnerNationality:
         values.partnerNationality !== ""
           ? values.partnerNationality
           : !currentForm.partnerNationality
-            ? ""
-            : currentForm.partnerNationality,
+          ? ""
+          : currentForm.partnerNationality,
       partnerCity:
         values.partnerCity !== "" ? values.partnerCity : !currentForm.partnerCity ? "" : currentForm.partnerCity,
       partnerState:
@@ -478,8 +478,8 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
         values.partnerCountry !== ""
           ? values.partnerCountry
           : !currentForm.partnerCountry
-            ? ""
-            : currentForm.partnerCountry,
+          ? ""
+          : currentForm.partnerCountry,
       unionDate: values.unionDate ?? currentForm.unionDate,
       divorceDate: values.divorceDate ?? currentForm.divorceDate,
     });
@@ -493,7 +493,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           `familyLivingInTheUSA.${currentFamilyIndex}.relation`,
           `familyLivingInTheUSA.${currentFamilyIndex}.situation`,
         ],
-        { shouldFocus: true },
+        { shouldFocus: true }
       )
       .then(() => {
         if (Object.keys(form.formState.errors).length === 0) {
@@ -507,7 +507,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           ]);
 
           const familyFiltered = familyLivingInTheUSA.filter(
-            (item) => item.name !== "" || item.relation !== "" || item.situation !== "",
+            (item) => item.name !== "" || item.relation !== "" || item.situation !== ""
           );
 
           setCurrentFamilyIndex((prev) => prev + 1);
@@ -661,7 +661,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
                   <FormItem
                     className={cn(
                       "w-full bg-secondary rounded-xl p-4 flex flex-col gap-2",
-                      fatherLiveInTheUSAConfirmation === "Não" && "hidden",
+                      fatherLiveInTheUSAConfirmation === "Não" && "hidden"
                     )}
                   >
                     <FormLabel className="text-foreground">
@@ -814,7 +814,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
                   <FormItem
                     className={cn(
                       "w-full bg-secondary rounded-xl p-4 flex flex-col gap-2",
-                      motherLiveInTheUSAConfirmation === "Não" && "hidden",
+                      motherLiveInTheUSAConfirmation === "Não" && "hidden"
                     )}
                   >
                     <FormLabel className="text-foreground">
@@ -890,7 +890,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
               <div
                 className={cn(
                   "w-full bg-secondary rounded-xl p-4 space-y-6",
-                  familyLivingInTheUSAConfirmation === "Não" && "hidden",
+                  familyLivingInTheUSAConfirmation === "Não" && "hidden"
                 )}
               >
                 <span className="text-foreground text-base font-medium">Em caso afirmativo, informe:</span>
@@ -1332,6 +1332,17 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
           <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={() => router.push(`/resumo-formulario/${profileId}`)}
+                >
+                  Cancelar
+                </Button>
+
                 <Button
                   size="xl"
                   type="submit"

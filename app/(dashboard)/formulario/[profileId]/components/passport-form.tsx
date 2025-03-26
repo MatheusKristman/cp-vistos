@@ -685,6 +685,17 @@ export function PassportForm({ currentForm, profileId, isEditing }: Props) {
               <>
                 <Button
                   size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={() => router.push(`/resumo-formulario/${profileId}`)}
+                >
+                  Cancelar
+                </Button>
+
+                <Button
+                  size="xl"
                   type="submit"
                   className="w-full flex items-center gap-2 sm:w-fit"
                   disabled={isPending || isSavePending}

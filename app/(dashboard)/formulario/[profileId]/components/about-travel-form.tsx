@@ -121,7 +121,7 @@ const formSchema = z
         payerRelation,
         payerEmail,
       },
-      ctx,
+      ctx
     ) => {
       if (hasAddressInUSA === "Sim" && USACompleteAddress.length === 0) {
         ctx.addIssue({
@@ -194,7 +194,7 @@ const formSchema = z
           path: ["payerEmail"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -305,8 +305,8 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
           values.visitLocations !== ""
             ? values.visitLocations
             : !currentForm.visitLocations
-              ? ""
-              : currentForm.visitLocations,
+            ? ""
+            : currentForm.visitLocations,
         hasAddressInUSA: values.hasAddressInUSA ?? (currentForm.hasAddressInUSA ? "Sim" : "Não"),
         USACompleteAddress:
           values.USACompleteAddress !== "" ? values.USACompleteAddress : currentForm.USACompleteAddress,
@@ -352,8 +352,8 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
         values.visitLocations !== ""
           ? values.visitLocations
           : !currentForm.visitLocations
-            ? ""
-            : currentForm.visitLocations,
+          ? ""
+          : currentForm.visitLocations,
       hasAddressInUSA: values.hasAddressInUSA ?? (currentForm.hasAddressInUSA ? "Sim" : "Não"),
       USACompleteAddress: values.USACompleteAddress !== "" ? values.USACompleteAddress : currentForm.USACompleteAddress,
       USAZipCode: values.USAZipCode !== "" ? values.USAZipCode : currentForm.USAZipCode,
@@ -516,7 +516,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
-                travelItineraryConfirmation === "Não" && "hidden",
+                travelItineraryConfirmation === "Não" && "hidden"
               )}
             >
               <FormField
@@ -865,8 +865,8 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                       {payer === "Outra pessoa"
                         ? "Nome de quem pagará a viagem*"
                         : payer === "Empresa"
-                          ? "Empresa que pagará a viagem*"
-                          : "Nome ou Empresa que pagará a viagem*"}
+                        ? "Empresa que pagará a viagem*"
+                        : "Nome ou Empresa que pagará a viagem*"}
                     </FormLabel>
 
                     <FormControl>
@@ -957,6 +957,17 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
           <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={() => router.push(`/resumo-formulario/${profileId}`)}
+                >
+                  Cancelar
+                </Button>
+
                 <Button
                   size="xl"
                   type="submit"

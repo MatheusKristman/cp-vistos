@@ -3169,9 +3169,20 @@ export function SecurityForm({ currentForm, profileId, isEditing }: Props) {
             />
           </div>
 
-          <div className="w-full flex flex-col-reverse items-center gap-x-4 gap-y-6 sm:flex-row sm:justify-end">
+          <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={() => router.push(`/resumo-formulario/${profileId}`)}
+                >
+                  Cancelar
+                </Button>
+
                 <Button
                   size="xl"
                   type="submit"

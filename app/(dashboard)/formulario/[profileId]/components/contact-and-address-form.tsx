@@ -249,7 +249,7 @@ const formSchema = z
         fiveYearsOtherEmailConfirmation,
         otherEmail,
       },
-      ctx,
+      ctx
     ) => {
       if (postalAddressConfirmation === "Sim" && otherPostalAddress.length === 0) {
         ctx.addIssue({
@@ -274,7 +274,7 @@ const formSchema = z
           path: ["otherEmail"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -994,6 +994,17 @@ export function ContactAndAddressForm({ currentForm, profileId, isEditing }: Pro
           <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={() => router.push(`/resumo-formulario/${profileId}`)}
+                >
+                  Cancelar
+                </Button>
+
                 <Button
                   size="xl"
                   type="submit"

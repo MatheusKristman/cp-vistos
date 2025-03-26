@@ -70,7 +70,7 @@ const formSchema = z
         immigrationRequestByAnotherPersonConfirmation,
         immigrationRequestByAnotherPersonDetails,
       },
-      ctx,
+      ctx
     ) => {
       if (
         hasBeenOnUSAConfirmation === "Sim" &&
@@ -162,7 +162,7 @@ const formSchema = z
           path: ["immigrationRequestByAnotherPersonDetails"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -280,11 +280,11 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
   useEffect(() => {
     form.setValue(
       `USALastTravel.${currentUSALastTravelIndex}.arriveDate`,
-      USALastTravel[currentUSALastTravelIndex].arriveDate,
+      USALastTravel[currentUSALastTravelIndex].arriveDate
     );
     form.setValue(
       `USALastTravel.${currentUSALastTravelIndex}.estimatedTime`,
-      USALastTravel[currentUSALastTravelIndex].estimatedTime,
+      USALastTravel[currentUSALastTravelIndex].estimatedTime
     );
   }, [currentUSALastTravelIndex]);
 
@@ -316,15 +316,15 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
         americanLicense: values.americanLicense
           ? values.americanLicense
           : !currentForm.americanLicense
-            ? { licenseNumber: "", state: "" }
-            : currentForm.americanLicense,
+          ? { licenseNumber: "", state: "" }
+          : currentForm.americanLicense,
         USAVisaConfirmation: values.USAVisaConfirmation ?? (currentForm.USAVisaConfirmation ? "Sim" : "Não"),
         visaIssuingDate:
           values.visaIssuingDate !== undefined
             ? values.visaIssuingDate
             : !currentForm.visaIssuingDate
-              ? undefined
-              : currentForm.visaIssuingDate,
+            ? undefined
+            : currentForm.visaIssuingDate,
         visaNumber:
           values.visaNumber !== "" ? values.visaNumber : !currentForm.visaNumber ? "" : currentForm.visaNumber,
         newVisaConfirmation: values.newVisaConfirmation ?? (currentForm.newVisaConfirmation ? "Sim" : "Não"),
@@ -339,31 +339,31 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
           values.lostVisaDetails !== ""
             ? values.lostVisaDetails
             : !currentForm.lostVisaDetails
-              ? ""
-              : currentForm.lostVisaDetails,
+            ? ""
+            : currentForm.lostVisaDetails,
         canceledVisaConfirmation:
           values.canceledVisaConfirmation ?? (currentForm.canceledVisaConfirmation ? "Sim" : "Não"),
         canceledVisaDetails:
           values.canceledVisaDetails !== ""
             ? values.canceledVisaDetails
             : !currentForm.canceledVisaDetails
-              ? ""
-              : currentForm.canceledVisaDetails,
+            ? ""
+            : currentForm.canceledVisaDetails,
         deniedVisaConfirmation: values.deniedVisaConfirmation ?? (currentForm.deniedVisaConfirmation ? "Sim" : "Não"),
         deniedVisaDetails:
           values.deniedVisaDetails !== ""
             ? values.deniedVisaDetails
             : !currentForm.deniedVisaDetails
-              ? ""
-              : currentForm.deniedVisaDetails,
+            ? ""
+            : currentForm.deniedVisaDetails,
         consularPost:
           values.consularPost !== "" ? values.consularPost : !currentForm.consularPost ? "" : currentForm.consularPost,
         deniedVisaType:
           values.deniedVisaType !== ""
             ? values.deniedVisaType
             : !currentForm.deniedVisaType
-              ? ""
-              : currentForm.deniedVisaType,
+            ? ""
+            : currentForm.deniedVisaType,
         immigrationRequestByAnotherPersonConfirmation:
           values.immigrationRequestByAnotherPersonConfirmation ??
           (currentForm.immigrationRequestByAnotherPersonConfirmation ? "Sim" : "Não"),
@@ -371,8 +371,8 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
           values.immigrationRequestByAnotherPersonDetails !== ""
             ? values.immigrationRequestByAnotherPersonDetails
             : !currentForm.immigrationRequestByAnotherPersonDetails
-              ? ""
-              : currentForm.immigrationRequestByAnotherPersonDetails,
+            ? ""
+            : currentForm.immigrationRequestByAnotherPersonDetails,
       });
       setRedirectStep(null);
     }
@@ -381,7 +381,7 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
   function onSubmit(values: z.infer<typeof formSchema>) {
     const USALastTravelFormatted: { arriveDate: Date; estimatedTime: string }[] = USALastTravel.filter(
       (travel): travel is { arriveDate: Date; estimatedTime: string } =>
-        (travel.arriveDate !== undefined || travel.estimatedTime !== "") && travel.arriveDate instanceof Date,
+        (travel.arriveDate !== undefined || travel.estimatedTime !== "") && travel.arriveDate instanceof Date
     );
 
     submitPreviousTravel({
@@ -410,15 +410,15 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
       americanLicense: values.americanLicense
         ? values.americanLicense
         : !currentForm.americanLicense
-          ? { licenseNumber: "", state: "" }
-          : currentForm.americanLicense,
+        ? { licenseNumber: "", state: "" }
+        : currentForm.americanLicense,
       USAVisaConfirmation: values.USAVisaConfirmation ?? (currentForm.USAVisaConfirmation ? "Sim" : "Não"),
       visaIssuingDate:
         values.visaIssuingDate !== undefined
           ? values.visaIssuingDate
           : !currentForm.visaIssuingDate
-            ? undefined
-            : currentForm.visaIssuingDate,
+          ? undefined
+          : currentForm.visaIssuingDate,
       visaNumber: values.visaNumber !== "" ? values.visaNumber : !currentForm.visaNumber ? "" : currentForm.visaNumber,
       newVisaConfirmation: values.newVisaConfirmation ?? (currentForm.newVisaConfirmation ? "Sim" : "Não"),
       sameCountryResidenceConfirmation:
@@ -432,31 +432,31 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
         values.lostVisaDetails !== ""
           ? values.lostVisaDetails
           : !currentForm.lostVisaDetails
-            ? ""
-            : currentForm.lostVisaDetails,
+          ? ""
+          : currentForm.lostVisaDetails,
       canceledVisaConfirmation:
         values.canceledVisaConfirmation ?? (currentForm.canceledVisaConfirmation ? "Sim" : "Não"),
       canceledVisaDetails:
         values.canceledVisaDetails !== ""
           ? values.canceledVisaDetails
           : !currentForm.canceledVisaDetails
-            ? ""
-            : currentForm.canceledVisaDetails,
+          ? ""
+          : currentForm.canceledVisaDetails,
       deniedVisaConfirmation: values.deniedVisaConfirmation ?? (currentForm.deniedVisaConfirmation ? "Sim" : "Não"),
       deniedVisaDetails:
         values.deniedVisaDetails !== ""
           ? values.deniedVisaDetails
           : !currentForm.deniedVisaDetails
-            ? ""
-            : currentForm.deniedVisaDetails,
+          ? ""
+          : currentForm.deniedVisaDetails,
       consularPost:
         values.consularPost !== "" ? values.consularPost : !currentForm.consularPost ? "" : currentForm.consularPost,
       deniedVisaType:
         values.deniedVisaType !== ""
           ? values.deniedVisaType
           : !currentForm.deniedVisaType
-            ? ""
-            : currentForm.deniedVisaType,
+          ? ""
+          : currentForm.deniedVisaType,
       immigrationRequestByAnotherPersonConfirmation:
         values.immigrationRequestByAnotherPersonConfirmation ??
         (currentForm.immigrationRequestByAnotherPersonConfirmation ? "Sim" : "Não"),
@@ -464,8 +464,8 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
         values.immigrationRequestByAnotherPersonDetails !== ""
           ? values.immigrationRequestByAnotherPersonDetails
           : !currentForm.immigrationRequestByAnotherPersonDetails
-            ? ""
-            : currentForm.immigrationRequestByAnotherPersonDetails,
+          ? ""
+          : currentForm.immigrationRequestByAnotherPersonDetails,
     });
   }
 
@@ -476,7 +476,7 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
           `USALastTravel.${currentUSALastTravelIndex}.arriveDate`,
           `USALastTravel.${currentUSALastTravelIndex}.estimatedTime`,
         ],
-        { shouldFocus: true },
+        { shouldFocus: true }
       )
       .then(() => {
         if (Object.keys(form.formState.errors).length === 0) {
@@ -552,7 +552,7 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
               <div
                 className={cn(
                   "w-full bg-secondary rounded-xl p-4 space-y-6",
-                  hasBeenOnUSAConfirmation === "Não" && "hidden",
+                  hasBeenOnUSAConfirmation === "Não" && "hidden"
                 )}
               >
                 <div className="w-full flex flex-col gap-2">
@@ -660,7 +660,7 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
                           "w-full py-2 px-4 bg-primary/50 hover:bg-primary/75 rounded-xl flex items-center gap-2 group sm:w-fit",
                           {
                             "bg-primary hover:bg-primary": currentUSALastTravelIndex === index,
-                          },
+                          }
                         )}
                       >
                         <div
@@ -1330,6 +1330,17 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
           <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={() => router.push(`/resumo-formulario/${profileId}`)}
+                >
+                  Cancelar
+                </Button>
+
                 <Button
                   size="xl"
                   type="submit"

@@ -25,7 +25,7 @@ const formSchema = z
       z.object({
         name: z.string(),
         relation: z.string(),
-      }),
+      })
     ),
     groupMemberConfirmation: z.enum(["Sim", "Não"]),
     groupName: z.string(),
@@ -63,7 +63,7 @@ const formSchema = z
           path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -74,7 +74,7 @@ interface Props {
 
 export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) {
   const [currentOtherPeopleTravelingIndex, setCurrentOtherPeopleTravelingIndex] = useState<number>(
-    currentForm.otherPeopleTraveling.length ?? 0,
+    currentForm.otherPeopleTraveling.length ?? 0
   );
   const [otherPeopleTravelingItems, setOtherPeopleTravelingItems] = useState<{ name: string; relation: string }[]>([]);
   const [resetOtherPeopleTravelingFields, setResetOtherPeopleTravelingFields] = useState<boolean>(false);
@@ -146,7 +146,7 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
       setCurrentOtherPeopleTravelingIndex(currentForm.otherPeopleTraveling.length);
 
       const otherPeopleTravelingFiltered = currentForm.otherPeopleTraveling.filter(
-        (item) => item.name !== "" && item.relation !== "",
+        (item) => item.name !== "" && item.relation !== ""
       );
 
       setOtherPeopleTravelingItems(otherPeopleTravelingFiltered);
@@ -211,7 +211,7 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
           `otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.name`,
           `otherPeopleTraveling.${currentOtherPeopleTravelingIndex}.relation`,
         ],
-        { shouldFocus: true },
+        { shouldFocus: true }
       )
       .then(() => {
         if (Object.keys(form.formState.errors).length === 0) {
@@ -224,7 +224,7 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
           ]);
 
           const otherPeopleTravelingFiltered = otherPeopleTraveling.filter(
-            (item) => item.name !== "" && item.relation !== "",
+            (item) => item.name !== "" && item.relation !== ""
           );
 
           setCurrentOtherPeopleTravelingIndex((prev) => prev + 1);
@@ -295,7 +295,7 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
               <div
                 className={cn(
                   "flex flex-col gap-2 bg-secondary rounded-xl p-4",
-                  otherPeopleTravelingConfirmation === "Não" && "hidden",
+                  otherPeopleTravelingConfirmation === "Não" && "hidden"
                 )}
               >
                 <span className="text-sm font-medium text-foreground">
@@ -441,6 +441,17 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
           <div className="w-full flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
             {isEditing ? (
               <>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  type="button"
+                  className="w-full flex items-center gap-2 sm:w-fit"
+                  disabled={isPending || isSavePending}
+                  onClick={() => router.push(`/resumo-formulario/${profileId}`)}
+                >
+                  Cancelar
+                </Button>
+
                 <Button
                   size="xl"
                   type="submit"
