@@ -33,10 +33,7 @@ export default function RootLayout({
   return (
     <html className="min-h-screen" lang="pt-BR">
       <body
-        className={cn(
-          "relative min-h-screen overflow-x-hidden bg-background font-sans antialiased",
-          poppins.variable,
-        )}
+        className={cn("relative min-h-screen overflow-x-hidden bg-background font-sans antialiased", poppins.variable)}
       >
         <NextAuthSessionProvider>
           <TRPCProvider>
@@ -52,7 +49,7 @@ export default function RootLayout({
             <HeroUIProvider>{children}</HeroUIProvider>
           </TRPCProvider>
         </NextAuthSessionProvider>
-        <Toaster />
+        <Toaster position="top-center" />
       </body>
     </html>
   );
