@@ -1074,7 +1074,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
                 </div>
               </div>
 
-              <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="flex flex-col">
                   <span className="text-sm text-foreground/50 font-medium">Cidade do contato</span>
 
@@ -1091,16 +1091,6 @@ export function ClientDetailsForm({ handleClose }: Props) {
                   <span className="text-lg font-medium text-foreground">
                     {client.form.organizationOrUSAResidentState
                       ? client.form.organizationOrUSAResidentState
-                      : "Não Preenchido"}
-                  </span>
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="text-sm text-foreground/50 font-medium">País do contato</span>
-
-                  <span className="text-lg font-medium text-foreground">
-                    {client.form.organizationOrUSAResidentCountry
-                      ? client.form.organizationOrUSAResidentCountry
                       : "Não Preenchido"}
                   </span>
                 </div>

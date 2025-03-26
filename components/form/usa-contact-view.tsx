@@ -54,7 +54,7 @@ export function USAContactView({ form, className }: USAContactViewProps) {
         </div>
       </div>
 
-      <div className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", className)}>
+      <div className={cn("w-full grid grid-cols-1 sm:grid-cols-2 gap-6", className)}>
         <div className="w-full flex flex-col gap-1">
           <span className="text-sm text-foreground/60 font-medium">Cidade do contato</span>
 
@@ -71,16 +71,6 @@ export function USAContactView({ form, className }: USAContactViewProps) {
           <span className="text-lg font-medium text-foreground">
             {form.organizationOrUSAResidentState && form.organizationOrUSAResidentState.length > 0
               ? form.organizationOrUSAResidentState
-              : "Não Preenchido"}
-          </span>
-        </div>
-
-        <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">País do contato</span>
-
-          <span className="text-lg font-medium text-foreground">
-            {form.organizationOrUSAResidentCountry && form.organizationOrUSAResidentCountry.length > 0
-              ? form.organizationOrUSAResidentCountry
               : "Não Preenchido"}
           </span>
         </div>

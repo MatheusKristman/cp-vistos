@@ -329,7 +329,6 @@ model Form {
   organizationOrUSAResidentZipCode              String?
   organizationOrUSAResidentCity                 String?
   organizationOrUSAResidentState                String?
-  organizationOrUSAResidentCountry              String?
   organizationOrUSAResidentTel                  String?
   organizationOrUSAResidentEmail                String?
   fatherCompleteName                            String?

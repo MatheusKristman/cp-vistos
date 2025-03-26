@@ -143,7 +143,6 @@ export type PrimaryFormControl = {
   organizationOrUSAResidentZipCode: string;
   organizationOrUSAResidentCity: string;
   organizationOrUSAResidentState: string;
-  organizationOrUSAResidentCountry: string;
   organizationOrUSAResidentTel: string;
   organizationOrUSAResidentEmail: string;
   fatherCompleteName: string;
