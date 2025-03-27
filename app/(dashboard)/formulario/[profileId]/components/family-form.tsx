@@ -323,7 +323,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
       maritalStatus === "Divorciado(a)" ||
       maritalStatus === "Viúvo(a)" ||
       maritalStatus === "Casado(a)" ||
-      maritalStatus === "União Estavel" ||
+      maritalStatus === "União Estável" ||
       maritalStatus === "Parceiro(a) Doméstico(a)"
     ) {
       if (partnerCompleteName.length === 0) {
@@ -1035,7 +1035,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
               ) : maritalStatus === "Viúvo(a)" ? (
                 <>Dados do cônjuge falecido</>
               ) : maritalStatus === "Casado(a)" ||
-                maritalStatus === "União Estavel" ||
+                maritalStatus === "União Estável" ||
                 maritalStatus === "Parceiro(a) Doméstico(a)" ? (
                 <>Dados do cônjuge</>
               ) : null}
@@ -1196,7 +1196,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
                   maritalStatus === "Solteiro(a)" ||
                   maritalStatus === "Casado(a)" ||
                   maritalStatus === "Viúvo(a)" ||
-                  maritalStatus === "União Estavel" ||
+                  maritalStatus === "União Estável" ||
                   maritalStatus === "Parceiro(a) Doméstico(a)",
               })}
             >
@@ -1209,7 +1209,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
                   maritalStatus === "Solteiro(a)" ||
                   maritalStatus === "Casado(a)" ||
                   maritalStatus === "Viúvo(a)" ||
-                  maritalStatus === "União Estavel" ||
+                  maritalStatus === "União Estável" ||
                   maritalStatus === "Parceiro(a) Doméstico(a)",
               })}
             >
