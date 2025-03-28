@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { NotificationStatusForm, StatusForm } from "@prisma/client";
 import isEmail from "validator/lib/isEmail";
+import { parse } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 
 export const formsRouter = router({
   getProfile: isUserAuthedProcedure
@@ -822,10 +824,10 @@ export const formsRouter = router({
           step: z.number(),
           isEditing: z.boolean(),
           travelItineraryConfirmation: z.enum(["Sim", "Não"]),
-          USAPreviewArriveDate: z.date({ message: "Campo obrigatório" }).optional(),
+          USAPreviewArriveDate: z.string().min(1),
           arriveFlyNumber: z.string(),
           arriveCity: z.string(),
-          USAPreviewReturnDate: z.date({ message: "Campo obrigatório" }).optional(),
+          USAPreviewReturnDate: z.string().optional(),
           returnFlyNumber: z.string(),
           returnCity: z.string(),
           estimatedTimeNumber: z.coerce.number().gt(0, "Campo precisa ter valor maior que zero"),
@@ -948,10 +950,8 @@ export const formsRouter = router({
         step,
         isEditing,
         travelItineraryConfirmation,
-        USAPreviewArriveDate,
         arriveFlyNumber,
         arriveCity,
-        USAPreviewReturnDate,
         returnFlyNumber,
         returnCity,
         estimatedTimeNumber,
@@ -1026,6 +1026,22 @@ export const formsRouter = router({
         });
       }
 
+      const USAPreviewArriveDateFormatted = opts.input.USAPreviewArriveDate
+        ? parse(opts.input.USAPreviewArriveDate, "dd/MM/yyyy", new Date())
+        : undefined;
+
+      const USAPreviewReturnDateFormatted = opts.input.USAPreviewReturnDate
+        ? parse(opts.input.USAPreviewReturnDate, "dd/MM/yyyy", new Date())
+        : undefined;
+
+      const USAPreviewArriveDate = USAPreviewArriveDateFormatted
+        ? fromZonedTime(USAPreviewArriveDateFormatted, "America/Sao_Paulo")
+        : undefined;
+
+      const USAPreviewReturnDate = USAPreviewReturnDateFormatted
+        ? fromZonedTime(USAPreviewReturnDateFormatted, "America/Sao_Paulo")
+        : undefined;
+
       await prisma.form.update({
         where: {
           id: profileUpdated.form.id,
@@ -1062,10 +1078,10 @@ export const formsRouter = router({
         profileId: z.string().min(1),
         redirectStep: z.number().optional(),
         travelItineraryConfirmation: z.enum(["Sim", "Não"]).nullable(),
-        USAPreviewArriveDate: z.date().optional().nullable(),
+        USAPreviewArriveDate: z.string().optional().nullable(),
         arriveFlyNumber: z.string().nullable(),
         arriveCity: z.string().nullable(),
-        USAPreviewReturnDate: z.date().optional().nullable(),
+        USAPreviewReturnDate: z.string().optional().nullable(),
         returnFlyNumber: z.string().nullable(),
         returnCity: z.string().nullable(),
         estimatedTimeNumber: z.coerce.number().gte(0, "Não é permitido número negativo").nullable(),
@@ -1089,10 +1105,8 @@ export const formsRouter = router({
         profileId,
         redirectStep,
         travelItineraryConfirmation,
-        USAPreviewArriveDate,
         arriveFlyNumber,
         arriveCity,
-        USAPreviewReturnDate,
         returnFlyNumber,
         returnCity,
         estimatedTimeNumber,
@@ -1134,16 +1148,32 @@ export const formsRouter = router({
         });
       }
 
+      const USAPreviewArriveDateFormatted = opts.input.USAPreviewArriveDate
+        ? parse(opts.input.USAPreviewArriveDate, "dd/MM/yyyy", new Date())
+        : undefined;
+
+      const USAPreviewReturnDateFormatted = opts.input.USAPreviewReturnDate
+        ? parse(opts.input.USAPreviewReturnDate, "dd/MM/yyyy", new Date())
+        : undefined;
+
+      const USAPreviewArriveDate = USAPreviewArriveDateFormatted
+        ? fromZonedTime(USAPreviewArriveDateFormatted, "America/Sao_Paulo")
+        : undefined;
+
+      const USAPreviewReturnDate = USAPreviewReturnDateFormatted
+        ? fromZonedTime(USAPreviewReturnDateFormatted, "America/Sao_Paulo")
+        : undefined;
+
       await prisma.form.update({
         where: {
           id: profile.form.id,
         },
         data: {
           travelItineraryConfirmation: travelItineraryConfirmation === "Sim",
-          USAPreviewArriveDate,
+          USAPreviewArriveDate: USAPreviewArriveDate,
           arriveFlyNumber,
           arriveCity,
-          USAPreviewReturnDate,
+          USAPreviewReturnDate: USAPreviewReturnDate,
           returnFlyNumber,
           returnCity,
           estimatedTimeOnUSA: estimatedTimeNumber + " " + estimatedTimeType,

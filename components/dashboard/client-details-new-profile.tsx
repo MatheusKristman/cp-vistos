@@ -67,7 +67,7 @@ const formSchema = z
           "O3 Cônjuge ou Filho de um O1 ou O2",
           "",
         ],
-        { message: "Classe de visto inválida" },
+        { message: "Classe de visto inválida" }
       )
       .optional(),
     category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -262,15 +262,19 @@ export function ClientDetailsNewProfile({ handleClose }: Props) {
   }
 
   function formatDate(e: ChangeEvent<HTMLInputElement>) {
-    let valueFormatted = e.target.value.replace(/[^0-9/]/g, "");
+    const numbersOnly = e.target.value.replace(/\D/g, "");
 
-    const parts = valueFormatted.split("/");
+    // Limita a 8 dígitos (ddmmaaaa)
+    const limitedNumbers = numbersOnly.slice(0, 8);
 
-    if (parts.length > 3) {
-      valueFormatted = parts.slice(0, 3).join("/");
-    }
+    // Formata a data com regex
+    const formattedDate = limitedNumbers.replace(/^(\d{0,2})(\d{0,2})(\d{0,4})/, (_, d, m, y) => {
+      if (!m) return d;
+      if (!y) return `${d}/${m}`;
+      return `${d}/${m}/${y}`;
+    });
 
-    return valueFormatted;
+    return formattedDate;
   }
 
   function handleDateBlur(field: "birthDate" | "issuanceDate" | "expireDate" | "scheduleDate" | "entryDate") {
@@ -558,7 +562,7 @@ export function ClientDetailsNewProfile({ handleClose }: Props) {
                   <FormItem
                     className={cn(
                       "flex flex-col gap-1",
-                      category !== "Visto Americano" && category !== "E-TA" && "hidden",
+                      category !== "Visto Americano" && category !== "E-TA" && "hidden"
                     )}
                   >
                     <FormLabel className="truncate">Passaporte</FormLabel>
@@ -1050,7 +1054,7 @@ export function ClientDetailsNewProfile({ handleClose }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6",
-                category !== "E-TA" && "hidden",
+                category !== "E-TA" && "hidden"
               )}
             >
               <FormField

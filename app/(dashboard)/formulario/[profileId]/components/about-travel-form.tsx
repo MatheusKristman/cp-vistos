@@ -2,8 +2,8 @@
 
 import { z } from "zod";
 import { toast } from "sonner";
-import { useEffect } from "react";
-import { format } from "date-fns";
+import { ChangeEvent, useEffect, useState } from "react";
+import { format, formatDate, getYear, isValid, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -86,10 +86,10 @@ const USALocations = [
 const formSchema = z
   .object({
     travelItineraryConfirmation: z.enum(["Sim", "Não"]),
-    USAPreviewArriveDate: z.date({ message: "Campo obrigatório" }),
+    USAPreviewArriveDate: z.string().min(1, { message: "Campo obrigatório" }),
     arriveFlyNumber: z.string(),
     arriveCity: z.string(),
-    USAPreviewReturnDate: z.date({ message: "Campo obrigatório" }).optional(),
+    USAPreviewReturnDate: z.string().optional(),
     returnFlyNumber: z.string(),
     returnCity: z.string(),
     estimatedTimeNumber: z.coerce.number().gt(0, "Campo precisa ter valor maior que zero"),
@@ -204,16 +204,22 @@ interface Props {
 }
 
 export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
+  const [USAPreviewArriveDateCalendar, setUSAPreviewArriveDateCalendar] = useState<Date | undefined>(undefined);
+  const [USAPreviewReturnDateCalendar, setUSAPreviewReturnDateCalendar] = useState<Date | undefined>(undefined);
   const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       travelItineraryConfirmation: currentForm.travelItineraryConfirmation ? "Sim" : "Não",
-      USAPreviewArriveDate: currentForm.USAPreviewArriveDate ? currentForm.USAPreviewArriveDate : undefined,
+      USAPreviewArriveDate: currentForm.USAPreviewArriveDate
+        ? format(currentForm.USAPreviewArriveDate, "dd/MM/yyyy")
+        : "",
       arriveFlyNumber: currentForm.arriveFlyNumber ? currentForm.arriveFlyNumber : "",
       arriveCity: currentForm.arriveCity ? currentForm.arriveCity : "",
-      USAPreviewReturnDate: currentForm.USAPreviewReturnDate ? currentForm.USAPreviewReturnDate : undefined,
+      USAPreviewReturnDate: currentForm.USAPreviewReturnDate
+        ? format(currentForm.USAPreviewReturnDate, "dd/MM/yyyy")
+        : "",
       returnFlyNumber: currentForm.returnFlyNumber ? currentForm.returnFlyNumber : "",
       returnCity: currentForm.returnCity ? currentForm.returnCity : "",
       estimatedTimeNumber: currentForm.estimatedTimeOnUSA ? Number(currentForm.estimatedTimeOnUSA.split(" ")[0]) : 0,
@@ -235,6 +241,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
 
   const travelItineraryConfirmation = form.watch("travelItineraryConfirmation");
   const hasAddressInUSA = form.watch("hasAddressInUSA");
+  const currentYear = getYear(new Date());
   const payer = form.watch("payer");
   const utils = trpc.useUtils();
   const router = useRouter();
@@ -281,6 +288,22 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
   });
 
   useEffect(() => {
+    if (USAPreviewArriveDateCalendar !== undefined) {
+      const dateFormatted = format(USAPreviewArriveDateCalendar, "dd/MM/yyyy");
+
+      form.setValue("USAPreviewArriveDate", dateFormatted);
+    }
+  }, [USAPreviewArriveDateCalendar]);
+
+  useEffect(() => {
+    if (USAPreviewReturnDateCalendar !== undefined) {
+      const dateFormatted = format(USAPreviewReturnDateCalendar, "dd/MM/yyyy");
+
+      form.setValue("USAPreviewReturnDate", dateFormatted);
+    }
+  }, [USAPreviewReturnDateCalendar]);
+
+  useEffect(() => {
     if (redirectStep !== null) {
       const values = form.getValues();
 
@@ -289,10 +312,18 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
         redirectStep,
         travelItineraryConfirmation:
           values.travelItineraryConfirmation ?? (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
-        USAPreviewArriveDate: values.USAPreviewArriveDate ?? currentForm.USAPreviewArriveDate,
+        USAPreviewArriveDate: values.USAPreviewArriveDate
+          ? values.USAPreviewArriveDate
+          : currentForm.USAPreviewArriveDate
+          ? format(currentForm.USAPreviewArriveDate, "dd/MM/yyyy")
+          : "",
         arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : currentForm.arriveFlyNumber,
         arriveCity: values.arriveCity !== "" ? values.arriveCity : currentForm.arriveCity,
-        USAPreviewReturnDate: values.USAPreviewReturnDate ?? currentForm.USAPreviewReturnDate,
+        USAPreviewReturnDate: values.USAPreviewReturnDate
+          ? format(values.USAPreviewReturnDate, "dd/MM/yyyy")
+          : currentForm.USAPreviewReturnDate
+          ? format(currentForm.USAPreviewReturnDate, "dd/MM/yyyy")
+          : "",
         returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : currentForm.returnFlyNumber,
         returnCity: values.returnCity !== "" ? values.returnCity : currentForm.returnCity,
         estimatedTimeNumber: values.estimatedTimeNumber
@@ -336,10 +367,18 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
       profileId,
       travelItineraryConfirmation:
         values.travelItineraryConfirmation ?? (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
-      USAPreviewArriveDate: values.USAPreviewArriveDate ?? currentForm.USAPreviewArriveDate,
+      USAPreviewArriveDate: values.USAPreviewArriveDate
+        ? values.USAPreviewArriveDate
+        : currentForm.USAPreviewArriveDate
+        ? format(currentForm.USAPreviewArriveDate, "dd/MM/yyyy")
+        : "",
       arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : currentForm.arriveFlyNumber,
       arriveCity: values.arriveCity !== "" ? values.arriveCity : currentForm.arriveCity,
-      USAPreviewReturnDate: values.USAPreviewReturnDate ?? currentForm.USAPreviewReturnDate,
+      USAPreviewReturnDate: values.USAPreviewReturnDate
+        ? format(values.USAPreviewReturnDate, "dd/MM/yyyy")
+        : currentForm.USAPreviewReturnDate
+        ? format(currentForm.USAPreviewReturnDate, "dd/MM/yyyy")
+        : "",
       returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : currentForm.returnFlyNumber,
       returnCity: values.returnCity !== "" ? values.returnCity : currentForm.returnCity,
       estimatedTimeNumber: values.estimatedTimeNumber
@@ -366,6 +405,81 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
       payerRelation: values.payerRelation !== "" ? values.payerRelation : currentForm.payerRelation,
       payerEmail: values.payerEmail !== "" ? values.payerEmail : currentForm.payerEmail,
     });
+  }
+
+  function formatDate(e: ChangeEvent<HTMLInputElement>) {
+    const numbersOnly = e.target.value.replace(/\D/g, "");
+
+    // Limita a 8 dígitos (ddmmaaaa)
+    const limitedNumbers = numbersOnly.slice(0, 8);
+
+    // Formata a data com regex
+    const formattedDate = limitedNumbers.replace(/^(\d{0,2})(\d{0,2})(\d{0,4})/, (_, d, m, y) => {
+      if (!m) return d;
+      if (!y) return `${d}/${m}`;
+      return `${d}/${m}/${y}`;
+    });
+
+    return formattedDate;
+  }
+
+  function handleDateBlur(field: "USAPreviewArriveDate" | "USAPreviewReturnDate") {
+    const currentDate = form.getValues(field);
+
+    if (currentDate) {
+      const [day, month, year] = currentDate.split("/");
+
+      if (!day) {
+        form.setError(field, { message: "Data inválida" }, { shouldFocus: true });
+
+        return;
+      }
+
+      if (!month) {
+        form.setError(field, { message: "Data inválida" }, { shouldFocus: true });
+
+        return;
+      }
+
+      if (!year) {
+        form.setError(field, { message: "Data inválida" }, { shouldFocus: true });
+
+        return;
+      }
+
+      if (
+        day.length !== 2 ||
+        month.length !== 2 ||
+        year.length !== 4 ||
+        Number(day) === 0 ||
+        Number(month) === 0 ||
+        Number(year) === 0
+      ) {
+        form.setError(field, { message: "Data inválida" }, { shouldFocus: true });
+
+        return;
+      } else {
+        form.clearErrors(field);
+      }
+
+      if (currentDate?.length === 10) {
+        const dateFormatted = parse(currentDate, "dd/MM/yyyy", new Date());
+
+        if (!isValid(dateFormatted)) {
+          form.setError(field, { message: "Data inválida" }, { shouldFocus: true });
+
+          return;
+        }
+
+        if (field === "USAPreviewArriveDate") {
+          setUSAPreviewArriveDateCalendar(dateFormatted);
+        }
+
+        if (field === "USAPreviewReturnDate") {
+          setUSAPreviewReturnDateCalendar(dateFormatted);
+        }
+      }
+    }
   }
 
   return (
@@ -422,50 +536,58 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">Data prevista da viagem aos EUA*</FormLabel>
 
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            disabled={isPending || isSavePending}
-                            variant="date"
-                            className={cn("!mt-auto", !field.value && "text-muted-foreground")}
-                          >
-                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <FormControl>
+                      <div className="w-full relative">
+                        <Input
+                          {...field}
+                          className="pl-14"
+                          maxLength={10}
+                          placeholder="Insira a data prevista da viagem aos EUA"
+                          onChange={(e) => {
+                            const formattedDate = formatDate(e);
 
-                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
-
-                            {field.value ? (
-                              format(field.value, "PPP", {
-                                locale: ptBR,
-                              })
-                            ) : (
-                              <span className="text-muted-foreground">Selecione a data</span>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          locale={ptBR}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date("1900-01-01")}
-                          captionLayout="dropdown"
-                          fromYear={1900}
-                          toYear={2100}
-                          classNames={{
-                            day_hidden: "invisible",
-                            dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
-                            caption_dropdowns: "flex gap-3",
-                            vhidden: "hidden",
-                            caption_label: "hidden",
+                            form.setValue("USAPreviewArriveDate", formattedDate);
                           }}
-                          initialFocus
+                          onBlur={() => handleDateBlur("USAPreviewArriveDate")}
                         />
-                      </PopoverContent>
-                    </Popover>
+
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="flex items-center gap-2 h-12 py-2 absolute left-2 top-1/2 -translate-y-1/2"
+                            >
+                              <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+
+                              <div className="h-full w-[2px] bg-secondary" />
+                            </Button>
+                          </PopoverTrigger>
+
+                          <PopoverContent className="w-auto p-0 bg-background" align="start">
+                            <Calendar
+                              mode="single"
+                              locale={ptBR}
+                              selected={USAPreviewArriveDateCalendar}
+                              onSelect={setUSAPreviewArriveDateCalendar}
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                              captionLayout="dropdown"
+                              fromYear={1900}
+                              toYear={currentYear}
+                              month={USAPreviewArriveDateCalendar}
+                              classNames={{
+                                day_hidden: "invisible",
+                                dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                                caption_dropdowns: "flex gap-3",
+                                vhidden: "hidden",
+                                caption_label: "hidden",
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
                   </FormItem>
@@ -526,50 +648,58 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                   <FormItem className={cn("flex flex-col gap-2", travelItineraryConfirmation === "Não" && "hidden")}>
                     <FormLabel className="text-foreground">Data prevista de retorno ao Brasil</FormLabel>
 
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            disabled={travelItineraryConfirmation === "Não" || isPending || isSavePending}
-                            variant="date"
-                            className={cn("!mt-auto", !field.value && "text-muted-foreground")}
-                          >
-                            <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <FormControl>
+                      <div className="w-full relative">
+                        <Input
+                          {...field}
+                          className="pl-14"
+                          maxLength={10}
+                          placeholder="Insira a data prevista de retorno ao Brasil"
+                          onChange={(e) => {
+                            const formattedDate = formatDate(e);
 
-                            <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
-
-                            {field.value ? (
-                              format(field.value, "PPP", {
-                                locale: ptBR,
-                              })
-                            ) : (
-                              <span className="text-muted-foreground">Selecione a data</span>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          locale={ptBR}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date("1900-01-01")}
-                          captionLayout="dropdown"
-                          fromYear={1900}
-                          toYear={2100}
-                          classNames={{
-                            day_hidden: "invisible",
-                            dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                            caption_dropdowns: "flex gap-3",
-                            vhidden: "hidden",
-                            caption_label: "hidden",
+                            form.setValue("USAPreviewReturnDate", formattedDate);
                           }}
-                          initialFocus
+                          onBlur={() => handleDateBlur("USAPreviewReturnDate")}
                         />
-                      </PopoverContent>
-                    </Popover>
+
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="flex items-center gap-2 h-12 py-2 absolute left-2 top-1/2 -translate-y-1/2"
+                            >
+                              <CalendarIcon strokeWidth={1.5} className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+
+                              <div className="h-full w-[2px] bg-secondary" />
+                            </Button>
+                          </PopoverTrigger>
+
+                          <PopoverContent className="w-auto p-0 bg-background" align="start">
+                            <Calendar
+                              mode="single"
+                              locale={ptBR}
+                              selected={USAPreviewReturnDateCalendar}
+                              onSelect={setUSAPreviewReturnDateCalendar}
+                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                              captionLayout="dropdown"
+                              fromYear={1900}
+                              toYear={currentYear}
+                              month={USAPreviewReturnDateCalendar}
+                              classNames={{
+                                day_hidden: "invisible",
+                                dropdown: "px-2 py-1.5 bg-muted text-primary text-sm focus-visible:outline-none",
+                                caption_dropdowns: "flex gap-3",
+                                vhidden: "hidden",
+                                caption_label: "hidden",
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
                   </FormItem>

@@ -96,15 +96,19 @@ export function ProfileForm({
   }
 
   function formatDate(e: ChangeEvent<HTMLInputElement>) {
-    let valueFormatted = e.target.value.replace(/[^0-9/]/g, "");
+    const numbersOnly = e.target.value.replace(/\D/g, "");
 
-    const parts = valueFormatted.split("/");
+    // Limita a 8 dígitos (ddmmaaaa)
+    const limitedNumbers = numbersOnly.slice(0, 8);
 
-    if (parts.length > 3) {
-      valueFormatted = parts.slice(0, 3).join("/");
-    }
+    // Formata a data com regex
+    const formattedDate = limitedNumbers.replace(/^(\d{0,2})(\d{0,2})(\d{0,4})/, (_, d, m, y) => {
+      if (!m) return d;
+      if (!y) return `${d}/${m}`;
+      return `${d}/${m}/${y}`;
+    });
 
-    return valueFormatted;
+    return formattedDate;
   }
 
   function handleTime(event: ChangeEvent<HTMLInputElement>) {
