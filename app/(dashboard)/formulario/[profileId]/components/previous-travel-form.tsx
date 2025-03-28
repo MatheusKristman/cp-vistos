@@ -879,7 +879,9 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
                 name="visaNumber"
                 render={({ field }) => (
                   <FormItem className={cn("flex flex-col gap-2", USAVisaConfirmation === "Não" && "hidden")}>
-                    <FormLabel className="text-foreground text-sm">Número do visto</FormLabel>
+                    <FormLabel className="text-foreground text-sm">
+                      Nº do último visto (está em vermelho do lado direito inferior do selo do visto)
+                    </FormLabel>
 
                     <FormControl>
                       <Input
