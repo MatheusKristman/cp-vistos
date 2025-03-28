@@ -260,7 +260,7 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
                 name="otherPeopleTravelingConfirmation"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel className="text-foreground">Há outras pessoas viajando com você?</FormLabel>
+                    <FormLabel className="text-foreground">Você viajará com alguém?</FormLabel>
 
                     <FormControl>
                       <RadioGroup
