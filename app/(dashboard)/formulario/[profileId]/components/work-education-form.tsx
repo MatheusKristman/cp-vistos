@@ -1,6 +1,16 @@
 "use client";
 
-import { ArrowRight, CircleDollarSign, Loader2, Plus, Save, X, Calendar as CalendarIcon } from "lucide-react";
+import {
+  ArrowRight,
+  CircleDollarSign,
+  Loader2,
+  Plus,
+  Save,
+  X,
+  Calendar as CalendarIcon,
+  Edit,
+  Trash,
+} from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { ptBR } from "date-fns/locale";
@@ -10,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { Form as FormType } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyInput from "react-currency-input-field";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -20,6 +30,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Accordion, AccordionContent, AccordionTrigger, AccordionItem } from "@/components/ui/accordion";
+import { Separator } from "@/components/ui/separator";
 
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
@@ -97,112 +109,118 @@ const formSchema = z
       courses[courses.length - 1].initialDate !== undefined ||
       courses[courses.length - 1].finishDate !== undefined;
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].companyCity === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.companyCity`],
-      });
-    }
+    for (let i = 0; i < previousJobs.length; i++) {
+      console.log(previousJobs[i]);
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].companyAddress === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.companyAddress`],
-      });
-    }
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].companyCity === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.companyCity`],
+        });
+      }
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].companyName === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.companyName`],
-      });
-    }
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].companyAddress === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.companyAddress`],
+        });
+      }
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].companyState === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.companyState`],
-      });
-    }
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].companyName === ""
+      ) {
+        console.log("Company name is empty");
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].jobDescription === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.jobDescription`],
-      });
-    }
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.companyName`],
+        });
+      }
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].companyCountry === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.companyCountry`],
-      });
-    }
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].companyState === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.companyState`],
+        });
+      }
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].office === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.office`],
-      });
-    }
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].jobDescription === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.jobDescription`],
+        });
+      }
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].admissionDate === undefined
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.admissionDate`],
-      });
-    }
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].companyCountry === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.companyCountry`],
+        });
+      }
 
-    if (
-      previousJobConfirmation === "Sim" &&
-      (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-      previousJobs[previousJobs.length - 1].resignationDate === undefined
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`previousJobs.${previousJobs.length - 1}.resignationDate`],
-      });
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].office === ""
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.office`],
+        });
+      }
+
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].admissionDate === undefined
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.admissionDate`],
+        });
+      }
+
+      if (
+        previousJobConfirmation === "Sim" &&
+        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
+        previousJobs[i].resignationDate === undefined
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`previousJobs.${i}.resignationDate`],
+        });
+      }
     }
 
     if (
@@ -290,15 +308,16 @@ interface Props {
 }
 
 export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) {
-  const [currentPreviousJobsIndex, setCurrentPreviousJobsIndex] = useState<number>(
-    currentForm.previousJobs.length ?? 0
-  );
-  const [resetPreviousJobsFields, setResetPreviousJobsFields] = useState<boolean>(false);
   const [currentCoursesIndex, setCurrentCoursesIndex] = useState<number>(currentForm.courses.length ?? 0);
   const [resetCoursesFields, setResetCoursesFields] = useState<boolean>(false);
 
+  // TODO: Adicionar verificação para limitar os previousJobs para 2
+  // TODO: Adicionar a mesma lógica no courses
+
   const currentYear = getYear(new Date());
   const { redirectStep, setRedirectStep } = useFormStore();
+
+  const previousJobsRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -325,20 +344,6 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 admissionDate: item.admissionDate ? new Date(item.admissionDate) : undefined,
                 resignationDate: item.resignationDate ? new Date(item.resignationDate) : undefined,
               })),
-              {
-                companyName: "",
-                companyAddress: "",
-                companyCity: "",
-                companyState: "",
-                companyCountry: "",
-                companyCep: "",
-                companyTel: "",
-                office: "",
-                supervisorName: "",
-                admissionDate: undefined,
-                resignationDate: undefined,
-                jobDescription: "",
-              },
             ]
           : [
               {
@@ -399,10 +404,6 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  useEffect(() => {
-    console.log({ previousJobs });
-  }, [previousJobs]);
-
   const { mutate: submitWorkEducation, isPending } = trpc.formsRouter.submitWorkEducation.useMutation({
     onSuccess: (data) => {
       toast.success(data.message);
@@ -445,81 +446,16 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   });
 
   useEffect(() => {
-    if (currentForm.previousJobs.length > 0) {
-      setCurrentPreviousJobsIndex(currentForm.previousJobs.length);
-    }
+    console.log({ errors: form.formState.errors });
+  }, [form.formState.errors]);
 
+  useEffect(() => {
     if (currentForm.courses.length > 0) {
       setCurrentCoursesIndex(currentForm.courses.length);
     }
   }, [currentForm]);
 
   useEffect(() => {
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.companyName`,
-      previousJobs[currentPreviousJobsIndex].companyName
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.companyAddress`,
-      previousJobs[currentPreviousJobsIndex].companyAddress
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.companyCity`,
-      previousJobs[currentPreviousJobsIndex].companyCity
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.companyState`,
-      previousJobs[currentPreviousJobsIndex].companyState
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.companyCountry`,
-      previousJobs[currentPreviousJobsIndex].companyCountry
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.companyCep`,
-      previousJobs[currentPreviousJobsIndex].companyCep
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.companyTel`,
-      previousJobs[currentPreviousJobsIndex].companyTel
-    );
-    form.setValue(`previousJobs.${currentPreviousJobsIndex}.office`, previousJobs[currentPreviousJobsIndex].office);
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.supervisorName`,
-      previousJobs[currentPreviousJobsIndex].supervisorName
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.admissionDate`,
-      previousJobs[currentPreviousJobsIndex].admissionDate
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.resignationDate`,
-      previousJobs[currentPreviousJobsIndex].resignationDate
-    );
-    form.setValue(
-      `previousJobs.${currentPreviousJobsIndex}.jobDescription`,
-      previousJobs[currentPreviousJobsIndex].jobDescription
-    );
-  }, [currentPreviousJobsIndex]);
-
-  useEffect(() => {
-    if (resetPreviousJobsFields) {
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyName`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyAddress`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCity`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyState`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCountry`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCep`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyTel`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.office`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.supervisorName`, "");
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.admissionDate`, undefined);
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.resignationDate`, undefined);
-      form.setValue(`previousJobs.${currentPreviousJobsIndex}.jobDescription`, "");
-
-      setResetPreviousJobsFields(false);
-    }
-
     if (resetCoursesFields) {
       form.setValue(`courses.${currentCoursesIndex}.institutionName`, "");
       form.setValue(`courses.${currentCoursesIndex}.address`, "");
@@ -533,7 +469,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
 
       setResetCoursesFields(false);
     }
-  }, [resetPreviousJobsFields, resetCoursesFields]);
+  }, [resetCoursesFields]);
 
   useEffect(() => {
     if (redirectStep !== null) {
@@ -618,12 +554,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
     form.setValue("companyCep", value);
   }
 
-  function handleCEPPreviousJobsChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleCEPPreviousJobsChange(event: ChangeEvent<HTMLInputElement>, index: number) {
     let value = event.target.value.replace(/[^\d]/g, "");
 
     value = value.replace(/(\d{5})(\d{3})/, "$1-$2");
 
-    form.setValue(`previousJobs.${currentPreviousJobsIndex}.companyCep`, value);
+    form.setValue(`previousJobs.${index}.companyCep`, value);
   }
 
   function handleCEPCoursesChange(event: ChangeEvent<HTMLInputElement>) {
@@ -789,61 +725,29 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   }
 
   function addPreviousJobs() {
-    form
-      .trigger(
-        [
-          `previousJobs.${currentPreviousJobsIndex}.companyName`,
-          `previousJobs.${currentPreviousJobsIndex}.companyAddress`,
-          `previousJobs.${currentPreviousJobsIndex}.companyCity`,
-          `previousJobs.${currentPreviousJobsIndex}.companyState`,
-          `previousJobs.${currentPreviousJobsIndex}.companyCountry`,
-          `previousJobs.${currentPreviousJobsIndex}.companyCep`,
-          `previousJobs.${currentPreviousJobsIndex}.companyTel`,
-          `previousJobs.${currentPreviousJobsIndex}.office`,
-          `previousJobs.${currentPreviousJobsIndex}.supervisorName`,
-          `previousJobs.${currentPreviousJobsIndex}.admissionDate`,
-          `previousJobs.${currentPreviousJobsIndex}.resignationDate`,
-          `previousJobs.${currentPreviousJobsIndex}.jobDescription`,
-        ],
-        { shouldFocus: true }
-      )
-      .then(() => {
-        if (Object.keys(form.formState.errors).length === 0) {
-          form.setValue("previousJobs", [
-            ...previousJobs,
-            {
-              companyName: "",
-              companyAddress: "",
-              companyCity: "",
-              companyState: "",
-              companyCountry: "",
-              companyCep: "",
-              companyTel: "",
-              office: "",
-              supervisorName: "",
-              admissionDate: undefined,
-              resignationDate: undefined,
-              jobDescription: "",
-            },
-          ]);
-
-          setCurrentPreviousJobsIndex((prev) => prev + 1);
-          //TODO: verificar se precisar remover isso
-          setResetPreviousJobsFields(true);
-        }
-      });
+    form.setValue("previousJobs", [
+      ...previousJobs,
+      {
+        companyName: "",
+        companyAddress: "",
+        companyCity: "",
+        companyState: "",
+        companyCountry: "",
+        companyCep: "",
+        companyTel: "",
+        office: "",
+        supervisorName: "",
+        admissionDate: undefined,
+        resignationDate: undefined,
+        jobDescription: "",
+      },
+    ]);
   }
 
-  function removePreviousJobs(index: number) {
-    const previousJobsFiltered = previousJobs.filter((_, i) => i !== index);
+  function handleRemovePreviousJobs(index: number) {
+    const updatedPreviousJobs = previousJobs.filter((_, i) => i !== index);
 
-    console.log({ previousJobsFiltered });
-
-    form.setValue("previousJobs", previousJobsFiltered);
-
-    console.log({ previousJobsFilteredLength: previousJobsFiltered.length - 1 });
-
-    setCurrentPreviousJobsIndex(previousJobsFiltered.length - 1);
+    form.setValue("previousJobs", updatedPreviousJobs);
   }
 
   function addCourses() {
@@ -1572,312 +1476,332 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
             </div>
 
             <div
+              ref={previousJobsRef}
               className={cn("w-full bg-secondary rounded-xl p-4 space-y-6 mb-10", {
                 hidden: previousJobConfirmation === "Não",
               })}
             >
-              <div className="w-full flex flex-col gap-y-4">
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.companyName`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Nome do empregador ou empresa anterior*</FormLabel>
+              {previousJobs.map((prevJob, index) => (
+                <div key={index} className="w-full flex flex-col gap-y-4">
+                  <div className="w-full flex items-center justify-between gap-6">
+                    <span className="w-fit bg-primary rounded-full px-3 py-1 text-white text-base font-medium mb-4">
+                      Experiência de trabalho - {index + 1}
+                    </span>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
+                    {index !== 0 && (
+                      <Button type="button" onClick={() => handleRemovePreviousJobs(index)} variant="ghost" size="icon">
+                        <X
+                          strokeWidth={1.5}
+                          className="size-8 text-foreground hover:text-foreground/70 transition-colors"
+                        />
+                      </Button>
                     )}
-                  />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.companyAddress`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Logradouro*</FormLabel>
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.companyName`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Nome do empregador ou empresa anterior*</FormLabel>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.companyCity`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Cidade*</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.companyAddress`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Logradouro*</FormLabel>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.companyState`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Estado*</FormLabel>
+                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.companyCity`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Cidade*</FormLabel>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.companyCountry`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">País*</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.companyState`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Estado*</FormLabel>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.companyCep`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">CEP</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.companyCountry`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">País*</FormLabel>
 
-                        <FormControl>
-                          <Input
-                            disabled={isPending}
-                            maxLength={9}
-                            name={field.name}
-                            ref={field.ref}
-                            onBlur={field.onBlur}
-                            value={field.value}
-                            onChange={handleCEPPreviousJobsChange}
-                            className="!mt-auto"
-                          />
-                        </FormControl>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.companyTel`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Telefone</FormLabel>
+                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.companyCep`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">CEP</FormLabel>
 
-                        <FormControl>
-                          <Input disabled={isPending} placeholder="Insira seu telefone..." {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.office`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Cargo / Função*</FormLabel>
-
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.supervisorName`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Nome completo do supervisor</FormLabel>
-
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.admissionDate`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Data de admissão*</FormLabel>
-
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                disabled={isPending}
-                                variant="date"
-                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
-                              >
-                                <CalendarIcon
-                                  strokeWidth={1.5}
-                                  className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                                />
-
-                                <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
-
-                                {field.value ? (
-                                  format(field.value, "PPP", {
-                                    locale: ptBR,
-                                  })
-                                ) : (
-                                  <span className="text-muted-foreground">Selecione a data</span>
-                                )}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              locale={ptBR}
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                              captionLayout="dropdown"
-                              fromYear={1900}
-                              toYear={currentYear}
-                              classNames={{
-                                day_hidden: "invisible",
-                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                                caption_dropdowns: "flex gap-3",
-                                vhidden: "hidden",
-                                caption_label: "hidden",
-                              }}
-                              initialFocus
+                          <FormControl>
+                            <Input
+                              disabled={isPending}
+                              maxLength={9}
+                              name={field.name}
+                              ref={field.ref}
+                              onBlur={field.onBlur}
+                              value={field.value}
+                              onChange={(e) => handleCEPPreviousJobsChange(e, index)}
+                              className="!mt-auto"
                             />
-                          </PopoverContent>
-                        </Popover>
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.companyTel`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Telefone</FormLabel>
+
+                          <FormControl>
+                            <Input disabled={isPending} placeholder="Insira seu telefone..." {...field} />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.office`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Cargo / Função*</FormLabel>
+
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.supervisorName`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Nome completo do supervisor</FormLabel>
+
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.admissionDate`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Data de admissão*</FormLabel>
+
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  disabled={isPending}
+                                  variant="date"
+                                  className={cn("!mt-auto", !field.value && "text-muted-foreground")}
+                                >
+                                  <CalendarIcon
+                                    strokeWidth={1.5}
+                                    className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                                  />
+
+                                  <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                                  {field.value ? (
+                                    format(field.value, "PPP", {
+                                      locale: ptBR,
+                                    })
+                                  ) : (
+                                    <span className="text-muted-foreground">Selecione a data</span>
+                                  )}
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                locale={ptBR}
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={currentYear}
+                                classNames={{
+                                  day_hidden: "invisible",
+                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  caption_dropdowns: "flex gap-3",
+                                  vhidden: "hidden",
+                                  caption_label: "hidden",
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`previousJobs.${index}.resignationDate`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel className="text-foreground">Data de demissão*</FormLabel>
+
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  disabled={isPending}
+                                  variant="date"
+                                  className={cn("!mt-auto", !field.value && "text-muted-foreground")}
+                                >
+                                  <CalendarIcon
+                                    strokeWidth={1.5}
+                                    className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                                  />
+
+                                  <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                                  {field.value ? (
+                                    format(field.value, "PPP", {
+                                      locale: ptBR,
+                                    })
+                                  ) : (
+                                    <span className="text-muted-foreground">Selecione a data</span>
+                                  )}
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                locale={ptBR}
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={currentYear}
+                                classNames={{
+                                  day_hidden: "invisible",
+                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  caption_dropdowns: "flex gap-3",
+                                  vhidden: "hidden",
+                                  caption_label: "hidden",
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
-                    name={`previousJobs.${currentPreviousJobsIndex}.resignationDate`}
+                    name={`previousJobs.${index}.jobDescription`}
                     render={({ field }) => (
                       <FormItem className="flex flex-col gap-2">
-                        <FormLabel className="text-foreground">Data de demissão*</FormLabel>
+                        <FormLabel className="text-foreground">
+                          Descreva brevemente as tarefas exercidas do seu cargo*
+                        </FormLabel>
 
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                disabled={isPending}
-                                variant="date"
-                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
-                              >
-                                <CalendarIcon
-                                  strokeWidth={1.5}
-                                  className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                                />
-
-                                <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
-
-                                {field.value ? (
-                                  format(field.value, "PPP", {
-                                    locale: ptBR,
-                                  })
-                                ) : (
-                                  <span className="text-muted-foreground">Selecione a data</span>
-                                )}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              locale={ptBR}
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                              captionLayout="dropdown"
-                              fromYear={1900}
-                              toYear={currentYear}
-                              classNames={{
-                                day_hidden: "invisible",
-                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                                caption_dropdowns: "flex gap-3",
-                                vhidden: "hidden",
-                                caption_label: "hidden",
-                              }}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <FormControl>
+                          <Textarea disabled={isPending} className="resize-none !mt-auto" {...field} />
+                        </FormControl>
 
                         <FormMessage className="text-sm text-destructive" />
                       </FormItem>
                     )}
                   />
+
+                  {index !== previousJobs.length - 1 && <Separator className="bg-white my-6" />}
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name={`previousJobs.${currentPreviousJobsIndex}.jobDescription`}
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
-                      <FormLabel className="text-foreground">
-                        Descreva brevemente as tarefas exercidas do seu cargo*
-                      </FormLabel>
-
-                      <FormControl>
-                        <Textarea disabled={isPending} className="resize-none !mt-auto" {...field} />
-                      </FormControl>
-
-                      <FormMessage className="text-sm text-destructive" />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              ))}
 
               <Button
                 type="button"
@@ -1886,45 +1810,9 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 disabled={isPending}
                 onClick={addPreviousJobs}
               >
-                Adicionar Outro
+                Adicionar
                 <Plus />
               </Button>
-
-              {previousJobs.length > 1 && (
-                <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                  {previousJobs.map((item, index) => (
-                    <div
-                      key={`otherName-${index}`}
-                      className={cn(
-                        "w-full py-2 px-4 bg-primary/50 hover:bg-primary/75 transition rounded-xl flex items-center gap-2 group sm:w-fit",
-                        {
-                          "bg-primary hover:bg-primary": currentPreviousJobsIndex === index,
-                        }
-                      )}
-                    >
-                      <div
-                        onClick={() => setCurrentPreviousJobsIndex(index)}
-                        className="w-full flex flex-col items-center gap-2 cursor-pointer"
-                      >
-                        <span className="text-sm font-medium text-white">
-                          Cargo: {item.office ? item.office : "(A preencher)"}
-                        </span>
-                      </div>
-
-                      <Button
-                        type="button"
-                        variant="link"
-                        size="icon"
-                        className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
-                        disabled={isPending}
-                        onClick={() => removePreviousJobs(index)}
-                      >
-                        <X strokeWidth={1} size={20} color="#FFF" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             <span className="text-foreground text-base font-medium mb-6">
