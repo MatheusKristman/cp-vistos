@@ -161,6 +161,10 @@ const accountFormSchema = z
         required_error: "Celular é obrigatório",
         invalid_type_error: "Celular inválido",
       })
+      .trim()
+      .refine((value) => /^[^a-zA-Z]+$/.test(value), {
+        message: "Celular inválido",
+      })
       .optional(),
     address: z.string({
       required_error: "Endereço é obrigatório",

@@ -27,7 +27,12 @@ const formSchema = z
     organizationOrUSAResidentZipCode: z.string(),
     organizationOrUSAResidentCity: z.string(),
     organizationOrUSAResidentState: z.string(),
-    organizationOrUSAResidentTel: z.string(),
+    organizationOrUSAResidentTel: z
+      .string()
+      .trim()
+      .refine((value) => value === "" || /^[^a-zA-Z]+$/.test(value), {
+        message: "Celular inválido",
+      }),
     organizationOrUSAResidentEmail: z.string(),
   })
   .superRefine(

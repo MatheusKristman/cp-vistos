@@ -47,7 +47,12 @@ const formSchema = z
     companyState: z.string(),
     companyCountry: z.string(),
     companyCep: z.string(),
-    companyTel: z.string(),
+    companyTel: z
+      .string()
+      .trim()
+      .refine((value) => value === "" || /^[^a-zA-Z]+$/.test(value), {
+        message: "Celular inválido",
+      }),
     admissionDate: z.date({ message: "Campo obrigatório" }).optional(),
     monthlySalary: z.string(),
     retireeDate: z.date({ message: "Campo obrigatório" }).optional(),
@@ -61,7 +66,12 @@ const formSchema = z
         companyState: z.string(),
         companyCountry: z.string(),
         companyCep: z.string(),
-        companyTel: z.string(),
+        companyTel: z
+          .string()
+          .trim()
+          .refine((value) => value === "" || /^[^a-zA-Z]+$/.test(value), {
+            message: "Celular inválido",
+          }),
         office: z.string(),
         supervisorName: z.string(),
         admissionDate: z.date({ message: "Data inválida" }).optional(),

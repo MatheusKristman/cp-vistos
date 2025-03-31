@@ -226,8 +226,19 @@ const formSchema = z
     country: z.string().min(1, { message: "Campo obrigatório" }),
     postalAddressConfirmation: z.enum(["Sim", "Não"]),
     otherPostalAddress: z.string(),
-    cel: z.string().min(1, { message: "Campo obrigatório" }),
-    tel: z.string(),
+    cel: z
+      .string()
+      .min(1, { message: "Campo obrigatório" })
+      .trim()
+      .refine((value) => /^[^a-zA-Z]+$/.test(value), {
+        message: "Celular inválido",
+      }),
+    tel: z
+      .string()
+      .trim()
+      .refine((value) => value === "" || /^[^a-zA-Z]+$/.test(value), {
+        message: "Celular inválido",
+      }),
     fiveYearsOtherTelConfirmation: z.enum(["Sim", "Não"]),
     otherTel: z.array(z.string().min(1)).optional(),
     email: z.string().min(1, { message: "Campo obrigatório" }).email({ message: "E-mail inválido" }),

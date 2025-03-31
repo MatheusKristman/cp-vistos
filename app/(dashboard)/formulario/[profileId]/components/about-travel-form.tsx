@@ -102,7 +102,12 @@ const formSchema = z
     USAState: z.string(),
     payer: z.string(),
     payerNameOrCompany: z.string(),
-    payerTel: z.string(),
+    payerTel: z
+      .string()
+      .trim()
+      .refine((value) => value === "" || /^[^a-zA-Z]+$/.test(value), {
+        message: "Celular inválido",
+      }),
     payerAddress: z.string(),
     payerRelation: z.string(),
     payerEmail: z.string(),
