@@ -29,7 +29,15 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">Nome do empregador ou empresa atual</span>
+          <span className="text-sm text-foreground/60 font-medium">
+            {form.occupation === "Empresário/Proprietário"
+              ? "Nome fantasia ou razão social"
+              : form.occupation === "Autônomo"
+              ? "Nome da MEI (se houver)"
+              : form.occupation === "Estudante"
+              ? "Nome da instituição"
+              : "Nome do empregador atual ou empresa"}
+          </span>
 
           <span className="text-lg font-medium text-foreground">
             {form.companyOrBossName && form.companyOrBossName.length > 0 ? form.companyOrBossName : "Não Preenchido"}
@@ -39,7 +47,7 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
 
       <div className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", className)}>
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">Endereço completo da empresa</span>
+          <span className="text-sm text-foreground/60 font-medium">Endereço completo da empresa/escola</span>
 
           <span className="text-lg font-medium text-foreground">
             {form.companyAddress && form.companyAddress.length > 0 ? form.companyAddress : "Não Preenchido"}
@@ -47,7 +55,7 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">Cidade da empresa</span>
+          <span className="text-sm text-foreground/60 font-medium">Cidade da empresa/escola</span>
 
           <span className="text-lg font-medium text-foreground">
             {form.companyCity && form.companyCity.length > 0 ? form.companyCity : "Não Preenchido"}
@@ -55,7 +63,7 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">Estado da empresa</span>
+          <span className="text-sm text-foreground/60 font-medium">Estado da empresa/escola</span>
 
           <span className="text-lg font-medium text-foreground">
             {form.companyState && form.companyState.length > 0 ? form.companyState : "Não Preenchido"}
@@ -65,7 +73,7 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
 
       <div className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", className)}>
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">País da empresa</span>
+          <span className="text-sm text-foreground/60 font-medium">País da empresa/escola</span>
 
           <span className="text-lg font-medium text-foreground">
             {form.companyCountry && form.companyCountry.length > 0 ? form.companyCountry : "Não Preenchido"}
@@ -73,7 +81,7 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">Cep da empresa</span>
+          <span className="text-sm text-foreground/60 font-medium">Cep da empresa/escola</span>
 
           <span className="text-lg font-medium text-foreground">
             {form.companyCep && form.companyCep.length > 0 ? form.companyCep : "Não Preenchido"}
@@ -81,7 +89,7 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">Telefone da empresa</span>
+          <span className="text-sm text-foreground/60 font-medium">Telefone da empresa/escola</span>
 
           <span className="text-lg font-medium text-foreground">
             {form.companyTel && form.companyTel.length > 0 ? form.companyTel : "Não Preenchido"}
@@ -91,7 +99,13 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
 
       <div className={cn("w-full grid grid-cols-1 sm:grid-cols-3 gap-6", className)}>
         <div className="w-full flex flex-col gap-1">
-          <span className="text-sm text-foreground/60 font-medium">Data de admissão</span>
+          <span className="text-sm text-foreground/60 font-medium">
+            {form.occupation === "Empresário/Proprietário"
+              ? "Data de abertura"
+              : form.occupation === "Estudante"
+              ? "Data de início"
+              : "Data de admissão"}
+          </span>
 
           <span className="text-lg font-medium text-foreground">
             {form.admissionDate ? format(form.admissionDate, "dd/MM/yyyy") : "Não Preenchido"}
@@ -118,8 +132,17 @@ export function WorkEducationView({ form, className }: WorkEducationViewProps) {
       <div className={cn("w-full grid grid-cols-1 sm:grid-cols-2 gap-6", className)}>
         <div className="w-full flex flex-col gap-1">
           <span className="text-sm text-foreground/60 font-medium">
-            Descreva quais são as suas funções dentro da sua empresa, se possui funcionários registrados e outras
-            informações relacionadas ao seu negócio
+            {form.occupation == "Contratado (CLT/PJ)"
+              ? "Descreva quais as suas funções dentro da empresa"
+              : form.occupation === "Estudante"
+              ? "Indique o nome do curso e o ano letivo. Se estiver realizando estágio ou tiver outra atividade secundária, mencione isso na descrição com detalhes"
+              : form.occupation === "Autônomo"
+              ? "Descreva as suas atividades"
+              : form.occupation === "Outro"
+              ? "Descreva sobre a sua atual ocupação"
+              : form.occupation === "Empresário/Proprietário"
+              ? "Descreva quais são as suas funções dentro da sua empresa, se possui funcionários registrados e outras informações relacionadas ao seu negócio"
+              : "Descreva as suas atividades"}
           </span>
 
           <span className="text-lg font-medium text-foreground">

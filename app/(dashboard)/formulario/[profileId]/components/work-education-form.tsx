@@ -698,6 +698,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
 
                         <SelectItem value="Autônomo">Autônomo</SelectItem>
 
+                        <SelectItem value="Estudante">Estudante</SelectItem>
+
                         <SelectItem value="Não Trabalho">Não Trabalho</SelectItem>
 
                         <SelectItem value="Aposentado">Aposentado</SelectItem>
@@ -726,6 +728,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       hidden:
                         occupation === "Empresário/Proprietário" ||
                         occupation === "Não Trabalho" ||
+                        occupation === "Estudante" ||
                         occupation === "Aposentado",
                     })}
                   >
@@ -744,6 +747,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                         tabIndex={
                           occupation === "Empresário/Proprietário" ||
                           occupation === "Não Trabalho" ||
+                          occupation === "Estudante" ||
                           occupation === "Aposentado"
                             ? -1
                             : occupation === "Contratado (CLT/PJ)" ||
@@ -754,6 +758,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                         }
                         disabled={
                           occupation === "Não Trabalho" ||
+                          occupation === "Estudante" ||
                           occupation === "Aposentado" ||
                           occupation === "Empresário/Proprietário" ||
                           isPending
@@ -774,7 +779,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 render={({ field }) => (
                   <FormItem
                     className={cn("flex flex-col gap-2 row-start-2 md:row-start-1 md:col-start-2", {
-                      "row-start-1 md:col-span-1 md:col-start-1": occupation === "Empresário/Proprietário",
+                      "row-start-1 md:col-span-1 md:col-start-1":
+                        occupation === "Empresário/Proprietário" || occupation === "Estudante",
                       hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
@@ -783,13 +789,15 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                         ? "Nome fantasia ou razão social"
                         : occupation === "Autônomo"
                         ? "Nome da MEI (se houver)"
+                        : occupation === "Estudante"
+                        ? "Nome da instituição"
                         : "Nome do empregador atual ou empresa"}
                     </FormLabel>
 
                     <FormControl>
                       <Input
                         tabIndex={
-                          occupation === "Empresário/Proprietário"
+                          occupation === "Empresário/Proprietário" || occupation === "Estudante"
                             ? 1
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
@@ -817,7 +825,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                   <FormItem
                     className={cn("flex flex-col gap-2", {
                       "row-start-2 md:row-start-1 md:col-start-2 md:col-span-2":
-                        occupation === "Empresário/Proprietário",
+                        occupation === "Empresário/Proprietário" || occupation === "Estudante",
                       "row-start-3 md:col-span-2 md:row-start-2 md:col-start-1":
                         occupation === "Contratado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
                       hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
@@ -829,12 +837,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       <Input
                         className="!mt-auto"
                         tabIndex={
-                          occupation === "Empresário/Proprietário" || occupation === "Não Trabalho"
+                          occupation === "Empresário/Proprietário" || occupation === "Estudante"
                             ? 2
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro"
-                            ? 6
+                            ? 3
                             : occupation === "Não Trabalho" || occupation === "Aposentado"
                             ? -1
                             : 0
@@ -866,12 +874,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       <Input
                         className="!mt-auto"
                         tabIndex={
-                          occupation === "Empresário/Proprietário" || occupation === "Não Trabalho"
-                            ? 3
+                          occupation === "Empresário/Proprietário" || occupation === "Estudante"
+                            ? 4
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro"
-                            ? 3
+                            ? 6
                             : occupation === "Não Trabalho" || occupation === "Aposentado"
                             ? -1
                             : 0
@@ -903,12 +911,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       <Input
                         className="!mt-auto"
                         tabIndex={
-                          occupation === "Empresário/Proprietário"
-                            ? 4
+                          occupation === "Empresário/Proprietário" || occupation === "Estudante"
+                            ? 5
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro"
-                            ? 4
+                            ? 7
                             : occupation === "Não Trabalho" || occupation === "Aposentado"
                             ? -1
                             : 0
@@ -940,12 +948,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       <Input
                         className="!mt-auto"
                         tabIndex={
-                          occupation === "Empresário/Proprietário"
-                            ? 5
+                          occupation === "Empresário/Proprietário" || occupation === "Estudante"
+                            ? 6
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro"
-                            ? 5
+                            ? 8
                             : occupation === "Não Trabalho" || occupation === "Aposentado"
                             ? -1
                             : 0
@@ -977,12 +985,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       <Input
                         className="!mt-auto"
                         tabIndex={
-                          occupation === "Empresário/Proprietário"
-                            ? 6
+                          occupation === "Empresário/Proprietário" || occupation === "Estudante"
+                            ? 3
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro"
-                            ? 7
+                            ? 4
                             : occupation === "Não Trabalho" || occupation === "Aposentado"
                             ? -1
                             : 0
@@ -1018,12 +1026,12 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     <FormControl>
                       <Input
                         tabIndex={
-                          occupation === "Empresário/Proprietário"
+                          occupation === "Empresário/Proprietário" || occupation === "Estudante"
                             ? 7
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro"
-                            ? 8
+                            ? 5
                             : occupation === "Não Trabalho" || occupation === "Aposentado"
                             ? -1
                             : 0
@@ -1045,14 +1053,19 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 render={({ field }) => (
                   <FormItem
                     className={cn("flex flex-col gap-2", {
-                      "row-start-8 md:row-start-3 md:col-start-3": occupation === "Empresário/Proprietário",
+                      "row-start-8 md:row-start-3 md:col-start-3":
+                        occupation === "Empresário/Proprietário" || occupation === "Estudante",
                       "row-start-9 md:row-start-4 md:col-start-2":
                         occupation === "Contratado (CLT/PJ)" || occupation === "Autônomo" || occupation === "Outro",
                       hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
                     })}
                   >
                     <FormLabel className="text-foreground">
-                      {occupation === "Empresário/Proprietário" ? "Data de abertura" : "Data de admissão"}
+                      {occupation === "Empresário/Proprietário"
+                        ? "Data de abertura"
+                        : occupation === "Estudante"
+                        ? "Data de início"
+                        : "Data de admissão"}
                     </FormLabel>
 
                     <Popover>
@@ -1060,7 +1073,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                         <FormControl>
                           <Button
                             tabIndex={
-                              occupation === "Empresário/Proprietário"
+                              occupation === "Empresário/Proprietário" || occupation === "Estudante"
                                 ? 8
                                 : occupation === "Contratado (CLT/PJ)" ||
                                   occupation === "Autônomo" ||
@@ -1124,6 +1137,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     className={cn("flex flex-col gap-2", {
                       hidden:
                         occupation === "Empresário/Proprietário" ||
+                        occupation === "Estudante" ||
                         occupation === "Contratado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Não Trabalho" ||
@@ -1138,6 +1152,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                           <Button
                             tabIndex={
                               occupation === "Empresário/Proprietário" ||
+                              occupation === "Estudante" ||
                               occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro" ||
@@ -1150,6 +1165,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                             disabled={
                               occupation === "Não Trabalho" ||
                               occupation === "Empresário/Proprietário" ||
+                              occupation === "Estudante" ||
                               occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro" ||
@@ -1209,7 +1225,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                       "row-start-9 md:row-start-4 md:col-start-1": occupation === "Empresário/Proprietário",
                       "row-start-10 md:row-start-4 md:col-start-3":
                         occupation === "Autônomo" || occupation === "Contratado (CLT/PJ)" || occupation === "Outro",
-                      hidden: occupation === "Não Trabalho" || occupation === "Aposentado",
+                      hidden:
+                        occupation === "Não Trabalho" || occupation === "Aposentado" || occupation === "Estudante",
                     })}
                   >
                     <FormLabel className="text-foreground">Renda mensal (R$)</FormLabel>
@@ -1228,11 +1245,18 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                                 occupation === "Autônomo" ||
                                 occupation === "Outro"
                               ? 10
-                              : occupation === "Não Trabalho" || occupation === "Aposentado"
+                              : occupation === "Não Trabalho" ||
+                                occupation === "Aposentado" ||
+                                occupation === "Estudante"
                               ? -1
                               : 0
                           }
-                          disabled={occupation === "Não Trabalho" || occupation === "Aposentado" || isPending}
+                          disabled={
+                            occupation === "Não Trabalho" ||
+                            occupation === "Aposentado" ||
+                            occupation === "Estudante" ||
+                            isPending
+                          }
                           placeholder="Insira o valor do serviço"
                           onValueChange={(value, name) => form.setValue(name as "monthlySalary", value ?? "0")}
                           decimalsLimit={2}
@@ -1258,6 +1282,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     className={cn({
                       "md:row-start-5 md:col-span-3":
                         occupation === "Empresário/Proprietário" ||
+                        occupation === "Estudante" ||
                         occupation === "Contratado (CLT/PJ)" ||
                         occupation === "Autônomo" ||
                         occupation === "Outro",
@@ -1267,6 +1292,11 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                     <FormLabel className="text-foreground">
                       {occupation == "Contratado (CLT/PJ)" ? (
                         <>Descreva quais as suas funções dentro da empresa</>
+                      ) : occupation === "Estudante" ? (
+                        <>
+                          Indique o nome do curso e o ano letivo. Se estiver realizando estágio ou tiver outra atividade
+                          secundária, mencione isso na descrição com detalhes
+                        </>
                       ) : occupation === "Autônomo" ? (
                         <>Descreva as suas atividades</>
                       ) : occupation === "Outro" ? (
@@ -1284,6 +1314,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                         tabIndex={
                           occupation === "Empresário/Proprietário"
                             ? 10
+                            : occupation === "Estudante"
+                            ? 9
                             : occupation === "Contratado (CLT/PJ)" ||
                               occupation === "Autônomo" ||
                               occupation === "Outro"
