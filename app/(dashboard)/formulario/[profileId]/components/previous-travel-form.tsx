@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import { toast } from "sonner";
-import {} from "lucide-react";
 import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
 import { format, getYear } from "date-fns";
@@ -702,7 +701,12 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
               </div>
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
+            <div
+              className={cn(
+                "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
+                hasBeenOnUSAConfirmation === "Não" && "hidden"
+              )}
+            >
               <FormField
                 control={form.control}
                 name="americanLicenseToDriveConfirmation"
