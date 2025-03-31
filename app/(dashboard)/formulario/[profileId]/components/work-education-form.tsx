@@ -83,17 +83,21 @@ const formSchema = z
       })
     ),
   })
-  .superRefine(({ previousJobConfirmation, previousJobs, courses }, ctx) => {
-    const hasCoursesValue =
-      courses[courses.length - 1].institutionName !== "" ||
-      courses[courses.length - 1].address !== "" ||
-      courses[courses.length - 1].city !== "" ||
-      courses[courses.length - 1].state !== "" ||
-      courses[courses.length - 1].country !== "" ||
-      courses[courses.length - 1].cep !== "" ||
-      courses[courses.length - 1].courseName !== "" ||
-      courses[courses.length - 1].initialDate !== undefined ||
-      courses[courses.length - 1].finishDate !== undefined;
+  .superRefine(({ occupation, admissionDate, previousJobConfirmation, previousJobs, courses }, ctx) => {
+    if (
+      (occupation === "Empresário/Proprietário" ||
+        occupation === "Estudante" ||
+        occupation === "Contratado (CLT/PJ)" ||
+        occupation === "Autônomo" ||
+        occupation === "Outro") &&
+      !admissionDate
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Campo obrigatório",
+        path: ["admissionDate"],
+      });
+    }
 
     for (let i = 0; i < previousJobs.length; i++) {
       console.log(previousJobs[i]);
@@ -1062,10 +1066,10 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                   >
                     <FormLabel className="text-foreground">
                       {occupation === "Empresário/Proprietário"
-                        ? "Data de abertura"
+                        ? "Data de abertura*"
                         : occupation === "Estudante"
-                        ? "Data de início"
-                        : "Data de admissão"}
+                        ? "Data de início*"
+                        : "Data de admissão*"}
                     </FormLabel>
 
                     <Popover>
@@ -1343,7 +1347,8 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-foreground">
-                      Já trabalhou anteriormente? Se sim, forneça um histórico dos últimos cinco anos
+                      Você já teve experiências profissionais anteriores? Caso sim, informe um histórico das suas
+                      últimas ocupações ou, se for o caso, da sua aposentadoria
                     </FormLabel>
 
                     <FormControl>
