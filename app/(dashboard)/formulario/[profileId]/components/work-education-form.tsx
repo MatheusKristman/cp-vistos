@@ -84,20 +84,6 @@ const formSchema = z
     ),
   })
   .superRefine(({ previousJobConfirmation, previousJobs, courses }, ctx) => {
-    const hasPreviousJobsValue =
-      previousJobs[previousJobs.length - 1].companyName !== "" ||
-      previousJobs[previousJobs.length - 1].companyAddress !== "" ||
-      previousJobs[previousJobs.length - 1].companyCity !== "" ||
-      previousJobs[previousJobs.length - 1].companyState !== "" ||
-      previousJobs[previousJobs.length - 1].companyCountry !== "" ||
-      previousJobs[previousJobs.length - 1].companyCep !== "" ||
-      previousJobs[previousJobs.length - 1].companyTel !== "" ||
-      previousJobs[previousJobs.length - 1].office !== "" ||
-      previousJobs[previousJobs.length - 1].supervisorName !== "" ||
-      previousJobs[previousJobs.length - 1].admissionDate !== undefined ||
-      previousJobs[previousJobs.length - 1].resignationDate !== undefined ||
-      previousJobs[previousJobs.length - 1].jobDescription !== "";
-
     const hasCoursesValue =
       courses[courses.length - 1].institutionName !== "" ||
       courses[courses.length - 1].address !== "" ||
@@ -112,11 +98,7 @@ const formSchema = z
     for (let i = 0; i < previousJobs.length; i++) {
       console.log(previousJobs[i]);
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].companyCity === ""
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].companyCity === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -124,11 +106,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].companyAddress === ""
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].companyAddress === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -136,11 +114,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].companyName === ""
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].companyName === "") {
         console.log("Company name is empty");
 
         ctx.addIssue({
@@ -150,11 +124,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].companyState === ""
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].companyState === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -162,11 +132,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].jobDescription === ""
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].jobDescription === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -174,11 +140,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].companyCountry === ""
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].companyCountry === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -186,11 +148,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].office === ""
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].office === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -198,11 +156,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].admissionDate === undefined
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].admissionDate === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -210,11 +164,7 @@ const formSchema = z
         });
       }
 
-      if (
-        previousJobConfirmation === "Sim" &&
-        // (previousJobs.length === 1 || (previousJobs.length > 1 && hasPreviousJobsValue)) &&
-        previousJobs[i].resignationDate === undefined
-      ) {
+      if (previousJobConfirmation === "Sim" && previousJobs[i].resignationDate === undefined) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo obrigatório",
@@ -223,81 +173,62 @@ const formSchema = z
       }
     }
 
-    if (
-      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
-      courses[courses.length - 1].institutionName === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`courses.${courses.length - 1}.institutionName`],
-      });
-    }
+    for (let i = 0; i < courses.length; i++) {
+      if (courses[i].institutionName === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`courses.${i}.institutionName`],
+        });
+      }
 
-    if (
-      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
-      courses[courses.length - 1].city === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`courses.${courses.length - 1}.city`],
-      });
-    }
+      if (courses[i].city === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`courses.${i}.city`],
+        });
+      }
 
-    if (
-      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
-      courses[courses.length - 1].state === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`courses.${courses.length - 1}.state`],
-      });
-    }
+      if (courses[i].state === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`courses.${i}.state`],
+        });
+      }
 
-    if (
-      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
-      courses[courses.length - 1].country === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`courses.${courses.length - 1}.country`],
-      });
-    }
+      if (courses[i].country === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`courses.${i}.country`],
+        });
+      }
 
-    if (
-      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
-      courses[courses.length - 1].courseName === ""
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`courses.${courses.length - 1}.courseName`],
-      });
-    }
+      if (courses[i].courseName === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`courses.${i}.courseName`],
+        });
+      }
 
-    if (
-      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
-      courses[courses.length - 1].initialDate === undefined
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`courses.${courses.length - 1}.initialDate`],
-      });
-    }
+      if (courses[i].initialDate === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`courses.${i}.initialDate`],
+        });
+      }
 
-    if (
-      (courses.length === 1 || (previousJobs.length > 1 && hasCoursesValue)) &&
-      courses[courses.length - 1].finishDate === undefined
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Campo obrigatório",
-        path: [`courses.${courses.length - 1}.finishDate`],
-      });
+      if (courses[i].finishDate === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Campo obrigatório",
+          path: [`courses.${i}.finishDate`],
+        });
+      }
     }
   });
 
@@ -308,16 +239,11 @@ interface Props {
 }
 
 export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) {
-  const [currentCoursesIndex, setCurrentCoursesIndex] = useState<number>(currentForm.courses.length ?? 0);
-  const [resetCoursesFields, setResetCoursesFields] = useState<boolean>(false);
-
-  // TODO: Adicionar verificação para limitar os previousJobs para 2
-  // TODO: Adicionar a mesma lógica no courses
-
   const currentYear = getYear(new Date());
   const { redirectStep, setRedirectStep } = useFormStore();
 
   const previousJobsRef = useRef<HTMLDivElement>(null);
+  const coursesRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -369,17 +295,6 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 initialDate: item.initialDate ? new Date(item.initialDate) : undefined,
                 finishDate: item.finishDate ? new Date(item.finishDate) : undefined,
               })),
-              {
-                institutionName: "",
-                address: "",
-                city: "",
-                state: "",
-                country: "",
-                cep: "",
-                courseName: "",
-                initialDate: undefined,
-                finishDate: undefined,
-              },
             ]
           : [
               {
@@ -448,28 +363,6 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   useEffect(() => {
     console.log({ errors: form.formState.errors });
   }, [form.formState.errors]);
-
-  useEffect(() => {
-    if (currentForm.courses.length > 0) {
-      setCurrentCoursesIndex(currentForm.courses.length);
-    }
-  }, [currentForm]);
-
-  useEffect(() => {
-    if (resetCoursesFields) {
-      form.setValue(`courses.${currentCoursesIndex}.institutionName`, "");
-      form.setValue(`courses.${currentCoursesIndex}.address`, "");
-      form.setValue(`courses.${currentCoursesIndex}.city`, "");
-      form.setValue(`courses.${currentCoursesIndex}.state`, "");
-      form.setValue(`courses.${currentCoursesIndex}.country`, "");
-      form.setValue(`courses.${currentCoursesIndex}.cep`, "");
-      form.setValue(`courses.${currentCoursesIndex}.courseName`, "");
-      form.setValue(`courses.${currentCoursesIndex}.initialDate`, undefined);
-      form.setValue(`courses.${currentCoursesIndex}.finishDate`, undefined);
-
-      setResetCoursesFields(false);
-    }
-  }, [resetCoursesFields]);
 
   useEffect(() => {
     if (redirectStep !== null) {
@@ -562,15 +455,16 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
     form.setValue(`previousJobs.${index}.companyCep`, value);
   }
 
-  function handleCEPCoursesChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleCEPCoursesChange(event: ChangeEvent<HTMLInputElement>, index: number) {
     let value = event.target.value.replace(/[^\d]/g, "");
 
     value = value.replace(/(\d{5})(\d{3})/, "$1-$2");
 
-    form.setValue(`courses.${currentCoursesIndex}.cep`, value);
+    form.setValue(`courses.${index}.cep`, value);
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // TODO: Verificar se é preciso formatar dessa forma ou remover essas variáveis
     const previousJobsFormatted: {
       companyName: string;
       companyAddress: string;
@@ -751,50 +645,26 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   }
 
   function addCourses() {
-    form
-      .trigger(
-        [
-          `courses.${currentCoursesIndex}.institutionName`,
-          `courses.${currentCoursesIndex}.address`,
-          `courses.${currentCoursesIndex}.city`,
-          `courses.${currentCoursesIndex}.state`,
-          `courses.${currentCoursesIndex}.country`,
-          `courses.${currentCoursesIndex}.cep`,
-          `courses.${currentCoursesIndex}.courseName`,
-          `courses.${currentCoursesIndex}.initialDate`,
-          `courses.${currentCoursesIndex}.finishDate`,
-        ],
-        { shouldFocus: true }
-      )
-      .then(() => {
-        if (Object.keys(form.formState.errors).length === 0) {
-          form.setValue("courses", [
-            ...courses,
-            {
-              institutionName: "",
-              address: "",
-              city: "",
-              state: "",
-              country: "",
-              cep: "",
-              courseName: "",
-              initialDate: undefined,
-              finishDate: undefined,
-            },
-          ]);
-
-          setCurrentCoursesIndex((prev) => prev + 1);
-          setResetCoursesFields(true);
-        }
-      });
+    form.setValue("courses", [
+      ...courses,
+      {
+        institutionName: "",
+        address: "",
+        city: "",
+        state: "",
+        country: "",
+        cep: "",
+        courseName: "",
+        initialDate: undefined,
+        finishDate: undefined,
+      },
+    ]);
   }
 
-  function removeCourses(index: number) {
-    const newArr = courses.filter((_, i) => i !== index);
+  function handleRemoveCourses(index: number) {
+    const updatedCourses = courses.filter((_, i) => i !== index);
 
-    form.setValue("courses", newArr);
-
-    setCurrentCoursesIndex((prev) => prev - 1);
+    form.setValue("courses", updatedCourses);
   }
 
   return (
@@ -1481,7 +1351,7 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 hidden: previousJobConfirmation === "Não",
               })}
             >
-              {previousJobs.map((prevJob, index) => (
+              {previousJobs.map((_, index) => (
                 <div key={index} className="w-full flex flex-col gap-y-4">
                   <div className="w-full flex items-center justify-between gap-6">
                     <span className="w-fit bg-primary rounded-full px-3 py-1 text-white text-base font-medium mb-4">
@@ -1803,16 +1673,18 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 </div>
               ))}
 
-              <Button
-                type="button"
-                size="xl"
-                className="w-full flex items-center gap-2 md:w-fit"
-                disabled={isPending}
-                onClick={addPreviousJobs}
-              >
-                Adicionar
-                <Plus />
-              </Button>
+              {previousJobs.length < 2 && (
+                <Button
+                  type="button"
+                  size="xl"
+                  className="w-full flex items-center gap-2 md:w-fit"
+                  disabled={isPending}
+                  onClick={addPreviousJobs}
+                >
+                  Adicionar
+                  <Plus />
+                </Button>
+              )}
             </div>
 
             <span className="text-foreground text-base font-medium mb-6">
@@ -1820,255 +1692,274 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
               informe o ensino básico.
             </span>
 
-            <div className="w-full bg-secondary rounded-xl p-4 space-y-6">
-              <div className="w-full flex flex-col gap-x-4 gap-y-6">
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.institutionName`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Nome completo da instituição*</FormLabel>
+            <div ref={coursesRef} className="w-full bg-secondary rounded-xl p-4 space-y-6">
+              {courses.map((_, index) => (
+                <div key={index} className="w-full flex flex-col gap-x-4 gap-y-6">
+                  <div className="w-full flex items-center justify-between gap-6">
+                    <span className="w-fit bg-primary rounded-full px-3 py-1 text-white text-base font-medium mb-4">
+                      Ensino - {index + 1}
+                    </span>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
+                    {index !== 0 && (
+                      <Button type="button" onClick={() => handleRemoveCourses(index)} variant="ghost" size="icon">
+                        <X
+                          strokeWidth={1.5}
+                          className="size-8 text-foreground hover:text-foreground/70 transition-colors"
+                        />
+                      </Button>
                     )}
-                  />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.address`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Endereço completo</FormLabel>
+                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.institutionName`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>Nome completo da instituição*</FormLabel>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.cep`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>CEP</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.address`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>Endereço completo</FormLabel>
 
-                        <FormControl>
-                          <Input
-                            className="!mt-auto"
-                            maxLength={9}
-                            name={field.name}
-                            ref={field.ref}
-                            onBlur={field.onBlur}
-                            value={field.value}
-                            disabled={isPending}
-                            onChange={handleCEPCoursesChange}
-                          />
-                        </FormControl>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.city`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Cidade*</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.cep`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>CEP</FormLabel>
 
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.state`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Estado*</FormLabel>
-
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.country`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>País*</FormLabel>
-
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.courseName`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Nome do curso*</FormLabel>
-
-                        <FormControl>
-                          <Input className="!mt-auto" disabled={isPending} {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.initialDate`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Data de início*</FormLabel>
-
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                disabled={isPending}
-                                variant="date"
-                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
-                              >
-                                <CalendarIcon
-                                  strokeWidth={1.5}
-                                  className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                                />
-
-                                <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
-
-                                {field.value ? (
-                                  format(field.value, "PPP", {
-                                    locale: ptBR,
-                                  })
-                                ) : (
-                                  <span className="text-muted-foreground">Selecione a data</span>
-                                )}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              locale={ptBR}
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                              captionLayout="dropdown"
-                              fromYear={1900}
-                              toYear={currentYear}
-                              classNames={{
-                                day_hidden: "invisible",
-                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                                caption_dropdowns: "flex gap-3",
-                                vhidden: "hidden",
-                                caption_label: "hidden",
-                              }}
-                              initialFocus
+                          <FormControl>
+                            <Input
+                              className="!mt-auto"
+                              maxLength={9}
+                              name={field.name}
+                              ref={field.ref}
+                              onBlur={field.onBlur}
+                              value={field.value}
+                              disabled={isPending}
+                              onChange={(e) => handleCEPCoursesChange(e, index)}
                             />
-                          </PopoverContent>
-                        </Popover>
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name={`courses.${currentCoursesIndex}.finishDate`}
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col gap-2">
-                        <FormLabel>Data de término*</FormLabel>
+                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.city`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>Cidade*</FormLabel>
 
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                disabled={isPending}
-                                variant="date"
-                                className={cn("!mt-auto", !field.value && "text-muted-foreground")}
-                              >
-                                <CalendarIcon
-                                  strokeWidth={1.5}
-                                  className="h-5 w-5 text-muted-foreground flex-shrink-0"
-                                />
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                                <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-                                {field.value ? (
-                                  format(field.value, "PPP", {
-                                    locale: ptBR,
-                                  })
-                                ) : (
-                                  <span className="text-muted-foreground">Selecione a data</span>
-                                )}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.state`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>Estado*</FormLabel>
 
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              locale={ptBR}
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                              captionLayout="dropdown"
-                              fromYear={1900}
-                              toYear={currentYear}
-                              classNames={{
-                                day_hidden: "invisible",
-                                dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
-                                caption_dropdowns: "flex gap-3",
-                                vhidden: "hidden",
-                                caption_label: "hidden",
-                              }}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
 
-                        <FormMessage className="text-sm text-destructive" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.country`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>País*</FormLabel>
+
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-6">
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.courseName`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>Nome do curso*</FormLabel>
+
+                          <FormControl>
+                            <Input className="!mt-auto" disabled={isPending} {...field} />
+                          </FormControl>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.initialDate`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>Data de início*</FormLabel>
+
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  disabled={isPending}
+                                  variant="date"
+                                  className={cn("!mt-auto", !field.value && "text-muted-foreground")}
+                                >
+                                  <CalendarIcon
+                                    strokeWidth={1.5}
+                                    className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                                  />
+
+                                  <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                                  {field.value ? (
+                                    format(field.value, "PPP", {
+                                      locale: ptBR,
+                                    })
+                                  ) : (
+                                    <span className="text-muted-foreground">Selecione a data</span>
+                                  )}
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                locale={ptBR}
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={currentYear}
+                                classNames={{
+                                  day_hidden: "invisible",
+                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  caption_dropdowns: "flex gap-3",
+                                  vhidden: "hidden",
+                                  caption_label: "hidden",
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`courses.${index}.finishDate`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col gap-2">
+                          <FormLabel>Data de término*</FormLabel>
+
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  disabled={isPending}
+                                  variant="date"
+                                  className={cn("!mt-auto", !field.value && "text-muted-foreground")}
+                                >
+                                  <CalendarIcon
+                                    strokeWidth={1.5}
+                                    className="h-5 w-5 text-muted-foreground flex-shrink-0"
+                                  />
+
+                                  <div className="w-[2px] h-full bg-muted rounded-full flex-shrink-0" />
+
+                                  {field.value ? (
+                                    format(field.value, "PPP", {
+                                      locale: ptBR,
+                                    })
+                                  ) : (
+                                    <span className="text-muted-foreground">Selecione a data</span>
+                                  )}
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                locale={ptBR}
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={currentYear}
+                                classNames={{
+                                  day_hidden: "invisible",
+                                  dropdown: "px-2 py-1.5 bg-[#2E3675]/80 text-white text-sm focus-visible:outline-none",
+                                  caption_dropdowns: "flex gap-3",
+                                  vhidden: "hidden",
+                                  caption_label: "hidden",
+                                }}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <FormMessage className="text-sm text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {index !== courses.length - 1 && <Separator className="bg-white my-6" />}
                 </div>
-              </div>
+              ))}
 
               <Button
                 type="button"
@@ -2080,42 +1971,6 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
                 Adicionar
                 <Plus />
               </Button>
-
-              {courses.length > 0 && (
-                <div className="w-full flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                  {courses.map((item, index) => (
-                    <div
-                      key={`otherName-${index}`}
-                      className={cn(
-                        "w-full py-2 px-4 bg-primary/50 hover:bg-primary/75 rounded-xl flex items-center gap-2 group sm:w-fit",
-                        {
-                          "bg-primary hover:bg-primary": currentCoursesIndex === index,
-                        }
-                      )}
-                    >
-                      <div
-                        onClick={() => setCurrentCoursesIndex(index)}
-                        className="w-full flex flex-col items-center gap-2 cursor-pointer"
-                      >
-                        <span className="text-sm font-medium text-white">
-                          Curso: {item.courseName ? item.courseName : "(A preencher)"}
-                        </span>
-                      </div>
-
-                      <Button
-                        type="button"
-                        variant="link"
-                        size="icon"
-                        className="size-5 hidden opacity-0 transition-all group-hover:block group-hover:opacity-100"
-                        disabled={isPending}
-                        onClick={() => removeCourses(index)}
-                      >
-                        <X strokeWidth={1} size={20} color="#FFF" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
