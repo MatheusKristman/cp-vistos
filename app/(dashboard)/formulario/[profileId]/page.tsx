@@ -5,7 +5,8 @@ import { Loader2 } from "lucide-react";
 import { differenceInYears } from "date-fns";
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PersonalDataForm } from "./components/personal-data-form";
+
+import { PersonalDataWrapper } from "./components/personal-data/personal-data-wrapper";
 import { ContactAndAddressForm } from "./components/contact-and-address-form";
 import { PassportForm } from "./components/passport-form";
 import { AboutTravelForm } from "./components/about-travel-form";
@@ -18,23 +19,10 @@ import { AdditionalInformationForm } from "./components/additional-information-f
 import { SecurityForm } from "./components/security-form";
 import { DashboardHeader } from "../../perfil/components/dashboard-header";
 
-import { trpc } from "@/lib/trpc-client";
 import { cn } from "@/lib/utils";
+import { STEPS } from "@/constants";
+import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
-
-const STEPS = [
-  { label: "Dados Pessoais", step: 0 },
-  { label: "Endereço e Contatos", step: 1 },
-  { label: "Passaporte", step: 2 },
-  { label: "Sobre a Viagem", step: 3 },
-  { label: "Companhia de Viagem", step: 4 },
-  { label: "Viagens Anteriores", step: 5 },
-  { label: "Contato nos Estados Unidos", step: 6 },
-  { label: "Informações Familiares", step: 7 },
-  { label: "Trabalho e Educação", step: 8 },
-  { label: "Informações Adicionais", step: 9 },
-  { label: "Segurança", step: 10 },
-] as const;
 
 export default function FormPage({ params }: { params: { profileId: string } }) {
   const profileId = params.profileId;
@@ -54,12 +42,12 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
     );
   }
 
-  const { data: formData } = trpc.formsRouter.getForm.useQuery({ profileId });
-  const { data: profileData } = trpc.formsRouter.getProfile.useQuery({
+  const { data: currentStep, isPending: isCurrentStepPending } = trpc.formsRouter.getCurrentStep.useQuery({
     profileId,
   });
+  const { data: isMinor, isPending: checkIsMinorPending } = trpc.formsRouter.checkIsMinor.useQuery({ profileId });
 
-  if (formData === undefined || profileData === undefined) {
+  if (!currentStep || checkIsMinorPending || isCurrentStepPending) {
     return (
       <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
         <Loader2 size={100} strokeWidth={1} className="animate-spin" />
@@ -69,11 +57,7 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
     );
   }
 
-  const currentStep = formData.form.profile.formStep;
   const stepDisabled = (step: number) => step > currentStep;
-  const isMinor = profileData.profile.birthDate
-    ? differenceInYears(new Date(), profileData.profile.birthDate) < 14
-    : false;
 
   return (
     <>
@@ -104,7 +88,7 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
                             "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
                             {
                               "bg-primary hover:bg-primary": formStep === step.step.toString(),
-                            },
+                            }
                           )}
                         />
 
@@ -126,7 +110,7 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
                             "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
                             {
                               "bg-primary hover:bg-primary": formStep === step.step.toString(),
-                            },
+                            }
                           )}
                         />
 
@@ -140,10 +124,8 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
           </div>
         </div>
 
-        {formStep === "0" && (
-          <PersonalDataForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
-        )}
-        {formStep === "1" && (
+        {formStep === "0" && <PersonalDataWrapper profileId={profileId} isEditing={isEditing} />}
+        {/* {formStep === "1" && (
           <ContactAndAddressForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
         )}
         {formStep === "2" && <PassportForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />}
@@ -171,7 +153,7 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
         {formStep === "9" && (
           <AdditionalInformationForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
         )}
-        {formStep === "10" && <SecurityForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />}
+        {formStep === "10" && <SecurityForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />} */}
       </div>
     </>
   );

@@ -6,7 +6,6 @@ import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
 import { format, getYear } from "date-fns";
 import { useRouter } from "next/navigation";
-import { Form as FormType } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -19,10 +18,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { countries } from "@/constants";
 
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import { PersonalDataFormType } from "@/types";
 
 const formSchema = z
   .object({
@@ -102,208 +103,13 @@ const formSchema = z
     }
   );
 
-const countries = [
-  "Afeganistão",
-  "Albânia",
-  "Argélia",
-  "Andorra",
-  "Angola",
-  "Argentina",
-  "Armênia",
-  "Austrália",
-  "Áustria",
-  "Azerbaijão",
-  "Bahamas",
-  "Bahrein",
-  "Bangladesh",
-  "Barbados",
-  "Bielorrússia",
-  "Bélgica",
-  "Belize",
-  "Benin",
-  "Butão",
-  "Bolívia",
-  "Bósnia e Herzegovina",
-  "Botswana",
-  "Brasil",
-  "Brunei",
-  "Bulgária",
-  "Burkina Faso",
-  "Burundi",
-  "Cabo Verde",
-  "Camboja",
-  "Camarões",
-  "Canadá",
-  "Chade",
-  "Chile",
-  "China",
-  "Colômbia",
-  "Comores",
-  "Congo",
-  "Costa Rica",
-  "Croácia",
-  "Cuba",
-  "Chipre",
-  "República Tcheca",
-  "Dinamarca",
-  "Djibuti",
-  "Dominica",
-  "República Dominicana",
-  "Equador",
-  "Egito",
-  "El Salvador",
-  "Guiné Equatorial",
-  "Eritreia",
-  "Estônia",
-  "Essuatíni",
-  "Etiópia",
-  "Fiji",
-  "Finlândia",
-  "França",
-  "Gabão",
-  "Gâmbia",
-  "Geórgia",
-  "Alemanha",
-  "Gana",
-  "Grécia",
-  "Granada",
-  "Guatemala",
-  "Guiné",
-  "Guiné-Bissau",
-  "Guiana",
-  "Haiti",
-  "Honduras",
-  "Hungria",
-  "Islândia",
-  "Índia",
-  "Indonésia",
-  "Irã",
-  "Iraque",
-  "Irlanda",
-  "Israel",
-  "Itália",
-  "Jamaica",
-  "Japão",
-  "Jordânia",
-  "Cazaquistão",
-  "Quênia",
-  "Kiribati",
-  "Coreia do Norte",
-  "Coreia do Sul",
-  "Kosovo",
-  "Kuwait",
-  "Quirguistão",
-  "Laos",
-  "Letônia",
-  "Líbano",
-  "Lesoto",
-  "Libéria",
-  "Líbia",
-  "Liechtenstein",
-  "Lituânia",
-  "Luxemburgo",
-  "Madagascar",
-  "Malawi",
-  "Malásia",
-  "Maldivas",
-  "Mali",
-  "Malta",
-  "Ilhas Marshall",
-  "Mauritânia",
-  "Maurício",
-  "México",
-  "Micronésia",
-  "Moldávia",
-  "Mônaco",
-  "Mongólia",
-  "Montenegro",
-  "Marrocos",
-  "Moçambique",
-  "Mianmar (Birmânia)",
-  "Namíbia",
-  "Nauru",
-  "Nepal",
-  "Países Baixos",
-  "Nova Zelândia",
-  "Nicarágua",
-  "Níger",
-  "Nigéria",
-  "Macedônia do Norte",
-  "Noruega",
-  "Omã",
-  "Paquistão",
-  "Palau",
-  "Palestina",
-  "Panamá",
-  "Papua-Nova Guiné",
-  "Paraguai",
-  "Peru",
-  "Filipinas",
-  "Polônia",
-  "Portugal",
-  "Catar",
-  "Romênia",
-  "Rússia",
-  "Ruanda",
-  "São Cristóvão e Nevis",
-  "Santa Lúcia",
-  "São Vicente e Granadinas",
-  "Samoa",
-  "San Marino",
-  "São Tomé e Príncipe",
-  "Arábia Saudita",
-  "Senegal",
-  "Sérvia",
-  "Seychelles",
-  "Serra Leoa",
-  "Cingapura",
-  "Eslováquia",
-  "Eslovênia",
-  "Ilhas Salomão",
-  "Somália",
-  "África do Sul",
-  "Espanha",
-  "Sri Lanka",
-  "Sudão",
-  "Suriname",
-  "Suécia",
-  "Suíça",
-  "Síria",
-  "Taiwan",
-  "Tajiquistão",
-  "Tanzânia",
-  "Tailândia",
-  "Timor-Leste",
-  "Togo",
-  "Tonga",
-  "Trinidad e Tobago",
-  "Tunísia",
-  "Turquia",
-  "Turcomenistão",
-  "Tuvalu",
-  "Uganda",
-  "Ucrânia",
-  "Emirados Árabes Unidos",
-  "Reino Unido",
-  "Estados Unidos",
-  "Uruguai",
-  "Uzbequistão",
-  "Vanuatu",
-  "Vaticano",
-  "Venezuela",
-  "Vietnã",
-  "Iêmen",
-  "Zâmbia",
-  "Zimbábue",
-];
-
 interface Props {
+  personalDataForm: PersonalDataFormType;
   profileId: string;
-  currentForm: FormType;
   isEditing: boolean;
 }
 
-export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
+export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Props) {
   const [otherNamesValue, setOtherNamesValue] = useState<string>("");
 
   const { redirectStep, setRedirectStep } = useFormStore();
@@ -313,25 +119,27 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: currentForm.firstName ? currentForm.firstName : "",
-      lastName: currentForm.lastName ? currentForm.lastName : "",
-      cpf: currentForm.cpf ? currentForm.cpf : "",
-      otherNamesConfirmation: currentForm.otherNamesConfirmation ? "Sim" : "Não",
-      otherNames: currentForm.otherNames.length > 0 ? currentForm.otherNames : [],
-      sex: currentForm.sex ? currentForm.sex : undefined,
-      maritalStatus: currentForm.maritalStatus ? currentForm.maritalStatus : undefined,
-      birthDate: currentForm.birthDate ? currentForm.birthDate : undefined,
-      birthCity: currentForm.birthCity ? currentForm.birthCity : "",
-      birthState: currentForm.birthState ? currentForm.birthState : "",
-      birthCountry: currentForm.birthCountry ? currentForm.birthCountry : "",
-      originCountry: currentForm.originCountry ? currentForm.originCountry : "",
-      otherNationalityConfirmation: currentForm.otherNationalityConfirmation ? "Sim" : "Não",
-      otherNationalityPassport: currentForm.otherNationalityPassport ? currentForm.otherNationalityPassport : "",
-      otherNationalityCountry: currentForm.otherNationalityCountry ? currentForm.otherNationalityCountry : "",
-      otherCountryResidentConfirmation: currentForm.otherCountryResidentConfirmation ? "Sim" : "Não",
-      otherCountryResident: currentForm.otherCountryResident ? currentForm.otherCountryResident : "",
-      USSocialSecurityNumber: currentForm.USSocialSecurityNumber ? currentForm.USSocialSecurityNumber : "",
-      USTaxpayerIDNumber: currentForm.USTaxpayerIDNumber ? currentForm.USTaxpayerIDNumber : "",
+      firstName: personalDataForm.firstName ? personalDataForm.firstName : "",
+      lastName: personalDataForm.lastName ? personalDataForm.lastName : "",
+      cpf: personalDataForm.cpf ? personalDataForm.cpf : "",
+      otherNamesConfirmation: personalDataForm.otherNamesConfirmation ? "Sim" : "Não",
+      otherNames: personalDataForm.otherNames.length > 0 ? personalDataForm.otherNames : [],
+      sex: personalDataForm.sex ? personalDataForm.sex : undefined,
+      maritalStatus: personalDataForm.maritalStatus ? personalDataForm.maritalStatus : undefined,
+      birthDate: personalDataForm.birthDate ? personalDataForm.birthDate : undefined,
+      birthCity: personalDataForm.birthCity ? personalDataForm.birthCity : "",
+      birthState: personalDataForm.birthState ? personalDataForm.birthState : "",
+      birthCountry: personalDataForm.birthCountry ? personalDataForm.birthCountry : "",
+      originCountry: personalDataForm.originCountry ? personalDataForm.originCountry : "",
+      otherNationalityConfirmation: personalDataForm.otherNationalityConfirmation ? "Sim" : "Não",
+      otherNationalityPassport: personalDataForm.otherNationalityPassport
+        ? personalDataForm.otherNationalityPassport
+        : "",
+      otherNationalityCountry: personalDataForm.otherNationalityCountry ? personalDataForm.otherNationalityCountry : "",
+      otherCountryResidentConfirmation: personalDataForm.otherCountryResidentConfirmation ? "Sim" : "Não",
+      otherCountryResident: personalDataForm.otherCountryResident ? personalDataForm.otherCountryResident : "",
+      USSocialSecurityNumber: personalDataForm.USSocialSecurityNumber ? personalDataForm.USSocialSecurityNumber : "",
+      USTaxpayerIDNumber: personalDataForm.USTaxpayerIDNumber ? personalDataForm.USTaxpayerIDNumber : "",
     },
   });
 
@@ -400,39 +208,45 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
       savePersonalData({
         profileId,
         redirectStep,
-        firstName: values.firstName !== "" ? values.firstName : currentForm.firstName,
-        lastName: values.lastName !== "" ? values.lastName : currentForm.lastName,
-        cpf: values.cpf !== "" ? values.cpf : currentForm.cpf,
-        otherNamesConfirmation: values.otherNamesConfirmation ?? (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
-        otherNames: values.otherNames ?? currentForm.otherNames,
-        sex: values.sex !== "" ? values.sex : !currentForm.sex ? undefined : currentForm.sex,
+        firstName: values.firstName !== "" ? values.firstName : personalDataForm.firstName,
+        lastName: values.lastName !== "" ? values.lastName : personalDataForm.lastName,
+        cpf: values.cpf !== "" ? values.cpf : personalDataForm.cpf,
+        otherNamesConfirmation:
+          values.otherNamesConfirmation ?? (personalDataForm.otherNamesConfirmation ? "Sim" : "Não"),
+        otherNames: values.otherNames ?? personalDataForm.otherNames,
+        sex: values.sex !== "" ? values.sex : !personalDataForm.sex ? undefined : personalDataForm.sex,
         maritalStatus:
           values.maritalStatus !== ""
             ? values.maritalStatus
-            : !currentForm.maritalStatus
+            : !personalDataForm.maritalStatus
             ? undefined
-            : currentForm.maritalStatus,
-        birthDate: values.birthDate ?? currentForm.birthDate,
-        birthCity: values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
-        birthState: values.birthState !== "" ? values.birthState : currentForm.birthState,
-        birthCountry: values.birthCountry !== "" ? values.birthCountry : currentForm.birthCountry,
-        originCountry: values.originCountry !== "" ? values.originCountry : currentForm.originCountry,
+            : personalDataForm.maritalStatus,
+        birthDate: values.birthDate ?? personalDataForm.birthDate,
+        birthCity: values.birthCity !== "" ? values.birthCity : personalDataForm.birthCity,
+        birthState: values.birthState !== "" ? values.birthState : personalDataForm.birthState,
+        birthCountry: values.birthCountry !== "" ? values.birthCountry : personalDataForm.birthCountry,
+        originCountry: values.originCountry !== "" ? values.originCountry : personalDataForm.originCountry,
         otherNationalityConfirmation:
-          values.otherNationalityConfirmation ?? (currentForm.otherNationalityConfirmation ? "Sim" : "Não"),
+          values.otherNationalityConfirmation ?? (personalDataForm.otherNationalityConfirmation ? "Sim" : "Não"),
         otherNationalityPassport:
           values.otherNationalityPassport !== ""
             ? values.otherNationalityPassport
-            : currentForm.otherNationalityPassport,
+            : personalDataForm.otherNationalityPassport,
         otherNationalityCountry:
-          values.otherNationalityCountry !== "" ? values.otherNationalityCountry : currentForm.otherNationalityCountry,
+          values.otherNationalityCountry !== ""
+            ? values.otherNationalityCountry
+            : personalDataForm.otherNationalityCountry,
         otherCountryResidentConfirmation:
-          values.otherCountryResidentConfirmation ?? (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
+          values.otherCountryResidentConfirmation ??
+          (personalDataForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
         otherCountryResident:
-          values.otherCountryResident !== "" ? values.otherCountryResident : currentForm.otherCountryResident,
+          values.otherCountryResident !== "" ? values.otherCountryResident : personalDataForm.otherCountryResident,
         USSocialSecurityNumber:
-          values.USSocialSecurityNumber !== "" ? values.USSocialSecurityNumber : currentForm.USSocialSecurityNumber,
+          values.USSocialSecurityNumber !== ""
+            ? values.USSocialSecurityNumber
+            : personalDataForm.USSocialSecurityNumber,
         USTaxpayerIDNumber:
-          values.USTaxpayerIDNumber !== "" ? values.USTaxpayerIDNumber : currentForm.USTaxpayerIDNumber,
+          values.USTaxpayerIDNumber !== "" ? values.USTaxpayerIDNumber : personalDataForm.USTaxpayerIDNumber,
       });
       setRedirectStep(null);
     }
@@ -451,36 +265,42 @@ export function PersonalDataForm({ currentForm, profileId, isEditing }: Props) {
 
     savePersonalData({
       profileId,
-      firstName: values.firstName !== "" ? values.firstName : currentForm.firstName,
-      lastName: values.lastName !== "" ? values.lastName : currentForm.lastName,
-      cpf: values.cpf !== "" ? values.cpf : currentForm.cpf,
-      otherNamesConfirmation: values.otherNamesConfirmation ?? (currentForm.otherNamesConfirmation ? "Sim" : "Não"),
-      otherNames: values.otherNames ?? currentForm.otherNames,
-      sex: values.sex !== "" ? values.sex : !currentForm.sex ? undefined : currentForm.sex,
+      firstName: values.firstName !== "" ? values.firstName : personalDataForm.firstName,
+      lastName: values.lastName !== "" ? values.lastName : personalDataForm.lastName,
+      cpf: values.cpf !== "" ? values.cpf : personalDataForm.cpf,
+      otherNamesConfirmation:
+        values.otherNamesConfirmation ?? (personalDataForm.otherNamesConfirmation ? "Sim" : "Não"),
+      otherNames: values.otherNames ?? personalDataForm.otherNames,
+      sex: values.sex !== "" ? values.sex : !personalDataForm.sex ? undefined : personalDataForm.sex,
       maritalStatus:
         values.maritalStatus !== ""
           ? values.maritalStatus
-          : !currentForm.maritalStatus
+          : !personalDataForm.maritalStatus
           ? undefined
-          : currentForm.maritalStatus,
-      birthDate: values.birthDate ?? currentForm.birthDate,
-      birthCity: values.birthCity !== "" ? values.birthCity : currentForm.birthCity,
-      birthState: values.birthState !== "" ? values.birthState : currentForm.birthState,
-      birthCountry: values.birthCountry !== "" ? values.birthCountry : currentForm.birthCountry,
-      originCountry: values.originCountry !== "" ? values.originCountry : currentForm.originCountry,
+          : personalDataForm.maritalStatus,
+      birthDate: values.birthDate ?? personalDataForm.birthDate,
+      birthCity: values.birthCity !== "" ? values.birthCity : personalDataForm.birthCity,
+      birthState: values.birthState !== "" ? values.birthState : personalDataForm.birthState,
+      birthCountry: values.birthCountry !== "" ? values.birthCountry : personalDataForm.birthCountry,
+      originCountry: values.originCountry !== "" ? values.originCountry : personalDataForm.originCountry,
       otherNationalityConfirmation:
-        values.otherNationalityConfirmation ?? (currentForm.otherNationalityConfirmation ? "Sim" : "Não"),
+        values.otherNationalityConfirmation ?? (personalDataForm.otherNationalityConfirmation ? "Sim" : "Não"),
       otherNationalityPassport:
-        values.otherNationalityPassport !== "" ? values.otherNationalityPassport : currentForm.otherNationalityPassport,
+        values.otherNationalityPassport !== ""
+          ? values.otherNationalityPassport
+          : personalDataForm.otherNationalityPassport,
       otherNationalityCountry:
-        values.otherNationalityCountry !== "" ? values.otherNationalityCountry : currentForm.otherNationalityCountry,
+        values.otherNationalityCountry !== ""
+          ? values.otherNationalityCountry
+          : personalDataForm.otherNationalityCountry,
       otherCountryResidentConfirmation:
-        values.otherCountryResidentConfirmation ?? (currentForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
+        values.otherCountryResidentConfirmation ?? (personalDataForm.otherCountryResidentConfirmation ? "Sim" : "Não"),
       otherCountryResident:
-        values.otherCountryResident !== "" ? values.otherCountryResident : currentForm.otherCountryResident,
+        values.otherCountryResident !== "" ? values.otherCountryResident : personalDataForm.otherCountryResident,
       USSocialSecurityNumber:
-        values.USSocialSecurityNumber !== "" ? values.USSocialSecurityNumber : currentForm.USSocialSecurityNumber,
-      USTaxpayerIDNumber: values.USTaxpayerIDNumber !== "" ? values.USTaxpayerIDNumber : currentForm.USTaxpayerIDNumber,
+        values.USSocialSecurityNumber !== "" ? values.USSocialSecurityNumber : personalDataForm.USSocialSecurityNumber,
+      USTaxpayerIDNumber:
+        values.USTaxpayerIDNumber !== "" ? values.USTaxpayerIDNumber : personalDataForm.USTaxpayerIDNumber,
     });
   }
 

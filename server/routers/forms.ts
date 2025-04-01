@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
 import { NotificationStatusForm, StatusForm } from "@prisma/client";
 import isEmail from "validator/lib/isEmail";
-import { parse } from "date-fns";
+import { differenceInYears, parse } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 
 export const formsRouter = router({
@@ -33,6 +33,66 @@ export const formsRouter = router({
 
       return { profile };
     }),
+  getCurrentStep: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const form = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          profile: {
+            select: {
+              formStep: true,
+            },
+          },
+        },
+      });
+
+      if (!form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar a etapa",
+        });
+      }
+
+      return form.profile.formStep;
+    }),
+  checkIsMinor: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const profile = await prisma.profile.findUnique({
+        where: {
+          id: profileId,
+        },
+        select: {
+          birthDate: true,
+        },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao procurar o perfil",
+        });
+      }
+
+      const isMinor = profile.birthDate ? differenceInYears(new Date(), profile.birthDate) < 14 : false;
+
+      return isMinor;
+    }),
   getForm: isUserAuthedProcedure
     .input(
       z.object({
@@ -47,7 +107,11 @@ export const formsRouter = router({
           profileId,
         },
         include: {
-          profile: true,
+          profile: {
+            select: {
+              formStep: true,
+            },
+          },
         },
       });
 
@@ -58,7 +122,52 @@ export const formsRouter = router({
         });
       }
 
-      return { form };
+      return { form, currentStep: form.profile.formStep };
+    }),
+  getPersonalData: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const personalDataForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          firstName: true,
+          lastName: true,
+          cpf: true,
+          otherNamesConfirmation: true,
+          otherNames: true,
+          sex: true,
+          maritalStatus: true,
+          birthDate: true,
+          birthCity: true,
+          birthState: true,
+          birthCountry: true,
+          originCountry: true,
+          otherNationalityConfirmation: true,
+          otherNationalityPassport: true,
+          otherNationalityCountry: true,
+          otherCountryResidentConfirmation: true,
+          otherCountryResident: true,
+          USSocialSecurityNumber: true,
+          USTaxpayerIDNumber: true,
+        },
+      });
+
+      if (!personalDataForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return personalDataForm;
     }),
   submitPersonalData: isUserAuthedProcedure
     .input(
