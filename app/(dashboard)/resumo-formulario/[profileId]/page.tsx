@@ -23,21 +23,21 @@ export default function FormResumePage({ params }: { params: { profileId: string
                 Resumo do formulário
               </h2>
 
-              <Skeleton className="w-full h-12 bg-border rounded-none sm:w-60" />
+              <Skeleton className="w-full h-12 bg-primary/30 rounded-2xl sm:w-60" />
             </div>
 
             <div className="w-full flex flex-col gap-9">
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
-              <Skeleton className="w-full h-[108px] bg-border rounded-none" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
+              <Skeleton className="w-full h-[108px] bg-primary/30 rounded-xl" />
             </div>
           </div>
         ) : (
