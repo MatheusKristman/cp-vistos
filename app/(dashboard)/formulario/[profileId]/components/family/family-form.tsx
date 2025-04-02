@@ -22,6 +22,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import { FamilyFormType } from "@/types";
 
 const formSchema = z
   .object({
@@ -118,13 +119,13 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FormType;
+  familyForm: FamilyFormType;
   isEditing: boolean;
-  profile: Profile;
+  isMinor: boolean | undefined;
 }
 
-export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props) {
-  const [currentFamilyIndex, setCurrentFamilyIndex] = useState<number>(currentForm.familyLivingInTheUSA.length || 0);
+export function FamilyForm({ familyForm, profileId, isEditing, isMinor }: Props) {
+  const [currentFamilyIndex, setCurrentFamilyIndex] = useState<number>(familyForm.familyLivingInTheUSA.length || 0);
   const [familyLivingInTheUSAItems, setFamilyLivingInTheUSAItems] = useState<
     { name: string; relation: string; situation: string }[]
   >([]);
@@ -136,27 +137,27 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fatherCompleteName: currentForm.fatherCompleteName ? currentForm.fatherCompleteName : "",
-      fatherBirthdate: currentForm.fatherBirthdate ? currentForm.fatherBirthdate : undefined,
-      fatherLiveInTheUSAConfirmation: currentForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não",
-      fatherUSASituation: currentForm.fatherUSASituation ? currentForm.fatherUSASituation : "",
-      motherCompleteName: currentForm.motherCompleteName ? currentForm.motherCompleteName : "",
-      motherBirthdate: currentForm.motherBirthdate ? currentForm.motherBirthdate : undefined,
-      motherLiveInTheUSAConfirmation: currentForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não",
-      motherUSASituation: currentForm.motherUSASituation ? currentForm.motherUSASituation : "",
-      familyLivingInTheUSAConfirmation: currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não",
+      fatherCompleteName: familyForm.fatherCompleteName ? familyForm.fatherCompleteName : "",
+      fatherBirthdate: familyForm.fatherBirthdate ? familyForm.fatherBirthdate : undefined,
+      fatherLiveInTheUSAConfirmation: familyForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não",
+      fatherUSASituation: familyForm.fatherUSASituation ? familyForm.fatherUSASituation : "",
+      motherCompleteName: familyForm.motherCompleteName ? familyForm.motherCompleteName : "",
+      motherBirthdate: familyForm.motherBirthdate ? familyForm.motherBirthdate : undefined,
+      motherLiveInTheUSAConfirmation: familyForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não",
+      motherUSASituation: familyForm.motherUSASituation ? familyForm.motherUSASituation : "",
+      familyLivingInTheUSAConfirmation: familyForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não",
       familyLivingInTheUSA:
-        currentForm.familyLivingInTheUSA.length > 0
-          ? [...currentForm.familyLivingInTheUSA, { name: "", relation: "", situation: "" }]
+        familyForm.familyLivingInTheUSA.length > 0
+          ? [...familyForm.familyLivingInTheUSA, { name: "", relation: "", situation: "" }]
           : [{ name: "", relation: "", situation: "" }],
-      partnerCompleteName: currentForm.partnerCompleteName ? currentForm.partnerCompleteName : "",
-      partnerBirthdate: currentForm.partnerBirthdate ? currentForm.partnerBirthdate : undefined,
-      partnerNationality: currentForm.partnerNationality ? currentForm.partnerNationality : "",
-      partnerCity: currentForm.partnerCity ? currentForm.partnerCity : "",
-      partnerState: currentForm.partnerState ? currentForm.partnerState : "",
-      partnerCountry: currentForm.partnerCountry ? currentForm.partnerCountry : "",
-      unionDate: currentForm.unionDate ? currentForm.unionDate : undefined,
-      divorceDate: currentForm.divorceDate ? currentForm.divorceDate : undefined,
+      partnerCompleteName: familyForm.partnerCompleteName ? familyForm.partnerCompleteName : "",
+      partnerBirthdate: familyForm.partnerBirthdate ? familyForm.partnerBirthdate : undefined,
+      partnerNationality: familyForm.partnerNationality ? familyForm.partnerNationality : "",
+      partnerCity: familyForm.partnerCity ? familyForm.partnerCity : "",
+      partnerState: familyForm.partnerState ? familyForm.partnerState : "",
+      partnerCountry: familyForm.partnerCountry ? familyForm.partnerCountry : "",
+      unionDate: familyForm.unionDate ? familyForm.unionDate : undefined,
+      divorceDate: familyForm.divorceDate ? familyForm.divorceDate : undefined,
     },
   });
 
@@ -174,8 +175,7 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
   const divorceDate = form.watch("divorceDate");
   const utils = trpc.useUtils();
   const router = useRouter();
-  const maritalStatus = currentForm.maritalStatus;
-  const isMinor = profile.birthDate ? differenceInYears(new Date(), profile.birthDate) < 14 : false;
+  const maritalStatus = familyForm.maritalStatus;
 
   const { mutate: submitFamily, isPending } = trpc.formsRouter.submitFamily.useMutation({
     onSuccess: (data) => {
@@ -223,16 +223,16 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
   });
 
   useEffect(() => {
-    if (currentForm.familyLivingInTheUSA.length > 0) {
-      setCurrentFamilyIndex(currentForm.familyLivingInTheUSA.length);
+    if (familyForm.familyLivingInTheUSA.length > 0) {
+      setCurrentFamilyIndex(familyForm.familyLivingInTheUSA.length);
 
-      const familyFiltered = currentForm.familyLivingInTheUSA.filter(
+      const familyFiltered = familyForm.familyLivingInTheUSA.filter(
         (item) => (item.name !== "" && item.relation !== "") || item.situation !== ""
       );
 
       setFamilyLivingInTheUSAItems(familyFiltered);
     }
-  }, [currentForm]);
+  }, [familyForm]);
 
   useEffect(() => {
     if (resetFamilyFields) {
@@ -254,62 +254,62 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
         fatherCompleteName:
           values.fatherCompleteName !== ""
             ? values.fatherCompleteName
-            : !currentForm.fatherCompleteName
+            : !familyForm.fatherCompleteName
             ? ""
-            : currentForm.fatherCompleteName,
-        fatherBirthdate: values.fatherBirthdate ?? currentForm.fatherBirthdate,
+            : familyForm.fatherCompleteName,
+        fatherBirthdate: values.fatherBirthdate ?? familyForm.fatherBirthdate,
         fatherLiveInTheUSAConfirmation:
-          values.fatherLiveInTheUSAConfirmation ?? (currentForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"),
+          values.fatherLiveInTheUSAConfirmation ?? (familyForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"),
         fatherUSASituation:
           values.fatherUSASituation !== ""
             ? values.fatherUSASituation
-            : !currentForm.fatherUSASituation
+            : !familyForm.fatherUSASituation
             ? ""
-            : currentForm.fatherUSASituation,
+            : familyForm.fatherUSASituation,
         motherCompleteName:
           values.motherCompleteName !== ""
             ? values.motherCompleteName
-            : !currentForm.motherCompleteName
+            : !familyForm.motherCompleteName
             ? ""
-            : currentForm.motherCompleteName,
-        motherBirthdate: values.motherBirthdate ?? currentForm.motherBirthdate,
+            : familyForm.motherCompleteName,
+        motherBirthdate: values.motherBirthdate ?? familyForm.motherBirthdate,
         motherLiveInTheUSAConfirmation:
-          values.motherLiveInTheUSAConfirmation ?? (currentForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não"),
+          values.motherLiveInTheUSAConfirmation ?? (familyForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não"),
         motherUSASituation:
           values.motherUSASituation !== ""
             ? values.motherUSASituation
-            : !currentForm.motherUSASituation
+            : !familyForm.motherUSASituation
             ? ""
-            : currentForm.motherUSASituation,
+            : familyForm.motherUSASituation,
         familyLivingInTheUSAConfirmation:
-          values.familyLivingInTheUSAConfirmation ?? (currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
+          values.familyLivingInTheUSAConfirmation ?? (familyForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
         familyLivingInTheUSA:
-          familyLivingInTheUSAItems.length > 0 ? familyLivingInTheUSAItems : currentForm.familyLivingInTheUSA,
+          familyLivingInTheUSAItems.length > 0 ? familyLivingInTheUSAItems : familyForm.familyLivingInTheUSA,
         partnerCompleteName:
           values.partnerCompleteName !== ""
             ? values.partnerCompleteName
-            : !currentForm.partnerCompleteName
+            : !familyForm.partnerCompleteName
             ? ""
-            : currentForm.partnerCompleteName,
-        partnerBirthdate: values.partnerBirthdate ?? currentForm.partnerBirthdate,
+            : familyForm.partnerCompleteName,
+        partnerBirthdate: values.partnerBirthdate ?? familyForm.partnerBirthdate,
         partnerNationality:
           values.partnerNationality !== ""
             ? values.partnerNationality
-            : !currentForm.partnerNationality
+            : !familyForm.partnerNationality
             ? ""
-            : currentForm.partnerNationality,
+            : familyForm.partnerNationality,
         partnerCity:
-          values.partnerCity !== "" ? values.partnerCity : !currentForm.partnerCity ? "" : currentForm.partnerCity,
+          values.partnerCity !== "" ? values.partnerCity : !familyForm.partnerCity ? "" : familyForm.partnerCity,
         partnerState:
-          values.partnerState !== "" ? values.partnerState : !currentForm.partnerState ? "" : currentForm.partnerState,
+          values.partnerState !== "" ? values.partnerState : !familyForm.partnerState ? "" : familyForm.partnerState,
         partnerCountry:
           values.partnerCountry !== ""
             ? values.partnerCountry
-            : !currentForm.partnerCountry
+            : !familyForm.partnerCountry
             ? ""
-            : currentForm.partnerCountry,
-        unionDate: values.unionDate ?? currentForm.unionDate,
-        divorceDate: values.divorceDate ?? currentForm.divorceDate,
+            : familyForm.partnerCountry,
+        unionDate: values.unionDate ?? familyForm.unionDate,
+        divorceDate: values.divorceDate ?? familyForm.divorceDate,
       });
       setRedirectStep(null);
     }
@@ -426,62 +426,62 @@ export function FamilyForm({ currentForm, profileId, isEditing, profile }: Props
       fatherCompleteName:
         values.fatherCompleteName !== ""
           ? values.fatherCompleteName
-          : !currentForm.fatherCompleteName
+          : !familyForm.fatherCompleteName
           ? ""
-          : currentForm.fatherCompleteName,
-      fatherBirthdate: values.fatherBirthdate ?? currentForm.fatherBirthdate,
+          : familyForm.fatherCompleteName,
+      fatherBirthdate: values.fatherBirthdate ?? familyForm.fatherBirthdate,
       fatherLiveInTheUSAConfirmation:
-        values.fatherLiveInTheUSAConfirmation ?? (currentForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"),
+        values.fatherLiveInTheUSAConfirmation ?? (familyForm.fatherLiveInTheUSAConfirmation ? "Sim" : "Não"),
       fatherUSASituation:
         values.fatherUSASituation !== ""
           ? values.fatherUSASituation
-          : !currentForm.fatherUSASituation
+          : !familyForm.fatherUSASituation
           ? ""
-          : currentForm.fatherUSASituation,
+          : familyForm.fatherUSASituation,
       motherCompleteName:
         values.motherCompleteName !== ""
           ? values.motherCompleteName
-          : !currentForm.motherCompleteName
+          : !familyForm.motherCompleteName
           ? ""
-          : currentForm.motherCompleteName,
-      motherBirthdate: values.motherBirthdate ?? currentForm.motherBirthdate,
+          : familyForm.motherCompleteName,
+      motherBirthdate: values.motherBirthdate ?? familyForm.motherBirthdate,
       motherLiveInTheUSAConfirmation:
-        values.motherLiveInTheUSAConfirmation ?? (currentForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não"),
+        values.motherLiveInTheUSAConfirmation ?? (familyForm.motherLiveInTheUSAConfirmation ? "Sim" : "Não"),
       motherUSASituation:
         values.motherUSASituation !== ""
           ? values.motherUSASituation
-          : !currentForm.motherUSASituation
+          : !familyForm.motherUSASituation
           ? ""
-          : currentForm.motherUSASituation,
+          : familyForm.motherUSASituation,
       familyLivingInTheUSAConfirmation:
-        values.familyLivingInTheUSAConfirmation ?? (currentForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
+        values.familyLivingInTheUSAConfirmation ?? (familyForm.familyLivingInTheUSAConfirmation ? "Sim" : "Não"),
       familyLivingInTheUSA:
-        familyLivingInTheUSAItems.length > 0 ? familyLivingInTheUSAItems : currentForm.familyLivingInTheUSA,
+        familyLivingInTheUSAItems.length > 0 ? familyLivingInTheUSAItems : familyForm.familyLivingInTheUSA,
       partnerCompleteName:
         values.partnerCompleteName !== ""
           ? values.partnerCompleteName
-          : !currentForm.partnerCompleteName
+          : !familyForm.partnerCompleteName
           ? ""
-          : currentForm.partnerCompleteName,
-      partnerBirthdate: values.partnerBirthdate ?? currentForm.partnerBirthdate,
+          : familyForm.partnerCompleteName,
+      partnerBirthdate: values.partnerBirthdate ?? familyForm.partnerBirthdate,
       partnerNationality:
         values.partnerNationality !== ""
           ? values.partnerNationality
-          : !currentForm.partnerNationality
+          : !familyForm.partnerNationality
           ? ""
-          : currentForm.partnerNationality,
+          : familyForm.partnerNationality,
       partnerCity:
-        values.partnerCity !== "" ? values.partnerCity : !currentForm.partnerCity ? "" : currentForm.partnerCity,
+        values.partnerCity !== "" ? values.partnerCity : !familyForm.partnerCity ? "" : familyForm.partnerCity,
       partnerState:
-        values.partnerState !== "" ? values.partnerState : !currentForm.partnerState ? "" : currentForm.partnerState,
+        values.partnerState !== "" ? values.partnerState : !familyForm.partnerState ? "" : familyForm.partnerState,
       partnerCountry:
         values.partnerCountry !== ""
           ? values.partnerCountry
-          : !currentForm.partnerCountry
+          : !familyForm.partnerCountry
           ? ""
-          : currentForm.partnerCountry,
-      unionDate: values.unionDate ?? currentForm.unionDate,
-      divorceDate: values.divorceDate ?? currentForm.divorceDate,
+          : familyForm.partnerCountry,
+      unionDate: values.unionDate ?? familyForm.unionDate,
+      divorceDate: values.divorceDate ?? familyForm.divorceDate,
     });
   }
 

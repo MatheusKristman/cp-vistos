@@ -1,61 +1,52 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { differenceInYears } from "date-fns";
+import { useSearchParams } from "next/navigation";
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-import { PersonalDataWrapper } from "./components/personal-data/personal-data-wrapper";
-import { ContactAndAddressForm } from "./components/contact-and-address-form";
-import { PassportForm } from "./components/passport-form";
-import { AboutTravelForm } from "./components/about-travel-form";
-import { TravelCompanyForm } from "./components/travel-company-form";
-import { PreviousTravelForm } from "./components/previous-travel-form";
-import { USAContactForm } from "./components/usa-contact-form";
-import { FamilyForm } from "./components/family-form";
-import { WorkEducationForm } from "./components/work-education-form";
-import { AdditionalInformationForm } from "./components/additional-information-form";
-import { SecurityForm } from "./components/security-form";
+import { FamilyWrapper } from "./components/family/family-wrapper";
+import { PassportWrapper } from "./components/passport/passport-wrapper";
+import { SecurityWrapper } from "./components/security/security-wrapper";
 import { DashboardHeader } from "../../perfil/components/dashboard-header";
+import { USAContactWrapper } from "./components/usa-contact/use-contact-wrapper";
+import { AboutTravelWrapper } from "./components/about-travel/about-travel-wrapper";
+import { PersonalDataWrapper } from "./components/personal-data/personal-data-wrapper";
+import { TravelCompanyWrapper } from "./components/travel-company/travel-company-wrapper";
+import { WorkEducationWrapper } from "./components/work-education/work-education-wrapper";
+import { PreviousTravelWrapper } from "./components/previous-travel/previous-travel-wrapper";
+import { ContactAndAddressWrapper } from "./components/contact-and-address/contact-and-address-wrapper";
+import { AdditionalInformationWrapper } from "./components/additional-information/additional-information-wrapper";
 
 import { cn } from "@/lib/utils";
 import { STEPS } from "@/constants";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import { FormServerError } from "./components/form-server-error";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FormPage({ params }: { params: { profileId: string } }) {
   const profileId = params.profileId;
+
   const searchParams = useSearchParams();
   const formStep = searchParams.get("formStep");
   const isEditingParam = searchParams.get("isEditing");
   const isEditing: boolean = isEditingParam ? JSON.parse(isEditingParam) : false;
+
   const { setRedirectStep } = useFormStore();
 
   if (!profileId) {
-    return (
-      <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
-        <Loader2 size={100} strokeWidth={1} className="animate-spin" />
-
-        <span className="text-center text-2xl font-semibold text-primary">Um momento...</span>
-      </div>
-    );
+    return <FormServerError />;
   }
 
-  const { data: currentStep, isPending: isCurrentStepPending } = trpc.formsRouter.getCurrentStep.useQuery({
+  const { data: formSteps, isPending: isCurrentStepPending } = trpc.formsRouter.getCurrentStep.useQuery({
     profileId,
   });
   const { data: isMinor, isPending: checkIsMinorPending } = trpc.formsRouter.checkIsMinor.useQuery({ profileId });
 
-  if (!currentStep || checkIsMinorPending || isCurrentStepPending) {
-    return (
-      <div className="w-screen h-screen flex flex-col gap-4 items-center justify-center">
-        <Loader2 size={100} strokeWidth={1} className="animate-spin" />
+  const loading = !formSteps || checkIsMinorPending || isCurrentStepPending;
 
-        <span className="text-center text-2xl font-semibold text-primary">Um momento...</span>
-      </div>
-    );
-  }
+  const currentStep = formSteps ?? 0;
 
   const stepDisabled = (step: number) => step > currentStep;
 
@@ -73,87 +64,88 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
         <div className={cn("w-full flex flex-col items-center gap-4 mb-6 sm:mb-12 lg:mb-24", isEditing && "hidden")}>
           <h1 className="text-2xl sm:text-3xl text-center font-semibold text-foreground">Complete seu cadastro</h1>
 
-          <div className="hidden lg:flex items-center gap-4">
-            <TooltipProvider>
-              {isMinor
-                ? STEPS.filter((step) => step.step !== 8).map((step) => {
-                    const disabled = stepDisabled(step.step);
+          {loading ? (
+            <div className="hidden lg:flex items-center gap-4">
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+              <Skeleton className="size-4 rounded-full" />
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center gap-4">
+              <TooltipProvider>
+                {isMinor
+                  ? STEPS.filter((step) => step.step !== 8).map((step) => {
+                      const disabled = stepDisabled(step.step);
 
-                    return (
-                      <Tooltip key={step.step} delayDuration={0}>
-                        <TooltipTrigger
-                          disabled={disabled}
-                          onClick={() => setRedirectStep(step.step)}
-                          className={cn(
-                            "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
-                            {
-                              "bg-primary hover:bg-primary": formStep === step.step.toString(),
-                            }
-                          )}
-                        />
+                      return (
+                        <Tooltip key={step.step} delayDuration={0}>
+                          <TooltipTrigger
+                            disabled={disabled}
+                            onClick={() => setRedirectStep(step.step)}
+                            className={cn(
+                              "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
+                              {
+                                "bg-primary hover:bg-primary": formStep === step.step.toString(),
+                              }
+                            )}
+                          />
 
-                        <TooltipContent side="bottom">
-                          <p className="font-medium">{step.label}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })
-                : STEPS.map((step) => {
-                    const disabled = stepDisabled(step.step);
+                          <TooltipContent side="bottom">
+                            <p className="font-medium">{step.label}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })
+                  : STEPS.map((step) => {
+                      const disabled = stepDisabled(step.step);
 
-                    return (
-                      <Tooltip key={step.step} delayDuration={0}>
-                        <TooltipTrigger
-                          disabled={disabled}
-                          onClick={() => setRedirectStep(step.step)}
-                          className={cn(
-                            "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
-                            {
-                              "bg-primary hover:bg-primary": formStep === step.step.toString(),
-                            }
-                          )}
-                        />
+                      return (
+                        <Tooltip key={step.step} delayDuration={0}>
+                          <TooltipTrigger
+                            disabled={disabled}
+                            onClick={() => setRedirectStep(step.step)}
+                            className={cn(
+                              "size-4 flex-shrink-0 rounded-full border border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50",
+                              {
+                                "bg-primary hover:bg-primary": formStep === step.step.toString(),
+                              }
+                            )}
+                          />
 
-                        <TooltipContent side="bottom">
-                          <p className="font-medium">{step.label}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-            </TooltipProvider>
-          </div>
+                          <TooltipContent side="bottom">
+                            <p className="font-medium">{step.label}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
+              </TooltipProvider>
+            </div>
+          )}
         </div>
 
-        {formStep === "0" && <PersonalDataWrapper profileId={profileId} isEditing={isEditing} />}
-        {/* {formStep === "1" && (
-          <ContactAndAddressForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
-        )}
-        {formStep === "2" && <PassportForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />}
-        {formStep === "3" && (
-          <AboutTravelForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
-        )}
-        {formStep === "4" && (
-          <TravelCompanyForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
-        )}
-        {formStep === "5" && (
-          <PreviousTravelForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
-        )}
-        {formStep === "6" && <USAContactForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />}
+        {formStep === "0" && <PersonalDataWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
+        {formStep === "1" && <ContactAndAddressWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
+        {formStep === "2" && <PassportWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
+        {formStep === "3" && <AboutTravelWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
+        {formStep === "4" && <TravelCompanyWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
+        {formStep === "5" && <PreviousTravelWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
+        {formStep === "6" && <USAContactWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
         {formStep === "7" && (
-          <FamilyForm
-            currentForm={formData.form}
-            profileId={profileId}
-            isEditing={isEditing}
-            profile={profileData.profile}
-          />
+          <FamilyWrapper profileId={profileId} isEditing={isEditing} isMinor={isMinor} loading={loading} />
         )}
-        {formStep === "8" && (
-          <WorkEducationForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
-        )}
+        {formStep === "8" && <WorkEducationWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
         {formStep === "9" && (
-          <AdditionalInformationForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />
+          <AdditionalInformationWrapper profileId={profileId} isEditing={isEditing} loading={loading} />
         )}
-        {formStep === "10" && <SecurityForm currentForm={formData.form} profileId={profileId} isEditing={isEditing} />} */}
+        {formStep === "10" && <SecurityWrapper profileId={profileId} isEditing={isEditing} loading={loading} />}
       </div>
     </>
   );

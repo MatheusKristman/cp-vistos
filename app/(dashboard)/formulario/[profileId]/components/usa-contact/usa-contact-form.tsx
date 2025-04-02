@@ -17,6 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import { USAContactFormType } from "@/types";
 
 const formSchema = z
   .object({
@@ -109,40 +110,40 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FormType;
+  usaContactForm: USAContactFormType;
   isEditing: boolean;
 }
 
-export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
+export function USAContactForm({ usaContactForm, profileId, isEditing }: Props) {
   const { redirectStep, setRedirectStep } = useFormStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      hasUSAOrganizationOrResident: currentForm.hasUSAOrganizationOrResident ? "Sim" : "Não",
-      organizationOrUSAResidentName: currentForm.organizationOrUSAResidentName
-        ? currentForm.organizationOrUSAResidentName
+      hasUSAOrganizationOrResident: usaContactForm.hasUSAOrganizationOrResident ? "Sim" : "Não",
+      organizationOrUSAResidentName: usaContactForm.organizationOrUSAResidentName
+        ? usaContactForm.organizationOrUSAResidentName
         : "",
-      organizationOrUSAResidentRelation: currentForm.organizationOrUSAResidentRelation
-        ? currentForm.organizationOrUSAResidentRelation
+      organizationOrUSAResidentRelation: usaContactForm.organizationOrUSAResidentRelation
+        ? usaContactForm.organizationOrUSAResidentRelation
         : "",
-      organizationOrUSAResidentAddress: currentForm.organizationOrUSAResidentAddress
-        ? currentForm.organizationOrUSAResidentAddress
+      organizationOrUSAResidentAddress: usaContactForm.organizationOrUSAResidentAddress
+        ? usaContactForm.organizationOrUSAResidentAddress
         : "",
-      organizationOrUSAResidentZipCode: currentForm.organizationOrUSAResidentZipCode
-        ? currentForm.organizationOrUSAResidentZipCode
+      organizationOrUSAResidentZipCode: usaContactForm.organizationOrUSAResidentZipCode
+        ? usaContactForm.organizationOrUSAResidentZipCode
         : "",
-      organizationOrUSAResidentCity: currentForm.organizationOrUSAResidentCity
-        ? currentForm.organizationOrUSAResidentCity
+      organizationOrUSAResidentCity: usaContactForm.organizationOrUSAResidentCity
+        ? usaContactForm.organizationOrUSAResidentCity
         : "",
-      organizationOrUSAResidentState: currentForm.organizationOrUSAResidentState
-        ? currentForm.organizationOrUSAResidentState
+      organizationOrUSAResidentState: usaContactForm.organizationOrUSAResidentState
+        ? usaContactForm.organizationOrUSAResidentState
         : "",
-      organizationOrUSAResidentTel: currentForm.organizationOrUSAResidentTel
-        ? currentForm.organizationOrUSAResidentTel
+      organizationOrUSAResidentTel: usaContactForm.organizationOrUSAResidentTel
+        ? usaContactForm.organizationOrUSAResidentTel
         : "",
-      organizationOrUSAResidentEmail: currentForm.organizationOrUSAResidentEmail
-        ? currentForm.organizationOrUSAResidentEmail
+      organizationOrUSAResidentEmail: usaContactForm.organizationOrUSAResidentEmail
+        ? usaContactForm.organizationOrUSAResidentEmail
         : "",
     },
   });
@@ -200,55 +201,55 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
         profileId,
         redirectStep,
         hasUSAOrganizationOrResident:
-          values.hasUSAOrganizationOrResident ?? (currentForm.hasUSAOrganizationOrResident ? "Sim" : "Não"),
+          values.hasUSAOrganizationOrResident ?? (usaContactForm.hasUSAOrganizationOrResident ? "Sim" : "Não"),
         organizationOrUSAResidentName:
           values.organizationOrUSAResidentName !== ""
             ? values.organizationOrUSAResidentName
-            : !currentForm.organizationOrUSAResidentName
+            : !usaContactForm.organizationOrUSAResidentName
             ? ""
-            : currentForm.organizationOrUSAResidentName,
+            : usaContactForm.organizationOrUSAResidentName,
         organizationOrUSAResidentRelation:
           values.organizationOrUSAResidentRelation !== ""
             ? values.organizationOrUSAResidentRelation
-            : !currentForm.organizationOrUSAResidentRelation
+            : !usaContactForm.organizationOrUSAResidentRelation
             ? ""
-            : currentForm.organizationOrUSAResidentRelation,
+            : usaContactForm.organizationOrUSAResidentRelation,
         organizationOrUSAResidentAddress:
           values.organizationOrUSAResidentAddress !== ""
             ? values.organizationOrUSAResidentAddress
-            : !currentForm.organizationOrUSAResidentAddress
+            : !usaContactForm.organizationOrUSAResidentAddress
             ? ""
-            : currentForm.organizationOrUSAResidentAddress,
+            : usaContactForm.organizationOrUSAResidentAddress,
         organizationOrUSAResidentZipCode:
           values.organizationOrUSAResidentZipCode !== ""
             ? values.organizationOrUSAResidentZipCode
-            : !currentForm.organizationOrUSAResidentZipCode
+            : !usaContactForm.organizationOrUSAResidentZipCode
             ? ""
-            : currentForm.organizationOrUSAResidentZipCode,
+            : usaContactForm.organizationOrUSAResidentZipCode,
         organizationOrUSAResidentCity:
           values.organizationOrUSAResidentCity !== ""
             ? values.organizationOrUSAResidentCity
-            : !currentForm.organizationOrUSAResidentCity
+            : !usaContactForm.organizationOrUSAResidentCity
             ? ""
-            : currentForm.organizationOrUSAResidentCity,
+            : usaContactForm.organizationOrUSAResidentCity,
         organizationOrUSAResidentState:
           values.organizationOrUSAResidentState !== ""
             ? values.organizationOrUSAResidentState
-            : !currentForm.organizationOrUSAResidentState
+            : !usaContactForm.organizationOrUSAResidentState
             ? ""
-            : currentForm.organizationOrUSAResidentState,
+            : usaContactForm.organizationOrUSAResidentState,
         organizationOrUSAResidentTel:
           values.organizationOrUSAResidentTel !== ""
             ? values.organizationOrUSAResidentTel
-            : !currentForm.organizationOrUSAResidentTel
+            : !usaContactForm.organizationOrUSAResidentTel
             ? ""
-            : currentForm.organizationOrUSAResidentTel,
+            : usaContactForm.organizationOrUSAResidentTel,
         organizationOrUSAResidentEmail:
           values.organizationOrUSAResidentEmail !== ""
             ? values.organizationOrUSAResidentEmail
-            : !currentForm.organizationOrUSAResidentEmail
+            : !usaContactForm.organizationOrUSAResidentEmail
             ? ""
-            : currentForm.organizationOrUSAResidentEmail,
+            : usaContactForm.organizationOrUSAResidentEmail,
       });
       setRedirectStep(null);
     }
@@ -264,55 +265,55 @@ export function USAContactForm({ currentForm, profileId, isEditing }: Props) {
     saveUsaContact({
       profileId,
       hasUSAOrganizationOrResident:
-        values.hasUSAOrganizationOrResident ?? (currentForm.hasUSAOrganizationOrResident ? "Sim" : "Não"),
+        values.hasUSAOrganizationOrResident ?? (usaContactForm.hasUSAOrganizationOrResident ? "Sim" : "Não"),
       organizationOrUSAResidentName:
         values.organizationOrUSAResidentName !== ""
           ? values.organizationOrUSAResidentName
-          : !currentForm.organizationOrUSAResidentName
+          : !usaContactForm.organizationOrUSAResidentName
           ? ""
-          : currentForm.organizationOrUSAResidentName,
+          : usaContactForm.organizationOrUSAResidentName,
       organizationOrUSAResidentRelation:
         values.organizationOrUSAResidentRelation !== ""
           ? values.organizationOrUSAResidentRelation
-          : !currentForm.organizationOrUSAResidentRelation
+          : !usaContactForm.organizationOrUSAResidentRelation
           ? ""
-          : currentForm.organizationOrUSAResidentRelation,
+          : usaContactForm.organizationOrUSAResidentRelation,
       organizationOrUSAResidentAddress:
         values.organizationOrUSAResidentAddress !== ""
           ? values.organizationOrUSAResidentAddress
-          : !currentForm.organizationOrUSAResidentAddress
+          : !usaContactForm.organizationOrUSAResidentAddress
           ? ""
-          : currentForm.organizationOrUSAResidentAddress,
+          : usaContactForm.organizationOrUSAResidentAddress,
       organizationOrUSAResidentZipCode:
         values.organizationOrUSAResidentZipCode !== ""
           ? values.organizationOrUSAResidentZipCode
-          : !currentForm.organizationOrUSAResidentZipCode
+          : !usaContactForm.organizationOrUSAResidentZipCode
           ? ""
-          : currentForm.organizationOrUSAResidentZipCode,
+          : usaContactForm.organizationOrUSAResidentZipCode,
       organizationOrUSAResidentCity:
         values.organizationOrUSAResidentCity !== ""
           ? values.organizationOrUSAResidentCity
-          : !currentForm.organizationOrUSAResidentCity
+          : !usaContactForm.organizationOrUSAResidentCity
           ? ""
-          : currentForm.organizationOrUSAResidentCity,
+          : usaContactForm.organizationOrUSAResidentCity,
       organizationOrUSAResidentState:
         values.organizationOrUSAResidentState !== ""
           ? values.organizationOrUSAResidentState
-          : !currentForm.organizationOrUSAResidentState
+          : !usaContactForm.organizationOrUSAResidentState
           ? ""
-          : currentForm.organizationOrUSAResidentState,
+          : usaContactForm.organizationOrUSAResidentState,
       organizationOrUSAResidentTel:
         values.organizationOrUSAResidentTel !== ""
           ? values.organizationOrUSAResidentTel
-          : !currentForm.organizationOrUSAResidentTel
+          : !usaContactForm.organizationOrUSAResidentTel
           ? ""
-          : currentForm.organizationOrUSAResidentTel,
+          : usaContactForm.organizationOrUSAResidentTel,
       organizationOrUSAResidentEmail:
         values.organizationOrUSAResidentEmail !== ""
           ? values.organizationOrUSAResidentEmail
-          : !currentForm.organizationOrUSAResidentEmail
+          : !usaContactForm.organizationOrUSAResidentEmail
           ? ""
-          : currentForm.organizationOrUSAResidentEmail,
+          : usaContactForm.organizationOrUSAResidentEmail,
     });
   }
 

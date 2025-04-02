@@ -23,201 +23,8 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const countries = [
-  "Afeganistão",
-  "Albânia",
-  "Argélia",
-  "Andorra",
-  "Angola",
-  "Argentina",
-  "Armênia",
-  "Austrália",
-  "Áustria",
-  "Azerbaijão",
-  "Bahamas",
-  "Bahrein",
-  "Bangladesh",
-  "Barbados",
-  "Bielorrússia",
-  "Bélgica",
-  "Belize",
-  "Benin",
-  "Butão",
-  "Bolívia",
-  "Bósnia e Herzegovina",
-  "Botswana",
-  "Brasil",
-  "Brunei",
-  "Bulgária",
-  "Burkina Faso",
-  "Burundi",
-  "Cabo Verde",
-  "Camboja",
-  "Camarões",
-  "Canadá",
-  "Chade",
-  "Chile",
-  "China",
-  "Colômbia",
-  "Comores",
-  "Congo",
-  "Costa Rica",
-  "Croácia",
-  "Cuba",
-  "Chipre",
-  "República Tcheca",
-  "Dinamarca",
-  "Djibuti",
-  "Dominica",
-  "República Dominicana",
-  "Equador",
-  "Egito",
-  "El Salvador",
-  "Guiné Equatorial",
-  "Eritreia",
-  "Estônia",
-  "Essuatíni",
-  "Etiópia",
-  "Fiji",
-  "Finlândia",
-  "França",
-  "Gabão",
-  "Gâmbia",
-  "Geórgia",
-  "Alemanha",
-  "Gana",
-  "Grécia",
-  "Granada",
-  "Guatemala",
-  "Guiné",
-  "Guiné-Bissau",
-  "Guiana",
-  "Haiti",
-  "Honduras",
-  "Hungria",
-  "Islândia",
-  "Índia",
-  "Indonésia",
-  "Irã",
-  "Iraque",
-  "Irlanda",
-  "Israel",
-  "Itália",
-  "Jamaica",
-  "Japão",
-  "Jordânia",
-  "Cazaquistão",
-  "Quênia",
-  "Kiribati",
-  "Coreia do Norte",
-  "Coreia do Sul",
-  "Kosovo",
-  "Kuwait",
-  "Quirguistão",
-  "Laos",
-  "Letônia",
-  "Líbano",
-  "Lesoto",
-  "Libéria",
-  "Líbia",
-  "Liechtenstein",
-  "Lituânia",
-  "Luxemburgo",
-  "Madagascar",
-  "Malawi",
-  "Malásia",
-  "Maldivas",
-  "Mali",
-  "Malta",
-  "Ilhas Marshall",
-  "Mauritânia",
-  "Maurício",
-  "México",
-  "Micronésia",
-  "Moldávia",
-  "Mônaco",
-  "Mongólia",
-  "Montenegro",
-  "Marrocos",
-  "Moçambique",
-  "Mianmar (Birmânia)",
-  "Namíbia",
-  "Nauru",
-  "Nepal",
-  "Países Baixos",
-  "Nova Zelândia",
-  "Nicarágua",
-  "Níger",
-  "Nigéria",
-  "Macedônia do Norte",
-  "Noruega",
-  "Omã",
-  "Paquistão",
-  "Palau",
-  "Palestina",
-  "Panamá",
-  "Papua-Nova Guiné",
-  "Paraguai",
-  "Peru",
-  "Filipinas",
-  "Polônia",
-  "Portugal",
-  "Catar",
-  "Romênia",
-  "Rússia",
-  "Ruanda",
-  "São Cristóvão e Nevis",
-  "Santa Lúcia",
-  "São Vicente e Granadinas",
-  "Samoa",
-  "San Marino",
-  "São Tomé e Príncipe",
-  "Arábia Saudita",
-  "Senegal",
-  "Sérvia",
-  "Seychelles",
-  "Serra Leoa",
-  "Cingapura",
-  "Eslováquia",
-  "Eslovênia",
-  "Ilhas Salomão",
-  "Somália",
-  "África do Sul",
-  "Espanha",
-  "Sri Lanka",
-  "Sudão",
-  "Suriname",
-  "Suécia",
-  "Suíça",
-  "Síria",
-  "Taiwan",
-  "Tajiquistão",
-  "Tanzânia",
-  "Tailândia",
-  "Timor-Leste",
-  "Togo",
-  "Tonga",
-  "Trinidad e Tobago",
-  "Tunísia",
-  "Turquia",
-  "Turcomenistão",
-  "Tuvalu",
-  "Uganda",
-  "Ucrânia",
-  "Emirados Árabes Unidos",
-  "Reino Unido",
-  "Estados Unidos",
-  "Uruguai",
-  "Uzbequistão",
-  "Vanuatu",
-  "Vaticano",
-  "Venezuela",
-  "Vietnã",
-  "Iêmen",
-  "Zâmbia",
-  "Zimbábue",
-];
+import { countries } from "@/constants";
+import { AdditionalInformationFormType } from "@/types";
 
 const formSchema = z
   .object({
@@ -342,12 +149,12 @@ const formSchema = z
   );
 
 interface Props {
-  currentForm: FormType;
+  additionalInformationForm: AdditionalInformationFormType;
   profileId: string;
   isEditing: boolean;
 }
 
-export function AdditionalInformationForm({ currentForm, profileId, isEditing }: Props) {
+export function AdditionalInformationForm({ additionalInformationForm, profileId, isEditing }: Props) {
   const [languageValue, setLanguageValue] = useState<string>("");
   const [countryValue, setCountryValue] = useState<string>("");
   const [organizationValue, setOrganizationValue] = useState<string>("");
@@ -357,26 +164,28 @@ export function AdditionalInformationForm({ currentForm, profileId, isEditing }:
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      languages: currentForm.languages,
-      fiveYearsOtherCountryTravelsConfirmation: currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não",
-      fiveYearsOtherCountryTravels: currentForm.fiveYearsOtherCountryTravels,
-      socialOrganizationConfirmation: currentForm.socialOrganizationConfirmation ? "Sim" : "Não",
-      socialOrganization: currentForm.socialOrganization,
-      weaponTrainingConfirmation: currentForm.weaponTrainingConfirmation ? "Sim" : "Não",
-      weaponTrainingDetails: currentForm.weaponTrainingDetails ?? "",
-      militaryServiceConfirmation: currentForm.militaryServiceConfirmation ? "Sim" : "Não",
-      militaryServiceCountry: currentForm.militaryServiceCountry ?? "",
-      militaryServiceLocal: currentForm.militaryServiceLocal ?? "",
-      militaryServicePatent: currentForm.militaryServicePatent ?? "",
-      militaryServiceSpecialty: currentForm.militaryServiceSpecialty ?? "",
-      militaryServiceStartDate: currentForm.militaryServiceStartDate
-        ? new Date(currentForm.militaryServiceStartDate)
+      languages: additionalInformationForm.languages,
+      fiveYearsOtherCountryTravelsConfirmation: additionalInformationForm.fiveYearsOtherCountryTravelsConfirmation
+        ? "Sim"
+        : "Não",
+      fiveYearsOtherCountryTravels: additionalInformationForm.fiveYearsOtherCountryTravels,
+      socialOrganizationConfirmation: additionalInformationForm.socialOrganizationConfirmation ? "Sim" : "Não",
+      socialOrganization: additionalInformationForm.socialOrganization,
+      weaponTrainingConfirmation: additionalInformationForm.weaponTrainingConfirmation ? "Sim" : "Não",
+      weaponTrainingDetails: additionalInformationForm.weaponTrainingDetails ?? "",
+      militaryServiceConfirmation: additionalInformationForm.militaryServiceConfirmation ? "Sim" : "Não",
+      militaryServiceCountry: additionalInformationForm.militaryServiceCountry ?? "",
+      militaryServiceLocal: additionalInformationForm.militaryServiceLocal ?? "",
+      militaryServicePatent: additionalInformationForm.militaryServicePatent ?? "",
+      militaryServiceSpecialty: additionalInformationForm.militaryServiceSpecialty ?? "",
+      militaryServiceStartDate: additionalInformationForm.militaryServiceStartDate
+        ? new Date(additionalInformationForm.militaryServiceStartDate)
         : undefined,
-      militaryServiceEndDate: currentForm.militaryServiceEndDate
-        ? new Date(currentForm.militaryServiceEndDate)
+      militaryServiceEndDate: additionalInformationForm.militaryServiceEndDate
+        ? new Date(additionalInformationForm.militaryServiceEndDate)
         : undefined,
-      insurgencyOrganizationConfirmation: currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não",
-      insurgencyOrganizationDetails: currentForm.insurgencyOrganizationDetails ?? "",
+      insurgencyOrganizationConfirmation: additionalInformationForm.insurgencyOrganizationConfirmation ? "Sim" : "Não",
+      insurgencyOrganizationDetails: additionalInformationForm.insurgencyOrganizationDetails ?? "",
     },
   });
 
@@ -441,72 +250,76 @@ export function AdditionalInformationForm({ currentForm, profileId, isEditing }:
       saveAdditionalInformation({
         profileId,
         redirectStep,
-        languages: values.languages.length > 0 ? values.languages : currentForm.languages,
+        languages: values.languages.length > 0 ? values.languages : additionalInformationForm.languages,
         fiveYearsOtherCountryTravelsConfirmation:
           values.fiveYearsOtherCountryTravelsConfirmation ??
-          (currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
+          (additionalInformationForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
         fiveYearsOtherCountryTravels:
           values.fiveYearsOtherCountryTravels.length > 0
             ? values.fiveYearsOtherCountryTravels
-            : currentForm.fiveYearsOtherCountryTravels,
+            : additionalInformationForm.fiveYearsOtherCountryTravels,
         socialOrganizationConfirmation:
-          values.socialOrganizationConfirmation ?? (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
+          values.socialOrganizationConfirmation ??
+          (additionalInformationForm.socialOrganizationConfirmation ? "Sim" : "Não"),
         socialOrganization:
-          values.socialOrganization.length > 0 ? values.socialOrganization : currentForm.socialOrganization,
+          values.socialOrganization.length > 0
+            ? values.socialOrganization
+            : additionalInformationForm.socialOrganization,
         weaponTrainingConfirmation:
-          values.weaponTrainingConfirmation ?? (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
+          values.weaponTrainingConfirmation ?? (additionalInformationForm.weaponTrainingConfirmation ? "Sim" : "Não"),
         weaponTrainingDetails:
           values.weaponTrainingDetails !== ""
             ? values.weaponTrainingDetails
-            : !currentForm.weaponTrainingDetails
+            : !additionalInformationForm.weaponTrainingDetails
             ? ""
-            : currentForm.weaponTrainingDetails,
+            : additionalInformationForm.weaponTrainingDetails,
         militaryServiceConfirmation:
-          values.militaryServiceConfirmation ?? (currentForm.militaryServiceConfirmation ? "Sim" : "Não"),
+          values.militaryServiceConfirmation ?? (additionalInformationForm.militaryServiceConfirmation ? "Sim" : "Não"),
         militaryServiceCountry:
           values.militaryServiceCountry !== ""
             ? values.militaryServiceCountry
-            : !currentForm.militaryServiceCountry
+            : !additionalInformationForm.militaryServiceCountry
             ? ""
-            : currentForm.militaryServiceCountry,
+            : additionalInformationForm.militaryServiceCountry,
         militaryServiceLocal:
           values.militaryServiceLocal !== ""
             ? values.militaryServiceLocal
-            : !currentForm.militaryServiceLocal
+            : !additionalInformationForm.militaryServiceLocal
             ? ""
-            : currentForm.militaryServiceLocal,
+            : additionalInformationForm.militaryServiceLocal,
         militaryServicePatent:
           values.militaryServicePatent !== ""
             ? values.militaryServicePatent
-            : !currentForm.militaryServicePatent
+            : !additionalInformationForm.militaryServicePatent
             ? ""
-            : currentForm.militaryServicePatent,
+            : additionalInformationForm.militaryServicePatent,
         militaryServiceSpecialty:
           values.militaryServiceSpecialty !== ""
             ? values.militaryServiceSpecialty
-            : !currentForm.militaryServiceSpecialty
+            : !additionalInformationForm.militaryServiceSpecialty
             ? ""
-            : currentForm.militaryServiceSpecialty,
+            : additionalInformationForm.militaryServiceSpecialty,
         militaryServiceStartDate:
           values.militaryServiceStartDate !== undefined
             ? values.militaryServiceStartDate
-            : !currentForm.militaryServiceStartDate
+            : !additionalInformationForm.militaryServiceStartDate
             ? undefined
-            : currentForm.militaryServiceStartDate,
+            : additionalInformationForm.militaryServiceStartDate,
         militaryServiceEndDate:
           values.militaryServiceEndDate !== undefined
             ? values.militaryServiceEndDate
-            : !currentForm.militaryServiceEndDate
+            : !additionalInformationForm.militaryServiceEndDate
             ? undefined
-            : currentForm.militaryServiceEndDate,
+            : additionalInformationForm.militaryServiceEndDate,
         insurgencyOrganizationConfirmation:
-          values.insurgencyOrganizationConfirmation ?? (currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
+          values.insurgencyOrganizationConfirmation ??
+          (additionalInformationForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
         insurgencyOrganizationDetails:
           values.insurgencyOrganizationDetails !== ""
             ? values.insurgencyOrganizationDetails
-            : !currentForm.insurgencyOrganizationDetails
+            : !additionalInformationForm.insurgencyOrganizationDetails
             ? ""
-            : currentForm.insurgencyOrganizationDetails,
+            : additionalInformationForm.insurgencyOrganizationDetails,
       });
       setRedirectStep(null);
     }
@@ -602,72 +415,74 @@ export function AdditionalInformationForm({ currentForm, profileId, isEditing }:
 
     saveAdditionalInformation({
       profileId,
-      languages: values.languages.length > 0 ? values.languages : currentForm.languages,
+      languages: values.languages.length > 0 ? values.languages : additionalInformationForm.languages,
       fiveYearsOtherCountryTravelsConfirmation:
         values.fiveYearsOtherCountryTravelsConfirmation ??
-        (currentForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
+        (additionalInformationForm.fiveYearsOtherCountryTravelsConfirmation ? "Sim" : "Não"),
       fiveYearsOtherCountryTravels:
         values.fiveYearsOtherCountryTravels.length > 0
           ? values.fiveYearsOtherCountryTravels
-          : currentForm.fiveYearsOtherCountryTravels,
+          : additionalInformationForm.fiveYearsOtherCountryTravels,
       socialOrganizationConfirmation:
-        values.socialOrganizationConfirmation ?? (currentForm.socialOrganizationConfirmation ? "Sim" : "Não"),
+        values.socialOrganizationConfirmation ??
+        (additionalInformationForm.socialOrganizationConfirmation ? "Sim" : "Não"),
       socialOrganization:
-        values.socialOrganization.length > 0 ? values.socialOrganization : currentForm.socialOrganization,
+        values.socialOrganization.length > 0 ? values.socialOrganization : additionalInformationForm.socialOrganization,
       weaponTrainingConfirmation:
-        values.weaponTrainingConfirmation ?? (currentForm.weaponTrainingConfirmation ? "Sim" : "Não"),
+        values.weaponTrainingConfirmation ?? (additionalInformationForm.weaponTrainingConfirmation ? "Sim" : "Não"),
       weaponTrainingDetails:
         values.weaponTrainingDetails !== ""
           ? values.weaponTrainingDetails
-          : !currentForm.weaponTrainingDetails
+          : !additionalInformationForm.weaponTrainingDetails
           ? ""
-          : currentForm.weaponTrainingDetails,
+          : additionalInformationForm.weaponTrainingDetails,
       militaryServiceConfirmation:
-        values.militaryServiceConfirmation ?? (currentForm.militaryServiceConfirmation ? "Sim" : "Não"),
+        values.militaryServiceConfirmation ?? (additionalInformationForm.militaryServiceConfirmation ? "Sim" : "Não"),
       militaryServiceCountry:
         values.militaryServiceCountry !== ""
           ? values.militaryServiceCountry
-          : !currentForm.militaryServiceCountry
+          : !additionalInformationForm.militaryServiceCountry
           ? ""
-          : currentForm.militaryServiceCountry,
+          : additionalInformationForm.militaryServiceCountry,
       militaryServiceLocal:
         values.militaryServiceLocal !== ""
           ? values.militaryServiceLocal
-          : !currentForm.militaryServiceLocal
+          : !additionalInformationForm.militaryServiceLocal
           ? ""
-          : currentForm.militaryServiceLocal,
+          : additionalInformationForm.militaryServiceLocal,
       militaryServicePatent:
         values.militaryServicePatent !== ""
           ? values.militaryServicePatent
-          : !currentForm.militaryServicePatent
+          : !additionalInformationForm.militaryServicePatent
           ? ""
-          : currentForm.militaryServicePatent,
+          : additionalInformationForm.militaryServicePatent,
       militaryServiceSpecialty:
         values.militaryServiceSpecialty !== ""
           ? values.militaryServiceSpecialty
-          : !currentForm.militaryServiceSpecialty
+          : !additionalInformationForm.militaryServiceSpecialty
           ? ""
-          : currentForm.militaryServiceSpecialty,
+          : additionalInformationForm.militaryServiceSpecialty,
       militaryServiceStartDate:
         values.militaryServiceStartDate !== undefined
           ? values.militaryServiceStartDate
-          : !currentForm.militaryServiceStartDate
+          : !additionalInformationForm.militaryServiceStartDate
           ? undefined
-          : currentForm.militaryServiceStartDate,
+          : additionalInformationForm.militaryServiceStartDate,
       militaryServiceEndDate:
         values.militaryServiceEndDate !== undefined
           ? values.militaryServiceEndDate
-          : !currentForm.militaryServiceEndDate
+          : !additionalInformationForm.militaryServiceEndDate
           ? undefined
-          : currentForm.militaryServiceEndDate,
+          : additionalInformationForm.militaryServiceEndDate,
       insurgencyOrganizationConfirmation:
-        values.insurgencyOrganizationConfirmation ?? (currentForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
+        values.insurgencyOrganizationConfirmation ??
+        (additionalInformationForm.insurgencyOrganizationConfirmation ? "Sim" : "Não"),
       insurgencyOrganizationDetails:
         values.insurgencyOrganizationDetails !== ""
           ? values.insurgencyOrganizationDetails
-          : !currentForm.insurgencyOrganizationDetails
+          : !additionalInformationForm.insurgencyOrganizationDetails
           ? ""
-          : currentForm.insurgencyOrganizationDetails,
+          : additionalInformationForm.insurgencyOrganizationDetails,
     });
   }
 

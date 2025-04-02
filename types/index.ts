@@ -1,4 +1,4 @@
-import { Comments, Form, Profile, User } from "@prisma/client";
+import { Comments, Form, NullableListFilter, Profile, User } from "@prisma/client";
 
 declare global {
   namespace PrismaJson {
@@ -72,6 +72,226 @@ export type PersonalDataFormType = {
   otherCountryResident: string | null;
   USSocialSecurityNumber: string | null;
   USTaxpayerIDNumber: string | null;
+};
+
+export type ContactAndAddressFormType = {
+  address: string | null;
+  addressNumber: string | null;
+  complement: string | null;
+  district: string | null;
+  city: string | null;
+  state: string | null;
+  cep: string | null;
+  country: string | null;
+  postalAddressConfirmation: boolean | null;
+  otherPostalAddress: string | null;
+  cel: string | null;
+  tel: string | null;
+  fiveYearsOtherTelConfirmation: boolean | null;
+  otherTel: string[];
+  email: string | null;
+  fiveYearsOtherEmailConfirmation: boolean | null;
+  otherEmail: string | null;
+  facebook: string | null;
+  linkedin: string | null;
+  instagram: string | null;
+  othersSocialMedia: string | null;
+};
+
+export type PassportFormType = {
+  passportNumber: string | null;
+  passportCity: string | null;
+  passportState: string | null;
+  passportIssuingCountry: string | null;
+  passportIssuingDate: Date | null;
+  passportExpireDate: Date | null;
+  passportLostConfirmation: boolean | null;
+  lostPassportNumber: string | null;
+  lostPassportCountry: string | null;
+  lostPassportDetails: string | null;
+};
+
+export type AboutTravelFormType = {
+  travelItineraryConfirmation: boolean | null;
+  USAPreviewArriveDate: Date | null;
+  arriveFlyNumber: string | null;
+  arriveCity: string | null;
+  USAPreviewReturnDate: Date | null;
+  returnFlyNumber: string | null;
+  returnCity: string | null;
+  estimatedTimeOnUSA: string | null;
+  visitLocations: string | null;
+  hasAddressInUSA: boolean | null;
+  USACompleteAddress: string | null;
+  USAZipCode: string | null;
+  USACity: string | null;
+  USAState: string | null;
+  payer: string | null;
+  payerNameOrCompany: string | null;
+  payerTel: string | null;
+  payerAddress: string | null;
+  payerRelation: string | null;
+  payerEmail: string | null;
+};
+
+export type TravelCompanyFormType = {
+  otherPeopleTravelingConfirmation: boolean | null;
+  otherPeopleTraveling: { name: string; relation: string }[];
+  groupMemberConfirmation: boolean | null;
+  groupName: string | null;
+};
+
+export type PreviousTravelFormType = {
+  hasBeenOnUSAConfirmation: boolean | null;
+  USALastTravel: PrismaJson.USALastTravelType[];
+  americanLicenseToDriveConfirmation: boolean | null;
+  americanLicense: PrismaJson.americanLicenseType | null;
+  USAVisaConfirmation: boolean | null;
+  visaIssuingDate: Date | null;
+  visaNumber: string | null;
+  newVisaConfirmation: boolean | null;
+  sameCountryResidenceConfirmation: boolean | null;
+  sameVisaTypeConfirmation: boolean | null;
+  fingerprintsProvidedConfirmation: boolean | null;
+  lostVisaConfirmation: boolean | null;
+  lostVisaDetails: string | null;
+  canceledVisaConfirmation: boolean | null;
+  canceledVisaDetails: string | null;
+  deniedVisaConfirmation: boolean | null;
+  deniedVisaDetails: string | null;
+  consularPost: string | null;
+  deniedVisaType: string | null;
+  immigrationRequestByAnotherPersonConfirmation: boolean | null;
+  immigrationRequestByAnotherPersonDetails: string | null;
+};
+
+export type USAContactFormType = {
+  hasUSAOrganizationOrResident: boolean | null;
+  organizationOrUSAResidentName: string | null;
+  organizationOrUSAResidentRelation: string | null;
+  organizationOrUSAResidentAddress: string | null;
+  organizationOrUSAResidentZipCode: string | null;
+  organizationOrUSAResidentCity: string | null;
+  organizationOrUSAResidentState: string | null;
+  organizationOrUSAResidentTel: string | null;
+  organizationOrUSAResidentEmail: string | null;
+};
+
+export type FamilyFormType = {
+  fatherCompleteName: string | null;
+  fatherBirthdate: Date | null;
+  fatherLiveInTheUSAConfirmation: boolean | null;
+  fatherUSASituation: string | null;
+  motherCompleteName: string | null;
+  motherBirthdate: Date | null;
+  motherLiveInTheUSAConfirmation: boolean | null;
+  motherUSASituation: string | null;
+  familyLivingInTheUSAConfirmation: boolean | null;
+  familyLivingInTheUSA: PrismaJson.familyLivingInTheUSAType[];
+  partnerCompleteName: string | null;
+  partnerBirthdate: Date | null;
+  partnerNationality: string | null;
+  partnerCity: string | null;
+  partnerState: string | null;
+  partnerCountry: string | null;
+  unionDate: Date | null;
+  divorceDate: Date | null;
+  maritalStatus: string | null;
+};
+
+export type WorkEducationFormType = {
+  occupation: string | null;
+  office: string | null;
+  companyOrBossName: string | null;
+  companyAddress: string | null;
+  companyCity: string | null;
+  companyState: string | null;
+  companyCountry: string | null;
+  companyCep: string | null;
+  companyTel: string | null;
+  admissionDate: Date | null;
+  monthlySalary: string | null;
+  retireeDate: Date | null;
+  jobDetails: string | null;
+  previousJobConfirmation: boolean | null;
+  previousJobs: PrismaJson.previousJobsType[];
+  courses: PrismaJson.coursesType[];
+};
+
+export type AdditionalInformationFormType = {
+  languages: string[];
+  fiveYearsOtherCountryTravelsConfirmation: boolean | null;
+  fiveYearsOtherCountryTravels: string[];
+  socialOrganizationConfirmation: boolean | null;
+  socialOrganization: string[];
+  weaponTrainingConfirmation: boolean | null;
+  weaponTrainingDetails: string | null;
+  militaryServiceConfirmation: boolean | null;
+  militaryServiceCountry: string | null;
+  militaryServiceLocal: string | null;
+  militaryServicePatent: string | null;
+  militaryServiceSpecialty: string | null;
+  militaryServiceStartDate: Date | null;
+  militaryServiceEndDate: Date | null;
+  insurgencyOrganizationConfirmation: boolean | null;
+  insurgencyOrganizationDetails: string | null;
+};
+
+export type SecurityFormType = {
+  contagiousDiseaseConfirmation: boolean | null;
+  contagiousDiseaseConfirmationDetails: string | null;
+  phisicalMentalProblemConfirmation: boolean | null;
+  phisicalMentalProblemConfirmationDetails: string | null;
+  crimeConfirmation: boolean | null;
+  crimeConfirmationDetails: string | null;
+  drugsProblemConfirmation: boolean | null;
+  drugsProblemConfirmationDetails: string | null;
+  lawViolateConfirmation: boolean | null;
+  lawViolateConfirmationDetails: string | null;
+  prostitutionConfirmation: boolean | null;
+  prostitutionConfirmationDetails: string | null;
+  moneyLaundryConfirmation: boolean | null;
+  moneyLaundryConfirmationDetails: string | null;
+  peopleTrafficConfirmation: boolean | null;
+  peopleTrafficConfirmationDetails: string | null;
+  helpPeopleTrafficConfirmation: boolean | null;
+  helpPeopleTrafficConfirmationDetails: string | null;
+  parentPeopleTrafficConfirmation: boolean | null;
+  parentPeopleTrafficConfirmationDetails: string | null;
+  spyConfirmation: boolean | null;
+  spyConfirmationDetails: string | null;
+  terrorismConfirmation: boolean | null;
+  terrorismConfirmationDetails: string | null;
+  financialAssistanceConfirmation: boolean | null;
+  financialAssistanceConfirmationDetails: string | null;
+  terrorismMemberConfirmation: boolean | null;
+  terrorismMemberConfirmationDetails: string | null;
+  parentTerrorismConfirmation: boolean | null;
+  parentTerrorismConfirmationDetails: string | null;
+  genocideConfirmation: boolean | null;
+  genocideConfirmationDetails: string | null;
+  tortureConfirmation: boolean | null;
+  tortureConfirmationDetails: string | null;
+  assassinConfirmation: boolean | null;
+  assassinConfirmationDetails: string | null;
+  childSoldierConfirmation: boolean | null;
+  childSoldierConfirmationDetails: string | null;
+  religionLibertyConfirmation: boolean | null;
+  religionLibertyConfirmationDetails: string | null;
+  abortConfirmation: boolean | null;
+  abortConfirmationDetails: string | null;
+  coerciveTransplantConfirmation: boolean | null;
+  coerciveTransplantConfirmationDetails: string | null;
+  visaFraudConfirmation: boolean | null;
+  visaFraudConfirmationDetails: string | null;
+  deportedConfirmation: boolean | null;
+  deportedConfirmationDetails: string | null;
+  childCustodyConfirmation: boolean | null;
+  childCustodyConfirmationDetails: string | null;
+  lawViolationConfirmation: boolean | null;
+  lawViolationConfirmationDetails: string | null;
+  avoidTaxConfirmation: boolean | null;
+  avoidTaxConfirmationDetails: string | null;
 };
 
 export type UserWithForm = User & {

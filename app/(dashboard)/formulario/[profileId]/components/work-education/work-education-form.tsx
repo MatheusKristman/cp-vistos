@@ -36,6 +36,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import { WorkEducationFormType } from "@/types";
 
 const formSchema = z
   .object({
@@ -247,12 +248,12 @@ const formSchema = z
   });
 
 interface Props {
-  currentForm: FormType;
+  workEducationForm: WorkEducationFormType;
   profileId: string;
   isEditing: boolean;
 }
 
-export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) {
+export function WorkEducationForm({ workEducationForm, profileId, isEditing }: Props) {
   const currentYear = getYear(new Date());
   const { redirectStep, setRedirectStep } = useFormStore();
 
@@ -262,24 +263,24 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      occupation: currentForm.occupation ? currentForm.occupation : "Aposentado",
-      office: currentForm.office ? currentForm.office : "",
-      companyOrBossName: currentForm.companyOrBossName ? currentForm.companyOrBossName : "",
-      companyAddress: currentForm.companyAddress ? currentForm.companyAddress : "",
-      companyCity: currentForm.companyCity ? currentForm.companyCity : "",
-      companyState: currentForm.companyState ? currentForm.companyState : "",
-      companyCountry: currentForm.companyCountry ? currentForm.companyCountry : "",
-      companyCep: currentForm.companyCep ? currentForm.companyCep : "",
-      companyTel: currentForm.companyTel ? currentForm.companyTel : "",
-      admissionDate: currentForm.admissionDate ? currentForm.admissionDate : undefined,
-      monthlySalary: currentForm.monthlySalary ? currentForm.monthlySalary : "",
-      retireeDate: currentForm.retireeDate ? currentForm.retireeDate : undefined,
-      jobDetails: currentForm.jobDetails ? currentForm.jobDetails : "",
-      previousJobConfirmation: currentForm.previousJobConfirmation ? "Sim" : "Não",
+      occupation: workEducationForm.occupation ? workEducationForm.occupation : "Aposentado",
+      office: workEducationForm.office ? workEducationForm.office : "",
+      companyOrBossName: workEducationForm.companyOrBossName ? workEducationForm.companyOrBossName : "",
+      companyAddress: workEducationForm.companyAddress ? workEducationForm.companyAddress : "",
+      companyCity: workEducationForm.companyCity ? workEducationForm.companyCity : "",
+      companyState: workEducationForm.companyState ? workEducationForm.companyState : "",
+      companyCountry: workEducationForm.companyCountry ? workEducationForm.companyCountry : "",
+      companyCep: workEducationForm.companyCep ? workEducationForm.companyCep : "",
+      companyTel: workEducationForm.companyTel ? workEducationForm.companyTel : "",
+      admissionDate: workEducationForm.admissionDate ? workEducationForm.admissionDate : undefined,
+      monthlySalary: workEducationForm.monthlySalary ? workEducationForm.monthlySalary : "",
+      retireeDate: workEducationForm.retireeDate ? workEducationForm.retireeDate : undefined,
+      jobDetails: workEducationForm.jobDetails ? workEducationForm.jobDetails : "",
+      previousJobConfirmation: workEducationForm.previousJobConfirmation ? "Sim" : "Não",
       previousJobs:
-        currentForm.previousJobs.length > 0
+        workEducationForm.previousJobs.length > 0
           ? [
-              ...currentForm.previousJobs.map((item) => ({
+              ...workEducationForm.previousJobs.map((item) => ({
                 ...item,
                 admissionDate: item.admissionDate ? new Date(item.admissionDate) : undefined,
                 resignationDate: item.resignationDate ? new Date(item.resignationDate) : undefined,
@@ -302,9 +303,9 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
               },
             ],
       courses:
-        currentForm.courses.length > 0
+        workEducationForm.courses.length > 0
           ? [
-              ...currentForm.courses.map((item) => ({
+              ...workEducationForm.courses.map((item) => ({
                 ...item,
                 initialDate: item.initialDate ? new Date(item.initialDate) : undefined,
                 finishDate: item.finishDate ? new Date(item.finishDate) : undefined,
@@ -396,56 +397,80 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
         profileId,
         redirectStep,
         occupation:
-          values.occupation !== "" ? values.occupation : !currentForm.occupation ? "" : currentForm.occupation,
-        office: values.office !== "" ? values.office : !currentForm.office ? "" : currentForm.office,
+          values.occupation !== ""
+            ? values.occupation
+            : !workEducationForm.occupation
+            ? ""
+            : workEducationForm.occupation,
+        office: values.office !== "" ? values.office : !workEducationForm.office ? "" : workEducationForm.office,
         companyOrBossName:
           values.companyOrBossName !== ""
             ? values.companyOrBossName
-            : !currentForm.companyOrBossName
+            : !workEducationForm.companyOrBossName
             ? ""
-            : currentForm.companyOrBossName,
+            : workEducationForm.companyOrBossName,
         companyAddress:
           values.companyAddress !== ""
             ? values.companyAddress
-            : !currentForm.companyAddress
+            : !workEducationForm.companyAddress
             ? ""
-            : currentForm.companyAddress,
+            : workEducationForm.companyAddress,
         companyCity:
-          values.companyCity !== "" ? values.companyCity : !currentForm.companyCity ? "" : currentForm.companyCity,
+          values.companyCity !== ""
+            ? values.companyCity
+            : !workEducationForm.companyCity
+            ? ""
+            : workEducationForm.companyCity,
         companyState:
-          values.companyState !== "" ? values.companyState : !currentForm.companyState ? "" : currentForm.companyState,
+          values.companyState !== ""
+            ? values.companyState
+            : !workEducationForm.companyState
+            ? ""
+            : workEducationForm.companyState,
         companyCountry:
           values.companyCountry !== ""
             ? values.companyCountry
-            : !currentForm.companyCountry
+            : !workEducationForm.companyCountry
             ? ""
-            : currentForm.companyCountry,
+            : workEducationForm.companyCountry,
         companyCep:
-          values.companyCep !== "" ? values.companyCep : !currentForm.companyCep ? "" : currentForm.companyCep,
+          values.companyCep !== ""
+            ? values.companyCep
+            : !workEducationForm.companyCep
+            ? ""
+            : workEducationForm.companyCep,
         companyTel:
-          values.companyTel !== "" ? values.companyTel : !currentForm.companyTel ? "" : currentForm.companyTel,
+          values.companyTel !== ""
+            ? values.companyTel
+            : !workEducationForm.companyTel
+            ? ""
+            : workEducationForm.companyTel,
         admissionDate:
           values.admissionDate !== undefined
             ? values.admissionDate
-            : !currentForm.admissionDate
+            : !workEducationForm.admissionDate
             ? undefined
-            : currentForm.admissionDate,
+            : workEducationForm.admissionDate,
         monthlySalary:
           values.monthlySalary !== ""
             ? values.monthlySalary
-            : !currentForm.monthlySalary
+            : !workEducationForm.monthlySalary
             ? ""
-            : currentForm.monthlySalary,
+            : workEducationForm.monthlySalary,
         retireeDate:
           values.retireeDate !== undefined
             ? values.retireeDate
-            : !currentForm.retireeDate
+            : !workEducationForm.retireeDate
             ? undefined
-            : currentForm.retireeDate,
+            : workEducationForm.retireeDate,
         jobDetails:
-          values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
+          values.jobDetails !== ""
+            ? values.jobDetails
+            : !workEducationForm.jobDetails
+            ? ""
+            : workEducationForm.jobDetails,
         previousJobConfirmation:
-          values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
+          values.previousJobConfirmation ?? (workEducationForm.previousJobConfirmation ? "Sim" : "Não"),
         previousJobs: previousJobsFormatted,
         courses: coursesFormatted,
       });
@@ -581,52 +606,81 @@ export function WorkEducationForm({ currentForm, profileId, isEditing }: Props) 
 
     saveWorkEducation({
       profileId,
-      occupation: values.occupation !== "" ? values.occupation : !currentForm.occupation ? "" : currentForm.occupation,
-      office: values.office !== "" ? values.office : !currentForm.office ? "" : currentForm.office,
+      occupation:
+        values.occupation !== ""
+          ? values.occupation
+          : !workEducationForm.occupation
+          ? ""
+          : workEducationForm.occupation,
+      office: values.office !== "" ? values.office : !workEducationForm.office ? "" : workEducationForm.office,
       companyOrBossName:
         values.companyOrBossName !== ""
           ? values.companyOrBossName
-          : !currentForm.companyOrBossName
+          : !workEducationForm.companyOrBossName
           ? ""
-          : currentForm.companyOrBossName,
+          : workEducationForm.companyOrBossName,
       companyAddress:
         values.companyAddress !== ""
           ? values.companyAddress
-          : !currentForm.companyAddress
+          : !workEducationForm.companyAddress
           ? ""
-          : currentForm.companyAddress,
+          : workEducationForm.companyAddress,
       companyCity:
-        values.companyCity !== "" ? values.companyCity : !currentForm.companyCity ? "" : currentForm.companyCity,
+        values.companyCity !== ""
+          ? values.companyCity
+          : !workEducationForm.companyCity
+          ? ""
+          : workEducationForm.companyCity,
       companyState:
-        values.companyState !== "" ? values.companyState : !currentForm.companyState ? "" : currentForm.companyState,
+        values.companyState !== ""
+          ? values.companyState
+          : !workEducationForm.companyState
+          ? ""
+          : workEducationForm.companyState,
       companyCountry:
         values.companyCountry !== ""
           ? values.companyCountry
-          : !currentForm.companyCountry
+          : !workEducationForm.companyCountry
           ? ""
-          : currentForm.companyCountry,
-      companyCep: values.companyCep !== "" ? values.companyCep : !currentForm.companyCep ? "" : currentForm.companyCep,
-      companyTel: values.companyTel !== "" ? values.companyTel : !currentForm.companyTel ? "" : currentForm.companyTel,
+          : workEducationForm.companyCountry,
+      companyCep:
+        values.companyCep !== ""
+          ? values.companyCep
+          : !workEducationForm.companyCep
+          ? ""
+          : workEducationForm.companyCep,
+      companyTel:
+        values.companyTel !== ""
+          ? values.companyTel
+          : !workEducationForm.companyTel
+          ? ""
+          : workEducationForm.companyTel,
       admissionDate:
         values.admissionDate !== undefined
           ? values.admissionDate
-          : !currentForm.admissionDate
+          : !workEducationForm.admissionDate
           ? undefined
-          : currentForm.admissionDate,
+          : workEducationForm.admissionDate,
       monthlySalary:
         values.monthlySalary !== ""
           ? values.monthlySalary
-          : !currentForm.monthlySalary
+          : !workEducationForm.monthlySalary
           ? ""
-          : currentForm.monthlySalary,
+          : workEducationForm.monthlySalary,
       retireeDate:
         values.retireeDate !== undefined
           ? values.retireeDate
-          : !currentForm.retireeDate
+          : !workEducationForm.retireeDate
           ? undefined
-          : currentForm.retireeDate,
-      jobDetails: values.jobDetails !== "" ? values.jobDetails : !currentForm.jobDetails ? "" : currentForm.jobDetails,
-      previousJobConfirmation: values.previousJobConfirmation ?? (currentForm.previousJobConfirmation ? "Sim" : "Não"),
+          : workEducationForm.retireeDate,
+      jobDetails:
+        values.jobDetails !== ""
+          ? values.jobDetails
+          : !workEducationForm.jobDetails
+          ? ""
+          : workEducationForm.jobDetails,
+      previousJobConfirmation:
+        values.previousJobConfirmation ?? (workEducationForm.previousJobConfirmation ? "Sim" : "Não"),
       previousJobs: previousJobsFormatted,
       courses: coursesFormatted,
     });

@@ -17,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import { TravelCompanyFormType } from "@/types";
 
 const formSchema = z
   .object({
@@ -68,13 +69,13 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FormType;
+  travelCompanyForm: TravelCompanyFormType;
   isEditing: boolean;
 }
 
-export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) {
+export function TravelCompanyForm({ travelCompanyForm, profileId, isEditing }: Props) {
   const [currentOtherPeopleTravelingIndex, setCurrentOtherPeopleTravelingIndex] = useState<number>(
-    currentForm.otherPeopleTraveling.length ?? 0
+    travelCompanyForm.otherPeopleTraveling.length ?? 0
   );
   const [otherPeopleTravelingItems, setOtherPeopleTravelingItems] = useState<{ name: string; relation: string }[]>([]);
   const [resetOtherPeopleTravelingFields, setResetOtherPeopleTravelingFields] = useState<boolean>(false);
@@ -84,13 +85,13 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      otherPeopleTravelingConfirmation: currentForm.otherPeopleTravelingConfirmation ? "Sim" : "Não",
+      otherPeopleTravelingConfirmation: travelCompanyForm.otherPeopleTravelingConfirmation ? "Sim" : "Não",
       otherPeopleTraveling:
-        currentForm.otherPeopleTraveling.length > 0
-          ? [...currentForm.otherPeopleTraveling, { name: "", relation: "" }]
+        travelCompanyForm.otherPeopleTraveling.length > 0
+          ? [...travelCompanyForm.otherPeopleTraveling, { name: "", relation: "" }]
           : [{ name: "", relation: "" }],
-      groupMemberConfirmation: currentForm.groupMemberConfirmation ? "Sim" : "Não",
-      groupName: currentForm.groupName ? currentForm.groupName : "",
+      groupMemberConfirmation: travelCompanyForm.groupMemberConfirmation ? "Sim" : "Não",
+      groupName: travelCompanyForm.groupName ? travelCompanyForm.groupName : "",
     },
   });
 
@@ -142,16 +143,16 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
   });
 
   useEffect(() => {
-    if (currentForm.otherPeopleTraveling.length > 0) {
-      setCurrentOtherPeopleTravelingIndex(currentForm.otherPeopleTraveling.length);
+    if (travelCompanyForm.otherPeopleTraveling.length > 0) {
+      setCurrentOtherPeopleTravelingIndex(travelCompanyForm.otherPeopleTraveling.length);
 
-      const otherPeopleTravelingFiltered = currentForm.otherPeopleTraveling.filter(
+      const otherPeopleTravelingFiltered = travelCompanyForm.otherPeopleTraveling.filter(
         (item) => item.name !== "" && item.relation !== ""
       );
 
       setOtherPeopleTravelingItems(otherPeopleTravelingFiltered);
     }
-  }, [currentForm]);
+  }, [travelCompanyForm]);
 
   useEffect(() => {
     if (resetOtherPeopleTravelingFields) {
@@ -170,11 +171,11 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
         profileId,
         redirectStep,
         otherPeopleTravelingConfirmation:
-          values.otherPeopleTravelingConfirmation ?? currentForm.otherPeopleTravelingConfirmation,
+          values.otherPeopleTravelingConfirmation ?? travelCompanyForm.otherPeopleTravelingConfirmation,
         otherPeopleTraveling:
-          otherPeopleTravelingItems.length > 0 ? otherPeopleTravelingItems : currentForm.otherPeopleTraveling,
-        groupMemberConfirmation: values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
-        groupName: values.groupName !== "" ? values.groupName : currentForm.groupName,
+          otherPeopleTravelingItems.length > 0 ? otherPeopleTravelingItems : travelCompanyForm.otherPeopleTraveling,
+        groupMemberConfirmation: values.groupMemberConfirmation ?? travelCompanyForm.groupMemberConfirmation,
+        groupName: values.groupName !== "" ? values.groupName : travelCompanyForm.groupName,
       });
       setRedirectStep(null);
     }
@@ -196,11 +197,11 @@ export function TravelCompanyForm({ currentForm, profileId, isEditing }: Props) 
     saveTravelCompany({
       profileId,
       otherPeopleTravelingConfirmation:
-        values.otherPeopleTravelingConfirmation ?? currentForm.otherPeopleTravelingConfirmation,
+        values.otherPeopleTravelingConfirmation ?? travelCompanyForm.otherPeopleTravelingConfirmation,
       otherPeopleTraveling:
-        otherPeopleTravelingItems.length > 0 ? otherPeopleTravelingItems : currentForm.otherPeopleTraveling,
-      groupMemberConfirmation: values.groupMemberConfirmation ?? currentForm.groupMemberConfirmation,
-      groupName: values.groupName !== "" ? values.groupName : currentForm.groupName,
+        otherPeopleTravelingItems.length > 0 ? otherPeopleTravelingItems : travelCompanyForm.otherPeopleTraveling,
+      groupMemberConfirmation: values.groupMemberConfirmation ?? travelCompanyForm.groupMemberConfirmation,
+      groupName: values.groupName !== "" ? values.groupName : travelCompanyForm.groupName,
     });
   }
 

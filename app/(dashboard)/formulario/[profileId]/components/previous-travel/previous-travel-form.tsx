@@ -22,6 +22,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
+import { PreviousTravelFormType } from "@/types";
 
 const formSchema = z
   .object({
@@ -166,12 +167,14 @@ const formSchema = z
 
 interface Props {
   profileId: string;
-  currentForm: FormType;
+  previousTravelForm: PreviousTravelFormType;
   isEditing: boolean;
 }
 
-export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props) {
-  const [currentUSALastTravelIndex, setCurrentUSALastTravelIndex] = useState(currentForm.USALastTravel.length ?? 0);
+export function PreviousTravelForm({ previousTravelForm, profileId, isEditing }: Props) {
+  const [currentUSALastTravelIndex, setCurrentUSALastTravelIndex] = useState(
+    previousTravelForm.USALastTravel.length ?? 0
+  );
   const [resetUSALastTravelFields, setResetUSALastTravelFields] = useState<boolean>(false);
 
   const { redirectStep, setRedirectStep } = useFormStore();
@@ -181,39 +184,41 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      hasBeenOnUSAConfirmation: currentForm.hasBeenOnUSAConfirmation ? "Sim" : "Não",
+      hasBeenOnUSAConfirmation: previousTravelForm.hasBeenOnUSAConfirmation ? "Sim" : "Não",
       USALastTravel:
-        currentForm.USALastTravel.length > 0
+        previousTravelForm.USALastTravel.length > 0
           ? [
-              ...currentForm.USALastTravel.map((item) => ({
+              ...previousTravelForm.USALastTravel.map((item) => ({
                 ...item,
                 arriveDate: item.arriveDate ? new Date(item.arriveDate) : undefined,
               })),
               { arriveDate: undefined, estimatedTime: "" },
             ]
           : [{ arriveDate: undefined, estimatedTime: "" }],
-      americanLicenseToDriveConfirmation: currentForm.americanLicenseToDriveConfirmation ? "Sim" : "Não",
-      americanLicense: currentForm.americanLicense ? currentForm.americanLicense : { licenseNumber: "", state: "" },
-      USAVisaConfirmation: currentForm.USAVisaConfirmation ? "Sim" : "Não",
-      visaIssuingDate: currentForm.visaIssuingDate ? currentForm.visaIssuingDate : undefined,
-      visaNumber: currentForm.visaNumber ? currentForm.visaNumber : "",
-      newVisaConfirmation: currentForm.newVisaConfirmation ? "Sim" : "Não",
-      sameCountryResidenceConfirmation: currentForm.sameCountryResidenceConfirmation ? "Sim" : "Não",
-      sameVisaTypeConfirmation: currentForm.sameVisaTypeConfirmation ? "Sim" : "Não",
-      fingerprintsProvidedConfirmation: currentForm.fingerprintsProvidedConfirmation ? "Sim" : "Não",
-      lostVisaConfirmation: currentForm.lostVisaConfirmation ? "Sim" : "Não",
-      lostVisaDetails: currentForm.lostVisaDetails ? currentForm.lostVisaDetails : "",
-      canceledVisaConfirmation: currentForm.canceledVisaConfirmation ? "Sim" : "Não",
-      canceledVisaDetails: currentForm.canceledVisaDetails ? currentForm.canceledVisaDetails : "",
-      deniedVisaConfirmation: currentForm.deniedVisaConfirmation ? "Sim" : "Não",
-      deniedVisaDetails: currentForm.deniedVisaDetails ? currentForm.deniedVisaDetails : "",
-      consularPost: currentForm.consularPost ? currentForm.consularPost : "",
-      deniedVisaType: currentForm.deniedVisaType ? currentForm.deniedVisaType : "",
-      immigrationRequestByAnotherPersonConfirmation: currentForm.immigrationRequestByAnotherPersonConfirmation
+      americanLicenseToDriveConfirmation: previousTravelForm.americanLicenseToDriveConfirmation ? "Sim" : "Não",
+      americanLicense: previousTravelForm.americanLicense
+        ? previousTravelForm.americanLicense
+        : { licenseNumber: "", state: "" },
+      USAVisaConfirmation: previousTravelForm.USAVisaConfirmation ? "Sim" : "Não",
+      visaIssuingDate: previousTravelForm.visaIssuingDate ? previousTravelForm.visaIssuingDate : undefined,
+      visaNumber: previousTravelForm.visaNumber ? previousTravelForm.visaNumber : "",
+      newVisaConfirmation: previousTravelForm.newVisaConfirmation ? "Sim" : "Não",
+      sameCountryResidenceConfirmation: previousTravelForm.sameCountryResidenceConfirmation ? "Sim" : "Não",
+      sameVisaTypeConfirmation: previousTravelForm.sameVisaTypeConfirmation ? "Sim" : "Não",
+      fingerprintsProvidedConfirmation: previousTravelForm.fingerprintsProvidedConfirmation ? "Sim" : "Não",
+      lostVisaConfirmation: previousTravelForm.lostVisaConfirmation ? "Sim" : "Não",
+      lostVisaDetails: previousTravelForm.lostVisaDetails ? previousTravelForm.lostVisaDetails : "",
+      canceledVisaConfirmation: previousTravelForm.canceledVisaConfirmation ? "Sim" : "Não",
+      canceledVisaDetails: previousTravelForm.canceledVisaDetails ? previousTravelForm.canceledVisaDetails : "",
+      deniedVisaConfirmation: previousTravelForm.deniedVisaConfirmation ? "Sim" : "Não",
+      deniedVisaDetails: previousTravelForm.deniedVisaDetails ? previousTravelForm.deniedVisaDetails : "",
+      consularPost: previousTravelForm.consularPost ? previousTravelForm.consularPost : "",
+      deniedVisaType: previousTravelForm.deniedVisaType ? previousTravelForm.deniedVisaType : "",
+      immigrationRequestByAnotherPersonConfirmation: previousTravelForm.immigrationRequestByAnotherPersonConfirmation
         ? "Sim"
         : "Não",
-      immigrationRequestByAnotherPersonDetails: currentForm.immigrationRequestByAnotherPersonDetails
-        ? currentForm.immigrationRequestByAnotherPersonDetails
+      immigrationRequestByAnotherPersonDetails: previousTravelForm.immigrationRequestByAnotherPersonDetails
+        ? previousTravelForm.immigrationRequestByAnotherPersonDetails
         : "",
     },
   });
@@ -271,10 +276,10 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
   });
 
   useEffect(() => {
-    if (currentForm.USALastTravel.length > 0) {
-      setCurrentUSALastTravelIndex(currentForm.USALastTravel.length);
+    if (previousTravelForm.USALastTravel.length > 0) {
+      setCurrentUSALastTravelIndex(previousTravelForm.USALastTravel.length);
     }
-  }, [currentForm]);
+  }, [previousTravelForm]);
 
   useEffect(() => {
     form.setValue(
@@ -308,70 +313,82 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
         profileId,
         redirectStep,
         hasBeenOnUSAConfirmation:
-          values.hasBeenOnUSAConfirmation ?? (currentForm.hasBeenOnUSAConfirmation ? "Sim" : "Não"),
+          values.hasBeenOnUSAConfirmation ?? (previousTravelForm.hasBeenOnUSAConfirmation ? "Sim" : "Não"),
         USALastTravel: USALastTravelFormatted,
         americanLicenseToDriveConfirmation:
-          values.americanLicenseToDriveConfirmation ?? (currentForm.americanLicenseToDriveConfirmation ? "Sim" : "Não"),
+          values.americanLicenseToDriveConfirmation ??
+          (previousTravelForm.americanLicenseToDriveConfirmation ? "Sim" : "Não"),
         americanLicense: values.americanLicense
           ? values.americanLicense
-          : !currentForm.americanLicense
+          : !previousTravelForm.americanLicense
           ? { licenseNumber: "", state: "" }
-          : currentForm.americanLicense,
-        USAVisaConfirmation: values.USAVisaConfirmation ?? (currentForm.USAVisaConfirmation ? "Sim" : "Não"),
+          : previousTravelForm.americanLicense,
+        USAVisaConfirmation: values.USAVisaConfirmation ?? (previousTravelForm.USAVisaConfirmation ? "Sim" : "Não"),
         visaIssuingDate:
           values.visaIssuingDate !== undefined
             ? values.visaIssuingDate
-            : !currentForm.visaIssuingDate
+            : !previousTravelForm.visaIssuingDate
             ? undefined
-            : currentForm.visaIssuingDate,
+            : previousTravelForm.visaIssuingDate,
         visaNumber:
-          values.visaNumber !== "" ? values.visaNumber : !currentForm.visaNumber ? "" : currentForm.visaNumber,
-        newVisaConfirmation: values.newVisaConfirmation ?? (currentForm.newVisaConfirmation ? "Sim" : "Não"),
+          values.visaNumber !== ""
+            ? values.visaNumber
+            : !previousTravelForm.visaNumber
+            ? ""
+            : previousTravelForm.visaNumber,
+        newVisaConfirmation: values.newVisaConfirmation ?? (previousTravelForm.newVisaConfirmation ? "Sim" : "Não"),
         sameCountryResidenceConfirmation:
-          values.sameCountryResidenceConfirmation ?? (currentForm.sameCountryResidenceConfirmation ? "Sim" : "Não"),
+          values.sameCountryResidenceConfirmation ??
+          (previousTravelForm.sameCountryResidenceConfirmation ? "Sim" : "Não"),
         sameVisaTypeConfirmation:
-          values.sameVisaTypeConfirmation ?? (currentForm.sameVisaTypeConfirmation ? "Sim" : "Não"),
+          values.sameVisaTypeConfirmation ?? (previousTravelForm.sameVisaTypeConfirmation ? "Sim" : "Não"),
         fingerprintsProvidedConfirmation:
-          values.fingerprintsProvidedConfirmation ?? (currentForm.fingerprintsProvidedConfirmation ? "Sim" : "Não"),
-        lostVisaConfirmation: values.lostVisaConfirmation ?? (currentForm.lostVisaConfirmation ? "Sim" : "Não"),
+          values.fingerprintsProvidedConfirmation ??
+          (previousTravelForm.fingerprintsProvidedConfirmation ? "Sim" : "Não"),
+        lostVisaConfirmation: values.lostVisaConfirmation ?? (previousTravelForm.lostVisaConfirmation ? "Sim" : "Não"),
         lostVisaDetails:
           values.lostVisaDetails !== ""
             ? values.lostVisaDetails
-            : !currentForm.lostVisaDetails
+            : !previousTravelForm.lostVisaDetails
             ? ""
-            : currentForm.lostVisaDetails,
+            : previousTravelForm.lostVisaDetails,
         canceledVisaConfirmation:
-          values.canceledVisaConfirmation ?? (currentForm.canceledVisaConfirmation ? "Sim" : "Não"),
+          values.canceledVisaConfirmation ?? (previousTravelForm.canceledVisaConfirmation ? "Sim" : "Não"),
         canceledVisaDetails:
           values.canceledVisaDetails !== ""
             ? values.canceledVisaDetails
-            : !currentForm.canceledVisaDetails
+            : !previousTravelForm.canceledVisaDetails
             ? ""
-            : currentForm.canceledVisaDetails,
-        deniedVisaConfirmation: values.deniedVisaConfirmation ?? (currentForm.deniedVisaConfirmation ? "Sim" : "Não"),
+            : previousTravelForm.canceledVisaDetails,
+        deniedVisaConfirmation:
+          values.deniedVisaConfirmation ?? (previousTravelForm.deniedVisaConfirmation ? "Sim" : "Não"),
         deniedVisaDetails:
           values.deniedVisaDetails !== ""
             ? values.deniedVisaDetails
-            : !currentForm.deniedVisaDetails
+            : !previousTravelForm.deniedVisaDetails
             ? ""
-            : currentForm.deniedVisaDetails,
+            : previousTravelForm.deniedVisaDetails,
         consularPost:
-          values.consularPost !== "" ? values.consularPost : !currentForm.consularPost ? "" : currentForm.consularPost,
+          values.consularPost !== ""
+            ? values.consularPost
+            : !previousTravelForm.consularPost
+            ? ""
+            : previousTravelForm.consularPost,
         deniedVisaType:
           values.deniedVisaType !== ""
             ? values.deniedVisaType
-            : !currentForm.deniedVisaType
+            : !previousTravelForm.deniedVisaType
             ? ""
-            : currentForm.deniedVisaType,
+            : previousTravelForm.deniedVisaType,
         immigrationRequestByAnotherPersonConfirmation:
           values.immigrationRequestByAnotherPersonConfirmation ??
-          (currentForm.immigrationRequestByAnotherPersonConfirmation ? "Sim" : "Não"),
+          (previousTravelForm.immigrationRequestByAnotherPersonConfirmation ? "Sim" : "Não"),
         immigrationRequestByAnotherPersonDetails:
           values.immigrationRequestByAnotherPersonDetails !== ""
             ? values.immigrationRequestByAnotherPersonDetails
-            : !currentForm.immigrationRequestByAnotherPersonDetails
+            : !previousTravelForm.immigrationRequestByAnotherPersonDetails
             ? ""
-            : currentForm.immigrationRequestByAnotherPersonDetails,
+            : previousTravelForm.immigrationRequestByAnotherPersonDetails,
       });
       setRedirectStep(null);
     }
@@ -402,69 +419,82 @@ export function PreviousTravelForm({ currentForm, profileId, isEditing }: Props)
     savePreviousTravel({
       profileId,
       hasBeenOnUSAConfirmation:
-        values.hasBeenOnUSAConfirmation ?? (currentForm.hasBeenOnUSAConfirmation ? "Sim" : "Não"),
+        values.hasBeenOnUSAConfirmation ?? (previousTravelForm.hasBeenOnUSAConfirmation ? "Sim" : "Não"),
       USALastTravel: USALastTravelFormatted,
       americanLicenseToDriveConfirmation:
-        values.americanLicenseToDriveConfirmation ?? (currentForm.americanLicenseToDriveConfirmation ? "Sim" : "Não"),
+        values.americanLicenseToDriveConfirmation ??
+        (previousTravelForm.americanLicenseToDriveConfirmation ? "Sim" : "Não"),
       americanLicense: values.americanLicense
         ? values.americanLicense
-        : !currentForm.americanLicense
+        : !previousTravelForm.americanLicense
         ? { licenseNumber: "", state: "" }
-        : currentForm.americanLicense,
-      USAVisaConfirmation: values.USAVisaConfirmation ?? (currentForm.USAVisaConfirmation ? "Sim" : "Não"),
+        : previousTravelForm.americanLicense,
+      USAVisaConfirmation: values.USAVisaConfirmation ?? (previousTravelForm.USAVisaConfirmation ? "Sim" : "Não"),
       visaIssuingDate:
         values.visaIssuingDate !== undefined
           ? values.visaIssuingDate
-          : !currentForm.visaIssuingDate
+          : !previousTravelForm.visaIssuingDate
           ? undefined
-          : currentForm.visaIssuingDate,
-      visaNumber: values.visaNumber !== "" ? values.visaNumber : !currentForm.visaNumber ? "" : currentForm.visaNumber,
-      newVisaConfirmation: values.newVisaConfirmation ?? (currentForm.newVisaConfirmation ? "Sim" : "Não"),
+          : previousTravelForm.visaIssuingDate,
+      visaNumber:
+        values.visaNumber !== ""
+          ? values.visaNumber
+          : !previousTravelForm.visaNumber
+          ? ""
+          : previousTravelForm.visaNumber,
+      newVisaConfirmation: values.newVisaConfirmation ?? (previousTravelForm.newVisaConfirmation ? "Sim" : "Não"),
       sameCountryResidenceConfirmation:
-        values.sameCountryResidenceConfirmation ?? (currentForm.sameCountryResidenceConfirmation ? "Sim" : "Não"),
+        values.sameCountryResidenceConfirmation ??
+        (previousTravelForm.sameCountryResidenceConfirmation ? "Sim" : "Não"),
       sameVisaTypeConfirmation:
-        values.sameVisaTypeConfirmation ?? (currentForm.sameVisaTypeConfirmation ? "Sim" : "Não"),
+        values.sameVisaTypeConfirmation ?? (previousTravelForm.sameVisaTypeConfirmation ? "Sim" : "Não"),
       fingerprintsProvidedConfirmation:
-        values.fingerprintsProvidedConfirmation ?? (currentForm.fingerprintsProvidedConfirmation ? "Sim" : "Não"),
-      lostVisaConfirmation: values.lostVisaConfirmation ?? (currentForm.lostVisaConfirmation ? "Sim" : "Não"),
+        values.fingerprintsProvidedConfirmation ??
+        (previousTravelForm.fingerprintsProvidedConfirmation ? "Sim" : "Não"),
+      lostVisaConfirmation: values.lostVisaConfirmation ?? (previousTravelForm.lostVisaConfirmation ? "Sim" : "Não"),
       lostVisaDetails:
         values.lostVisaDetails !== ""
           ? values.lostVisaDetails
-          : !currentForm.lostVisaDetails
+          : !previousTravelForm.lostVisaDetails
           ? ""
-          : currentForm.lostVisaDetails,
+          : previousTravelForm.lostVisaDetails,
       canceledVisaConfirmation:
-        values.canceledVisaConfirmation ?? (currentForm.canceledVisaConfirmation ? "Sim" : "Não"),
+        values.canceledVisaConfirmation ?? (previousTravelForm.canceledVisaConfirmation ? "Sim" : "Não"),
       canceledVisaDetails:
         values.canceledVisaDetails !== ""
           ? values.canceledVisaDetails
-          : !currentForm.canceledVisaDetails
+          : !previousTravelForm.canceledVisaDetails
           ? ""
-          : currentForm.canceledVisaDetails,
-      deniedVisaConfirmation: values.deniedVisaConfirmation ?? (currentForm.deniedVisaConfirmation ? "Sim" : "Não"),
+          : previousTravelForm.canceledVisaDetails,
+      deniedVisaConfirmation:
+        values.deniedVisaConfirmation ?? (previousTravelForm.deniedVisaConfirmation ? "Sim" : "Não"),
       deniedVisaDetails:
         values.deniedVisaDetails !== ""
           ? values.deniedVisaDetails
-          : !currentForm.deniedVisaDetails
+          : !previousTravelForm.deniedVisaDetails
           ? ""
-          : currentForm.deniedVisaDetails,
+          : previousTravelForm.deniedVisaDetails,
       consularPost:
-        values.consularPost !== "" ? values.consularPost : !currentForm.consularPost ? "" : currentForm.consularPost,
+        values.consularPost !== ""
+          ? values.consularPost
+          : !previousTravelForm.consularPost
+          ? ""
+          : previousTravelForm.consularPost,
       deniedVisaType:
         values.deniedVisaType !== ""
           ? values.deniedVisaType
-          : !currentForm.deniedVisaType
+          : !previousTravelForm.deniedVisaType
           ? ""
-          : currentForm.deniedVisaType,
+          : previousTravelForm.deniedVisaType,
       immigrationRequestByAnotherPersonConfirmation:
         values.immigrationRequestByAnotherPersonConfirmation ??
-        (currentForm.immigrationRequestByAnotherPersonConfirmation ? "Sim" : "Não"),
+        (previousTravelForm.immigrationRequestByAnotherPersonConfirmation ? "Sim" : "Não"),
       immigrationRequestByAnotherPersonDetails:
         values.immigrationRequestByAnotherPersonDetails !== ""
           ? values.immigrationRequestByAnotherPersonDetails
-          : !currentForm.immigrationRequestByAnotherPersonDetails
+          : !previousTravelForm.immigrationRequestByAnotherPersonDetails
           ? ""
-          : currentForm.immigrationRequestByAnotherPersonDetails,
+          : previousTravelForm.immigrationRequestByAnotherPersonDetails,
     });
   }
 

@@ -485,6 +485,53 @@ export const formsRouter = router({
 
       return { message: "Informações salvas", redirectStep };
     }),
+  getConctactAndAddress: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const contactAndAddressForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          address: true,
+          addressNumber: true,
+          complement: true,
+          district: true,
+          city: true,
+          state: true,
+          cep: true,
+          country: true,
+          postalAddressConfirmation: true,
+          otherPostalAddress: true,
+          cel: true,
+          tel: true,
+          fiveYearsOtherTelConfirmation: true,
+          otherTel: true,
+          email: true,
+          fiveYearsOtherEmailConfirmation: true,
+          otherEmail: true,
+          facebook: true,
+          linkedin: true,
+          instagram: true,
+          othersSocialMedia: true,
+        },
+      });
+
+      if (!contactAndAddressForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return contactAndAddressForm;
+    }),
   submitContactAndAddress: isUserAuthedProcedure
     .input(
       z.object({
@@ -738,6 +785,42 @@ export const formsRouter = router({
 
       return { message: "Informações salvas", redirectStep };
     }),
+  getPassport: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const passportForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          passportNumber: true,
+          passportCity: true,
+          passportState: true,
+          passportIssuingCountry: true,
+          passportIssuingDate: true,
+          passportExpireDate: true,
+          passportLostConfirmation: true,
+          lostPassportNumber: true,
+          lostPassportCountry: true,
+          lostPassportDetails: true,
+        },
+      });
+
+      if (!passportForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return passportForm;
+    }),
   submitPassport: isUserAuthedProcedure
     .input(
       z.object({
@@ -924,6 +1007,52 @@ export const formsRouter = router({
       });
 
       return { message: "Informações salvas", redirectStep };
+    }),
+  getAboutTravel: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const aboutTravelForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          travelItineraryConfirmation: true,
+          USAPreviewArriveDate: true,
+          arriveFlyNumber: true,
+          arriveCity: true,
+          USAPreviewReturnDate: true,
+          returnFlyNumber: true,
+          returnCity: true,
+          estimatedTimeOnUSA: true,
+          visitLocations: true,
+          hasAddressInUSA: true,
+          USACompleteAddress: true,
+          USAZipCode: true,
+          USACity: true,
+          USAState: true,
+          payer: true,
+          payerNameOrCompany: true,
+          payerTel: true,
+          payerAddress: true,
+          payerRelation: true,
+          payerEmail: true,
+        },
+      });
+
+      if (!aboutTravelForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return aboutTravelForm;
     }),
   submitAboutTravel: isUserAuthedProcedure
     .input(
@@ -1303,6 +1432,36 @@ export const formsRouter = router({
 
       return { message: "Informações salvas", redirectStep };
     }),
+  getTravelCompany: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const travelCompanyForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          otherPeopleTravelingConfirmation: true,
+          otherPeopleTraveling: true,
+          groupMemberConfirmation: true,
+          groupName: true,
+        },
+      });
+
+      if (!travelCompanyForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return travelCompanyForm;
+    }),
   submitTravelCompany: isUserAuthedProcedure
     .input(
       z
@@ -1499,6 +1658,53 @@ export const formsRouter = router({
       });
 
       return { message: "Informações salvas", redirectStep };
+    }),
+  getPreviousTravel: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const previousTravelForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          hasBeenOnUSAConfirmation: true,
+          USALastTravel: true,
+          americanLicenseToDriveConfirmation: true,
+          americanLicense: true,
+          USAVisaConfirmation: true,
+          visaIssuingDate: true,
+          visaNumber: true,
+          newVisaConfirmation: true,
+          sameCountryResidenceConfirmation: true,
+          sameVisaTypeConfirmation: true,
+          fingerprintsProvidedConfirmation: true,
+          lostVisaConfirmation: true,
+          lostVisaDetails: true,
+          canceledVisaConfirmation: true,
+          canceledVisaDetails: true,
+          deniedVisaConfirmation: true,
+          deniedVisaDetails: true,
+          consularPost: true,
+          deniedVisaType: true,
+          immigrationRequestByAnotherPersonConfirmation: true,
+          immigrationRequestByAnotherPersonDetails: true,
+        },
+      });
+
+      if (!previousTravelForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return previousTravelForm;
     }),
   submitPreviousTravel: isUserAuthedProcedure
     .input(
@@ -1883,6 +2089,41 @@ export const formsRouter = router({
 
       return { message: "Informações salvas", redirectStep };
     }),
+  getUSAContact: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const USAContactForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          hasUSAOrganizationOrResident: true,
+          organizationOrUSAResidentName: true,
+          organizationOrUSAResidentRelation: true,
+          organizationOrUSAResidentAddress: true,
+          organizationOrUSAResidentZipCode: true,
+          organizationOrUSAResidentCity: true,
+          organizationOrUSAResidentState: true,
+          organizationOrUSAResidentTel: true,
+          organizationOrUSAResidentEmail: true,
+        },
+      });
+
+      if (!USAContactForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return USAContactForm;
+    }),
   submitUsaContact: isUserAuthedProcedure
     .input(
       z.object({
@@ -2063,6 +2304,51 @@ export const formsRouter = router({
       });
 
       return { message: "Informações salvas", redirectStep };
+    }),
+  getFamily: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const familyForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          fatherCompleteName: true,
+          fatherBirthdate: true,
+          fatherLiveInTheUSAConfirmation: true,
+          fatherUSASituation: true,
+          motherCompleteName: true,
+          motherBirthdate: true,
+          motherLiveInTheUSAConfirmation: true,
+          motherUSASituation: true,
+          familyLivingInTheUSAConfirmation: true,
+          familyLivingInTheUSA: true,
+          partnerCompleteName: true,
+          partnerBirthdate: true,
+          partnerNationality: true,
+          partnerCity: true,
+          partnerState: true,
+          partnerCountry: true,
+          unionDate: true,
+          divorceDate: true,
+          maritalStatus: true,
+        },
+      });
+
+      if (!familyForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return familyForm;
     }),
   submitFamily: isUserAuthedProcedure
     .input(
@@ -2310,6 +2596,48 @@ export const formsRouter = router({
       });
 
       return { message: "Informações salvas", redirectStep };
+    }),
+  getWorkEducation: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const workEducationForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          occupation: true,
+          office: true,
+          companyOrBossName: true,
+          companyAddress: true,
+          companyCity: true,
+          companyState: true,
+          companyCountry: true,
+          companyCep: true,
+          companyTel: true,
+          admissionDate: true,
+          monthlySalary: true,
+          retireeDate: true,
+          jobDetails: true,
+          previousJobConfirmation: true,
+          previousJobs: true,
+          courses: true,
+        },
+      });
+
+      if (!workEducationForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return workEducationForm;
     }),
   submitWorkEducation: isUserAuthedProcedure
     .input(
@@ -2587,6 +2915,48 @@ export const formsRouter = router({
       });
 
       return { message: "Informações salvas", redirectStep };
+    }),
+  getAdditionalInformation: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const additionalInformationForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          languages: true,
+          fiveYearsOtherCountryTravelsConfirmation: true,
+          fiveYearsOtherCountryTravels: true,
+          socialOrganizationConfirmation: true,
+          socialOrganization: true,
+          weaponTrainingConfirmation: true,
+          weaponTrainingDetails: true,
+          militaryServiceConfirmation: true,
+          militaryServiceCountry: true,
+          militaryServiceLocal: true,
+          militaryServicePatent: true,
+          militaryServiceSpecialty: true,
+          militaryServiceStartDate: true,
+          militaryServiceEndDate: true,
+          insurgencyOrganizationConfirmation: true,
+          insurgencyOrganizationDetails: true,
+        },
+      });
+
+      if (!additionalInformationForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return additionalInformationForm;
     }),
   submitAdditionalInformation: isUserAuthedProcedure
     .input(
@@ -2913,6 +3283,86 @@ export const formsRouter = router({
       });
 
       return { message: "Informações salvas", redirectStep };
+    }),
+  getSecurity: isUserAuthedProcedure
+    .input(
+      z.object({
+        profileId: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { profileId } = opts.input;
+
+      const securityForm = await prisma.form.findFirst({
+        where: {
+          profileId,
+        },
+        select: {
+          contagiousDiseaseConfirmation: true,
+          contagiousDiseaseConfirmationDetails: true,
+          phisicalMentalProblemConfirmation: true,
+          phisicalMentalProblemConfirmationDetails: true,
+          crimeConfirmation: true,
+          crimeConfirmationDetails: true,
+          drugsProblemConfirmation: true,
+          drugsProblemConfirmationDetails: true,
+          lawViolateConfirmation: true,
+          lawViolateConfirmationDetails: true,
+          prostitutionConfirmation: true,
+          prostitutionConfirmationDetails: true,
+          moneyLaundryConfirmation: true,
+          moneyLaundryConfirmationDetails: true,
+          peopleTrafficConfirmation: true,
+          peopleTrafficConfirmationDetails: true,
+          helpPeopleTrafficConfirmation: true,
+          helpPeopleTrafficConfirmationDetails: true,
+          parentPeopleTrafficConfirmation: true,
+          parentPeopleTrafficConfirmationDetails: true,
+          spyConfirmation: true,
+          spyConfirmationDetails: true,
+          terrorismConfirmation: true,
+          terrorismConfirmationDetails: true,
+          financialAssistanceConfirmation: true,
+          financialAssistanceConfirmationDetails: true,
+          terrorismMemberConfirmation: true,
+          terrorismMemberConfirmationDetails: true,
+          parentTerrorismConfirmation: true,
+          parentTerrorismConfirmationDetails: true,
+          genocideConfirmation: true,
+          genocideConfirmationDetails: true,
+          tortureConfirmation: true,
+          tortureConfirmationDetails: true,
+          assassinConfirmation: true,
+          assassinConfirmationDetails: true,
+          childSoldierConfirmation: true,
+          childSoldierConfirmationDetails: true,
+          religionLibertyConfirmation: true,
+          religionLibertyConfirmationDetails: true,
+          abortConfirmation: true,
+          abortConfirmationDetails: true,
+          coerciveTransplantConfirmation: true,
+          coerciveTransplantConfirmationDetails: true,
+          visaFraudConfirmation: true,
+          visaFraudConfirmationDetails: true,
+          deportedConfirmation: true,
+          deportedConfirmationDetails: true,
+          childCustodyConfirmation: true,
+          childCustodyConfirmationDetails: true,
+          lawViolationConfirmation: true,
+          lawViolationConfirmationDetails: true,
+          avoidTaxConfirmation: true,
+          avoidTaxConfirmationDetails: true,
+        },
+      });
+
+      if (!securityForm) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Erro ao resgatar o formulário",
+        });
+      }
+
+      return securityForm;
     }),
   submitSecurity: isUserAuthedProcedure
     .input(

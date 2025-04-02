@@ -3,12 +3,11 @@
 import { z } from "zod";
 import { toast } from "sonner";
 import { ChangeEvent, useEffect, useState } from "react";
-import { format, formatDate, getYear, isValid, parse } from "date-fns";
+import { format, getYear, isValid, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import isEmail from "validator/lib/isEmail";
-import { Form as FormType } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader2, Save, Calendar as CalendarIcon } from "lucide-react";
 
@@ -23,65 +22,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
-
-const USALocations = [
-  "Alabama",
-  "Alaska",
-  "American Samoa",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-  "Connecticut",
-  "Delaware",
-  "District Of Columbia",
-  "Florida",
-  "Georgia",
-  "Guam",
-  "Hawaii",
-  "Idaho",
-  "Illinois",
-  "Indiana",
-  "Iowa",
-  "Kansas",
-  "Kentucky",
-  "Louisiana",
-  "Maine",
-  "Maryland",
-  "Massachusetts",
-  "Michigan",
-  "Minnesota",
-  "Mississippi",
-  "Missouri",
-  "Montana",
-  "Nebraska",
-  "Nevada",
-  "New Hampshire",
-  "New Jersey",
-  "New Mexico",
-  "New York",
-  "North Carolina",
-  "North Dakota",
-  "Northern Mariana Islands",
-  "Ohio",
-  "Oklahoma",
-  "Oregon",
-  "Pennsylvania",
-  "Puerto Rico",
-  "Rhode Island",
-  "South Carolina",
-  "South Dakota",
-  "Tennessee",
-  "Texas",
-  "Utah",
-  "Vermont",
-  "Virgin Islands",
-  "Virginia",
-  "Washington",
-  "West Virginia",
-  "Wisconsin",
-  "Wyoming",
-];
+import { AboutTravelFormType } from "@/types";
+import { USALocations } from "@/constants";
 
 const formSchema = z
   .object({
@@ -126,7 +68,7 @@ const formSchema = z
         payerRelation,
         payerEmail,
       },
-      ctx
+      ctx,
     ) => {
       if (hasAddressInUSA === "Sim" && USACompleteAddress.length === 0) {
         ctx.addIssue({
@@ -199,16 +141,16 @@ const formSchema = z
           path: ["payerEmail"],
         });
       }
-    }
+    },
   );
 
 interface Props {
-  currentForm: FormType;
+  aboutTravelForm: AboutTravelFormType;
   profileId: string;
   isEditing: boolean;
 }
 
-export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
+export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props) {
   const [USAPreviewArriveDateCalendar, setUSAPreviewArriveDateCalendar] = useState<Date | undefined>(undefined);
   const [USAPreviewReturnDateCalendar, setUSAPreviewReturnDateCalendar] = useState<Date | undefined>(undefined);
   const { redirectStep, setRedirectStep } = useFormStore();
@@ -216,31 +158,33 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      travelItineraryConfirmation: currentForm.travelItineraryConfirmation ? "Sim" : "Não",
-      USAPreviewArriveDate: currentForm.USAPreviewArriveDate
-        ? format(currentForm.USAPreviewArriveDate, "dd/MM/yyyy")
+      travelItineraryConfirmation: aboutTravelForm.travelItineraryConfirmation ? "Sim" : "Não",
+      USAPreviewArriveDate: aboutTravelForm.USAPreviewArriveDate
+        ? format(aboutTravelForm.USAPreviewArriveDate, "dd/MM/yyyy")
         : "",
-      arriveFlyNumber: currentForm.arriveFlyNumber ? currentForm.arriveFlyNumber : "",
-      arriveCity: currentForm.arriveCity ? currentForm.arriveCity : "",
-      USAPreviewReturnDate: currentForm.USAPreviewReturnDate
-        ? format(currentForm.USAPreviewReturnDate, "dd/MM/yyyy")
+      arriveFlyNumber: aboutTravelForm.arriveFlyNumber ? aboutTravelForm.arriveFlyNumber : "",
+      arriveCity: aboutTravelForm.arriveCity ? aboutTravelForm.arriveCity : "",
+      USAPreviewReturnDate: aboutTravelForm.USAPreviewReturnDate
+        ? format(aboutTravelForm.USAPreviewReturnDate, "dd/MM/yyyy")
         : "",
-      returnFlyNumber: currentForm.returnFlyNumber ? currentForm.returnFlyNumber : "",
-      returnCity: currentForm.returnCity ? currentForm.returnCity : "",
-      estimatedTimeNumber: currentForm.estimatedTimeOnUSA ? Number(currentForm.estimatedTimeOnUSA.split(" ")[0]) : 0,
-      estimatedTimeType: currentForm.estimatedTimeOnUSA ? currentForm.estimatedTimeOnUSA.split(" ")[1] : "",
-      visitLocations: currentForm.visitLocations ? currentForm.visitLocations : "",
-      hasAddressInUSA: currentForm.hasAddressInUSA ? "Sim" : "Não",
-      USACompleteAddress: currentForm.USACompleteAddress ? currentForm.USACompleteAddress : "",
-      USAZipCode: currentForm.USAZipCode ? currentForm.USAZipCode : "",
-      USACity: currentForm.USACity ? currentForm.USACity : "",
-      USAState: currentForm.USAState ? currentForm.USAState : "",
-      payer: currentForm.payer ? currentForm.payer : "",
-      payerNameOrCompany: currentForm.payerNameOrCompany ? currentForm.payerNameOrCompany : "",
-      payerTel: currentForm.payerTel ? currentForm.payerTel : "",
-      payerAddress: currentForm.payerAddress ? currentForm.payerAddress : "",
-      payerRelation: currentForm.payerRelation ? currentForm.payerRelation : "",
-      payerEmail: currentForm.payerEmail ? currentForm.payerEmail : "",
+      returnFlyNumber: aboutTravelForm.returnFlyNumber ? aboutTravelForm.returnFlyNumber : "",
+      returnCity: aboutTravelForm.returnCity ? aboutTravelForm.returnCity : "",
+      estimatedTimeNumber: aboutTravelForm.estimatedTimeOnUSA
+        ? Number(aboutTravelForm.estimatedTimeOnUSA.split(" ")[0])
+        : 0,
+      estimatedTimeType: aboutTravelForm.estimatedTimeOnUSA ? aboutTravelForm.estimatedTimeOnUSA.split(" ")[1] : "",
+      visitLocations: aboutTravelForm.visitLocations ? aboutTravelForm.visitLocations : "",
+      hasAddressInUSA: aboutTravelForm.hasAddressInUSA ? "Sim" : "Não",
+      USACompleteAddress: aboutTravelForm.USACompleteAddress ? aboutTravelForm.USACompleteAddress : "",
+      USAZipCode: aboutTravelForm.USAZipCode ? aboutTravelForm.USAZipCode : "",
+      USACity: aboutTravelForm.USACity ? aboutTravelForm.USACity : "",
+      USAState: aboutTravelForm.USAState ? aboutTravelForm.USAState : "",
+      payer: aboutTravelForm.payer ? aboutTravelForm.payer : "",
+      payerNameOrCompany: aboutTravelForm.payerNameOrCompany ? aboutTravelForm.payerNameOrCompany : "",
+      payerTel: aboutTravelForm.payerTel ? aboutTravelForm.payerTel : "",
+      payerAddress: aboutTravelForm.payerAddress ? aboutTravelForm.payerAddress : "",
+      payerRelation: aboutTravelForm.payerRelation ? aboutTravelForm.payerRelation : "",
+      payerEmail: aboutTravelForm.payerEmail ? aboutTravelForm.payerEmail : "",
     },
   });
 
@@ -316,46 +260,46 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
         profileId,
         redirectStep,
         travelItineraryConfirmation:
-          values.travelItineraryConfirmation ?? (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
+          values.travelItineraryConfirmation ?? (aboutTravelForm.travelItineraryConfirmation ? "Sim" : "Não"),
         USAPreviewArriveDate: values.USAPreviewArriveDate
           ? values.USAPreviewArriveDate
-          : currentForm.USAPreviewArriveDate
-          ? format(currentForm.USAPreviewArriveDate, "dd/MM/yyyy")
-          : "",
-        arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : currentForm.arriveFlyNumber,
-        arriveCity: values.arriveCity !== "" ? values.arriveCity : currentForm.arriveCity,
+          : aboutTravelForm.USAPreviewArriveDate
+            ? format(aboutTravelForm.USAPreviewArriveDate, "dd/MM/yyyy")
+            : "",
+        arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : aboutTravelForm.arriveFlyNumber,
+        arriveCity: values.arriveCity !== "" ? values.arriveCity : aboutTravelForm.arriveCity,
         USAPreviewReturnDate: values.USAPreviewReturnDate
           ? format(values.USAPreviewReturnDate, "dd/MM/yyyy")
-          : currentForm.USAPreviewReturnDate
-          ? format(currentForm.USAPreviewReturnDate, "dd/MM/yyyy")
-          : "",
-        returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : currentForm.returnFlyNumber,
-        returnCity: values.returnCity !== "" ? values.returnCity : currentForm.returnCity,
+          : aboutTravelForm.USAPreviewReturnDate
+            ? format(aboutTravelForm.USAPreviewReturnDate, "dd/MM/yyyy")
+            : "",
+        returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : aboutTravelForm.returnFlyNumber,
+        returnCity: values.returnCity !== "" ? values.returnCity : aboutTravelForm.returnCity,
         estimatedTimeNumber: values.estimatedTimeNumber
           ? values.estimatedTimeNumber
-          : Number(currentForm.estimatedTimeOnUSA?.split(" ")[0]),
+          : Number(aboutTravelForm.estimatedTimeOnUSA?.split(" ")[0]),
         estimatedTimeType: values.estimatedTimeType
           ? values.estimatedTimeType
-          : currentForm.estimatedTimeOnUSA!.split(" ")[1],
+          : aboutTravelForm.estimatedTimeOnUSA!.split(" ")[1],
         visitLocations:
           values.visitLocations !== ""
             ? values.visitLocations
-            : !currentForm.visitLocations
-            ? ""
-            : currentForm.visitLocations,
-        hasAddressInUSA: values.hasAddressInUSA ?? (currentForm.hasAddressInUSA ? "Sim" : "Não"),
+            : !aboutTravelForm.visitLocations
+              ? ""
+              : aboutTravelForm.visitLocations,
+        hasAddressInUSA: values.hasAddressInUSA ?? (aboutTravelForm.hasAddressInUSA ? "Sim" : "Não"),
         USACompleteAddress:
-          values.USACompleteAddress !== "" ? values.USACompleteAddress : currentForm.USACompleteAddress,
-        USAZipCode: values.USAZipCode !== "" ? values.USAZipCode : currentForm.USAZipCode,
-        USACity: values.USACity !== "" ? values.USACity : currentForm.USACity,
-        USAState: values.USAState !== "" ? values.USAState : currentForm.USAState,
-        payer: values.payer !== "" ? values.payer : currentForm.payer,
+          values.USACompleteAddress !== "" ? values.USACompleteAddress : aboutTravelForm.USACompleteAddress,
+        USAZipCode: values.USAZipCode !== "" ? values.USAZipCode : aboutTravelForm.USAZipCode,
+        USACity: values.USACity !== "" ? values.USACity : aboutTravelForm.USACity,
+        USAState: values.USAState !== "" ? values.USAState : aboutTravelForm.USAState,
+        payer: values.payer !== "" ? values.payer : aboutTravelForm.payer,
         payerNameOrCompany:
-          values.payerNameOrCompany !== "" ? values.payerNameOrCompany : currentForm.payerNameOrCompany,
-        payerTel: values.payerTel !== "" ? values.payerTel : currentForm.payerTel,
-        payerAddress: values.payerAddress !== "" ? values.payerAddress : currentForm.payerAddress,
-        payerRelation: values.payerRelation !== "" ? values.payerRelation : currentForm.payerRelation,
-        payerEmail: values.payerEmail !== "" ? values.payerEmail : currentForm.payerEmail,
+          values.payerNameOrCompany !== "" ? values.payerNameOrCompany : aboutTravelForm.payerNameOrCompany,
+        payerTel: values.payerTel !== "" ? values.payerTel : aboutTravelForm.payerTel,
+        payerAddress: values.payerAddress !== "" ? values.payerAddress : aboutTravelForm.payerAddress,
+        payerRelation: values.payerRelation !== "" ? values.payerRelation : aboutTravelForm.payerRelation,
+        payerEmail: values.payerEmail !== "" ? values.payerEmail : aboutTravelForm.payerEmail,
       });
       setRedirectStep(null);
     }
@@ -371,44 +315,46 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
     saveAboutTravel({
       profileId,
       travelItineraryConfirmation:
-        values.travelItineraryConfirmation ?? (currentForm.travelItineraryConfirmation ? "Sim" : "Não"),
+        values.travelItineraryConfirmation ?? (aboutTravelForm.travelItineraryConfirmation ? "Sim" : "Não"),
       USAPreviewArriveDate: values.USAPreviewArriveDate
         ? values.USAPreviewArriveDate
-        : currentForm.USAPreviewArriveDate
-        ? format(currentForm.USAPreviewArriveDate, "dd/MM/yyyy")
-        : "",
-      arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : currentForm.arriveFlyNumber,
-      arriveCity: values.arriveCity !== "" ? values.arriveCity : currentForm.arriveCity,
+        : aboutTravelForm.USAPreviewArriveDate
+          ? format(aboutTravelForm.USAPreviewArriveDate, "dd/MM/yyyy")
+          : "",
+      arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : aboutTravelForm.arriveFlyNumber,
+      arriveCity: values.arriveCity !== "" ? values.arriveCity : aboutTravelForm.arriveCity,
       USAPreviewReturnDate: values.USAPreviewReturnDate
         ? format(values.USAPreviewReturnDate, "dd/MM/yyyy")
-        : currentForm.USAPreviewReturnDate
-        ? format(currentForm.USAPreviewReturnDate, "dd/MM/yyyy")
-        : "",
-      returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : currentForm.returnFlyNumber,
-      returnCity: values.returnCity !== "" ? values.returnCity : currentForm.returnCity,
+        : aboutTravelForm.USAPreviewReturnDate
+          ? format(aboutTravelForm.USAPreviewReturnDate, "dd/MM/yyyy")
+          : "",
+      returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : aboutTravelForm.returnFlyNumber,
+      returnCity: values.returnCity !== "" ? values.returnCity : aboutTravelForm.returnCity,
       estimatedTimeNumber: values.estimatedTimeNumber
         ? values.estimatedTimeNumber
-        : Number(currentForm.estimatedTimeOnUSA?.split(" ")[0]),
+        : Number(aboutTravelForm.estimatedTimeOnUSA?.split(" ")[0]),
       estimatedTimeType: values.estimatedTimeType
         ? values.estimatedTimeType
-        : currentForm.estimatedTimeOnUSA!.split(" ")[1],
+        : aboutTravelForm.estimatedTimeOnUSA!.split(" ")[1],
       visitLocations:
         values.visitLocations !== ""
           ? values.visitLocations
-          : !currentForm.visitLocations
-          ? ""
-          : currentForm.visitLocations,
-      hasAddressInUSA: values.hasAddressInUSA ?? (currentForm.hasAddressInUSA ? "Sim" : "Não"),
-      USACompleteAddress: values.USACompleteAddress !== "" ? values.USACompleteAddress : currentForm.USACompleteAddress,
-      USAZipCode: values.USAZipCode !== "" ? values.USAZipCode : currentForm.USAZipCode,
-      USACity: values.USACity !== "" ? values.USACity : currentForm.USACity,
-      USAState: values.USAState !== "" ? values.USAState : currentForm.USAState,
-      payer: values.payer !== "" ? values.payer : currentForm.payer,
-      payerNameOrCompany: values.payerNameOrCompany !== "" ? values.payerNameOrCompany : currentForm.payerNameOrCompany,
-      payerTel: values.payerTel !== "" ? values.payerTel : currentForm.payerTel,
-      payerAddress: values.payerAddress !== "" ? values.payerAddress : currentForm.payerAddress,
-      payerRelation: values.payerRelation !== "" ? values.payerRelation : currentForm.payerRelation,
-      payerEmail: values.payerEmail !== "" ? values.payerEmail : currentForm.payerEmail,
+          : !aboutTravelForm.visitLocations
+            ? ""
+            : aboutTravelForm.visitLocations,
+      hasAddressInUSA: values.hasAddressInUSA ?? (aboutTravelForm.hasAddressInUSA ? "Sim" : "Não"),
+      USACompleteAddress:
+        values.USACompleteAddress !== "" ? values.USACompleteAddress : aboutTravelForm.USACompleteAddress,
+      USAZipCode: values.USAZipCode !== "" ? values.USAZipCode : aboutTravelForm.USAZipCode,
+      USACity: values.USACity !== "" ? values.USACity : aboutTravelForm.USACity,
+      USAState: values.USAState !== "" ? values.USAState : aboutTravelForm.USAState,
+      payer: values.payer !== "" ? values.payer : aboutTravelForm.payer,
+      payerNameOrCompany:
+        values.payerNameOrCompany !== "" ? values.payerNameOrCompany : aboutTravelForm.payerNameOrCompany,
+      payerTel: values.payerTel !== "" ? values.payerTel : aboutTravelForm.payerTel,
+      payerAddress: values.payerAddress !== "" ? values.payerAddress : aboutTravelForm.payerAddress,
+      payerRelation: values.payerRelation !== "" ? values.payerRelation : aboutTravelForm.payerRelation,
+      payerEmail: values.payerEmail !== "" ? values.payerEmail : aboutTravelForm.payerEmail,
     });
   }
 
@@ -643,7 +589,7 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
-                travelItineraryConfirmation === "Não" && "hidden"
+                travelItineraryConfirmation === "Não" && "hidden",
               )}
             >
               <FormField
@@ -1000,8 +946,8 @@ export function AboutTravelForm({ currentForm, profileId, isEditing }: Props) {
                       {payer === "Outra pessoa"
                         ? "Nome de quem pagará a viagem*"
                         : payer === "Empresa"
-                        ? "Empresa que pagará a viagem*"
-                        : "Nome ou Empresa que pagará a viagem*"}
+                          ? "Empresa que pagará a viagem*"
+                          : "Nome ou Empresa que pagará a viagem*"}
                     </FormLabel>
 
                     <FormControl>
