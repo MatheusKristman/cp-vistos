@@ -44,7 +44,7 @@ export default function FormPage({ params }: { params: { profileId: string } }) 
   });
   const { data: isMinor, isPending: checkIsMinorPending } = trpc.formsRouter.checkIsMinor.useQuery({ profileId });
 
-  const loading = !formSteps || checkIsMinorPending || isCurrentStepPending;
+  const loading = formSteps !== undefined || checkIsMinorPending || isCurrentStepPending;
 
   const currentStep = formSteps ?? 0;
 
