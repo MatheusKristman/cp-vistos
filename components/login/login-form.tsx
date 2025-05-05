@@ -2,27 +2,25 @@
 
 import { z } from "zod";
 import { toast } from "sonner";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { LoginCurve } from "iconsax-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Autoplay from "embla-carousel-autoplay";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Autoplay from "embla-carousel-autoplay";
-import { AnimatePresence, motion } from "framer-motion";
 
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { LoginHeader } from "./login-header";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
-  email: z.string().min(1, "E-mail obrigatório").email("E-mail inválido").toLowerCase(),
+  email: z.string().trim().min(1, "E-mail obrigatório").email("E-mail inválido").toLowerCase(),
   password: z.string().min(1, "Senha obrigatória"),
 });
 
@@ -134,7 +132,7 @@ export function LoginForm() {
                 <div
                   className={cn(
                     "relative w-full h-full bg-cover bg-center flex sm:justify-end after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0 after:bg-gradient-to-b after:from-transparent after:to-black/50",
-                    item.background
+                    item.background,
                   )}
                 >
                   <div className="w-full h-full flex flex-col justify-end gap-6 pb-20 px-12 relative z-10">

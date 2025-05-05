@@ -13,7 +13,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -37,7 +37,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -68,7 +68,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -97,7 +97,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -128,7 +128,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -207,7 +207,7 @@ export const formsRouter = router({
               otherNamesConfirmation,
               otherNames,
             },
-            ctx
+            ctx,
           ) => {
             if (
               otherNationalityConfirmation === "Sim" &&
@@ -249,8 +249,8 @@ export const formsRouter = router({
                 path: ["otherCountryResident"],
               });
             }
-          }
-        )
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -406,7 +406,7 @@ export const formsRouter = router({
         otherCountryResident: z.string().optional().nullable(),
         USSocialSecurityNumber: z.string().nullable(),
         USTaxpayerIDNumber: z.string().nullable(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -489,7 +489,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -552,14 +552,14 @@ export const formsRouter = router({
         tel: z.string(),
         fiveYearsOtherTelConfirmation: z.enum(["Sim", "Não"]),
         otherTel: z.array(z.string().min(1)).optional(),
-        email: z.string().min(1).email(),
+        email: z.string().trim().min(1).email(),
         fiveYearsOtherEmailConfirmation: z.enum(["Sim", "Não"]),
-        otherEmail: z.union([z.literal(""), z.string().email()]),
+        otherEmail: z.union([z.literal(""), z.string().trim().email()]),
         facebook: z.string(),
         linkedin: z.string(),
         instagram: z.string(),
         othersSocialMedia: z.string(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -695,14 +695,14 @@ export const formsRouter = router({
         tel: z.string().nullable(),
         fiveYearsOtherTelConfirmation: z.enum(["Sim", "Não"]).nullable(),
         otherTel: z.array(z.string().min(1)).optional(),
-        email: z.string().nullable(),
+        email: z.string().trim().nullable(),
         fiveYearsOtherEmailConfirmation: z.enum(["Sim", "Não"]).nullable(),
-        otherEmail: z.string().nullable(),
+        otherEmail: z.string().trim().nullable(),
         facebook: z.string().nullable(),
         linkedin: z.string().nullable(),
         instagram: z.string().nullable(),
         othersSocialMedia: z.string().nullable(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -789,7 +789,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -837,7 +837,7 @@ export const formsRouter = router({
         lostPassportNumber: z.string(),
         lostPassportCountry: z.string(),
         lostPassportDetails: z.string(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -947,7 +947,7 @@ export const formsRouter = router({
         lostPassportNumber: z.string().nullable(),
         lostPassportCountry: z.string().nullable(),
         lostPassportDetails: z.string().nullable(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -1012,7 +1012,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -1081,7 +1081,7 @@ export const formsRouter = router({
           payerTel: z.string(),
           payerAddress: z.string(),
           payerRelation: z.string(),
-          payerEmail: z.string(),
+          payerEmail: z.string().trim(),
         })
         .superRefine(
           (
@@ -1098,7 +1098,7 @@ export const formsRouter = router({
               payerRelation,
               payerEmail,
             },
-            ctx
+            ctx,
           ) => {
             if (hasAddressInUSA === "Sim" && USACompleteAddress.length === 0) {
               ctx.addIssue({
@@ -1132,7 +1132,7 @@ export const formsRouter = router({
               });
             }
 
-            if ((payer === "Outra pessoa" || payer === "Empresa") && payerNameOrCompany.length === 0) {
+            if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerNameOrCompany.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1140,7 +1140,7 @@ export const formsRouter = router({
               });
             }
 
-            if ((payer === "Outra pessoa" || payer === "Empresa") && payerTel.length === 0) {
+            if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerTel.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1148,7 +1148,7 @@ export const formsRouter = router({
               });
             }
 
-            if ((payer === "Outra pessoa" || payer === "Empresa") && payerAddress.length === 0) {
+            if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerAddress.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
@@ -1164,7 +1164,7 @@ export const formsRouter = router({
               });
             }
 
-            if ((payer === "Outra pessoa" || payer === "Empresa") && !isEmail(payerEmail)) {
+            if ((payer === "Outra pessoa" || payer === "Outra Empresa") && !isEmail(payerEmail)) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "E-mail inválido",
@@ -1172,15 +1172,15 @@ export const formsRouter = router({
               });
             }
 
-            if ((payer === "Outra pessoa" || payer === "Empresa") && payerEmail.length === 0) {
+            if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerEmail.length === 0) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Campo vazio, preencha para prosseguir",
                 path: ["payerEmail"],
               });
             }
-          }
-        )
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -1335,8 +1335,8 @@ export const formsRouter = router({
         payerTel: z.string().nullable(),
         payerAddress: z.string().nullable(),
         payerRelation: z.string().nullable(),
-        payerEmail: z.string().nullable(),
-      })
+        payerEmail: z.string().trim().nullable(),
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -1436,7 +1436,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -1474,7 +1474,7 @@ export const formsRouter = router({
             z.object({
               name: z.string(),
               relation: z.string(),
-            })
+            }),
           ),
           groupMemberConfirmation: z.enum(["Sim", "Não"]),
           groupName: z.string(),
@@ -1512,8 +1512,8 @@ export const formsRouter = router({
                 path: [`otherPeopleTraveling.${otherPeopleTraveling.length - 1}.relation`],
               });
             }
-          }
-        )
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -1606,11 +1606,11 @@ export const formsRouter = router({
           z.object({
             name: z.string(),
             relation: z.string(),
-          })
+          }),
         ),
         groupMemberConfirmation: z.enum(["Sim", "Não"]).nullable(),
         groupName: z.string().nullable(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -1663,7 +1663,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -1718,7 +1718,7 @@ export const formsRouter = router({
             z.object({
               arriveDate: z.coerce.date(),
               estimatedTime: z.string(),
-            })
+            }),
           ),
           americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
           americanLicense: z.object({
@@ -1762,7 +1762,7 @@ export const formsRouter = router({
               immigrationRequestByAnotherPersonConfirmation,
               immigrationRequestByAnotherPersonDetails,
             },
-            ctx
+            ctx,
           ) => {
             if (
               hasBeenOnUSAConfirmation === "Sim" &&
@@ -1854,8 +1854,8 @@ export const formsRouter = router({
                 path: ["immigrationRequestByAnotherPersonDetails"],
               });
             }
-          }
-        )
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -1982,7 +1982,7 @@ export const formsRouter = router({
           z.object({
             arriveDate: z.coerce.date().nullable(),
             estimatedTime: z.string(),
-          })
+          }),
         ),
         americanLicenseToDriveConfirmation: z.enum(["Sim", "Não"]),
         americanLicense: z.object({
@@ -2006,7 +2006,7 @@ export const formsRouter = router({
         deniedVisaType: z.string(),
         immigrationRequestByAnotherPersonConfirmation: z.enum(["Sim", "Não"]),
         immigrationRequestByAnotherPersonDetails: z.string(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -2093,7 +2093,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -2138,8 +2138,8 @@ export const formsRouter = router({
         organizationOrUSAResidentCity: z.string(),
         organizationOrUSAResidentState: z.string(),
         organizationOrUSAResidentTel: z.string(),
-        organizationOrUSAResidentEmail: z.string(),
-      })
+        organizationOrUSAResidentEmail: z.string().trim(),
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -2245,8 +2245,8 @@ export const formsRouter = router({
         organizationOrUSAResidentCity: z.string(),
         organizationOrUSAResidentState: z.string(),
         organizationOrUSAResidentTel: z.string(),
-        organizationOrUSAResidentEmail: z.string(),
-      })
+        organizationOrUSAResidentEmail: z.string().trim(),
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -2309,7 +2309,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -2370,7 +2370,7 @@ export const formsRouter = router({
             name: z.string(),
             relation: z.string(),
             situation: z.string(),
-          })
+          }),
         ),
         partnerCompleteName: z.string(),
         partnerBirthdate: z.date().optional(),
@@ -2380,7 +2380,7 @@ export const formsRouter = router({
         partnerCountry: z.string(),
         unionDate: z.date().optional(),
         divorceDate: z.date().optional(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -2510,7 +2510,7 @@ export const formsRouter = router({
             name: z.string(),
             relation: z.string(),
             situation: z.string(),
-          })
+          }),
         ),
         partnerCompleteName: z.string(),
         partnerBirthdate: z.coerce.date().optional().nullable(),
@@ -2520,7 +2520,7 @@ export const formsRouter = router({
         partnerCountry: z.string(),
         unionDate: z.coerce.date().optional().nullable(),
         divorceDate: z.coerce.date().optional().nullable(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -2601,7 +2601,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -2673,7 +2673,7 @@ export const formsRouter = router({
             admissionDate: z.coerce.date(),
             resignationDate: z.coerce.date(),
             jobDescription: z.string(),
-          })
+          }),
         ),
         courses: z.array(
           z.object({
@@ -2686,9 +2686,9 @@ export const formsRouter = router({
             courseName: z.string(),
             initialDate: z.coerce.date(),
             finishDate: z.coerce.date(),
-          })
+          }),
         ),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -2828,7 +2828,7 @@ export const formsRouter = router({
             admissionDate: z.coerce.date().nullable(),
             resignationDate: z.coerce.date().nullable(),
             jobDescription: z.string(),
-          })
+          }),
         ),
         courses: z.array(
           z.object({
@@ -2841,9 +2841,9 @@ export const formsRouter = router({
             courseName: z.string(),
             initialDate: z.coerce.date().nullable(),
             finishDate: z.coerce.date().nullable(),
-          })
+          }),
         ),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -2920,7 +2920,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -3001,7 +3001,7 @@ export const formsRouter = router({
               insurgencyOrganizationConfirmation,
               insurgencyOrganizationDetails,
             },
-            ctx
+            ctx,
           ) => {
             if (fiveYearsOtherCountryTravelsConfirmation === "Sim" && fiveYearsOtherCountryTravels.length === 0) {
               ctx.addIssue({
@@ -3082,8 +3082,8 @@ export const formsRouter = router({
                 path: ["insurgencyOrganizationDetails"],
               });
             }
-          }
-        )
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -3211,7 +3211,7 @@ export const formsRouter = router({
         militaryServiceEndDate: z.date().optional().nullable(),
         insurgencyOrganizationConfirmation: z.enum(["Sim", "Não"]),
         insurgencyOrganizationDetails: z.string().nullable(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {
@@ -3288,7 +3288,7 @@ export const formsRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .query(async (opts) => {
       const { profileId } = opts.input;
@@ -3484,7 +3484,7 @@ export const formsRouter = router({
               avoidTaxConfirmation,
               avoidTaxConfirmationDetails,
             },
-            ctx
+            ctx,
           ) => {
             if (contagiousDiseaseConfirmation === "") {
               ctx.addIssue({
@@ -3917,8 +3917,8 @@ export const formsRouter = router({
                 path: ["avoidTaxConfirmationDetails"],
               });
             }
-          }
-        )
+          },
+        ),
     )
     .mutation(async (opts) => {
       const {
@@ -4222,7 +4222,7 @@ export const formsRouter = router({
         lawViolationConfirmationDetails: z.string().nullable(),
         avoidTaxConfirmation: z.enum(["", "Sim", "Não"]),
         avoidTaxConfirmationDetails: z.string().nullable(),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const {

@@ -16,7 +16,7 @@ import useCollaboratorStore from "@/constants/stores/useCollaboratorStore";
 const formSchema = z
   .object({
     name: z.string().min(1, { message: "Nome é obrigatório" }),
-    email: z.string().min(1, { message: "E-mail é obrigatório" }).email({ message: "E-mail inválido" }),
+    email: z.string().trim().min(1, { message: "E-mail é obrigatório" }).email({ message: "E-mail inválido" }),
     password: z.string(),
     passwordConfirm: z.string(),
   })

@@ -65,6 +65,7 @@ export const userRouter = router({
             invalid_type_error: "E-mail inválido",
           })
           .email({ message: "E-mail inválido" })
+          .trim()
           .min(1, { message: "E-mail é obrigatório" }),
         password: z
           .string({
@@ -88,6 +89,7 @@ export const userRouter = router({
             invalid_type_error: "E-mail inválido",
           })
           .email({ message: "E-mail inválido" })
+          .trim()
           .min(1, { message: "E-mail é obrigatório" }),
         passwordScheduleAccount: z
           .string({
@@ -168,7 +170,7 @@ export const userRouter = router({
                       "O3 Cônjuge ou Filho de um O1 ou O2",
                       "",
                     ],
-                    { message: "Classe de visto inválida" }
+                    { message: "Classe de visto inválida" },
                   )
                   .optional(),
                 category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -243,12 +245,12 @@ export const userRouter = router({
                     message: "Horário do agendamento inválido",
                   });
                 }
-              })
+              }),
           )
           .min(1, {
             message: "Precisa ter pelo menos um perfil vinculado a conta",
           }),
-      })
+      }),
     )
     .mutation(async (opts) => {
       let scheduleAccount;
@@ -532,7 +534,7 @@ export const userRouter = router({
                 "O3 Cônjuge ou Filho de um O1 ou O2",
                 "",
               ],
-              { message: "Classe de visto inválida" }
+              { message: "Classe de visto inválida" },
             )
             .optional(),
           category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -607,7 +609,7 @@ export const userRouter = router({
               message: "Horário do agendamento inválido",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const {
@@ -793,7 +795,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -847,7 +849,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -901,7 +903,7 @@ export const userRouter = router({
     .input(
       z.object({
         category: z.enum(["american_visa", "passport", "e_ta"]),
-      })
+      }),
     )
     .query(async (opts) => {
       const { category } = opts.input;
@@ -980,7 +982,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -1017,7 +1019,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const profileId = opts.input.profileId;
@@ -1054,7 +1056,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "filling", "filled", "emitted"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1091,7 +1093,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["awaiting", "approved", "disapproved", "in_progress", "finished"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1128,7 +1130,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["paid", "pending"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1165,7 +1167,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         status: z.enum(["approved", "disapproved", "analysis"]),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, status } = opts.input;
@@ -1202,7 +1204,7 @@ export const userRouter = router({
       z.object({
         userId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { userId, annotation } = opts.input;
@@ -1224,7 +1226,7 @@ export const userRouter = router({
     .input(
       z.object({
         annotationId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { annotationId } = opts.input;
@@ -1242,7 +1244,7 @@ export const userRouter = router({
       z.object({
         annotationId: z.string().min(1),
         annotation: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { annotationId, annotation } = opts.input;
@@ -1271,7 +1273,7 @@ export const userRouter = router({
             .optional()
             .refine((val) => !val || (val && val.length === 0)),
           address: z.string(),
-          email: z.string().email().min(1),
+          email: z.string().trim().email().min(1),
           password: z.string(),
           passwordConfirm: z.string(),
           emailScheduleAccount: z.string().email().min(1),
@@ -1329,7 +1331,7 @@ export const userRouter = router({
               message: "As senhas não coincidem, verifique e tente novamente",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const {
@@ -1417,7 +1419,7 @@ export const userRouter = router({
       z.object({
         profileId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId, comment } = opts.input;
@@ -1445,7 +1447,7 @@ export const userRouter = router({
     .input(
       z.object({
         commentId: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { commentId } = opts.input;
@@ -1463,7 +1465,7 @@ export const userRouter = router({
       z.object({
         commentId: z.string().min(1),
         comment: z.array(z.string()).min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { commentId, comment } = opts.input;
@@ -1517,7 +1519,7 @@ export const userRouter = router({
                 "O3 Cônjuge ou Filho de um O1 ou O2",
                 "",
               ],
-              { message: "Classe de visto inválida" }
+              { message: "Classe de visto inválida" },
             )
             .optional(),
           category: z.enum(["Visto Americano", "Passaporte", "E-TA", ""]).refine((val) => val.length !== 0, {
@@ -1586,7 +1588,7 @@ export const userRouter = router({
               message: "Horário do agendamento inválido",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const {
@@ -1801,7 +1803,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1821,7 +1823,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1841,7 +1843,7 @@ export const userRouter = router({
     .input(
       z.object({
         profileId: z.string().min(1, "ID do perfil é obrigatório"),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { profileId } = opts.input;
@@ -1887,7 +1889,7 @@ export const userRouter = router({
               message: "As senhas não coincidem",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const { actualPassword, newPassword } = opts.input;

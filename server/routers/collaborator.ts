@@ -19,7 +19,7 @@ export const collaboratorRouter = router({
     .input(
       z.object({
         id: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { id } = opts.input;
@@ -37,7 +37,7 @@ export const collaboratorRouter = router({
       z
         .object({
           name: z.string().min(1).min(6),
-          email: z.string().min(1).email(),
+          email: z.string().trim().min(1).email(),
           password: z.string().min(1).min(6),
           passwordConfirm: z.string().min(1).min(6),
         })
@@ -48,7 +48,7 @@ export const collaboratorRouter = router({
               code: "custom",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const { name, email, password } = opts.input;
@@ -72,7 +72,7 @@ export const collaboratorRouter = router({
         .object({
           collaboratorId: z.string().min(1),
           name: z.string().min(1).min(6),
-          email: z.string().min(1).email(),
+          email: z.string().trim().min(1).email(),
           password: z.string(),
           passwordConfirm: z.string(),
         })
@@ -97,7 +97,7 @@ export const collaboratorRouter = router({
               code: "custom",
             });
           }
-        })
+        }),
     )
     .mutation(async (opts) => {
       const { collaboratorId, name, email, password } = opts.input;
@@ -133,7 +133,7 @@ export const collaboratorRouter = router({
     .input(
       z.object({
         id: z.string().min(1),
-      })
+      }),
     )
     .mutation(async (opts) => {
       const { id } = opts.input;

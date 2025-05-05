@@ -59,6 +59,7 @@ const formSchema = z
         required_error: "E-mail é obrigatório",
         invalid_type_error: "E-mail inválido",
       })
+      .trim()
       .email({ message: "E-mail inválido" })
       .min(1, { message: "E-mail é obrigatório" }),
     password: z.string({

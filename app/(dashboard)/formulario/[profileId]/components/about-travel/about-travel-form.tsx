@@ -94,7 +94,7 @@ const formSchema = z
         });
       }
 
-      if ((payer === "Outra pessoa" || payer === "Empresa") && payerNameOrCompany.length === 0) {
+      if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerNameOrCompany.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -102,7 +102,7 @@ const formSchema = z
         });
       }
 
-      if ((payer === "Outra pessoa" || payer === "Empresa") && payerTel.length === 0) {
+      if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerTel.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -110,7 +110,7 @@ const formSchema = z
         });
       }
 
-      if ((payer === "Outra pessoa" || payer === "Empresa") && payerAddress.length === 0) {
+      if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerAddress.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -126,7 +126,7 @@ const formSchema = z
         });
       }
 
-      if ((payer === "Outra pessoa" || payer === "Empresa") && !isEmail(payerEmail)) {
+      if ((payer === "Outra pessoa" || payer === "Outra Empresa") && !isEmail(payerEmail)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "E-mail inválido",
@@ -134,7 +134,7 @@ const formSchema = z
         });
       }
 
-      if ((payer === "Outra pessoa" || payer === "Empresa") && payerEmail.length === 0) {
+      if ((payer === "Outra pessoa" || payer === "Outra Empresa") && payerEmail.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Campo vazio, preencha para prosseguir",
@@ -918,7 +918,7 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
 
                         <SelectItem value="Outra pessoa">Outra pessoa</SelectItem>
 
-                        <SelectItem value="Empresa">Empresa</SelectItem>
+                        <SelectItem value="Outra Empresa">Outra Empresa</SelectItem>
 
                         <SelectItem value="Empregador">Empregador</SelectItem>
                       </SelectContent>
@@ -945,7 +945,7 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
                     <FormLabel className="text-foreground">
                       {payer === "Outra pessoa"
                         ? "Nome de quem pagará a viagem*"
-                        : payer === "Empresa"
+                        : payer === "Outra Empresa"
                           ? "Empresa que pagará a viagem*"
                           : "Nome ou Empresa que pagará a viagem*"}
                     </FormLabel>
