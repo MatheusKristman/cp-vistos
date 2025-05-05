@@ -52,7 +52,7 @@ const formSchema = z
       }),
     payerAddress: z.string(),
     payerRelation: z.string(),
-    payerEmail: z.string(),
+    payerEmail: z.string().trim(),
   })
   .superRefine(
     (
