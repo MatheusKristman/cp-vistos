@@ -1475,9 +1475,7 @@ export function ClientDetailsForm({ handleClose }: Props) {
 
                       <div className="w-full grid grid-cols-1 gap-6">
                         <div className="w-full flex flex-col gap-1">
-                          <span className="text-sm text-foreground/70 font-medium">
-                            Nome do empregador ou empresa lg font-medium
-                          </span>
+                          <span className="text-sm text-foreground/70 font-medium">Nome do empregador ou empresa</span>
 
                           <span className="text-base text-foreground">{previousJobs.companyName}</span>
                         </div>
