@@ -65,6 +65,7 @@ export type PersonalDataFormType = {
   birthState: string | null;
   birthCountry: string | null;
   originCountry: string | null;
+  ESTAVisaDeniedConfirmation: boolean | null;
   otherNationalityConfirmation: boolean | null;
   otherNationalityPassport: string | null;
   otherNationalityCountry: string | null;

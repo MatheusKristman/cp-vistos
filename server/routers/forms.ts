@@ -7,6 +7,7 @@ import { NotificationStatusForm, StatusForm } from "@prisma/client";
 import isEmail from "validator/lib/isEmail";
 import { differenceInYears, parse } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
+import { exportTraceState } from "next/dist/trace";
 
 export const formsRouter = router({
   getProfile: isUserAuthedProcedure
@@ -150,6 +151,7 @@ export const formsRouter = router({
           birthState: true,
           birthCountry: true,
           originCountry: true,
+          ESTAVisaDeniedConfirmation: true,
           otherNationalityConfirmation: true,
           otherNationalityPassport: true,
           otherNationalityCountry: true,
@@ -188,6 +190,7 @@ export const formsRouter = router({
           birthState: z.string().min(1),
           birthCountry: z.string().min(1),
           originCountry: z.string().min(1),
+          ESTAVisaDeniedConfirmation: z.enum(["Sim", "Não"]),
           otherNationalityConfirmation: z.enum(["Sim", "Não"]),
           otherNationalityPassport: z.string().optional(),
           otherNationalityCountry: z.string().optional(),
@@ -269,6 +272,7 @@ export const formsRouter = router({
         birthState,
         birthCountry,
         originCountry,
+        ESTAVisaDeniedConfirmation,
         otherNationalityConfirmation,
         otherNationalityPassport,
         otherNationalityCountry,
@@ -370,6 +374,7 @@ export const formsRouter = router({
           birthState,
           birthCountry,
           originCountry,
+          ESTAVisaDeniedConfirmation: ESTAVisaDeniedConfirmation === "Sim",
           otherNationalityConfirmation: otherNationalityConfirmation === "Sim",
           otherNationalityPassport,
           otherNationalityCountry,
@@ -399,6 +404,7 @@ export const formsRouter = router({
         birthState: z.string().nullable(),
         birthCountry: z.string().nullable(),
         originCountry: z.string().nullable(),
+        ESTAVisaDeniedConfirmation: z.enum(["Sim", "Não"]).nullable(),
         otherNationalityConfirmation: z.enum(["Sim", "Não"]).nullable(),
         otherNationalityPassport: z.string().optional().nullable(),
         otherNationalityCountry: z.string().optional().nullable(),
@@ -424,6 +430,7 @@ export const formsRouter = router({
         birthState,
         birthCountry,
         originCountry,
+        ESTAVisaDeniedConfirmation,
         otherNationalityConfirmation,
         otherNationalityPassport,
         otherNationalityCountry,
@@ -473,6 +480,7 @@ export const formsRouter = router({
           birthState,
           birthCountry,
           originCountry,
+          ESTAVisaDeniedConfirmation: ESTAVisaDeniedConfirmation === "Sim",
           otherNationalityConfirmation: otherNationalityConfirmation === "Sim",
           otherNationalityPassport,
           otherNationalityCountry,

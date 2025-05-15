@@ -229,6 +229,7 @@ model Form {
   birthState                       String?
   birthCountry                     String?
   originCountry                    String?
+  ESTAVisaDeniedConfirmation       Boolean?
   otherNationalityConfirmation     Boolean?
   otherNationalityPassport         String?
   otherNationalityCountry          String?

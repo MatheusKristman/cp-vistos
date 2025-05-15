@@ -39,6 +39,7 @@ const formSchema = z
     birthState: z.string().min(1, "Campo obrigatório"),
     birthCountry: z.string().min(1, "Campo obrigatório"),
     originCountry: z.string().min(1, "Campo obrigatório"),
+    ESTAVisaDeniedConfirmation: z.enum(["Sim", "Não"]),
     otherNationalityConfirmation: z.enum(["Sim", "Não"]),
     otherNationalityPassport: z.string().optional(),
     otherNationalityCountry: z.string().optional(),
@@ -58,7 +59,7 @@ const formSchema = z
         otherCountryResidentConfirmation,
         otherCountryResident,
       },
-      ctx
+      ctx,
     ) => {
       if (
         otherNationalityConfirmation === "Sim" &&
@@ -100,7 +101,7 @@ const formSchema = z
           path: ["otherCountryResident"],
         });
       }
-    }
+    },
   );
 
 interface Props {
@@ -131,6 +132,7 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
       birthState: personalDataForm.birthState ? personalDataForm.birthState : "",
       birthCountry: personalDataForm.birthCountry ? personalDataForm.birthCountry : "",
       originCountry: personalDataForm.originCountry ? personalDataForm.originCountry : "",
+      ESTAVisaDeniedConfirmation: personalDataForm.ESTAVisaDeniedConfirmation ? "Sim" : "Não",
       otherNationalityConfirmation: personalDataForm.otherNationalityConfirmation ? "Sim" : "Não",
       otherNationalityPassport: personalDataForm.otherNationalityPassport
         ? personalDataForm.otherNationalityPassport
@@ -219,13 +221,15 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
           values.maritalStatus !== ""
             ? values.maritalStatus
             : !personalDataForm.maritalStatus
-            ? undefined
-            : personalDataForm.maritalStatus,
+              ? undefined
+              : personalDataForm.maritalStatus,
         birthDate: values.birthDate ?? personalDataForm.birthDate,
         birthCity: values.birthCity !== "" ? values.birthCity : personalDataForm.birthCity,
         birthState: values.birthState !== "" ? values.birthState : personalDataForm.birthState,
         birthCountry: values.birthCountry !== "" ? values.birthCountry : personalDataForm.birthCountry,
         originCountry: values.originCountry !== "" ? values.originCountry : personalDataForm.originCountry,
+        ESTAVisaDeniedConfirmation:
+          values.ESTAVisaDeniedConfirmation ?? (personalDataForm.ESTAVisaDeniedConfirmation ? "Sim" : "Não"),
         otherNationalityConfirmation:
           values.otherNationalityConfirmation ?? (personalDataForm.otherNationalityConfirmation ? "Sim" : "Não"),
         otherNationalityPassport:
@@ -276,13 +280,15 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
         values.maritalStatus !== ""
           ? values.maritalStatus
           : !personalDataForm.maritalStatus
-          ? undefined
-          : personalDataForm.maritalStatus,
+            ? undefined
+            : personalDataForm.maritalStatus,
       birthDate: values.birthDate ?? personalDataForm.birthDate,
       birthCity: values.birthCity !== "" ? values.birthCity : personalDataForm.birthCity,
       birthState: values.birthState !== "" ? values.birthState : personalDataForm.birthState,
       birthCountry: values.birthCountry !== "" ? values.birthCountry : personalDataForm.birthCountry,
       originCountry: values.originCountry !== "" ? values.originCountry : personalDataForm.originCountry,
+      ESTAVisaDeniedConfirmation:
+        values.ESTAVisaDeniedConfirmation ?? (personalDataForm.ESTAVisaDeniedConfirmation ? "Sim" : "Não"),
       otherNationalityConfirmation:
         values.otherNationalityConfirmation ?? (personalDataForm.otherNationalityConfirmation ? "Sim" : "Não"),
       otherNationalityPassport:
@@ -734,7 +740,7 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
               />
             </div>
 
-            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="otherNationalityConfirmation"
@@ -771,7 +777,9 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
                   </FormItem>
                 )}
               />
+            </div>
 
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6">
               <FormField
                 control={form.control}
                 name="otherNationalityCountry"
@@ -813,6 +821,46 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
                         disabled={otherNationalityConfirmation === "Não" || isPending || isSavePending}
                         {...field}
                       />
+                    </FormControl>
+
+                    <FormMessage className="text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="ESTAVisaDeniedConfirmation"
+                render={({ field }) => (
+                  <FormItem className={cn("flex flex-col gap-2", otherNationalityConfirmation === "Não" && "hidden")}>
+                    <FormLabel className="text-foreground">
+                      Você já teve sua autorização de viagem negada pelo Departamento de Segurança Interna por meio do
+                      Sistema Eletrônico de Autorização de Viagem (ESTA)?
+                    </FormLabel>
+
+                    <FormControl>
+                      <RadioGroup
+                        disabled={isPending || isSavePending || isBirthLoading}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Não" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Não</FormLabel>
+                        </FormItem>
+
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Sim" />
+                          </FormControl>
+
+                          <FormLabel className="font-normal">Sim</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
                     </FormControl>
 
                     <FormMessage className="text-sm text-destructive" />
