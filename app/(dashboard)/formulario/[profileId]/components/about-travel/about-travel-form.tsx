@@ -68,7 +68,7 @@ const formSchema = z
         payerRelation,
         payerEmail,
       },
-      ctx,
+      ctx
     ) => {
       if (hasAddressInUSA === "Sim" && USACompleteAddress.length === 0) {
         ctx.addIssue({
@@ -141,7 +141,7 @@ const formSchema = z
           path: ["payerEmail"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -264,15 +264,15 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
         USAPreviewArriveDate: values.USAPreviewArriveDate
           ? values.USAPreviewArriveDate
           : aboutTravelForm.USAPreviewArriveDate
-            ? format(aboutTravelForm.USAPreviewArriveDate, "dd/MM/yyyy")
-            : "",
+          ? format(aboutTravelForm.USAPreviewArriveDate, "dd/MM/yyyy")
+          : "",
         arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : aboutTravelForm.arriveFlyNumber,
         arriveCity: values.arriveCity !== "" ? values.arriveCity : aboutTravelForm.arriveCity,
         USAPreviewReturnDate: values.USAPreviewReturnDate
           ? format(values.USAPreviewReturnDate, "dd/MM/yyyy")
           : aboutTravelForm.USAPreviewReturnDate
-            ? format(aboutTravelForm.USAPreviewReturnDate, "dd/MM/yyyy")
-            : "",
+          ? format(aboutTravelForm.USAPreviewReturnDate, "dd/MM/yyyy")
+          : "",
         returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : aboutTravelForm.returnFlyNumber,
         returnCity: values.returnCity !== "" ? values.returnCity : aboutTravelForm.returnCity,
         estimatedTimeNumber: values.estimatedTimeNumber
@@ -285,8 +285,8 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
           values.visitLocations !== ""
             ? values.visitLocations
             : !aboutTravelForm.visitLocations
-              ? ""
-              : aboutTravelForm.visitLocations,
+            ? ""
+            : aboutTravelForm.visitLocations,
         hasAddressInUSA: values.hasAddressInUSA ?? (aboutTravelForm.hasAddressInUSA ? "Sim" : "Não"),
         USACompleteAddress:
           values.USACompleteAddress !== "" ? values.USACompleteAddress : aboutTravelForm.USACompleteAddress,
@@ -319,15 +319,15 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
       USAPreviewArriveDate: values.USAPreviewArriveDate
         ? values.USAPreviewArriveDate
         : aboutTravelForm.USAPreviewArriveDate
-          ? format(aboutTravelForm.USAPreviewArriveDate, "dd/MM/yyyy")
-          : "",
+        ? format(aboutTravelForm.USAPreviewArriveDate, "dd/MM/yyyy")
+        : "",
       arriveFlyNumber: values.arriveFlyNumber !== "" ? values.arriveFlyNumber : aboutTravelForm.arriveFlyNumber,
       arriveCity: values.arriveCity !== "" ? values.arriveCity : aboutTravelForm.arriveCity,
       USAPreviewReturnDate: values.USAPreviewReturnDate
         ? format(values.USAPreviewReturnDate, "dd/MM/yyyy")
         : aboutTravelForm.USAPreviewReturnDate
-          ? format(aboutTravelForm.USAPreviewReturnDate, "dd/MM/yyyy")
-          : "",
+        ? format(aboutTravelForm.USAPreviewReturnDate, "dd/MM/yyyy")
+        : "",
       returnFlyNumber: values.returnFlyNumber !== "" ? values.returnFlyNumber : aboutTravelForm.returnFlyNumber,
       returnCity: values.returnCity !== "" ? values.returnCity : aboutTravelForm.returnCity,
       estimatedTimeNumber: values.estimatedTimeNumber
@@ -340,8 +340,8 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
         values.visitLocations !== ""
           ? values.visitLocations
           : !aboutTravelForm.visitLocations
-            ? ""
-            : aboutTravelForm.visitLocations,
+          ? ""
+          : aboutTravelForm.visitLocations,
       hasAddressInUSA: values.hasAddressInUSA ?? (aboutTravelForm.hasAddressInUSA ? "Sim" : "Não"),
       USACompleteAddress:
         values.USACompleteAddress !== "" ? values.USACompleteAddress : aboutTravelForm.USACompleteAddress,
@@ -521,10 +521,10 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
                               locale={ptBR}
                               selected={USAPreviewArriveDateCalendar}
                               onSelect={setUSAPreviewArriveDateCalendar}
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                              disabled={(date) => date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
-                              toYear={currentYear}
+                              toYear={new Date().getFullYear() + 10}
                               month={USAPreviewArriveDateCalendar}
                               classNames={{
                                 day_hidden: "invisible",
@@ -589,7 +589,7 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
             <div
               className={cn(
                 "w-full grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-6 mb-6",
-                travelItineraryConfirmation === "Não" && "hidden",
+                travelItineraryConfirmation === "Não" && "hidden"
               )}
             >
               <FormField
@@ -633,10 +633,10 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
                               locale={ptBR}
                               selected={USAPreviewReturnDateCalendar}
                               onSelect={setUSAPreviewReturnDateCalendar}
-                              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                              disabled={(date) => date < new Date("1900-01-01")}
                               captionLayout="dropdown"
                               fromYear={1900}
-                              toYear={currentYear}
+                              toYear={new Date().getFullYear() + 10}
                               month={USAPreviewReturnDateCalendar}
                               classNames={{
                                 day_hidden: "invisible",
@@ -946,8 +946,8 @@ export function AboutTravelForm({ aboutTravelForm, profileId, isEditing }: Props
                       {payer === "Outra pessoa"
                         ? "Nome de quem pagará a viagem*"
                         : payer === "Outra Empresa"
-                          ? "Empresa que pagará a viagem*"
-                          : "Nome ou Empresa que pagará a viagem*"}
+                        ? "Empresa que pagará a viagem*"
+                        : "Nome ou Empresa que pagará a viagem*"}
                     </FormLabel>
 
                     <FormControl>
