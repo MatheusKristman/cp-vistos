@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";

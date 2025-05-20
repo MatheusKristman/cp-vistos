@@ -81,7 +81,6 @@ export default function ClientAreaPage() {
                 interviewDate={profile.interviewDate}
                 DSNumber={profile.DSNumber}
                 formStep={profile.formStep}
-                birthDate={profile.birthDate}
                 updatedAt={profile.updatedAt}
               />
             ))
@@ -100,7 +99,6 @@ export default function ClientAreaPage() {
                 CASVDate={profile.CASVDate}
                 interviewDate={profile.interviewDate}
                 DSNumber={profile.DSNumber}
-                birthDate={profile.birthDate}
                 formStep={profile.formStep}
                 updatedAt={profile.updatedAt}
               />

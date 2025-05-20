@@ -35,6 +35,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Input } from "../ui/input";
+import { trpc } from "@/lib/trpc-client";
 
 interface Props {
   profileId: string;
@@ -43,7 +44,6 @@ interface Props {
   profileName: string;
   CASVDate: Date | null;
   interviewDate: Date | null;
-  birthDate: Date | null;
   DSNumber: string;
   updatedAt: Date;
   formStep: number;
@@ -52,7 +52,7 @@ interface Props {
 interface FormRedirectConfirmationProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  birthDate: Date | null;
+  birthDate: string | undefined;
   formLink: string;
 }
 
@@ -163,7 +163,7 @@ function FormRedirectConfirmation({ open, setOpen, birthDate, formLink }: FormRe
       return;
     }
 
-    if (dateString !== format(new Date(birthDate), "dd/MM/yyyy")) {
+    if (dateString !== birthDate) {
       toast.error("Data de nascimento inválida");
 
       return;
@@ -344,7 +344,6 @@ export function ProfileFormBox({
   CASVDate,
   interviewDate,
   DSNumber,
-  birthDate,
   updatedAt,
   formStep,
 }: Props) {
@@ -353,6 +352,8 @@ export function ProfileFormBox({
   const [isFormConfirmationModalOpen, setFormConfirmationModalOpen] = useState<boolean>(false);
 
   const formLink = formStep > 10 ? `/resumo-formulario/${profileId}` : `/formulario/${profileId}?formStep=${formStep}`;
+
+  const { data: profileBirthDate } = trpc.clientRouter.getProfileBirthDate.useQuery({ profileId });
 
   useEffect(() => {
     switch (statusDS) {
@@ -411,7 +412,7 @@ export function ProfileFormBox({
         <FormRedirectConfirmation
           open={isFormConfirmationModalOpen}
           setOpen={setFormConfirmationModalOpen}
-          birthDate={birthDate}
+          birthDate={profileBirthDate}
           formLink={formLink}
         />
       </div>

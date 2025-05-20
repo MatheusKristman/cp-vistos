@@ -25,6 +25,7 @@ import { trpc } from "@/lib/trpc-client";
 import useFormStore from "@/constants/stores/useFormStore";
 import { PersonalDataFormType } from "@/types";
 
+// TODO: alterar input de date para string igual nos outros forms
 const formSchema = z
   .object({
     firstName: z.string().min(1, "Campo obrigatório"),
@@ -59,7 +60,7 @@ const formSchema = z
         otherCountryResidentConfirmation,
         otherCountryResident,
       },
-      ctx,
+      ctx
     ) => {
       if (
         otherNationalityConfirmation === "Sim" &&
@@ -101,7 +102,7 @@ const formSchema = z
           path: ["otherCountryResident"],
         });
       }
-    },
+    }
   );
 
 interface Props {
@@ -115,7 +116,9 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
 
   const { redirectStep, setRedirectStep } = useFormStore();
 
-  const { data, isLoading: isBirthLoading } = trpc.clientRouter.getProfileBirthDate.useQuery({ profileId });
+  const { data: profileBirthDate, isLoading: isBirthLoading } = trpc.clientRouter.getProfileBirthDate.useQuery({
+    profileId,
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -200,7 +203,7 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
       const values = form.getValues();
 
       if (birthDate !== undefined) {
-        if (data && data.birthDate && format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")) {
+        if (profileBirthDate && format(birthDate, "dd/MM/yyyy") !== profileBirthDate) {
           toast.error("Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente");
 
           return;
@@ -221,8 +224,8 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
           values.maritalStatus !== ""
             ? values.maritalStatus
             : !personalDataForm.maritalStatus
-              ? undefined
-              : personalDataForm.maritalStatus,
+            ? undefined
+            : personalDataForm.maritalStatus,
         birthDate: values.birthDate ?? personalDataForm.birthDate,
         birthCity: values.birthCity !== "" ? values.birthCity : personalDataForm.birthCity,
         birthState: values.birthState !== "" ? values.birthState : personalDataForm.birthState,
@@ -260,7 +263,7 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
     const values = form.getValues();
 
     if (birthDate !== undefined) {
-      if (data && data.birthDate && format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")) {
+      if (profileBirthDate && format(birthDate, "dd/MM/yyyy") !== profileBirthDate) {
         toast.error("Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente");
 
         return;
@@ -280,8 +283,8 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
         values.maritalStatus !== ""
           ? values.maritalStatus
           : !personalDataForm.maritalStatus
-            ? undefined
-            : personalDataForm.maritalStatus,
+          ? undefined
+          : personalDataForm.maritalStatus,
       birthDate: values.birthDate ?? personalDataForm.birthDate,
       birthCity: values.birthCity !== "" ? values.birthCity : personalDataForm.birthCity,
       birthState: values.birthState !== "" ? values.birthState : personalDataForm.birthState,
@@ -311,7 +314,7 @@ export function PersonalDataForm({ personalDataForm, profileId, isEditing }: Pro
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (data && data.birthDate && format(birthDate, "dd/MM/yyyy") !== format(data.birthDate, "dd/MM/yyyy")) {
+    if (profileBirthDate && format(birthDate, "dd/MM/yyyy") !== profileBirthDate) {
       toast.error("Data de nascimento é diferente da data cadastrada no perfil, verifique e tente novamente");
 
       return;

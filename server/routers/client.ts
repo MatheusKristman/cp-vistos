@@ -4,6 +4,7 @@ import { z } from "zod";
 import { isUserAuthedProcedure, router } from "../trpc";
 import prisma from "@/lib/prisma";
 import { Category } from "@prisma/client";
+import { format, formatDate } from "date-fns";
 
 export const clientRouter = router({
   getProfiles: isUserAuthedProcedure.query(async (opts) => {
@@ -61,6 +62,15 @@ export const clientRouter = router({
         });
       }
 
-      return { birthDate: currentProfile.birthDate };
+      if (!currentProfile.birthDate) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Perfil não possui data de nascimento",
+        });
+      }
+
+      const birthDate = format(currentProfile.birthDate, "dd/MM/yyyy");
+
+      return birthDate;
     }),
 });
