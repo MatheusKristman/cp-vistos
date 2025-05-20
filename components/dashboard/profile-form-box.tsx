@@ -151,6 +151,8 @@ function FormRedirectConfirmation({ open, setOpen, birthDate, formLink }: FormRe
   }
 
   function submitDate() {
+    alert(`datas: ${date} | ${dateString} | ${birthDate}`);
+
     if (date === undefined || dateString === "") {
       toast.error("Selecione a data de nascimento para prosseguir");
 
