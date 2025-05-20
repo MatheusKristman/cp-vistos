@@ -47,7 +47,7 @@ const formSchema = z
         invalid_type_error: "Celular inválido",
       })
       .optional()
-      .refine((val) => !val || (val && val.length === 0), {
+      .refine((val) => !val || (val && val.length !== 0), {
         message: "Celular inválido",
       }),
     address: z.string({
@@ -194,17 +194,17 @@ export function ClientDetailsEditAccount({ handleClose }: Props) {
       passwordConfirmScheduleAccount: client?.user.passwordScheduleAccount ?? "",
       budget: client?.user.budget?.toString() ?? "",
       budgetPaid:
-        (client && client.user.budgetPaid === "paid"
+        client && client.user.budgetPaid === "paid"
           ? "Pago"
           : client && client.user.budgetPaid === "pending"
-            ? "Pendente"
-            : "") ?? "",
+          ? "Pendente"
+          : "",
       scheduleAccount:
-        (client && client.user.scheduleAccount === "active"
+        client && client.user.scheduleAccount === "active"
           ? "Ativado"
           : client && client.user.scheduleAccount === "inactive"
-            ? "Inativo"
-            : "") ?? "",
+          ? "Inativo"
+          : "",
     },
   });
 
